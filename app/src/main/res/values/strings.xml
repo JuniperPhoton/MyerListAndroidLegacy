@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MyerList</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="myer">Myer</string>
+    <string name="list">List</string>
+    <string name="loginBtn">LOGIN</string>
+    <string name="registerBtn">REGISTER</string>
+    <string name="action_settings">Settings</string>
+    <string name="Subtitle">Sync your todos over Windows and Android</string>
+    <color name="MyerListBlue">#FF436998</color>
+    <color name="MyerListBlueLight">#FF4C83C9</color>
+    <color name="MyerListGray">#FFF2F2F2</color>
+</resources>

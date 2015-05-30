@@ -1,50 +1,30 @@
 package com.example.juniper.myerlistandroid;
 
-import android.content.Intent;
-import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 
 
-public class MainActivity extends AppCompatActivity {
-
-    public final static String EXTRA_MESSAGE = "ToLogin";
+public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
     }
 
-    public void toLoginClick(View v) {
+    public void loginClick(View view){
 
-        Intent intent=new Intent(this,LoginActivity.class);
-        intent.putExtra("EXTRA_MESSAGE", true);
-        startActivity(intent);
-    }
-
-    public void toRegisterClick(View view){
-        Intent intent=new Intent(this,LoginActivity.class);
-        intent.putExtra(EXTRA_MESSAGE,false);
-        startActivity(intent);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_login, menu);
         return true;
     }
 

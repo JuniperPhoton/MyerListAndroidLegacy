@@ -5,8 +5,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon"
-        android:label="@string/app_name"
-        >
+        android:label="@string/app_name" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -16,6 +15,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@style/MainAppTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.juniper.myerlistandroid.MainActivity" />
         </activity>
     </application>
 

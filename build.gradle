@@ -5,7 +5,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3';
+        classpath 'com.android.tools.build:gradle:1.2.3'
+
         //compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
         //compile 'com.android.support:appcompat-v7:21.0.3'
         //compile fileTree(include: ['*.jar'], dir: 'libs')

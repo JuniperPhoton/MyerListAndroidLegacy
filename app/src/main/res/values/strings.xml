@@ -17,4 +17,27 @@
     <color name="MyerListGray">#FFF2F2F2</color>
     <string name="title_activity_login">login</string>
     <string name="FontLight">sans-serif-light</string>
+    <string name="title_activity_start">StartActivity</string>
+    <string name="title_activity_main">MyerList</string>
+    <string name="account_text">ACCOUNT</string>
+
+    <string name="title_section1">To-dos</string>
+    <string name="title_section2">Deleted tiems</string>
+    <string name="title_section3">Settings</string>
+    <string name="title_section4">About</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+    <string name="deleteditems">DELETED ITEMS</string>
+    <string name="settings">SETTINGS</string>
+    <string name="about">ABOUT</string>
+
+    <array name="planets_array">
+        <item>DeletedItems</item>
+        <item>Setting</item>
+        <item>About</item>
+    </array>
+    <string name="drawer_open">Menu opened</string>
+    <string name="drawer_close">Menu closed</string>
 </resources>

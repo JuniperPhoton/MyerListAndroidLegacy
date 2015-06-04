@@ -1,10 +1,12 @@
 package com.example.juniper.myerlistandroid;
 
 
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -47,11 +49,14 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
                                                        if (mSelectedView != null)
                                                        {
                                                            mSelectedView.setSelected(false);
-                                                       }
-                                                       mSelectedPosition = viewHolder.getPosition();
-                                                       v.setSelected(true);
-                                                       mSelectedView = v;
-                                                       if (mNavigationDrawerCallbacks != null)
+                                                   }
+            mSelectedPosition = viewHolder.getPosition();
+
+            v.setSelected(true);
+
+            mSelectedView = v;
+
+            if (mNavigationDrawerCallbacks != null)
                                                            mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(viewHolder.getPosition());
                                                    }
                                                }
@@ -64,8 +69,9 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     public void onBindViewHolder(NavigationDrawerAdapter.ViewHolder viewHolder, int i)
     {
         viewHolder.textView.setText(mData.get(i).getText());
-        viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds(mData.get(i).getDrawable(), null, null, null);
-        if (mSelectedPosition == i)
+        viewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
+        //viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds(mData.get(i).getDrawable(), null, null, null);
+        if (mSelectedPosition == i && i!=4)
         {
             if (mSelectedView != null)
             {
@@ -80,7 +86,9 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     public void selectPosition(int position)
     {
+
         mSelectedPosition = position;
+
         notifyItemChanged(position);
     }
 
@@ -93,11 +101,13 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
         public TextView textView;
+        public ImageView imageView;
 
         public ViewHolder(View itemView)
         {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.item_name);
+            imageView=(ImageView) itemView.findViewById(R.id.item_icon);
         }
     }
 }

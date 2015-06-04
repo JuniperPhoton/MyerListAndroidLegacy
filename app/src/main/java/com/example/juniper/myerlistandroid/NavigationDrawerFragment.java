@@ -2,6 +2,7 @@ package com.example.juniper.myerlistandroid;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -29,6 +30,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import helper.ConfigHelper;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -62,6 +65,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerList;
     private View mFragmentContainerView;
+    private TextView mEmailView;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -77,6 +81,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
+
         if (savedInstanceState != null)
         {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
@@ -90,6 +95,10 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     {
         View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         mDrawerList = (RecyclerView) view.findViewById(R.id.drawerList);
+
+        mEmailView=(TextView)view.findViewById(R.id.account_block);
+        mEmailView.setText(ConfigHelper.getString(view.getContext(), "email"));
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mDrawerList.setLayoutManager(layoutManager);
@@ -100,6 +109,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         adapter.setNavigationDrawerCallbacks(this);
         mDrawerList.setAdapter(adapter);
         selectItem(mCurrentSelectedPosition);
+
+
         return view;
     }
 
@@ -127,9 +138,12 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     public List<NavigationItem> getMenu()
     {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
-        items.add(new NavigationItem("item 1", getResources().getDrawable(R.drawable.ic_menu_check)));
-        items.add(new NavigationItem("item 2", getResources().getDrawable(R.drawable.ic_menu_check)));
-        items.add(new NavigationItem("item 3", getResources().getDrawable(R.drawable.ic_menu_check)));
+        items.add(new NavigationItem("TO-DOS",getResources().getDrawable(R.drawable.accept)));
+        items.add(new NavigationItem("DELETED ITEMS", getResources().getDrawable(R.drawable.delete)));
+        items.add(new NavigationItem("SETTINGS", getResources().getDrawable(R.drawable.settings)));
+        items.add(new NavigationItem("ABOUT", getResources().getDrawable(R.drawable.like)));
+        items.add(new NavigationItem("LOGOUT", getResources().getDrawable(R.drawable.alert)));
+
         return items;
     }
 
@@ -196,6 +210,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
     private void selectItem(int position)
     {
+
         mCurrentSelectedPosition = position;
         if (mDrawerLayout != null)
         {
@@ -205,6 +220,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         {
             mCallbacks.onNavigationDrawerItemSelected(position);
         }
+
         ((NavigationDrawerAdapter) mDrawerList.getAdapter()).selectPosition(position);
     }
 
@@ -225,6 +241,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         try
         {
             mCallbacks = (NavigationDrawerCallbacks) activity;
+
         }
         catch (ClassCastException e)
         {

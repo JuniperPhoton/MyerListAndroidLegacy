@@ -12,9 +12,7 @@
     <string name="emailHint">EMAIL</string>
     <string name="passwordHint">PASSWORD</string>
     <string name="repasswordHint">CONFIRM YOUR PASSWORD</string>
-    <color name="MyerListBlue">#FF436998</color>
-    <color name="MyerListBlueLight">#FF4C83C9</color>
-    <color name="MyerListGray">#FFF2F2F2</color>
+
     <string name="title_activity_login">login</string>
     <string name="FontLight">sans-serif-light</string>
     <string name="title_activity_start">StartActivity</string>
@@ -38,6 +36,12 @@
         <item>Setting</item>
         <item>About</item>
     </array>
+
     <string name="drawer_open">Menu opened</string>
     <string name="drawer_close">Menu closed</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="shared_logininfo_file">login_info</string>
+    <string name="logout_content">Confirm to logout?</string>
+    <string name="logout_title">NOTICE</string>
 </resources>

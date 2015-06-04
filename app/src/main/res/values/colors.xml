@@ -7,7 +7,10 @@
         Refer also to Color palette for the UI colors you should use:
         http://www.google.com/design/spec/style/color.html#color-ui-color-palette
     -->
-
+    <color name="MyerListBlue">#FF436998</color>
+    <color name="MyerListBlueLight">#FF4C83C9</color>
+    <color name="MyerListGray">#FFF2F2F2</color>
+    <color name="MyerListGrayDark">#ffdddddd</color>
     <color name="myPrimaryColor">#2196F3</color>
     <color name="myPrimaryDarkColor">#1976D2</color>
     <color name="myAccentColor">#FF4081</color>
@@ -18,4 +21,6 @@
 
     <drawable name="pressed_gray">#0c000000</drawable>
     <drawable name="selected_gray">#2c000000</drawable>
+    <color name="pink">#ff5252</color>
+    <color name="pink_pressed">#d50000</color>
 </resources>

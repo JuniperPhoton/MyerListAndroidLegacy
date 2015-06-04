@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20sp">
             <TextView
+                android:id="@+id/logintitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/loginBtn"
@@ -49,28 +50,34 @@
         android:orientation="vertical"
         android:layout_weight="1.5">
         <EditText
+            android:id="@+id/emailbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/emailHint"
+            android:textColor="@android:color/black"
             android:layout_marginTop="20sp"
             android:layout_marginLeft="20sp"
             android:layout_marginRight="20sp"
             android:textSize="12sp" />
         <EditText
+            android:id="@+id/psbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/passwordHint"
+            android:textColor="@android:color/black"
             android:layout_marginTop="20sp"
             android:layout_marginLeft="20sp"
             android:layout_marginRight="20sp"
             android:password="true"
             android:textSize="12sp" />
         <EditText
+            android:id="@+id/confirmpsbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/repasswordHint"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="20sp"
+            android:textColor="@android:color/black"
             android:layout_marginRight="20sp"
             android:password="true"
             android:textSize="12sp" />

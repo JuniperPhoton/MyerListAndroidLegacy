@@ -1,24 +1,20 @@
-package com.example.juniper.myerlistandroid;
+package activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.juniper.myerlistandroid.R;
 
 import java.security.NoSuchAlgorithmException;
 
 import helper.AppHelper;
 import helper.DataHelper;
 import helper.PostHelper;
-import model.LoginState;
 
 
 public class LoginActivity extends AppCompatActivity implements PostHelper.OnCheckResponseListener,PostHelper.OnGetSaltResponseListener,PostHelper.OnLoginResponseListener
@@ -30,6 +26,8 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
     private ProgressDialog progressDialog;
 
     private boolean isToRegister=true;
+
+    private final boolean DEBUG_ENABLE=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -55,9 +53,13 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
         progressDialog=new ProgressDialog(this,ProgressDialog.STYLE_SPINNER);
     }
 
-    public void loginClick(View view)
+    public void loginClick(View view) throws NoSuchAlgorithmException
     {
-
+        if(DEBUG_ENABLE)
+        {
+            PostHelper.Login(this,"dengweichao@hotmail.com","windfantasy","o5Ib5jNhXa");
+            return;
+        }
         if(!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString()))
         {
             if(DataHelper.IsEmailFormat(mEmailBox.getText().toString()))

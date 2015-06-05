@@ -1,32 +1,37 @@
-package com.example.juniper.myerlistandroid;
+package activity;
 
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
+
+import com.example.juniper.myerlistandroid.NavigationDrawerCallbacks;
+import fragment.NavigationDrawerFragment;
+import com.example.juniper.myerlistandroid.R;
+import fragment.ToDoFragment;
+
+import org.json.JSONArray;
+
+import java.util.List;
 
 import helper.ConfigHelper;
 import helper.PostHelper;
-import helper.PostHelper.OnCheckResponseListener;
-import model.OnActionListener;
+import helper.PostHelper.OnGetSchedulesListener;
+import model.Schedule;
 
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerCallbacks,ToDoFragment.OnFragmentInteractionListener, OnCheckResponseListener, OnActionListener
+public class MainActivity extends ActionBarActivity implements NavigationDrawerCallbacks,ToDoFragment.OnFragmentInteractionListener,OnGetSchedulesListener
 {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
+    private ToDoFragment mToDoFragment;
     private Toolbar mToolbar;
 
     @Override
@@ -51,7 +56,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     {
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
-        if (findViewById(R.id.fragment_container) != null) {
+        if (findViewById(R.id.fragment_container) != null)
+        {
 
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
@@ -62,7 +68,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
             // Create a new Fragment to be placed in the activity layout
             ToDoFragment firstFragment = new ToDoFragment();
-
+            mToDoFragment=firstFragment;
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
             //firstFragment.setArguments(getIntent().getExtras());
@@ -70,6 +76,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
             // Add the fragment to the 'fragment_container' FrameLayout
             getFragmentManager().beginTransaction()
                     .add(R.id.fragment_container,firstFragment).commit();
+
+            Intent intent=getIntent();
+            if(intent.getStringExtra("LOGIN_STATE").equals("Logined"))
+            {
+                mToDoFragment.ShowRefreshing();
+                PostHelper.GetAllSchedules(this, ConfigHelper.getString(this, "sid"),ConfigHelper.getString(this,"access_token"));
+            }
         }
 
     }
@@ -137,16 +150,14 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
     }
 
-
     @Override
-    public void OnCheckResponse(boolean check)
+    public void OnGotScheduleResponse(JSONArray array)
     {
-        Toast.makeText(this,"haha",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void OnGotMessage(String msg)
-    {
-        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+        List<Schedule> todoList=Schedule.parseJsonObjFromArray(array);
+        if(todoList!=null)
+        {
+            mToDoFragment.SetUpData(todoList);
+            mToDoFragment.StopRefreshing();
+        }
     }
 }

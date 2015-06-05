@@ -1,35 +1,18 @@
 package helper;
 
-import android.app.DownloadManager;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.Toast;
 import org.apache.http.Header;
-import org.apache.http.HttpResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.ResponseHandlerInterface;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.io.IOException;
-import java.net.URI;
 
 import model.OnActionListener;
 
@@ -73,6 +56,7 @@ public class PostHelper
     public static OnGetSaltResponseListener mOnGetSaltResponseListener;
     public static OnLoginResponseListener mOnLoginResponseListener;
     public static OnActionListener mOnActionListener;
+    public static OnGetSchedulesListener mOnGetSchedules;
 
     public  static void CheckExist(Context context,final String email)
     {
@@ -203,6 +187,44 @@ public class PostHelper
         });
     }
 
+    public static void GetAllSchedules(Context context,String sid,String access_token)
+    {
+        mOnGetSchedules=(OnGetSchedulesListener)context;
+
+        AsyncHttpClient client=new AsyncHttpClient();
+        RequestParams params=new RequestParams();
+        params.put("sid",sid);
+
+        client.post(ScheduleGetUri+"sid="+sid+"&access_token="+access_token, params, new JsonHttpResponseHandler()
+        {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
+            {
+                Boolean isSuccess = null;
+                try
+                {
+                    isSuccess = response.getBoolean("isSuccessed");
+                    if(isSuccess)
+                    {
+                        JSONArray array=response.getJSONArray("ScheduleInfo");
+                        if(array!=null)
+                        {
+                            mOnGetSchedules.OnGotScheduleResponse(array);
+                        }
+
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
+
+        });
+
+    }
+
     public interface OnCheckResponseListener
     {
         void OnCheckResponse(boolean check);
@@ -216,5 +238,10 @@ public class PostHelper
     public interface OnLoginResponseListener
     {
         void OnLoginResponse(boolean value);
+    }
+
+    public interface OnGetSchedulesListener
+    {
+        void OnGotScheduleResponse(JSONArray array);
     }
 }

@@ -61,7 +61,7 @@
             android:id="@+id/tologinBtn"
             android:onClick="toLoginClick"
             android:layout_width="match_parent"
-            android:layout_height="45sp"
+            android:layout_height="40sp"
             android:text="@string/loginBtn"
             android:layout_marginTop="30sp"
             android:layout_marginRight="20sp"
@@ -74,7 +74,7 @@
         <Button
             android:onClick="toRegisterClick"
             android:layout_width="match_parent"
-            android:layout_height="45sp"
+            android:layout_height="40sp"
             android:text="@string/registerBtn"
             android:layout_marginLeft="20sp"
             android:layout_marginRight="20sp"
@@ -84,11 +84,12 @@
         <Button
             android:onClick="toMainClick"
             android:layout_width="match_parent"
-            android:layout_height="45sp"
+            android:layout_height="40sp"
             android:text="@string/offlineBtn"
             android:layout_marginLeft="20sp"
             android:layout_marginRight="20sp"
             android:layout_marginTop="10sp"
+            android:layout_marginBottom="10sp"
             android:textColor="@android:color/background_dark"
             android:background="@color/MyerListGrayDark"/>
     </LinearLayout>

@@ -1,4 +1,4 @@
-package com.example.juniper.myerlistandroid;
+package model;
 
 
 import android.graphics.drawable.Drawable;

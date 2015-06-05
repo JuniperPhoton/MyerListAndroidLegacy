@@ -1,22 +1,17 @@
-package com.example.juniper.myerlistandroid;
+package activity;
 
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.Toast;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+import com.example.juniper.myerlistandroid.R;
 
+import activity.LoginActivity;
+import activity.MainActivity;
 import helper.ConfigHelper;
-import helper.PostHelper;
 
 
 public class StartActivity extends AppCompatActivity
@@ -36,14 +31,22 @@ public class StartActivity extends AppCompatActivity
         boolean offline=ConfigHelper.getBoolean(this,"offline_mode");
         if(offline || email!=null )
         {
+            Intent intent=new Intent(this, MainActivity.class);
+            intent.putExtra("LOGIN_STATE","Logined");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else if(offline)
+        {
             toMainClick(null);
         }
-
     }
 
     public void toLoginClick(View v)
     {
-        Intent intent=new Intent(this,LoginActivity.class);
+        Intent intent=new Intent(this, LoginActivity.class);
         intent.putExtra("LOGIN_STATE", "ToLogin");
         startActivity(intent);
     }

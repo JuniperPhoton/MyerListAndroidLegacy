@@ -3,6 +3,7 @@ package helper;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.widget.Toast;
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -13,8 +14,10 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import java.security.NoSuchAlgorithmException;
-
-import model.OnActionListener;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import model.Schedule;
 
 public class PostHelper
 {
@@ -55,8 +58,8 @@ public class PostHelper
     public static OnCheckResponseListener mOnCheckResponseListener;
     public static OnGetSaltResponseListener mOnGetSaltResponseListener;
     public static OnLoginResponseListener mOnLoginResponseListener;
-    public static OnActionListener mOnActionListener;
     public static OnGetSchedulesListener mOnGetSchedules;
+    public static OnAddedMemoListener mOnAddedListener;
 
     public  static void CheckExist(Context context,final String email)
     {
@@ -136,7 +139,7 @@ public class PostHelper
         });
     }
 
-    public static void Login(Context context, final String email, final String password,String salt) throws NoSuchAlgorithmException
+    public static void Login(Context context, final String email, final String password, final String salt) throws NoSuchAlgorithmException
     {
         mOnLoginResponseListener=(OnLoginResponseListener)context;
 
@@ -155,26 +158,25 @@ public class PostHelper
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response)
             {
-                boolean isSuccess= false;
+                boolean isSuccess = false;
                 try
                 {
                     isSuccess = response.getBoolean("isSuccessed");
-                    if(isSuccess)
+                    if (isSuccess)
                     {
-                        JSONObject userObj=response.getJSONObject("UserInfo");
-                        if(userObj!=null)
+                        JSONObject userObj = response.getJSONObject("UserInfo");
+                        if (userObj != null)
                         {
-                            String sid=userObj.getString("sid");
-                            String access_token=userObj.getString("access_token");
-                            ConfigHelper.putString(ContextUtil.getInstance(),"email",email);
-                            ConfigHelper.putString(ContextUtil.getInstance(),"password",password);
-                            ConfigHelper.putString(ContextUtil.getInstance(),"sid",sid);
-                            ConfigHelper.putString(ContextUtil.getInstance(),"access_token",access_token);
+                            String sid = userObj.getString("sid");
+                            String access_token = userObj.getString("access_token");
+                            ConfigHelper.putString(ContextUtil.getInstance(), "email", email);
+                            ConfigHelper.putString(ContextUtil.getInstance(), "password", password);
+                            ConfigHelper.putString(ContextUtil.getInstance(),"salt",salt);
+                            ConfigHelper.putString(ContextUtil.getInstance(), "sid", sid);
+                            ConfigHelper.putString(ContextUtil.getInstance(), "access_token", access_token);
                             mOnLoginResponseListener.OnLoginResponse(true);
-                        }
-                        else mOnLoginResponseListener.OnLoginResponse(false);
-                    }
-                    else mOnLoginResponseListener.OnLoginResponse((false));
+                        } else mOnLoginResponseListener.OnLoginResponse(false);
+                    } else mOnLoginResponseListener.OnLoginResponse((false));
                 }
                 catch (JSONException e)
                 {
@@ -183,11 +185,16 @@ public class PostHelper
                 }
 
             }
+            @Override
+            public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object)
+            {
+                mOnLoginResponseListener.OnLoginResponse((false));
+            }
 
         });
     }
 
-    public static void GetAllSchedules(Context context,String sid,String access_token)
+    public static void GetOrderedSchedules(Context context,final String sid, final String access_token)
     {
         mOnGetSchedules=(OnGetSchedulesListener)context;
 
@@ -207,9 +214,35 @@ public class PostHelper
                     if(isSuccess)
                     {
                         JSONArray array=response.getJSONArray("ScheduleInfo");
+
                         if(array!=null)
                         {
-                            mOnGetSchedules.OnGotScheduleResponse(array);
+                            final List<Schedule> todosList=Schedule.parseJsonObjFromArray(array);
+
+                            AsyncHttpClient client=new AsyncHttpClient();
+                            RequestParams params=new RequestParams();
+                            params.put("sid",sid);
+                            client.post(ScheduleGetOrderUri+"sid="+sid+"&access_token="+access_token,params,new JsonHttpResponseHandler()
+                            {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, JSONObject response)
+                                {
+                                    try
+                                    {
+                                        boolean isSuccess=response.getBoolean("isSuccessed");
+                                        if(isSuccess)
+                                        {
+                                            String orderStr=response.getJSONArray(("OrderList")).getJSONObject(0).getString("list_order");
+                                            List<Schedule> listToReturn=Schedule.setOrderByString(todosList,orderStr);
+                                            mOnGetSchedules.OnGotScheduleResponse(listToReturn);
+                                        }
+                                    }
+                                    catch (JSONException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
                         }
 
                     }
@@ -222,8 +255,45 @@ public class PostHelper
             }
 
         });
-
     }
+
+    public static void AddMemo(Context context,String sid,String content,String isDone)
+    {
+        mOnAddedListener=(OnAddedMemoListener)context;
+
+        AsyncHttpClient client=new AsyncHttpClient();
+        RequestParams params=new RequestParams();
+        params.put("sid",sid);
+        params.put("time", Calendar.getInstance().getTime().toString());
+        params.put("content",content);
+        params.put("isdone",isDone);
+        client.post(ScheduleAddUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context,"access_token"), params, new JsonHttpResponseHandler()
+        {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
+            {
+                Boolean isSuccess = null;
+                try
+                {
+                    isSuccess = response.getBoolean("isSuccessed");
+                    if (isSuccess)
+                    {
+                        Schedule newSche=Schedule.parseJsonObjToObj(response);
+                        mOnAddedListener.OnAddedResponse(true,newSche);
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    mOnAddedListener.OnAddedResponse(false, null);
+                }
+
+            }
+
+        });
+    }
+
+
 
     public interface OnCheckResponseListener
     {
@@ -242,6 +312,12 @@ public class PostHelper
 
     public interface OnGetSchedulesListener
     {
-        void OnGotScheduleResponse(JSONArray array);
+        void OnGotScheduleResponse(List<Schedule> mytodosList);
     }
+
+    public interface OnAddedMemoListener
+    {
+        void OnAddedResponse(boolean isSuccess,Schedule newTodo);
+    }
+
 }

@@ -56,7 +56,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     private ActionBarDrawerToggle mActionBarDrawerToggle;
 
     private DrawerLayout mDrawerLayout;
-    private RecyclerView mDrawerList;
+    private RecyclerView mDrawerRecyclerView;
     private View mFragmentContainerView;
     private TextView mEmailView;
 
@@ -87,24 +87,27 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        mDrawerList = (RecyclerView) view.findViewById(R.id.drawerList);
 
+        //Show account displaying email address
         mEmailView=(TextView)view.findViewById(R.id.account_block);
         mEmailView.setText(ConfigHelper.getString(view.getContext(), "email"));
+
+        //RecyclerView to display navigation item
+        mDrawerRecyclerView = (RecyclerView) view.findViewById(R.id.drawerList);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        mDrawerList.setLayoutManager(layoutManager);
-        mDrawerList.setHasFixedSize(true);
+        mDrawerRecyclerView.setLayoutManager(layoutManager);
+        mDrawerRecyclerView.setHasFixedSize(true);
 
         final List<NavigationItem> navigationItems = getMenu();
 
         NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(navigationItems);
         adapter.setNavigationDrawerCallbacks(this);
-        mDrawerList.setAdapter(adapter);
-        selectItem(mCurrentSelectedPosition);
+        mDrawerRecyclerView.setAdapter(adapter);
 
+        selectItem(mCurrentSelectedPosition);
 
         return view;
     }
@@ -203,20 +206,21 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
     }
 
-    private void selectItem(int position)
+    public void selectItem(int position)
     {
-
         mCurrentSelectedPosition = position;
-        if (mDrawerLayout != null)
-        {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
-        }
+
         if (mCallbacks != null)
         {
             mCallbacks.onNavigationDrawerItemSelected(position);
         }
 
-        ((NavigationDrawerAdapter) mDrawerList.getAdapter()).selectPosition(position);
+        ((NavigationDrawerAdapter) mDrawerRecyclerView.getAdapter()).selectPosition(position);
+
+        if (mDrawerLayout != null)
+        {
+            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        }
     }
 
     public void openDrawer()

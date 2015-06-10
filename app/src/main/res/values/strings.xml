@@ -44,4 +44,5 @@
     <string name="shared_logininfo_file">login_info</string>
     <string name="logout_content">Confirm to logout?</string>
     <string name="logout_title">NOTICE</string>
+    <string name="title_activity_about">About</string>
 </resources>

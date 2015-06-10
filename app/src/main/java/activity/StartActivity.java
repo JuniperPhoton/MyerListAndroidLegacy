@@ -26,22 +26,6 @@ public class StartActivity extends AppCompatActivity
         }
 
         setContentView(R.layout.activity_start);
-
-        String email=ConfigHelper.getString(this,"email");
-        boolean offline=ConfigHelper.getBoolean(this,"offline_mode");
-        if(offline || email!=null )
-        {
-            Intent intent=new Intent(this, MainActivity.class);
-            intent.putExtra("LOGIN_STATE","Logined");
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                    Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-        else if(offline)
-        {
-            toMainClick(null);
-        }
     }
 
     public void toLoginClick(View v)

@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 public  class ConfigHelper
 {
     private static String name="config";
+    public static boolean ISOFFLINEMODE=true;
 
     public static SharedPreferences getSharedPreference(Context context)
     {

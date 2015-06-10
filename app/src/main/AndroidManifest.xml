@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.juniper.myerlistandroid" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name="helper.ContextUtil"
         android:allowBackup="true"
@@ -27,9 +29,13 @@
         </activity>
         <activity
             android:name="activity.MainActivity"
-
             android:theme="@style/AppTheme" >
         </activity>
+        <activity
+            android:name="activity.AboutActivity"
+            android:label="@string/title_activity_about"
+            android:theme="@style/AppTheme">
+        </activity>
     </application>
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
 </manifest>

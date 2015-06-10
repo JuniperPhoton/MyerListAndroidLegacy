@@ -63,7 +63,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/drawerList"
             android:layout_width="match_parent"
-            android:clickable="false"
+            android:clickable="true"
             android:scrollbars="vertical"
             android:layout_height="250dp"
             android:background="@color/myDrawerBackground"

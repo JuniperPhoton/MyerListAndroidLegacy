@@ -4,7 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="button_pressed_z_material">3dp</dimen>
     <dimen name="button_elevation_material">3dp</dimen>
-
+    <dimen name="email_z_index">2dp</dimen>
+    <dimen name="card_z_index">1dp</dimen>
     <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>

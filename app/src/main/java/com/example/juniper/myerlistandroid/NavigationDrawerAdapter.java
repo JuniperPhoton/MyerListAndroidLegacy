@@ -1,16 +1,21 @@
 package com.example.juniper.myerlistandroid;
 
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
+import helper.AppHelper;
+import helper.ContextUtil;
 import model.NavigationItem;
+import model.Schedule;
 
 
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.ViewHolder>
@@ -41,28 +46,28 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_drawer, viewGroup, false);
         final ViewHolder viewHolder = new ViewHolder(v);
-        viewHolder.itemView.setClickable(true);
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener()
-                                               {
-                                                   @Override
-                                                   public void onClick(View v)
+        viewHolder.linearLayout.setOnClickListener(new View.OnClickListener()
                                                    {
-                                                       if (mSelectedView != null)
+                                                       @Override
+                                                       public void onClick(View v)
                                                        {
-                                                           mSelectedView.setSelected(false);
+                                                           if (mSelectedView != null)
+                                                           {
+                                                               ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
+                                                           }
+                                                           mSelectedPosition = viewHolder.getPosition();
+
+                                                           //v.setSelected(true);
+
+                                                           mSelectedView = (CardView)v.getParent();
+
+                                                           if (mNavigationDrawerCallbacks != null)
+                                                               mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(viewHolder.getPosition());
+                                                       }
                                                    }
-            mSelectedPosition = viewHolder.getPosition();
-
-            v.setSelected(true);
-
-            mSelectedView = v;
-
-            if (mNavigationDrawerCallbacks != null)
-                                                           mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(viewHolder.getPosition());
-                                                   }
-                                               }
         );
-        viewHolder.itemView.setBackgroundResource(R.drawable.row_selector);
+        //viewHolder.cardView.setCardBackgroundColor(R.drawable.row_selector);
+
         return viewHolder;
     }
 
@@ -71,27 +76,32 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     {
         viewHolder.textView.setText(mData.get(i).getText());
         viewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
-        //viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds(mData.get(i).getDrawable(), null, null, null);
-        if (mSelectedPosition == i && i!=4)
+        if (mSelectedPosition == i && i!=4 && i!=3)
         {
             if (mSelectedView != null)
             {
-                mSelectedView.setSelected(false);
+                ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
             }
             mSelectedPosition = i;
-            mSelectedView = viewHolder.itemView;
-            mSelectedView.setSelected(true);
+            mSelectedView = viewHolder.cardView;
+            ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.MyerListBlueLight));
+            //mSelectedView.setSelected(true);
         }
     }
 
 
     public void selectPosition(int position)
     {
-
         mSelectedPosition = position;
-
         notifyItemChanged(position);
     }
+
+    public void deleteToDo(String id)
+    {
+
+    }
+
+
 
     @Override
     public int getItemCount()
@@ -103,12 +113,16 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     {
         public TextView textView;
         public ImageView imageView;
+        public CardView cardView;
+        public LinearLayout linearLayout;
 
         public ViewHolder(View itemView)
         {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.item_name);
             imageView=(ImageView) itemView.findViewById(R.id.item_icon);
+            cardView=(CardView)itemView.findViewById(R.id.navigation_card_view);
+            linearLayout=(LinearLayout) cardView.findViewById(R.id.navigationitem_layout);
         }
     }
 }

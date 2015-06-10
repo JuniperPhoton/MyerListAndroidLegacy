@@ -5,10 +5,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Schedule
+public class Schedule implements Serializable
 {
     private String id;
     private String sid;
@@ -26,7 +27,7 @@ public class Schedule
 
     }
 
-    public String GetID()
+    public String getID()
     {
         return this.id;
     }
@@ -100,6 +101,54 @@ public class Schedule
             }
         }
         return listToReturn;
+    }
+
+    public static Schedule parseJsonObjToObj(JSONObject jsonObject)
+    {
+        try
+        {
+            Schedule newMemo=new Schedule();
+            JSONObject info=jsonObject.getJSONObject("ScheduleInfo");
+            newMemo.setID(info.getString("id"));
+            newMemo.setSID(info.getString("sid"));
+            newMemo.setContent(info.getString("content"));
+            newMemo.setIsDone(info.getString("isdone").equals("1"));
+
+            return  newMemo;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+
+    }
+
+    public static List<Schedule> setOrderByString(List<Schedule> oriList,String orderList)
+    {
+        List<Schedule> listToReturn=new ArrayList<>();
+        String[] orders=orderList.split(",");
+        for(int i=0;i<orders.length;i++)
+        {
+            if(orders[i].equals("") || orders[i].equals(" "))
+            {
+                continue;
+            }
+            String currentOrder=orders[i];
+            for(Schedule s:oriList)
+            {
+                if(s.getID().equals(currentOrder))
+                {
+                    listToReturn.add(s);
+                    oriList.remove(s);
+                    break;
+                }
+            }
+        }
+        for(Schedule s:oriList)
+        {
+            listToReturn.add(s);
+        }
+        return  listToReturn;
     }
 
 

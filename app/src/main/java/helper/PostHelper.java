@@ -1,6 +1,5 @@
 package helper;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,25 +20,7 @@ import model.Schedule;
 
 public class PostHelper
 {
-    public static boolean isConnnected(Context context)
-    {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (null != connectivityManager)
-        {
-            NetworkInfo networkInfo[] = connectivityManager.getAllNetworkInfo();
 
-            if (null != networkInfo) {
-                for (NetworkInfo info : networkInfo) {
-                    if (info.getState() == NetworkInfo.State.CONNECTED) {
-                       // Log.e(TAG, "the net is ok");
-                        return true;
-                    }
-                }
-            }
-        }
-        Toast.makeText(context, "Please check your network ;-)", Toast.LENGTH_SHORT).show();
-        return false;
-    }
 
     public final static String domain = "121.41.21.21";
     public static String UserCheckExist = "http://" + domain + "/schedule/User/CheckUserExist/v1?";
@@ -75,13 +56,12 @@ public class PostHelper
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 // If the response is JSONObject instead of expected JSONArray
-                JSONObject jsonObject=response;
                 try
                 {
-                    boolean isSuccess=jsonObject.getBoolean("isSuccessed");
+                    boolean isSuccess=response.getBoolean("isSuccessed");
                     if(isSuccess)
                     {
-                        boolean isExist=jsonObject.getBoolean("isExist");
+                        boolean isExist=response.getBoolean("isExist");
                         if(isExist)
                         {
                             mOnCheckResponseListener.OnCheckResponse(true);
@@ -110,13 +90,12 @@ public class PostHelper
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 // If the response is JSONObject instead of expected JSONArray
-                JSONObject jsonObject=response;
                 try
                 {
-                    boolean isSuccess=jsonObject.getBoolean("isSuccessed");
+                    boolean isSuccess=response.getBoolean("isSuccessed");
                     if(isSuccess)
                     {
-                        String salt=jsonObject.getString("Salt");
+                        String salt=response.getString("Salt");
 
                         mOnGetSaltResponseListener.OnGetSaltResponse(salt);
                     }
@@ -198,8 +177,7 @@ public class PostHelper
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
 
-        String ps=password;
-        String psAfterMD5=NetworkSecurityHelper.get32MD5Str(ps);
+        String psAfterMD5=NetworkSecurityHelper.get32MD5Str(password);
         String psToPost=NetworkSecurityHelper.get32MD5Str(psAfterMD5 + salt);
 
         params.put("email",email);

@@ -35,8 +35,6 @@
                   android:orientation="vertical"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  android:paddingLeft="10dp"
-                  android:paddingRight="10dp"
                   android:paddingTop="0dp"
                   android:paddingBottom="0dp">
         <TextView
@@ -45,63 +43,107 @@
             android:text="@string/user_hobbit_block"
             android:textStyle="bold"
             android:textSize="20sp"
+            android:layout_marginLeft="10sp"
             android:textColor="@color/MyerListBlueLight"
             android:layout_marginTop="20sp"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10sp">
-            <TextView
-                android:text="@string/tap_keyboard_block"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="wrap_content"/>
-            <Switch
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:id="@+id/ShowKeyboardSwitch"
-                android:checked="true"
-                />
-        </LinearLayout>
-        <ImageView
+            android:layout_height="100sp"
             android:layout_marginTop="10sp"
-            android:layout_width="match_parent"
-            android:layout_height="1sp"
-            android:layout_marginRight="10sp"
-            android:scaleType="fitXY"
-            android:src="@drawable/line_gray"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10sp">
-            <TextView
-                android:text="@string/tap_bottom_block"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="wrap_content"/>
-            <Switch
-                android:id="@+id/AddToBottomSwitch"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:checked="true"
-                android:layout_height="wrap_content"/>
+            android:orientation="vertical"
+            android:background="@android:color/white">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp"
+                android:layout_marginTop="10sp">
+                <TextView
+                    android:text="@string/tap_keyboard_block"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"/>
+                <Switch
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ShowKeyboardSwitch"
+                    android:checked="true"
+                    />
+            </LinearLayout>
+            <ImageView
+                android:layout_marginTop="10sp"
+                android:layout_width="match_parent"
+                android:layout_height="1sp"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp"
+                android:scaleType="fitXY"
+                android:src="@drawable/line_gray"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp"
+                android:layout_marginTop="10sp">
+                <TextView
+                    android:text="@string/tap_bottom_block"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"/>
+                <Switch
+                    android:id="@+id/AddToBottomSwitch"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
         </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/lang_block"
             android:textStyle="bold"
             android:textSize="20sp"
+            android:layout_marginLeft="10sp"
+            android:layout_marginRight="10sp"
             android:textColor="@color/MyerListBlueLight"
             android:layout_marginTop="20sp"/>
-        <TextView
-            android:layout_marginTop="10sp"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Coming soon..."/>
+            android:layout_marginTop="10sp"
+            android:orientation="vertical"
+            android:background="@android:color/white">
+            <TextView
+                android:layout_marginTop="10sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp"
+                android:layout_marginBottom="10sp"
+                android:text="Coming soon..."/>
+        </LinearLayout>
+
+        <!--<RadioGroup-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content">-->
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent">-->
+                <!--<RadioButton-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="ENGLISH"/>-->
+                <!--<RadioButton-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="中文"/>-->
+            <!--</LinearLayout>-->
+            <!-- -->
+        <!--</RadioGroup>-->
     </LinearLayout>
 
 

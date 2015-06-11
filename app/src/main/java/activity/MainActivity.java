@@ -17,13 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.juniper.myerlistandroid.NavigationDrawerCallbacks;
 
 import fragment.NavigationDrawerFragment;
 import com.example.juniper.myerlistandroid.R;
-import com.example.juniper.myerlistandroid.ToDoListAdapter;
 
-import org.w3c.dom.Text;
 
 import fragment.ToDoFragment;
 
@@ -39,6 +36,8 @@ import helper.ConfigHelper;
 import helper.ContextUtil;
 import helper.PostHelper;
 import helper.PostHelper.OnGetSchedulesListener;
+import middle.NavigationDrawerCallbacks;
+import middle.ToDoListAdapter;
 import model.Schedule;
 
 
@@ -239,19 +238,24 @@ public class MainActivity extends ActionBarActivity implements
             }
         });
 
-         AlertDialog.Builder builder=new AlertDialog.Builder(this);
-         mDialog=builder.setView((dialogView)).show();
-         mNewMemoText.requestFocus();
-        Timer timer=new Timer();
-        timer.schedule(new TimerTask()
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        mDialog=builder.setView((dialogView)).show();
+
+        if(ConfigHelper.getBoolean(ContextUtil.getInstance(),"ShowKeyboard"))
         {
-            @Override
-            public void run()
+            mNewMemoText.requestFocus();
+            Timer timer=new Timer();
+            timer.schedule(new TimerTask()
             {
-                InputMethodManager inputMethodManager = (InputMethodManager) mNewMemoText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.showSoftInput(mNewMemoText, 0);
-            }
-        },333);
+                @Override
+                public void run()
+                {
+                    InputMethodManager inputMethodManager = (InputMethodManager) mNewMemoText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(mNewMemoText, 0);
+                }
+            },333);
+
+        }
 
     }
 

@@ -11,11 +11,11 @@ public  class ConfigHelper
 
     public  static  void ConfigAppSetting()
     {
-        if(getString(ContextUtil.getInstance(),"ShowKeyboard")==null)
+        if(!checkKey(ContextUtil.getInstance(),"ShowKeyboard"))
         {
             putBoolean(ContextUtil.getInstance(),"ShowKeyboard",true);
         }
-        if(getString(ContextUtil.getInstance(),"AddToBottom")==null)
+        if(!checkKey(ContextUtil.getInstance(),"AddToBottom"))
         {
             putBoolean(ContextUtil.getInstance(),"AddToBottom",true);
         }
@@ -30,6 +30,12 @@ public  class ConfigHelper
     {
         SharedPreferences sharedPreferences= ConfigHelper.getSharedPreference(context);
         return sharedPreferences.getBoolean(key, false);
+    }
+
+    public  static boolean checkKey(Context context,String key)
+    {
+        SharedPreferences sharedPreferences= ConfigHelper.getSharedPreference(context);
+        return sharedPreferences.contains(key);
     }
 
     public static String getString(Context context,String key)

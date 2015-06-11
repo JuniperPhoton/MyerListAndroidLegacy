@@ -1,4 +1,4 @@
-package com.example.juniper.myerlistandroid;
+package middle;
 
 
 import android.support.v7.widget.CardView;
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.juniper.myerlistandroid.R;
 
 import java.util.List;
 

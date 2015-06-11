@@ -6,18 +6,20 @@ import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.example.juniper.myerlistandroid.R;
-import com.example.juniper.myerlistandroid.ToDoListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import helper.ConfigHelper;
 import helper.PostHelper;
+import middle.ToDoListAdapter;
 import model.Schedule;
 
 public class ToDoFragment extends Fragment
@@ -69,6 +71,7 @@ public class ToDoFragment extends Fragment
             }
         });
 
+
         return view;
     }
 
@@ -85,6 +88,7 @@ public class ToDoFragment extends Fragment
         if(mRefreshLayout!=null)
         {
             mRefreshLayout.setRefreshing(true);
+
         }
     }
 
@@ -121,7 +125,6 @@ public class ToDoFragment extends Fragment
         super.onDetach();
 
     }
-
 
 
 }

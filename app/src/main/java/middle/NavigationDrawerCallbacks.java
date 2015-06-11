@@ -1,4 +1,4 @@
-package com.example.juniper.myerlistandroid;
+package middle;
 
 public interface NavigationDrawerCallbacks
 {

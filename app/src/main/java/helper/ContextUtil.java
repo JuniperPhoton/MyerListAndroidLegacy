@@ -20,6 +20,8 @@ public class ContextUtil extends Application {
         super.onCreate();
         instance = this;
 
+        ConfigHelper.ConfigAppSetting();
+
         String email=ConfigHelper.getString(this,"email");
         boolean offline=ConfigHelper.getBoolean(this,"offline_mode");
         if(offline || email!=null )
@@ -27,13 +29,17 @@ public class ContextUtil extends Application {
             ConfigHelper.ISOFFLINEMODE=offline;
             Intent intent=new Intent(this, MainActivity.class);
             intent.putExtra("LOGIN_STATE",offline?"Offline":"AboutToLogin");
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         else
         {
             Intent intent=new Intent(this, StartActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
     }

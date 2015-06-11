@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.juniper.myerlistandroid" >
+    package="com.example.juniper.myerlistandroid"
+          android:versionCode="2"
+          android:versionName="0.6">
+
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -34,7 +37,12 @@
         <activity
             android:name="activity.AboutActivity"
             android:label="@string/title_activity_about"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
+        </activity>
+        <activity
+            android:name="activity.SettingActivity"
+            android:label="@string/title_activity_setting"
+            android:theme="@style/AppTheme" >
         </activity>
     </application>
 

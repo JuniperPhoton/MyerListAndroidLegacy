@@ -77,9 +77,9 @@ public class Schedule implements Serializable
         this.isDone=value;
     }
 
-    public static List<Schedule> parseJsonObjFromArray(JSONArray array)
+    public static ArrayList<Schedule> parseJsonObjFromArray(JSONArray array)
     {
-        List<Schedule> listToReturn=new ArrayList<Schedule>();
+        ArrayList<Schedule> listToReturn=new ArrayList<Schedule>();
         if(array!=null)
         {
             for(int i=0;i<array.length();i++)
@@ -123,9 +123,9 @@ public class Schedule implements Serializable
 
     }
 
-    public static List<Schedule> setOrderByString(List<Schedule> oriList,String orderList)
+    public static ArrayList<Schedule> setOrderByString(ArrayList<Schedule> oriList,String orderList)
     {
-        List<Schedule> listToReturn=new ArrayList<>();
+        ArrayList<Schedule> listToReturn=new ArrayList<>();
         String[] orders=orderList.split(",");
         for(int i=0;i<orders.length;i++)
         {
@@ -151,5 +151,15 @@ public class Schedule implements Serializable
         return  listToReturn;
     }
 
+    public static  String getOrderString(ArrayList<Schedule> list)
+    {
+        StringBuilder builder=new StringBuilder();
+        for(Schedule s:list)
+        {
+            builder.append(s.getID());
+            builder.append(',');
+        }
+        return builder.toString();
+    }
 
 }

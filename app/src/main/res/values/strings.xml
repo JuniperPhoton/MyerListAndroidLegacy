@@ -45,4 +45,9 @@
     <string name="logout_content">Confirm to logout?</string>
     <string name="logout_title">NOTICE</string>
     <string name="title_activity_about">About</string>
+    <string name="title_activity_setting">Setting</string>
+    <string name="tap_keyboard_block">Show keyboard when tapping to add</string>
+    <string name="tap_bottom_block">Add new to-do to bottom</string>
+    <string name="user_hobbit_block">User hobbit</string>
+    <string name="lang_block">Language</string>
 </resources>

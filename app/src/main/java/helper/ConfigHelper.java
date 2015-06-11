@@ -4,13 +4,22 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
-/**
- * Created by juniperphoton on 6/3/2015.
- */
 public  class ConfigHelper
 {
     private static String name="config";
     public static boolean ISOFFLINEMODE=true;
+
+    public  static  void ConfigAppSetting()
+    {
+        if(getString(ContextUtil.getInstance(),"ShowKeyboard")==null)
+        {
+            putBoolean(ContextUtil.getInstance(),"ShowKeyboard",true);
+        }
+        if(getString(ContextUtil.getInstance(),"AddToBottom")==null)
+        {
+            putBoolean(ContextUtil.getInstance(),"AddToBottom",true);
+        }
+    }
 
     public static SharedPreferences getSharedPreference(Context context)
     {

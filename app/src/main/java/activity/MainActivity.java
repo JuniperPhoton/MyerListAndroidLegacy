@@ -29,6 +29,7 @@ import fragment.ToDoFragment;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.BatchUpdateException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,7 +46,8 @@ public class MainActivity extends ActionBarActivity implements
         NavigationDrawerCallbacks,
         OnGetSchedulesListener,
         PostHelper.OnLoginResponseListener,
-        PostHelper.OnAddedMemoListener
+        PostHelper.OnAddedMemoListener,
+        PostHelper.OnSetOrderListener
 {
 
     /**
@@ -154,7 +156,7 @@ public class MainActivity extends ActionBarActivity implements
                    }
                    catch (Exception E)
                    {
-
+                        E.printStackTrace();
                    }
 
             };break;
@@ -164,7 +166,8 @@ public class MainActivity extends ActionBarActivity implements
             };break;
             case 2:
             {
-                getSupportActionBar().setTitle("Setting");
+                Intent intent=new Intent(getApplicationContext(),SettingActivity.class);
+                startActivity(intent);
             };break;
             case 3:
             {
@@ -270,7 +273,7 @@ public class MainActivity extends ActionBarActivity implements
 
 
     @Override
-    public void OnGotScheduleResponse(List<Schedule> mytodosList)
+    public void OnGotScheduleResponse(ArrayList<Schedule> mytodosList)
     {
         if(mytodosList!=null)
         {
@@ -285,7 +288,11 @@ public class MainActivity extends ActionBarActivity implements
         if(value)
         {
             PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
-        } else AppHelper.ShowShortToast("Fail to login.");
+        }
+        else
+        {
+            AppHelper.ShowShortToast("Fail to login.");
+        }
     }
 
     @Override
@@ -296,7 +303,22 @@ public class MainActivity extends ActionBarActivity implements
             ToDoListAdapter adapter=(ToDoListAdapter)mToDoFragment.mToDoRecyclerView.getAdapter();
             adapter.addToDos(newTodo);
             AppHelper.ShowShortToast("New memo added ;D");
+
+            PostHelper.SetListOrder(this,ConfigHelper.getString(this,"sid"),Schedule.getOrderString(adapter.getListSrc()));
         }
-       else  AppHelper.ShowShortToast("Fail to add memo :-(");
+       else
+        {
+            AppHelper.ShowShortToast("Fail to add memo :-(");
+        }
+    }
+
+    @Override
+    public void OnSetOrderResponse(boolean isSuccess)
+    {
+        if(isSuccess)
+        {
+
+        }
+
     }
 }

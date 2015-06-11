@@ -76,7 +76,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     {
         viewHolder.textView.setText(mData.get(i).getText());
         viewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
-        if (mSelectedPosition == i && i!=4 && i!=3)
+        if (mSelectedPosition == i && i!=4 && i!=3 && i!=2)
         {
             if (mSelectedView != null)
             {

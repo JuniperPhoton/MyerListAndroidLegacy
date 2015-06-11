@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.example.juniper.myerlistandroid.R;
 import com.example.juniper.myerlistandroid.ToDoListAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import helper.ConfigHelper;
@@ -24,7 +25,7 @@ public class ToDoFragment extends Fragment
 
     public RecyclerView mToDoRecyclerView;
     private View mFragmentContainerView;
-    private List<Schedule> mMySchedules;
+    private ArrayList<Schedule> mMySchedules;
     private SwipeRefreshLayout mRefreshLayout;
 
     public ToDoFragment()
@@ -71,7 +72,7 @@ public class ToDoFragment extends Fragment
         return view;
     }
 
-    public void SetUpData(List<Schedule> data)
+    public void SetUpData(ArrayList<Schedule> data)
     {
         mMySchedules=data;
         mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMySchedules));

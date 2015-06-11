@@ -7,17 +7,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import helper.ContextUtil;
 import helper.SerializerHelper;
 import model.Schedule;
 
 
 public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHolder>
 {
-    private List<Schedule> mMySchedules;
+    private ArrayList<Schedule> mMySchedules;
 
-    public ToDoListAdapter(List<Schedule> data)
+    public ToDoListAdapter(ArrayList<Schedule> data)
     {
         mMySchedules=data;
     }
@@ -57,7 +60,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         notifyItemInserted(mMySchedules.size() - 1);
 
         Gson gson=new Gson();
-        SerializerHelper.toStringAndSave(mMySchedules,mMySchedules.getClass());
+        SerializerHelper.toStringAndSave(ContextUtil.getInstance(),mMySchedules,mMySchedules.getClass());
+        ArrayList<Schedule> content=SerializerHelper.readFromFile(mMySchedules.getClass(),ContextUtil.getInstance());
     }
 
     public void deleteToDos(Schedule todoToDelete)
@@ -69,6 +73,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
     public int getItemCount()
     {
         return mMySchedules!=null?mMySchedules.size():0;
+    }
+
+    public ArrayList<Schedule> getListSrc()
+    {
+        return mMySchedules;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder

@@ -2,9 +2,11 @@ package activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -17,7 +19,7 @@ import helper.DataHelper;
 import helper.PostHelper;
 
 
-public class LoginActivity extends AppCompatActivity implements PostHelper.OnCheckResponseListener,PostHelper.OnGetSaltResponseListener,PostHelper.OnLoginResponseListener
+public class LoginActivity extends AppCompatActivity implements PostHelper.OnCheckResponseListener,PostHelper.OnGetSaltResponseListener,PostHelper.OnLoginResponseListener,PostHelper.OnRegisterListener
 {
     private EditText mEmailBox;
     private EditText mPasswordBox;
@@ -27,12 +29,18 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
 
     private boolean isToRegister=true;
 
-    private final boolean DEBUG_ENABLE=true;
+    private final boolean DEBUG_ENABLE=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
         setContentView(R.layout.activity_login);
 
         mEmailBox=(EditText)findViewById(R.id.emailbox);
@@ -60,19 +68,47 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
             PostHelper.Login(this,"dengweichao@hotmail.com","windfantasy","o5Ib5jNhXa");
             return;
         }
-        if(!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString()))
+        if(!isToRegister)
         {
-            if(DataHelper.IsEmailFormat(mEmailBox.getText().toString()))
+            if(!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString()))
             {
-                if(!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString()))
+                if(DataHelper.IsEmailFormat(mEmailBox.getText().toString()))
                 {
-                    progressDialog.setMessage("Loading...");
-                    progressDialog.show();
-                    PostHelper.CheckExist(this,mEmailBox.getText().toString());
+                    if(!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString()))
+                    {
+                        progressDialog.setMessage("Loading...");
+                        progressDialog.show();
+                        PostHelper.CheckExist(this,mEmailBox.getText().toString());
+                    }
+                    else AppHelper.ShowShortToast("Please input password");
                 }
-                else AppHelper.ShowShortToast("Please input password");
+                else AppHelper.ShowShortToast("Please input valid email");
             }
-            else AppHelper.ShowShortToast("Please input valid email");
+        }
+        else if(isToRegister)
+        {
+            if(!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString()))
+            {
+                if(DataHelper.IsEmailFormat(mEmailBox.getText().toString()))
+                {
+                    if(!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString()))
+                    {
+                        if(!DataHelper.IsStringNullOrEmpty(mConfirmPsBox.getText().toString()))
+                        {
+                            if(mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString()))
+                            {
+                                progressDialog.setMessage("Loading...");
+                                progressDialog.show();
+                                PostHelper.Register(this, mEmailBox.getText().toString(),mPasswordBox.getText().toString());
+                            }
+                            else AppHelper.ShowShortToast("Please make sure the passwords input are matched");
+                        }
+                        else AppHelper.ShowShortToast("Please input your password to be confirmed");
+                    }
+                    else AppHelper.ShowShortToast("Please input password");
+                }
+                else AppHelper.ShowShortToast("Please input valid email");
+            }
         }
     }
 
@@ -113,5 +149,18 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
         else AppHelper.ShowShortToast("Fail to login,please try again :-(");
 
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void OnRegisteredResponse(boolean isSuccess, String salt)
+    {
+        if(isSuccess)
+        {
+            Intent intent=new Intent(this,MainActivity.class);
+            intent.putExtra("LOGIN_STATE","AboutToLogin");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else AppHelper.ShowShortToast("Fail to register :-( ");
     }
 }

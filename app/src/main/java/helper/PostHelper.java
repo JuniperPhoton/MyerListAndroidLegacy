@@ -1,9 +1,9 @@
 package helper;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 import android.widget.Toast;
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -14,9 +14,9 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+
 import model.Schedule;
 
 public class PostHelper
@@ -58,8 +58,10 @@ public class PostHelper
     public static OnCheckResponseListener mOnCheckResponseListener;
     public static OnGetSaltResponseListener mOnGetSaltResponseListener;
     public static OnLoginResponseListener mOnLoginResponseListener;
-    public static OnGetSchedulesListener mOnGetSchedules;
+    public static OnGetSchedulesListener mOnGetSchedulesListener;
     public static OnAddedMemoListener mOnAddedListener;
+    public static OnSetOrderListener mOnSetOrderListener;
+    public static  OnRegisterListener mOnRegisteredListener;
 
     public  static void CheckExist(Context context,final String email)
     {
@@ -115,6 +117,7 @@ public class PostHelper
                     if(isSuccess)
                     {
                         String salt=jsonObject.getString("Salt");
+
                         mOnGetSaltResponseListener.OnGetSaltResponse(salt);
                     }
                     else mOnGetSaltResponseListener.OnGetSaltResponse(null);
@@ -135,6 +138,55 @@ public class PostHelper
                 {
                     e.printStackTrace();
                 }
+            }
+        });
+    }
+
+    public static void Register(Context context,final String email, final String password)
+    {
+        mOnRegisteredListener=(OnRegisterListener)context;
+
+        AsyncHttpClient client=new AsyncHttpClient();
+        RequestParams params=new RequestParams();
+
+        String psAfterMD5=NetworkSecurityHelper.get32MD5Str(password);
+        params.put("email",email);
+        params.put("password",psAfterMD5);
+
+        client.post(UserRegisterUri,params,new JsonHttpResponseHandler()
+        {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
+            {
+                boolean isSuccess = false;
+                try
+                {
+                    isSuccess = response.getBoolean("isSuccessed");
+                    if (isSuccess)
+                    {
+                        JSONObject userObj = response.getJSONObject("UserInfo");
+                        if (userObj != null)
+                        {
+                            String salt = userObj.getString("Salt");
+
+                            ConfigHelper.putString(ContextUtil.getInstance(), "email", email);
+                            ConfigHelper.putString(ContextUtil.getInstance(), "password", password);
+                            ConfigHelper.putString(ContextUtil.getInstance(),"salt",salt);
+
+                            mOnRegisteredListener.OnRegisteredResponse(true,salt);
+                        } else mOnRegisteredListener.OnRegisteredResponse(false, null);
+                    } else mOnRegisteredListener.OnRegisteredResponse(false, null);
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    mOnRegisteredListener.OnRegisteredResponse(false, null);
+                }
+            }
+            @Override
+            public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object)
+            {
+                mOnRegisteredListener.OnRegisteredResponse(false, null);
             }
         });
     }
@@ -196,7 +248,7 @@ public class PostHelper
 
     public static void GetOrderedSchedules(Context context,final String sid, final String access_token)
     {
-        mOnGetSchedules=(OnGetSchedulesListener)context;
+        mOnGetSchedulesListener =(OnGetSchedulesListener)context;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
@@ -217,7 +269,7 @@ public class PostHelper
 
                         if(array!=null)
                         {
-                            final List<Schedule> todosList=Schedule.parseJsonObjFromArray(array);
+                            final ArrayList<Schedule> todosList=Schedule.parseJsonObjFromArray(array);
 
                             AsyncHttpClient client=new AsyncHttpClient();
                             RequestParams params=new RequestParams();
@@ -233,8 +285,8 @@ public class PostHelper
                                         if(isSuccess)
                                         {
                                             String orderStr=response.getJSONArray(("OrderList")).getJSONObject(0).getString("list_order");
-                                            List<Schedule> listToReturn=Schedule.setOrderByString(todosList,orderStr);
-                                            mOnGetSchedules.OnGotScheduleResponse(listToReturn);
+                                            ArrayList<Schedule> listToReturn=Schedule.setOrderByString(todosList,orderStr);
+                                            mOnGetSchedulesListener.OnGotScheduleResponse(listToReturn);
                                         }
                                     }
                                     catch (JSONException e)
@@ -293,7 +345,39 @@ public class PostHelper
         });
     }
 
+    public static void SetListOrder(Context context,String sid,String order)
+    {
+        mOnSetOrderListener=(OnSetOrderListener)context;
 
+        AsyncHttpClient client=new AsyncHttpClient();
+        RequestParams params=new RequestParams();
+        params.put("sid",sid);
+        params.put("order", order);
+        client.post(ScheduleSetOrderUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context,"access_token"), params, new JsonHttpResponseHandler()
+        {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
+            {
+                Boolean isSuccess = null;
+                try
+                {
+                    isSuccess = response.getBoolean("isSuccessed");
+                    if (isSuccess)
+                    {
+                        Schedule newSche=Schedule.parseJsonObjToObj(response);
+                        mOnSetOrderListener.OnSetOrderResponse(true);
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    mOnSetOrderListener.OnSetOrderResponse(false);
+                }
+
+            }
+
+        });
+    }
 
     public interface OnCheckResponseListener
     {
@@ -312,12 +396,22 @@ public class PostHelper
 
     public interface OnGetSchedulesListener
     {
-        void OnGotScheduleResponse(List<Schedule> mytodosList);
+        void OnGotScheduleResponse(ArrayList<Schedule> mytodosList);
     }
 
     public interface OnAddedMemoListener
     {
         void OnAddedResponse(boolean isSuccess,Schedule newTodo);
+    }
+
+    public interface OnSetOrderListener
+    {
+        void OnSetOrderResponse(boolean isSuccess);
+    }
+
+    public interface OnRegisterListener
+    {
+        void OnRegisteredResponse(boolean isSuccess,String salt);
     }
 
 }

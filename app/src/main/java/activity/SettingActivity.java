@@ -1,7 +1,9 @@
 package activity;
 
+import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
@@ -19,6 +21,9 @@ public class SettingActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
         setContentView(R.layout.activity_setting);
 
         mShowKeyboardSwitch =(Switch)findViewById(R.id.ShowKeyboardSwitch);

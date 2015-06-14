@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/MyerListBlueLight</item>
         <item name="colorPrimaryDark">@color/MyerListBlue</item>
         <item name="colorAccent">@color/MyerListBlue</item>
+
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:navigationBarColor">@color/myNavigationColor</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>

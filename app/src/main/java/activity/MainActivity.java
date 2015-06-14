@@ -48,7 +48,9 @@ public class MainActivity extends ActionBarActivity implements
         OnGetSchedulesListener,
         PostHelper.OnLoginResponseListener,
         PostHelper.OnAddedMemoListener,
-        PostHelper.OnSetOrderListener
+        PostHelper.OnSetOrderListener,
+        PostHelper.OnDoneListener,
+        PostHelper.OnDeleteListener
 {
 
     /**
@@ -327,6 +329,18 @@ public class MainActivity extends ActionBarActivity implements
         {
 
         }
+
+    }
+
+    @Override
+    public void OnDoneResponse(boolean isSuccess)
+    {
+
+    }
+
+    @Override
+    public void OnDeleteResponse(boolean isSuccess)
+    {
 
     }
 }

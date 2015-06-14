@@ -42,7 +42,10 @@ public class PostHelper
     public static OnGetSchedulesListener mOnGetSchedulesListener;
     public static OnAddedMemoListener mOnAddedListener;
     public static OnSetOrderListener mOnSetOrderListener;
-    public static  OnRegisterListener mOnRegisteredListener;
+    public static OnRegisterListener mOnRegisteredListener;
+    public static OnDoneListener mOnDoneListener;
+    public static OnDeleteListener mOnDeleteListener;
+
 
     public  static void CheckExist(Context context,final String email)
     {
@@ -357,6 +360,79 @@ public class PostHelper
         });
     }
 
+    public static void SetDone(Context context,String sid,String id,String isDone)
+    {
+        mOnDoneListener=(OnDoneListener)context;
+
+        AsyncHttpClient client=new AsyncHttpClient();
+        RequestParams params=new RequestParams();
+        params.put("id",id);
+        params.put("isdone", isDone);
+        client.post(ScheduleFinishUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context,"access_token"), params, new JsonHttpResponseHandler()
+        {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
+            {
+                Boolean isSuccess = null;
+                try
+                {
+                    isSuccess = response.getBoolean("isSuccessed");
+                    if (isSuccess)
+                    {
+                        mOnDoneListener.OnDoneResponse(true);
+                    }
+                    else
+                    {
+                        mOnDoneListener.OnDoneResponse(false);
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    mOnDoneListener.OnDoneResponse(false);
+                }
+
+            }
+
+        });
+    }
+
+    public static void SetDelete(Context context,String sid,String id)
+    {
+        mOnDeleteListener=(OnDeleteListener)context;
+
+        AsyncHttpClient client=new AsyncHttpClient();
+        RequestParams params=new RequestParams();
+        params.put("id",id);
+        client.post(ScheduleDeleteUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context,"access_token"), params, new JsonHttpResponseHandler()
+        {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
+            {
+                Boolean isSuccess = null;
+                try
+                {
+                    isSuccess = response.getBoolean("isSuccessed");
+                    if (isSuccess)
+                    {
+                        mOnDeleteListener.OnDeleteResponse(true);
+                    }
+                    else
+                    {
+                        mOnDeleteListener.OnDeleteResponse(false);
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    mOnDeleteListener.OnDeleteResponse(false);
+                }
+
+            }
+
+        });
+    }
+
     public interface OnCheckResponseListener
     {
         void OnCheckResponse(boolean check);
@@ -390,6 +466,16 @@ public class PostHelper
     public interface OnRegisterListener
     {
         void OnRegisteredResponse(boolean isSuccess,String salt);
+    }
+
+    public interface OnDoneListener
+    {
+        void OnDoneResponse(boolean isSuccess);
+    }
+
+    public interface OnDeleteListener
+    {
+        void OnDeleteResponse(boolean isSuccess);
     }
 
 }

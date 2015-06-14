@@ -1,5 +1,6 @@
 package middle;
 
+import android.app.Activity;
 import android.media.Image;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -28,20 +29,24 @@ import java.util.List;
 import helper.AppHelper;
 import helper.ConfigHelper;
 import helper.ContextUtil;
+import helper.PostHelper;
 import helper.SerializerHelper;
 import model.Schedule;
 
 
 public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHolder> implements View.OnTouchListener
 {
+    private Activity mCurrentActivity;
+    private int mCurrentPosition=0;
     private ArrayList<Schedule> mMySchedules;
     private GestureDetector mGestureDetector;
     int lastX,lastY;
 
     private boolean mIsGreenOn=false;
 
-    public ToDoListAdapter(ArrayList<Schedule> data)
+    public ToDoListAdapter(ArrayList<Schedule> data,Activity activity)
     {
+        mCurrentActivity=activity;
         mMySchedules=data;
     }
 
@@ -59,6 +64,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
     {
         //bind data to UI component
         holder.textView.setText(mMySchedules.get(position).getContent());
+        holder.setID(mMySchedules.get(position).getID());
         if(!mMySchedules.get(position).getIsDone())
         {
             holder.lineView.setVisibility(View.GONE);
@@ -68,13 +74,13 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             @Override
             public void onClick(View view)
             {
-                mMySchedules.remove(position);
-                notifyItemRemoved(position);
+                deleteToDos(mMySchedules.get(position));
             }
         });
 
         //mGestureDetector=new GestureDetector(ContextUtil.getInstance(),new OnGestureListener(holder.relativeLayout));
         holder.relativeLayout.setOnTouchListener(this);
+        holder.relativeLayout.setTag(holder.getID());
     }
 
     public void addToDos(Schedule todoToAdd)
@@ -92,12 +98,26 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
 
         Gson gson=new Gson();
         SerializerHelper.toStringAndSave(ContextUtil.getInstance(), mMySchedules, mMySchedules.getClass());
-        ArrayList<Schedule> content=SerializerHelper.readFromFile(mMySchedules.getClass(),ContextUtil.getInstance());
+        //ArrayList<Schedule> content=SerializerHelper.readFromFile(mMySchedules.getClass(),ContextUtil.getInstance());
     }
 
     public void deleteToDos(Schedule todoToDelete)
     {
+        int index=0;
+        for(int i=0;i<mMySchedules.size();i++)
+        {
+           Schedule s=mMySchedules.get(i);
+            if(s.getID().equals(todoToDelete.getID()))
+            {
+                index=i;
+                break;
+            }
+        }
+        mMySchedules.remove(index);
+        notifyItemRemoved(index);
 
+        Gson gson=new Gson();
+        SerializerHelper.toStringAndSave(ContextUtil.getInstance(), mMySchedules, mMySchedules.getClass());
     }
 
     public  void markToDos()
@@ -122,7 +142,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
     public boolean onTouch(final View v, MotionEvent event)
     {
         RelativeLayout root=(RelativeLayout)v;
+
         int rollbackLeft=100;
+        int left=0;
+        String id=(String)v.getTag();
+
         switch(event.getAction())
         {
             case MotionEvent.ACTION_DOWN:
@@ -136,7 +160,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
                 int dx=(int)event.getRawX()-lastX;
 
                 //current left position relatively to parent
-                int left=v.getLeft()+dx;
+                left=v.getLeft()+dx;
 
 
                 //set the position of view relative to parent layout
@@ -145,16 +169,46 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
                 lastX=(int)event.getRawX();
                 lastY=(int)event.getRawY();
 
-                if(left<-10 && !mIsGreenOn)
+                if(left<-20 && !mIsGreenOn)
                 {
-                    SetGreenAnim((ImageView)root.findViewById(R.id.greenImageView));
+                    //SetGreenAnim((ImageView)root.findViewById(R.id.greenImageView));
                     //root.findViewById(R.id.greenImageView).setAlpha((float) 1);
                 }
-
 
                 Log.d("MOTION","move");
                 break;
             case MotionEvent.ACTION_UP:
+
+                left=v.getLeft();
+                if(left<-60)
+                {
+                    Schedule currentS=null;
+                    for (Schedule s:mMySchedules)
+                    {
+                        if(s.getID()==id)
+                        {
+                            currentS=s;
+                            break;
+                        }
+                    }
+                    if(currentS==null) break;
+
+                    ImageView lineview=(ImageView)v.findViewById(R.id.lineView);
+                    if(currentS.getIsDone())
+                    {
+                        lineview.setVisibility(View.GONE);
+                        currentS.setIsDone(false);
+                    }
+                    else
+                    {
+                        lineview.setVisibility(View.VISIBLE);
+                        currentS.setIsDone(true);
+                    }
+
+                    PostHelper.SetDone(mCurrentActivity,ConfigHelper.getString(ContextUtil.getInstance(),"sid"),id,currentS.getIsDone()?"1":"0");
+                    //SetGreenAnim((ImageView)root.findViewById(R.id.greenImageView));
+                    //root.findViewById(R.id.greenImageView).setAlpha((float) 1);
+                }
 
                 rollbackLeft=v.getScrollX();
                 SetBackAnim(v,rollbackLeft);
@@ -273,8 +327,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         v.startAnimation(animationSet);
     }
 
+
+
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
+        private String id;
         public TextView textView;
         public ImageView lineView;
         public ImageView deleteView;
@@ -291,6 +348,15 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             redImageView=(ImageView)itemView.findViewById(R.id.redImageView);
             deleteView=(ImageView)itemView.findViewById(R.id.deleteView);
             relativeLayout=(RelativeLayout)itemView.findViewById(R.id.todo_layout);
+        }
+
+        public String getID()
+        {
+            return id;
+        }
+        public void setID(String id)
+        {
+            this.id=id;
         }
     }
 }

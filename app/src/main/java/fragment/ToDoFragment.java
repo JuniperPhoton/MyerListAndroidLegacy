@@ -24,7 +24,7 @@ import model.Schedule;
 
 public class ToDoFragment extends Fragment
 {
-
+    private Activity mactivity;
     public RecyclerView mToDoRecyclerView;
     private View mFragmentContainerView;
     private ArrayList<Schedule> mMySchedules;
@@ -78,7 +78,7 @@ public class ToDoFragment extends Fragment
     public void SetUpData(ArrayList<Schedule> data)
     {
         mMySchedules=data;
-        mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMySchedules));
+        mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMySchedules,mactivity));
 
         StopRefreshing();
     }
@@ -112,6 +112,7 @@ public class ToDoFragment extends Fragment
         super.onAttach(activity);
         try
         {
+            mactivity=activity;
         }
         catch (ClassCastException e)
         {

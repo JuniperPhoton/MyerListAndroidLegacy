@@ -71,7 +71,6 @@
                     />
                 <ImageView
                     android:id="@+id/deleteView"
-                    android:onClick="DeleteClick"
                     android:layout_width="30sp"
                     android:layout_height="30sp"
                     android:layout_gravity="center_vertical"

@@ -1,8 +1,13 @@
 package middle;
 
 
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextPaint;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +18,7 @@ import android.widget.TextView;
 import com.example.juniper.myerlistandroid.R;
 
 import java.util.List;
+import java.util.Locale;
 
 import helper.AppHelper;
 import helper.ContextUtil;
@@ -56,6 +62,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
                                                            if (mSelectedView != null)
                                                            {
                                                                ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
+                                                               ((ImageView)mSelectedView.findViewById(R.id.item_select)).setVisibility(View.INVISIBLE);
                                                            }
                                                            mSelectedPosition = viewHolder.getPosition();
 
@@ -77,6 +84,14 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     public void onBindViewHolder(NavigationDrawerAdapter.ViewHolder viewHolder, int i)
     {
         viewHolder.textView.setText(mData.get(i).getText());
+        Resources resources = ContextUtil.getInstance().getResources();//获得res资源对象
+        Configuration config = resources.getConfiguration();//获得设置对象
+        if(config.locale==Locale.SIMPLIFIED_CHINESE)
+        {
+            TextPaint textPaint=viewHolder.textView.getPaint();
+            textPaint.setFakeBoldText(false);
+        }
+
         viewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
         if (mSelectedPosition == i && i!=4 && i!=3 && i!=2)
         {
@@ -86,8 +101,8 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
             }
             mSelectedPosition = i;
             mSelectedView = viewHolder.cardView;
-            ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.MyerListBlueLight));
-            //mSelectedView.setSelected(true);
+            ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.MyerListGray));
+            ((ImageView)mSelectedView.findViewById(R.id.item_select)).setVisibility(View.VISIBLE);
         }
     }
 

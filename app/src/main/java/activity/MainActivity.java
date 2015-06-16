@@ -50,7 +50,8 @@ public class MainActivity extends ActionBarActivity implements
         PostHelper.OnAddedMemoListener,
         PostHelper.OnSetOrderListener,
         PostHelper.OnDoneListener,
-        PostHelper.OnDeleteListener
+        PostHelper.OnDeleteListener,
+        NavigationDrawerFragment.DrawerStatusListener
 {
 
     /**
@@ -63,8 +64,6 @@ public class MainActivity extends ActionBarActivity implements
     private MainActivity mInstance;
     private AlertDialog mDialog;
 
-    private int mCurrentPosition;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -76,10 +75,7 @@ public class MainActivity extends ActionBarActivity implements
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.fragment_drawer);
-
-        // Set up the drawer.
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.fragment_drawer);
         mNavigationDrawerFragment.setup(R.id.fragment_drawer, (DrawerLayout) findViewById(R.id.drawer), mToolbar);
 
         mInstance=this;
@@ -124,9 +120,7 @@ public class MainActivity extends ActionBarActivity implements
             if(intent.getStringExtra("LOGIN_STATE").equals("AboutToLogin"))
             {
                 mToDoFragment.ShowRefreshing();
-
                 PostHelper.Login(this, ConfigHelper.getString(this, "email"), ConfigHelper.getString(this, "password"), ConfigHelper.getString(this, "salt"));
-
             }
         }
 
@@ -136,7 +130,6 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onNavigationDrawerItemSelected(int position)
     {
-        mCurrentPosition=position;
         // update the main content by replacing fragments
         //Toast.makeText(this, "Menu item selected -> " + position, Toast.LENGTH_SHORT).show();
         switch (position)
@@ -167,7 +160,7 @@ public class MainActivity extends ActionBarActivity implements
             };break;
             case 1:
             {
-                getSupportActionBar().setTitle("Deleted items");
+                getSupportActionBar().setTitle(getResources().getString(R.string.deleteditems));
             };break;
             case 2:
             {
@@ -184,7 +177,7 @@ public class MainActivity extends ActionBarActivity implements
                 AlertDialog.Builder builder=new AlertDialog.Builder(this);
                 builder.setTitle(R.string.logout_title);
                 builder.setMessage(R.string.logout_content);
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+                builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i)
@@ -196,7 +189,7 @@ public class MainActivity extends ActionBarActivity implements
                         startActivity(intent);
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i)
@@ -216,11 +209,13 @@ public class MainActivity extends ActionBarActivity implements
         View dialogView=(View)LayoutInflater.from(this).inflate(R.layout.add_todo_dialog, (ViewGroup) findViewById(R.id.dialog_title));
 
         TextView titleText=(TextView)dialogView.findViewById(R.id.dialog_title_text);
-        titleText.setText("ADD A MEMO");
+        titleText.setText(getResources().getString(R.string.new_memo_title));
 
         this.mNewMemoText=(EditText)dialogView.findViewById(R.id.newMemoEdit);
+        this.mNewMemoText.setHint(R.string.new_memo_hint);
 
         Button okBtn=(Button)dialogView.findViewById(R.id.add_ok_btn);
+        okBtn.setText(R.string.ok_btn);
         okBtn.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -232,6 +227,7 @@ public class MainActivity extends ActionBarActivity implements
         });
 
         Button cancelBtn=(Button)dialogView.findViewById(R.id.add_cancel_btn);
+        cancelBtn.setText(R.string.cancel_btn);
         cancelBtn.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -260,12 +256,9 @@ public class MainActivity extends ActionBarActivity implements
                     inputMethodManager.showSoftInput(mNewMemoText, 0);
                 }
             },333);
-
         }
 
     }
-
-
 
     @Override
     public void onBackPressed()
@@ -312,7 +305,7 @@ public class MainActivity extends ActionBarActivity implements
         {
             ToDoListAdapter adapter=(ToDoListAdapter)mToDoFragment.mToDoRecyclerView.getAdapter();
             adapter.addToDos(newTodo);
-            AppHelper.ShowShortToast("New memo added ;D");
+            AppHelper.ShowShortToast(getResources().getString(R.string.add_success));
 
             PostHelper.SetListOrder(this,ConfigHelper.getString(this,"sid"),Schedule.getOrderString(adapter.getListSrc()));
         }
@@ -342,5 +335,12 @@ public class MainActivity extends ActionBarActivity implements
     public void OnDeleteResponse(boolean isSuccess)
     {
 
+    }
+
+    @Override
+    public void OnDrawerStatusChanged(boolean isOpen)
+    {
+        ToDoListAdapter adapter=(ToDoListAdapter)mToDoFragment.mToDoRecyclerView.getAdapter();
+        if(adapter!=null) adapter.SetCanOperate(isOpen);
     }
 }

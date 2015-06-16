@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name">MyerList</string>
+    <string name="myer">Myer</string>
+    <string name="list">List</string>
+    <string name="loginBtn">登录</string>
+    <string name="registerBtn">注册</string>
+    <string name="offlineBtn">离线模式</string>
+    <string name="action_settings">设置</string>
+    <string name="Subtitle">在 Windows 和 Android 设备同步待办事项</string>
+    <string name="loginHint">登录以在各个设备同步</string>
+    <string name="emailHint">邮件</string>
+    <string name="passwordHint">密码</string>
+    <string name="repasswordHint">确认密码</string>
+
+    <string name="title_activity_login">登录</string>
+    <string name="FontLight">sans-serif-light</string>
+    <string name="title_activity_start">StartActivity</string>
+    <string name="title_activity_main">MyerList</string>
+    <string name="account_text">账户</string>
+
+    <string name="title_section1">待办事项</string>
+    <string name="title_section2">已删除</string>
+    <string name="title_section3">设置</string>
+    <string name="title_section4">关于</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="deleteditems">已删除</string>
+    <string name="settings">设置</string>
+    <string name="about">关于</string>
+
+    <string name="drawer_open">Menu opened</string>
+    <string name="drawer_close">Menu closed</string>
+
+    <string name="shared_logininfo_file">login_info</string>
+    <string name="logout_content">确认登出？</string>
+    <string name="logout_title">注意</string>
+    <string name="title_activity_about">关于</string>
+    <string name="title_activity_setting">设置</string>
+    <string name="tap_keyboard_block">添加的时候自动弹出键盘</string>
+    <string name="tap_bottom_block">新项目添加到末端</string>
+    <string name="user_hobbit_block">用户习惯</string>
+    <string name="lang_block">语言</string>
+    <string name="title_section5">登出</string>
+    <string name="ok_btn">确认</string>
+    <string name="cancel_btn">取消</string>
+    <string name="new_memo_title">添加待办事项</string>
+    <string name="new_memo_hint">例如：下班后接女朋友吃饭。</string>
+    <string name="loading_hint">加载中...</string>
+    <string name="vaild_email">请输入有效的电子邮件</string>
+    <string name="valid_password">两次输入的密码无效</string>
+    <string name="about_myerlist">关于 MyerList</string>
+    <string name="credit">感谢</string>
+    <string name="feedback">反馈</string>
+    <string name="version">版本</string>
+    <string name="feedback_content">请通过邮件尽情反馈。</string>
+    <string name="about_content">MyerList 是一个跨平台的待办事项应用。你可以在所有 Windows 和 Android 设备商上运行并且同步你的内容。希望能给带来简单高效的生活。</string>
+    <string name="chinese">简体中文</string>
+    <string name="change_lang">选择语言</string>
+    <string name="hand_hobbit_block">右手使用习惯</string>
+    <string name="add_success">添加成功</string>
+    <string name="login_success">登录成功</string>
+</resources>

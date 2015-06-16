@@ -1,6 +1,7 @@
 package middle;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.media.Image;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import fragment.ToDoFragment;
 import helper.AppHelper;
 import helper.ConfigHelper;
 import helper.ContextUtil;
@@ -36,18 +38,21 @@ import model.Schedule;
 
 public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHolder> implements View.OnTouchListener
 {
+    private boolean mCanOperate=true;
     private Activity mCurrentActivity;
-    private int mCurrentPosition=0;
+    private ToDoFragment mCurrentFragment;
     private ArrayList<Schedule> mMySchedules;
-    private GestureDetector mGestureDetector;
-    int lastX,lastY;
+    private Schedule mCurrentSchedule=null;
+    int lastX;
 
     private boolean mIsGreenOn=false;
+    private boolean mIsRedOn=false;
 
-    public ToDoListAdapter(ArrayList<Schedule> data,Activity activity)
+    public ToDoListAdapter(ArrayList<Schedule> data,Activity activity,ToDoFragment fragment)
     {
         mCurrentActivity=activity;
         mMySchedules=data;
+        mCurrentFragment=fragment;
     }
 
     @Override
@@ -60,7 +65,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position)
+    public void onBindViewHolder(final ViewHolder holder, final int position)
     {
         //bind data to UI component
         holder.textView.setText(mMySchedules.get(position).getContent());
@@ -81,6 +86,15 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         //mGestureDetector=new GestureDetector(ContextUtil.getInstance(),new OnGestureListener(holder.relativeLayout));
         holder.relativeLayout.setOnTouchListener(this);
         holder.relativeLayout.setTag(holder.getID());
+
+        holder.greenImageView.setAlpha(0f);
+        holder.redImageView.setAlpha(0f);
+        holder.relativeLayout.scrollTo(0,0);
+    }
+
+    public void SetCanOperate(boolean isDraweOpen)
+    {
+        mCanOperate=!isDraweOpen;
     }
 
     public void addToDos(Schedule todoToAdd)
@@ -88,7 +102,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         if(ConfigHelper.getBoolean(ContextUtil.getInstance(),"AddToBottom"))
         {
             mMySchedules.add(todoToAdd);
-            notifyItemInserted(mMySchedules.size() - 1);
+            notifyItemInserted(mMySchedules.size()-1);
         }
         else
         {
@@ -113,18 +127,17 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
                 break;
             }
         }
-        mMySchedules.remove(index);
         notifyItemRemoved(index);
+        mMySchedules.remove(todoToDelete);
+
+
+        PostHelper.SetDelete(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), todoToDelete.getID());
 
         Gson gson=new Gson();
         SerializerHelper.toStringAndSave(ContextUtil.getInstance(), mMySchedules, mMySchedules.getClass());
-    }
 
-    public  void markToDos()
-    {
 
     }
-
 
     @Override
     public int getItemCount()
@@ -143,8 +156,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
     {
         RelativeLayout root=(RelativeLayout)v;
 
-        int rollbackLeft=100;
-        int left=0;
+        int scrollleft=0;
         String id=(String)v.getTag();
 
         switch(event.getAction())
@@ -152,78 +164,46 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             case MotionEvent.ACTION_DOWN:
 
                 lastX= (int)event.getRawX();
-                Log.d("MOTION","down");
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                //change value of X
+
+                if(!mCanOperate) break;
+
                 int dx=(int)event.getRawX()-lastX;
 
-                //current left position relatively to parent
-                left=v.getLeft()+dx;
+                scrollleft=v.getScrollX();
 
-
-                //set the position of view relative to parent layout
                 v.scrollBy(-dx, 0);
 
-                lastX=(int)event.getRawX();
-                lastY=(int)event.getRawY();
-
-                if(left<-20 && !mIsGreenOn)
+                if(scrollleft<-20)
                 {
-                    //SetGreenAnim((ImageView)root.findViewById(R.id.greenImageView));
-                    //root.findViewById(R.id.greenImageView).setAlpha((float) 1);
+                    mCurrentFragment.DisableRefresh();
                 }
 
-                Log.d("MOTION","move");
+                lastX=(int)event.getRawX();
+
+                if(scrollleft<-100 && !mIsGreenOn)
+                {
+                    SetColorAnim((ImageView) root.findViewById(R.id.greenImageView),true);
+                }
+                else if(scrollleft>100 && !mIsRedOn)
+                {
+                    SetColorAnim((ImageView) root.findViewById(R.id.redImageView),false);
+                }
+
+
                 break;
             case MotionEvent.ACTION_UP:
 
-                left=v.getLeft();
-                if(left<-60)
-                {
-                    Schedule currentS=null;
-                    for (Schedule s:mMySchedules)
-                    {
-                        if(s.getID()==id)
-                        {
-                            currentS=s;
-                            break;
-                        }
-                    }
-                    if(currentS==null) break;
+                SetMoveComplete(v,v.getScrollX(),id);
 
-                    ImageView lineview=(ImageView)v.findViewById(R.id.lineView);
-                    if(currentS.getIsDone())
-                    {
-                        lineview.setVisibility(View.GONE);
-                        currentS.setIsDone(false);
-                    }
-                    else
-                    {
-                        lineview.setVisibility(View.VISIBLE);
-                        currentS.setIsDone(true);
-                    }
-
-                    PostHelper.SetDone(mCurrentActivity,ConfigHelper.getString(ContextUtil.getInstance(),"sid"),id,currentS.getIsDone()?"1":"0");
-                    //SetGreenAnim((ImageView)root.findViewById(R.id.greenImageView));
-                    //root.findViewById(R.id.greenImageView).setAlpha((float) 1);
-                }
-
-                rollbackLeft=v.getScrollX();
-                SetBackAnim(v,rollbackLeft);
-
-                Log.d("MOTION", "up");
                 break;
-            case MotionEvent.ACTION_OUTSIDE:
-            {
-                Log.d("MOTION", "outside");
-            };break;
+
             case MotionEvent.ACTION_CANCEL:
             {
-                rollbackLeft=v.getScrollX();
-                SetBackAnim(v,rollbackLeft);
-                Log.d("MOTION", "cancel");
+                SetMoveComplete(v, v.getScrollX(), id);
+
             };break;
 
         }
@@ -231,10 +211,61 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         return false;
     }
 
-    private void SetBackAnim(final View v, final int left)
+    private void SetMoveComplete(View v,float scrollLeft,String id)
     {
-        Log.d("MOTION", "anim");
+        //Find the current schedule
+
+        for (Schedule s:mMySchedules)
+        {
+            if(s.getID().equals(id))
+            {
+                mCurrentSchedule=s;
+                break;
+            }
+        }
+        if(mCurrentSchedule==null) return;
+
+        //Finish
+        if(scrollLeft<-100)
+        {
+
+            ImageView lineview=(ImageView)v.findViewById(R.id.lineView);
+            if(mCurrentSchedule.getIsDone())
+            {
+                lineview.setVisibility(View.GONE);
+                mCurrentSchedule.setIsDone(false);
+            }
+            else
+            {
+                lineview.setVisibility(View.VISIBLE);
+                mCurrentSchedule.setIsDone(true);
+            }
+
+            PostHelper.SetDone(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), id, mCurrentSchedule.getIsDone() ? "1" : "0");
+        }
+        //Delete
+        else if(scrollLeft>100)
+        {
+            deleteToDos(mCurrentSchedule);
+        }
+
+        if(mIsGreenOn)
+        {
+            UnSetColorAnim((ImageView) v.findViewById(R.id.greenImageView),true);
+        }
+        else if(mIsRedOn)
+        {
+            UnSetColorAnim((ImageView)v.findViewById(R.id.redImageView),false);
+        }
+
+        SetBackAnim(v, scrollLeft);
+
+    }
+
+    private void SetBackAnim(final View v, final float left)
+    {
         AnimationSet animationSet=new AnimationSet(true);
+
         TranslateAnimation translateAnimation=new TranslateAnimation(0,left,0,0);
         translateAnimation.setDuration(700);
         translateAnimation.setAnimationListener(new Animation.AnimationListener()
@@ -248,7 +279,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             @Override
             public void onAnimationEnd(Animation animation)
             {
-                UnSetGreenAnim((ImageView)v.findViewById(R.id.greenImageView));
+
+                mCurrentFragment.EnableRefresh();
                 v.clearAnimation();
                 v.scrollTo(0, 0);
             }
@@ -264,11 +296,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         v.startAnimation(animationSet);
     }
 
-    private void SetGreenAnim(final ImageView v)
+    private void SetColorAnim(final ImageView v,boolean isGreen)
     {
+        v.setAlpha(1f);
         AnimationSet animationSet=new AnimationSet(false);
         AlphaAnimation alphaAnimation=new AlphaAnimation(0.1f, 1.0f);
-        alphaAnimation.setFillAfter(true);
         alphaAnimation.setDuration(700);
         alphaAnimation.setAnimationListener(new Animation.AnimationListener()
         {
@@ -282,6 +314,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             public void onAnimationEnd(Animation animation)
             {
                 v.setAlpha(1.0f);
+                v.clearAnimation();
 
             }
 
@@ -293,14 +326,15 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         });
         animationSet.addAnimation(alphaAnimation);
         v.startAnimation(animationSet);
-        mIsGreenOn=true;
+
+        if(isGreen) mIsGreenOn=true;
+        else mIsRedOn=true;
     }
 
-    private void UnSetGreenAnim(final ImageView v)
+    private void UnSetColorAnim(final ImageView v, final boolean isGreen)
     {
         AnimationSet animationSet=new AnimationSet(false);
         AlphaAnimation alphaAnimation=new AlphaAnimation(1.0f, 0.0f);
-        alphaAnimation.setFillAfter(true);
         alphaAnimation.setDuration(700);
         alphaAnimation.setAnimationListener(new Animation.AnimationListener()
         {
@@ -314,7 +348,10 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             public void onAnimationEnd(Animation animation)
             {
                 v.setAlpha(0.0f);
-                mIsGreenOn=false;
+                v.clearAnimation();
+                if(isGreen) mIsGreenOn=false;
+                else mIsRedOn=false;
+
             }
 
             @Override
@@ -326,8 +363,6 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         animationSet.addAnimation(alphaAnimation);
         v.startAnimation(animationSet);
     }
-
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -358,5 +393,10 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         {
             this.id=id;
         }
+    }
+
+    public interface OnMoveListener
+    {
+        void OnMove(float getRawX,float getRawY,float getLeft);
     }
 }

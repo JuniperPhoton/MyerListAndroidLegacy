@@ -21,6 +21,7 @@
     <drawable name="unpressed">#FFF</drawable>
     <drawable name="pressed_gray">#0c000000</drawable>
     <drawable name="selected_gray">#2c000000</drawable>
-    <color name="pink">#ff5252</color>
-    <color name="pink_pressed">#d50000</color>
+    <color name="pink">#ff316b</color>
+    <color name="pink_pressed">#dc3967</color>
+    <color name="dialog_backgrd">#eeeeee</color>
 </resources>

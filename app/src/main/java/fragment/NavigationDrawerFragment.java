@@ -50,6 +50,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
      */
     private NavigationDrawerCallbacks mCallbacks;
 
+    private DrawerStatusListener mDrawerStatusListener;
+
     /**
      * Helper component that ties the action bar to the navigation drawer.
      */
@@ -136,11 +138,11 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     public List<NavigationItem> getMenu()
     {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
-        items.add(new NavigationItem("TO-DOS",getResources().getDrawable(R.drawable.accept)));
-        items.add(new NavigationItem("DELETED ITEMS", getResources().getDrawable(R.drawable.delete)));
-        items.add(new NavigationItem("SETTINGS", getResources().getDrawable(R.drawable.settings)));
-        items.add(new NavigationItem("ABOUT", getResources().getDrawable(R.drawable.like)));
-        items.add(new NavigationItem("LOGOUT", getResources().getDrawable(R.drawable.alert)));
+        items.add(new NavigationItem(getResources().getString(R.string.title_section1),getResources().getDrawable(R.drawable.accept)));
+        items.add(new NavigationItem(getResources().getString(R.string.title_section2), getResources().getDrawable(R.drawable.delete)));
+        items.add(new NavigationItem(getResources().getString(R.string.title_section3), getResources().getDrawable(R.drawable.settings)));
+        items.add(new NavigationItem(getResources().getString(R.string.title_section4), getResources().getDrawable(R.drawable.like)));
+        items.add(new NavigationItem(getResources().getString(R.string.title_section5), getResources().getDrawable(R.drawable.alert)));
 
         return items;
     }
@@ -168,6 +170,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
                 if (!isAdded()) return;
 
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+
+                mDrawerStatusListener.OnDrawerStatusChanged(false);
             }
 
             @Override
@@ -183,6 +187,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+                mDrawerStatusListener.OnDrawerStatusChanged(true);
             }
         };
 
@@ -226,6 +231,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     public void openDrawer()
     {
         mDrawerLayout.openDrawer(mFragmentContainerView);
+
     }
 
     public void closeDrawer()
@@ -240,7 +246,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         try
         {
             mCallbacks = (NavigationDrawerCallbacks) activity;
-
+            mDrawerStatusListener=(DrawerStatusListener)activity;
         }
         catch (ClassCastException e)
         {
@@ -268,6 +274,11 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         super.onConfigurationChanged(newConfig);
         // Forward the new configuration the drawer toggle component.
         mActionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    public interface DrawerStatusListener
+    {
+        void OnDrawerStatusChanged(boolean isOpen);
     }
 
 

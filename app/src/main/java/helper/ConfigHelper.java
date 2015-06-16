@@ -2,7 +2,12 @@ package helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.util.DisplayMetrics;
+
+import java.util.Locale;
 
 public  class ConfigHelper
 {
@@ -18,6 +23,36 @@ public  class ConfigHelper
         if(!checkKey(ContextUtil.getInstance(),"AddToBottom"))
         {
             putBoolean(ContextUtil.getInstance(),"AddToBottom",true);
+        }
+        if(!checkKey(ContextUtil.getInstance(),"HandHobbit"))
+        {
+            putBoolean(ContextUtil.getInstance(),"HandHobbit",true);
+        }
+
+        Resources resources = ContextUtil.getInstance().getResources();//获得res资源对象
+        Configuration config = resources.getConfiguration();//获得设置对象
+        DisplayMetrics dm = resources .getDisplayMetrics();//获得屏幕参数：主要是分辨率，像素等。
+
+        if(!checkKey(ContextUtil.getInstance(),"Language"))
+        {
+            if(config.locale==Locale.SIMPLIFIED_CHINESE)
+            {
+                putString(ContextUtil.getInstance(), "Language", "Chinese");
+            }
+            else putString(ContextUtil.getInstance(),"Language","English");
+        }
+        else
+        {
+            if(ConfigHelper.getString(ContextUtil.getInstance(), "Language").equals("Chinese"))
+            {
+                config.locale=Locale.SIMPLIFIED_CHINESE;
+                resources.updateConfiguration(config,dm);
+            }
+            else
+            {
+                config.locale=Locale.ENGLISH;
+                resources.updateConfiguration(config,dm);
+            }
         }
     }
 

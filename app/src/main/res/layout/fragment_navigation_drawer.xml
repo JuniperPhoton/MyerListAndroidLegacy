@@ -9,13 +9,13 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/login_background"
+            android:src="@drawable/wallpaper"
             android:scaleType="centerCrop"/>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/black"
-            android:alpha="0.5"></RelativeLayout>
+            android:alpha="0.01"></RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,19 +28,18 @@
                           android:orientation="horizontal"
                           android:gravity="center_vertical"
                           android:layout_alignParentBottom="true">
-                <ImageView
-                    android:id="@+id/item_icon"
-                    android:layout_width="20sp"
-                    android:layout_height="20sp"
-                    android:layout_marginLeft="10sp"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/account"/>
+                <!--<ImageView-->
+                    <!--android:id="@+id/item_icon"-->
+                    <!--android:layout_width="40sp"-->
+                    <!--android:layout_height="40sp"-->
+                    <!--android:layout_marginLeft="10sp"-->
+                    <!--android:background="@android:color/transparent"-->
+                    <!--android:src="@drawable/account2"/>-->
                 <TextView
                     android:id="@+id/item_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?android:attr/selectableItemBackground"
-                    android:drawablePadding="16dp"
                     android:textSize="14sp"
                     android:gravity="center_vertical"
                     android:textColor="@android:color/white"

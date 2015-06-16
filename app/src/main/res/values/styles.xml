@@ -12,7 +12,7 @@
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowBackground">@color/MyerListGray</item>
         <item name="android:windowContentTransitions">true</item>
-        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:fitsSystemWindows">false</item>
     </style>
     <style name="AppThemeWithBar" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->

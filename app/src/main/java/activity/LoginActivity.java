@@ -52,22 +52,20 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
         String state=intent.getStringExtra("LOGIN_STATE");
         if(state.equals("ToLogin"))
         {
-            mTitleView.setText("LOGIN");
+            mTitleView.setText(getResources().getString(R.string.loginBtn));
             mConfirmPsBox.setVisibility(View.GONE);
             isToRegister=false;
         }
-        else mTitleView.setText("REGISTER");
+        else mTitleView.setText(getResources().getString(R.string.registerBtn));
 
         progressDialog=new ProgressDialog(this,ProgressDialog.STYLE_SPINNER);
+
+
     }
 
     public void loginClick(View view) throws NoSuchAlgorithmException
     {
-        if(DEBUG_ENABLE)
-        {
-            PostHelper.Login(this,"dengweichao@hotmail.com","windfantasy","o5Ib5jNhXa");
-            return;
-        }
+
         if(!isToRegister)
         {
             if(!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString()))
@@ -76,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
                 {
                     if(!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString()))
                     {
-                        progressDialog.setMessage("Loading...");
+                        progressDialog.setMessage(getResources().getString(R.string.loading_hint));
                         progressDialog.show();
                         PostHelper.CheckExist(this,mEmailBox.getText().toString());
                     }
@@ -139,7 +137,7 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
     {
         if(value)
         {
-            AppHelper.ShowShortToast("Successfully login!");
+            AppHelper.ShowShortToast(getResources().getString(R.string.login_success));
 
             Intent intent=new Intent(this,MainActivity.class);
             intent.putExtra("LOGIN_STATE","Logined");

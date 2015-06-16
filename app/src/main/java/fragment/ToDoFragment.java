@@ -11,13 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.juniper.myerlistandroid.R;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import helper.ConfigHelper;
+import helper.ContextUtil;
 import helper.PostHelper;
 import middle.ToDoListAdapter;
 import model.Schedule;
@@ -29,6 +35,8 @@ public class ToDoFragment extends Fragment
     private View mFragmentContainerView;
     private ArrayList<Schedule> mMySchedules;
     private SwipeRefreshLayout mRefreshLayout;
+    private com.getbase.floatingactionbutton.FloatingActionButton add_fab;
+    private RelativeLayout mTodoLayoutRoot;
 
     public ToDoFragment()
     {
@@ -71,6 +79,16 @@ public class ToDoFragment extends Fragment
             }
         });
 
+        mTodoLayoutRoot=(RelativeLayout)view.findViewById(R.id.todo_root_layout);
+        add_fab=(com.getbase.floatingactionbutton.FloatingActionButton)view.findViewById(R.id.pink_icon);
+        if(!ConfigHelper.getBoolean(ContextUtil.getInstance(),"HandHobbit"))
+        {
+           RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+            layoutParams.setMargins(16,0,0,16);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            add_fab.setLayoutParams(layoutParams);
+        }
 
         return view;
     }
@@ -78,9 +96,14 @@ public class ToDoFragment extends Fragment
     public void SetUpData(ArrayList<Schedule> data)
     {
         mMySchedules=data;
-        mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMySchedules,mactivity));
+        mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMySchedules,mactivity,this));
 
         StopRefreshing();
+    }
+
+    public void RefreshData()
+    {
+        mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMySchedules,mactivity,this));
     }
 
     public void ShowRefreshing()
@@ -97,6 +120,22 @@ public class ToDoFragment extends Fragment
         if(mRefreshLayout!=null)
         {
             mRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    public void EnableRefresh()
+    {
+        if(mRefreshLayout!=null)
+        {
+            mRefreshLayout.setEnabled(true);
+        }
+    }
+
+    public void DisableRefresh()
+    {
+        if(mRefreshLayout!=null)
+        {
+            mRefreshLayout.setEnabled(false);
         }
     }
 
@@ -126,6 +165,5 @@ public class ToDoFragment extends Fragment
         super.onDetach();
 
     }
-
 
 }

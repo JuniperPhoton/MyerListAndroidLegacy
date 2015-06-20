@@ -3,6 +3,7 @@ package helper;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
@@ -15,21 +16,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import model.Schedule;
 
 public class SerializerHelper
 {
     public static final String todosFileName="MyTodos.txt";
-    public static  void toStringAndSave(Context context,Object o,Type type)
+    public static final String deletedFileName="Deleted.txt";
+
+    public static  void SerializeToFile(Context context, Object o, String fileName)
     {
         try
         {
             Gson gson=new Gson();
-            String jsonString=gson.toJson(o, type);
+            String jsonString=gson.toJson(o, o.getClass());
             byte[] bytes=jsonString.getBytes();
 
-            FileOutputStream outputStream=context.openFileOutput(todosFileName,context.MODE_PRIVATE);
+            FileOutputStream outputStream=context.openFileOutput(fileName,context.MODE_PRIVATE);
             outputStream.write(bytes);
             outputStream.close();
 
@@ -40,11 +45,11 @@ public class SerializerHelper
         }
     }
 
-    public static <T>  T readFromFile(Class<T> c,Context context)
+    public static  ArrayList<Schedule> DeSerializeFromFile(Context context, String fileName)
     {
         try
         {
-            FileInputStream inputStream=context.openFileInput(todosFileName);
+            FileInputStream inputStream=context.openFileInput(fileName);
             byte[] bytes=new byte[1024];
             ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
             int pos=0;
@@ -57,7 +62,12 @@ public class SerializerHelper
             byteArrayOutputStream.close();
 
             Gson gson=new Gson();
-            T list=gson.fromJson(byteArrayOutputStream.toString(), new TypeToken<T>(){}.getType());
+            GsonBuilder builder = new GsonBuilder();
+            gson = builder.enableComplexMapKeySerialization().create();
+            Type listType = new TypeToken<ArrayList<Schedule>>() {}.getType();
+
+            ArrayList<Schedule> list=gson.fromJson(byteArrayOutputStream.toString(), listType);
+
             return list;
 
         }

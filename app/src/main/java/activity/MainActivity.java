@@ -1,10 +1,8 @@
 package activity;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -13,23 +11,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import fragment.DeletedItemFragment;
 import fragment.NavigationDrawerFragment;
 import com.example.juniper.myerlistandroid.R;
 
 
 import fragment.ToDoFragment;
 
-import java.security.NoSuchAlgorithmException;
-import java.sql.BatchUpdateException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,9 +35,11 @@ import helper.ConfigHelper;
 import helper.ContextUtil;
 import helper.PostHelper;
 import helper.PostHelper.OnGetSchedulesListener;
-import middle.NavigationDrawerCallbacks;
-import middle.ToDoListAdapter;
+import adapter.NavigationDrawerCallbacks;
+import adapter.ToDoListAdapter;
+import helper.SerializerHelper;
 import model.Schedule;
+import model.ScheduleList;
 
 
 public class MainActivity extends ActionBarActivity implements
@@ -51,7 +50,9 @@ public class MainActivity extends ActionBarActivity implements
         PostHelper.OnSetOrderListener,
         PostHelper.OnDoneListener,
         PostHelper.OnDeleteListener,
-        NavigationDrawerFragment.DrawerStatusListener
+        NavigationDrawerFragment.DrawerStatusListener,
+        DeletedItemFragment.OnCreatedViewListener,
+        ToDoFragment.OnCreatedTodoViewListener
 {
 
     /**
@@ -59,10 +60,11 @@ public class MainActivity extends ActionBarActivity implements
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private ToDoFragment mToDoFragment;
+    private DeletedItemFragment mDeletedItemFragment;
+
     private Toolbar mToolbar;
-    private EditText mNewMemoText;
     private MainActivity mInstance;
-    private AlertDialog mDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -80,47 +82,51 @@ public class MainActivity extends ActionBarActivity implements
 
         mInstance=this;
 
-        try
+        String access_token=ConfigHelper.getString(this,"access_token");
+        boolean offline=ConfigHelper.getBoolean(this,"offline_mode");
+        ConfigHelper.ISOFFLINEMODE=offline;
+        if(!offline && access_token==null )
         {
-            InitialFragment(savedInstanceState);
+            ConfigHelper.ISOFFLINEMODE=false;
+            Intent intent=new Intent(this, StartActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
-        catch (Exception e)
+        else if(access_token!=null )
         {
-
+            InitialFragment(savedInstanceState,true);
         }
-
+        else
+        {
+             ConfigHelper.ISOFFLINEMODE=true;
+             mNavigationDrawerFragment.SetupOfflineMode();
+             InitialFragment(savedInstanceState, false);
+        }
     }
 
-    private void InitialFragment(Bundle savedInstanceState) throws NoSuchAlgorithmException
+    private void InitialFragment(Bundle savedInstanceState,boolean isLogined)
     {
-        // Check that the activity is using the layout version with
-        // the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null)
         {
 
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
+            if (savedInstanceState != null)
+            {
                 return;
             }
 
-            // Create a new Fragment to be placed in the activity layout
-            ToDoFragment firstFragment = new ToDoFragment();
-            mToDoFragment=firstFragment;
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            //firstFragment.setArguments(getIntent().getExtras());
+            mToDoFragment=new ToDoFragment();
 
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container,firstFragment).commit();
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container,mToDoFragment).commit();
 
-            Intent intent=getIntent();
-            if(intent.getStringExtra("LOGIN_STATE").equals("AboutToLogin"))
+            if(isLogined)
             {
                 mToDoFragment.ShowRefreshing();
-                PostHelper.Login(this, ConfigHelper.getString(this, "email"), ConfigHelper.getString(this, "password"), ConfigHelper.getString(this, "salt"));
+                PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
             }
         }
 
@@ -130,26 +136,21 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onNavigationDrawerItemSelected(int position)
     {
-        // update the main content by replacing fragments
-        //Toast.makeText(this, "Menu item selected -> " + position, Toast.LENGTH_SHORT).show();
+
         switch (position)
         {
             case 0:
             {
                    try
                    {
-                       ToDoFragment firstFragment = new ToDoFragment();
-                       mToDoFragment=firstFragment;
+                       if(mToDoFragment==null)
+                       {
+                           mToDoFragment=new ToDoFragment();
+                       }
 
                        getFragmentManager().beginTransaction()
-                               .replace(R.id.fragment_container,firstFragment).commit();
-                       mToDoFragment.ShowRefreshing();
-                       PostHelper.Login(this, ConfigHelper.getString(this, "email"), ConfigHelper.getString(this, "password"), ConfigHelper.getString(this, "salt"));
+                               .replace(R.id.fragment_container,mToDoFragment).commit();
 
-                       getFragmentManager().beginTransaction().replace(R.id.fragment_container,mToDoFragment).
-                               addToBackStack("todo_Fragment").
-                               setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).
-                               commit();
                        getSupportActionBar().setTitle("MyerList");
                    }
                    catch (Exception E)
@@ -160,7 +161,14 @@ public class MainActivity extends ActionBarActivity implements
             };break;
             case 1:
             {
+                if(mDeletedItemFragment==null)
+                {
+                    mDeletedItemFragment=new DeletedItemFragment();
+                }
+
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDeletedItemFragment).commit();
                 getSupportActionBar().setTitle(getResources().getString(R.string.deleteditems));
+
             };break;
             case 2:
             {
@@ -183,7 +191,9 @@ public class MainActivity extends ActionBarActivity implements
                     public void onClick(DialogInterface dialogInterface, int i)
                     {
                         ConfigHelper.putBoolean(getApplicationContext(), "offline_mode", false);
-                        ConfigHelper.DeleteKey(getApplicationContext(),"email");
+                        ConfigHelper.DeleteKey(getApplicationContext(), "email");
+                        ConfigHelper.DeleteKey(getApplicationContext(), "salt");
+                        ConfigHelper.DeleteKey(getApplicationContext(),"access_token");
                         Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
@@ -204,61 +214,7 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
-    public void toAddClick(View view)
-    {
-        View dialogView=(View)LayoutInflater.from(this).inflate(R.layout.add_todo_dialog, (ViewGroup) findViewById(R.id.dialog_title));
 
-        TextView titleText=(TextView)dialogView.findViewById(R.id.dialog_title_text);
-        titleText.setText(getResources().getString(R.string.new_memo_title));
-
-        this.mNewMemoText=(EditText)dialogView.findViewById(R.id.newMemoEdit);
-        this.mNewMemoText.setHint(R.string.new_memo_hint);
-
-        Button okBtn=(Button)dialogView.findViewById(R.id.add_ok_btn);
-        okBtn.setText(R.string.ok_btn);
-        okBtn.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                PostHelper.AddMemo(mInstance, ConfigHelper.getString(getApplicationContext(), "sid"), mNewMemoText.getText().toString(), "0");
-                mDialog.dismiss();
-            }
-        });
-
-        Button cancelBtn=(Button)dialogView.findViewById(R.id.add_cancel_btn);
-        cancelBtn.setText(R.string.cancel_btn);
-        cancelBtn.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                if (mDialog != null)
-                {
-                    mDialog.dismiss();
-                }
-            }
-        });
-
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        mDialog=builder.setView((dialogView)).show();
-
-        if(ConfigHelper.getBoolean(ContextUtil.getInstance(),"ShowKeyboard"))
-        {
-            mNewMemoText.requestFocus();
-            Timer timer=new Timer();
-            timer.schedule(new TimerTask()
-            {
-                @Override
-                public void run()
-                {
-                    InputMethodManager inputMethodManager = (InputMethodManager) mNewMemoText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.showSoftInput(mNewMemoText, 0);
-                }
-            },333);
-        }
-
-    }
 
     @Override
     public void onBackPressed()
@@ -266,6 +222,10 @@ public class MainActivity extends ActionBarActivity implements
         if (mNavigationDrawerFragment.isDrawerOpen())
         {
             mNavigationDrawerFragment.closeDrawer();
+        }
+        else if(mNavigationDrawerFragment.getCurrentSelectedPosition()==1)
+        {
+            mNavigationDrawerFragment.openDrawer();
         }
         else
         {
@@ -280,6 +240,7 @@ public class MainActivity extends ActionBarActivity implements
     {
         if(mytodosList!=null)
         {
+            ScheduleList.TodosList=mytodosList;
             mToDoFragment.SetUpData(mytodosList);
             mToDoFragment.StopRefreshing();
         }
@@ -342,5 +303,42 @@ public class MainActivity extends ActionBarActivity implements
     {
         ToDoListAdapter adapter=(ToDoListAdapter)mToDoFragment.mToDoRecyclerView.getAdapter();
         if(adapter!=null) adapter.SetCanOperate(isOpen);
+    }
+
+    @Override
+    public void OnCreated(boolean b)
+    {
+        mDeletedItemFragment.SetUpData(ScheduleList.DeletedList);
+        if(ScheduleList.DeletedList.size()==0)
+        {
+            mDeletedItemFragment.ShowNoItemHint();
+        }
+        else mDeletedItemFragment.HideNoItemHint();
+    }
+
+    @Override
+    public void OnCreatedToDo(boolean b)
+    {
+        ArrayList<Schedule> list= SerializerHelper.DeSerializeFromFile(this, SerializerHelper.todosFileName);
+        if(list==null) list=new ArrayList<>();
+        ScheduleList.TodosList=list;
+
+        if(ConfigHelper.ISLOADLISTONCE)
+        {
+            mToDoFragment.SetUpData(ScheduleList.TodosList);
+        }
+        else
+        {
+            ConfigHelper.ISLOADLISTONCE=true;
+            if(!ConfigHelper.ISOFFLINEMODE)
+            {
+                mToDoFragment.ShowRefreshing();
+                PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
+            }
+            else
+            {
+                mToDoFragment.SetUpData(ScheduleList.TodosList);
+            }
+        }
     }
 }

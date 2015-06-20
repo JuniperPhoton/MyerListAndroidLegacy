@@ -58,6 +58,7 @@
             android:fontFamily="@string/FontLight"/>
         <android.support.v7.widget.CardView
                     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/toLoginBtn_cardview"
                     android:layout_width="match_parent"
                     android:layout_height="40sp"
                     android:layout_marginTop="30sp"
@@ -74,13 +75,12 @@
                 android:background="?android:selectableItemBackground"
                 android:textColor="#ffffff"
                 android:padding="0dp"
-
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-
+            android:id="@+id/toRegisterBtn_cardview"
             android:layout_width="match_parent"
             android:layout_height="40sp"
             android:layout_marginTop="10sp"
@@ -104,6 +104,7 @@
             </android.support.v7.widget.CardView>
         <android.support.v7.widget.CardView
             xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toMainBtn_cardview"
             android:layout_width="match_parent"
             android:layout_height="40sp"
             android:layout_marginTop="10sp"

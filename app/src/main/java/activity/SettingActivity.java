@@ -21,6 +21,7 @@ import com.example.juniper.myerlistandroid.R;
 
 import java.util.Locale;
 
+import helper.AppHelper;
 import helper.ConfigHelper;
 import helper.ContextUtil;
 
@@ -35,7 +36,8 @@ public class SettingActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
+        {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
         setContentView(R.layout.activity_setting);
@@ -69,14 +71,14 @@ public class SettingActivity extends ActionBarActivity
             {
                 AlertDialog.Builder builder=new AlertDialog.Builder(SettingActivity.this);
                 builder.setTitle(getString(R.string.change_lang));
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
-                        dialogInterface.dismiss();
-                    }
-                });
+//                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+//                {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i)
+//                    {
+//                        dialogInterface.dismiss();
+//                    }
+//                });
                 builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)}, langStr.equals("Chinese")?1:0, new DialogInterface.OnClickListener()
                 {
                     @Override
@@ -84,19 +86,19 @@ public class SettingActivity extends ActionBarActivity
                     {
                         if(i==1)
                         {
-                            Resources resources = getResources();//获得res资源对象
-                            Configuration config = resources.getConfiguration();//获得设置对象
-                            DisplayMetrics dm = resources.getDisplayMetrics();//获得屏幕参数：主要是分辨率，像素等。
-                            config.locale = Locale.CHINESE; //简体中文
+                            Resources resources = getResources();
+                            Configuration config = resources.getConfiguration();
+                            DisplayMetrics dm = resources.getDisplayMetrics();
+                            config.locale = Locale.CHINESE;
                             resources.updateConfiguration(config, dm);
                             ConfigHelper.putString(ContextUtil.getInstance(), "Language", "Chinese");
                         }
                         else
                         {
-                            Resources resources = getResources();//获得res资源对象
-                            Configuration config = resources.getConfiguration();//获得设置对象
-                            DisplayMetrics dm = resources.getDisplayMetrics();//获得屏幕参数：主要是分辨率，像素等。
-                            config.locale = Locale.ENGLISH; //简体中文
+                            Resources resources = getResources();
+                            Configuration config = resources.getConfiguration();
+                            DisplayMetrics dm = resources.getDisplayMetrics();
+                            config.locale = Locale.ENGLISH;
                             resources.updateConfiguration(config, dm);
                             ConfigHelper.putString(ContextUtil.getInstance(), "Language", "English");
                         }
@@ -137,6 +139,7 @@ public class SettingActivity extends ActionBarActivity
             public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
             {
                 ConfigHelper.putBoolean(ContextUtil.getInstance(), "HandHobbit", b);
+                AppHelper.ShowShortToast(getResources().getString(R.string.rebootHint));
             }
         });
 

@@ -66,7 +66,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0.9 BETA"
+                        android:text="@string/version_value"
                         android:gravity="center_horizontal"
                         android:textColor="@android:color/black"
                         android:textSize="15sp"
@@ -219,8 +219,8 @@
         android:layout_marginTop="150sp"
         android:layout_marginLeft="10sp"
         fab:fab_icon="@drawable/email"
-        fab:fab_colorNormal="#ffe8e837"
-        fab:fab_colorPressed="#ffd0d03c"
+        fab:fab_colorNormal="@android:color/white"
+        fab:fab_colorPressed="@color/MyerListGray"
         fab:fab_elevation="0dp"
         fab:fab_animDuration="700"
         android:background="#ff66cde8"/>

@@ -2,6 +2,7 @@ package fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -16,8 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import middle.NavigationDrawerAdapter;
-import middle.NavigationDrawerCallbacks;
+import activity.StartActivity;
+import adapter.NavigationDrawerAdapter;
+import adapter.NavigationDrawerCallbacks;
 import model.NavigationItem;
 import com.example.juniper.myerlistandroid.R;
 
@@ -209,6 +211,26 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         });
 
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
+    }
+
+    public void SetupOfflineMode()
+    {
+        mEmailView.setClickable(true);
+        mEmailView.setText(R.string.now_to_login);
+        mEmailView.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent=new Intent(getActivity(),StartActivity.class);
+                getActivity().startActivity(intent);
+            }
+        });
+    }
+
+    public int getCurrentSelectedPosition()
+    {
+        return mCurrentSelectedPosition;
     }
 
     public void selectItem(int position)

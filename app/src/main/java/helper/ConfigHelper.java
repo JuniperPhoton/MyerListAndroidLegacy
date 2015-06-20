@@ -13,6 +13,7 @@ public  class ConfigHelper
 {
     private static String name="config";
     public static boolean ISOFFLINEMODE=true;
+    public static boolean ISLOADLISTONCE=false;
 
     public  static  void ConfigAppSetting()
     {
@@ -29,9 +30,9 @@ public  class ConfigHelper
             putBoolean(ContextUtil.getInstance(),"HandHobbit",true);
         }
 
-        Resources resources = ContextUtil.getInstance().getResources();//获得res资源对象
-        Configuration config = resources.getConfiguration();//获得设置对象
-        DisplayMetrics dm = resources .getDisplayMetrics();//获得屏幕参数：主要是分辨率，像素等。
+        Resources resources = ContextUtil.getInstance().getResources();
+        Configuration config = resources.getConfiguration();
+        DisplayMetrics dm = resources .getDisplayMetrics();
 
         if(!checkKey(ContextUtil.getInstance(),"Language"))
         {

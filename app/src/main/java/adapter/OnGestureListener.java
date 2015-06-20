@@ -1,18 +1,8 @@
-package middle;
+package adapter;
 
-import android.content.Context;
-import android.renderscript.RenderScript;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
-import helper.AppHelper;
-import helper.ContextUtil;
 
 public class OnGestureListener implements GestureDetector.OnGestureListener
 {

@@ -7,7 +7,7 @@
         Refer also to Color palette for the UI colors you should use:
         http://www.google.com/design/spec/style/color.html#color-ui-color-palette
     -->
-    <color name="MyerListBlue">#FF436998</color>
+    <color name="MyerListBlue">#FF4477b6</color>
     <color name="MyerListBlueLight">#FF4C83C9</color>
     <color name="MyerListGray">#FFF2F2F2</color>
     <color name="MyerListGrayDark">#ffdddddd</color>

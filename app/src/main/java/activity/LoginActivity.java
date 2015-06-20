@@ -15,6 +15,7 @@ import com.example.juniper.myerlistandroid.R;
 import java.security.NoSuchAlgorithmException;
 
 import helper.AppHelper;
+import helper.ConfigHelper;
 import helper.DataHelper;
 import helper.PostHelper;
 
@@ -95,17 +96,17 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
                         {
                             if(mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString()))
                             {
-                                progressDialog.setMessage("Loading...");
+                                progressDialog.setMessage(getResources().getString(R.string.loading_hint));
                                 progressDialog.show();
                                 PostHelper.Register(this, mEmailBox.getText().toString(),mPasswordBox.getText().toString());
                             }
-                            else AppHelper.ShowShortToast("Please make sure the passwords input are matched");
+                            else AppHelper.ShowShortToast(getString(R.string.two_ps_match));
                         }
-                        else AppHelper.ShowShortToast("Please input your password to be confirmed");
+                        else AppHelper.ShowShortToast(getString(R.string.confirm_ps_lost));
                     }
-                    else AppHelper.ShowShortToast("Please input password");
+                    else AppHelper.ShowShortToast(getString(R.string.ps_lost));
                 }
-                else AppHelper.ShowShortToast("Please input valid email");
+                else AppHelper.ShowShortToast(getString(R.string.email_invalid));
             }
         }
     }
@@ -118,7 +119,9 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
         {
             PostHelper.GetSalt(this,mEmailBox.getText().toString());
         }
-        else AppHelper.ShowShortToast("User do not exist.");
+        else AppHelper.ShowShortToast(getResources().getString(R.string.user_dont_exist));
+
+        progressDialog.dismiss();
     }
 
     @Override
@@ -129,7 +132,9 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
         {
             PostHelper.Login(this,mEmailBox.getText().toString(),mPasswordBox.getText().toString(),salt);
         }
-        else AppHelper.ShowShortToast("Fail to login,please try again :-(");
+        else AppHelper.ShowShortToast(getResources().getString(R.string.fail_to_login));
+
+        progressDialog.dismiss();
     }
 
     @Override
@@ -144,7 +149,7 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
-        else AppHelper.ShowShortToast("Fail to login,please try again :-(");
+        else AppHelper.ShowShortToast(getResources().getString(R.string.fail_to_login));
 
         progressDialog.dismiss();
     }
@@ -154,11 +159,17 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
     {
         if(isSuccess)
         {
-            Intent intent=new Intent(this,MainActivity.class);
-            intent.putExtra("LOGIN_STATE","AboutToLogin");
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            try
+            {
+                PostHelper.Login(this, ConfigHelper.getString(this, "email"), ConfigHelper.getString(this, "password"), ConfigHelper.getString(this, "salt"));
+            }
+            catch (NoSuchAlgorithmException e)
+            {
+                e.printStackTrace();
+            }
         }
-        else AppHelper.ShowShortToast("Fail to register :-( ");
+        else AppHelper.ShowShortToast(getResources().getString(R.string.fail_to_register));
+
+        progressDialog.dismiss();
     }
 }

@@ -150,7 +150,6 @@ public class PostHelper
                         if (userObj != null)
                         {
                             String salt = userObj.getString("Salt");
-
                             ConfigHelper.putString(ContextUtil.getInstance(), "email", email);
                             ConfigHelper.putString(ContextUtil.getInstance(), "password", password);
                             ConfigHelper.putString(ContextUtil.getInstance(),"salt",salt);
@@ -203,7 +202,7 @@ public class PostHelper
                             String sid = userObj.getString("sid");
                             String access_token = userObj.getString("access_token");
                             ConfigHelper.putString(ContextUtil.getInstance(), "email", email);
-                            ConfigHelper.putString(ContextUtil.getInstance(), "password", password);
+                            ConfigHelper.DeleteKey(ContextUtil.getInstance(), "password");
                             ConfigHelper.putString(ContextUtil.getInstance(),"salt",salt);
                             ConfigHelper.putString(ContextUtil.getInstance(), "sid", sid);
                             ConfigHelper.putString(ContextUtil.getInstance(), "access_token", access_token);

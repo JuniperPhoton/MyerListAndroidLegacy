@@ -1,4 +1,4 @@
-package middle;
+package adapter;
 
 public interface NavigationDrawerCallbacks
 {

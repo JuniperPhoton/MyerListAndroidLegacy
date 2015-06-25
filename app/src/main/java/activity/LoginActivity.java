@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.juniper.myerlistandroid.R;
+import com.umeng.analytics.MobclickAgent;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -20,7 +21,7 @@ import helper.DataHelper;
 import helper.PostHelper;
 
 
-public class LoginActivity extends AppCompatActivity implements PostHelper.OnCheckResponseListener,PostHelper.OnGetSaltResponseListener,PostHelper.OnLoginResponseListener,PostHelper.OnRegisterListener
+public class LoginActivity extends AppCompatActivity implements PostHelper.OnCheckResponseCallback, PostHelper.OnGetSaltResponseCallback, PostHelper.OnLoginResponseCallback, PostHelper.OnRegisterCallback
 {
     private EditText mEmailBox;
     private EditText mPasswordBox;
@@ -62,6 +63,20 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
         progressDialog=new ProgressDialog(this,ProgressDialog.STYLE_SPINNER);
 
 
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     public void loginClick(View view) throws NoSuchAlgorithmException

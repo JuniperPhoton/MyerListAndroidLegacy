@@ -18,6 +18,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.juniper.myerlistandroid.R;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.Locale;
 
@@ -144,6 +145,20 @@ public class SettingActivity extends ActionBarActivity
         });
 
 
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
 }

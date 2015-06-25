@@ -20,6 +20,7 @@ import android.widget.TextView;
 import activity.StartActivity;
 import adapter.NavigationDrawerAdapter;
 import adapter.NavigationDrawerCallbacks;
+import adapter.NavigationDrawerOtherCallbacks;
 import model.NavigationItem;
 import com.example.juniper.myerlistandroid.R;
 
@@ -33,7 +34,7 @@ import helper.ConfigHelper;
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class NavigationDrawerFragment extends Fragment implements NavigationDrawerCallbacks
+public class NavigationDrawerFragment extends Fragment implements NavigationDrawerCallbacks, NavigationDrawerOtherCallbacks
 {
 
     /**
@@ -51,6 +52,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
      * A pointer to the current callbacks instance (the Activity).
      */
     private NavigationDrawerCallbacks mCallbacks;
+    private NavigationDrawerOtherCallbacks mOtherCallbacks;
 
     private DrawerStatusListener mDrawerStatusListener;
 
@@ -61,6 +63,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerRecyclerView;
+    private RecyclerView mDrawerOtherRecyclerView;
     private View mFragmentContainerView;
     private TextView mEmailView;
 
@@ -113,6 +116,18 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
         selectItem(mCurrentSelectedPosition);
 
+        LinearLayoutManager layoutManagerOther = new LinearLayoutManager(getActivity());
+        layoutManagerOther.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mDrawerOtherRecyclerView=(RecyclerView)view.findViewById(R.id.drawerList_other);
+        mDrawerOtherRecyclerView.setLayoutManager(layoutManagerOther);
+        mDrawerOtherRecyclerView.setHasFixedSize(true);
+
+        final List<NavigationItem> otherItems=getOtherMenu();
+        NavigationDrawerAdapter adapterOther=new NavigationDrawerAdapter(otherItems);
+        adapterOther.setOtherNavigationDrawerCallbacks(this);
+        mDrawerOtherRecyclerView.setAdapter(adapterOther);
+
         return view;
     }
 
@@ -137,11 +152,25 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         selectItem(position);
     }
 
+    @Override
+    public void OnSelectedOther(int position)
+    {
+        selectOtherItem(position);
+    }
+
     public List<NavigationItem> getMenu()
     {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
         items.add(new NavigationItem(getResources().getString(R.string.title_section1),getResources().getDrawable(R.drawable.accept)));
         items.add(new NavigationItem(getResources().getString(R.string.title_section2), getResources().getDrawable(R.drawable.delete)));
+
+        return items;
+    }
+
+    public List<NavigationItem> getOtherMenu()
+    {
+        List<NavigationItem> items = new ArrayList<NavigationItem>();
+
         items.add(new NavigationItem(getResources().getString(R.string.title_section3), getResources().getDrawable(R.drawable.settings)));
         items.add(new NavigationItem(getResources().getString(R.string.title_section4), getResources().getDrawable(R.drawable.like)));
         items.add(new NavigationItem(getResources().getString(R.string.title_section5), getResources().getDrawable(R.drawable.alert)));
@@ -222,7 +251,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
             @Override
             public void onClick(View view)
             {
-                Intent intent=new Intent(getActivity(),StartActivity.class);
+                Intent intent = new Intent(getActivity(), StartActivity.class);
                 getActivity().startActivity(intent);
             }
         });
@@ -250,6 +279,19 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         }
     }
 
+    public void selectOtherItem(int position)
+    {
+        if(mOtherCallbacks!=null)
+        {
+            mOtherCallbacks.OnSelectedOther(position);
+        }
+        if (mDrawerLayout != null)
+        {
+            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        }
+    }
+
+
     public void openDrawer()
     {
         mDrawerLayout.openDrawer(mFragmentContainerView);
@@ -268,6 +310,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         try
         {
             mCallbacks = (NavigationDrawerCallbacks) activity;
+            mOtherCallbacks=(NavigationDrawerOtherCallbacks)activity;
             mDrawerStatusListener=(DrawerStatusListener)activity;
         }
         catch (ClassCastException e)
@@ -281,6 +324,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     {
         super.onDetach();
         mCallbacks = null;
+        mOtherCallbacks=null;
     }
 
     @Override
@@ -298,10 +342,14 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         mActionBarDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+
+
     public interface DrawerStatusListener
     {
         void OnDrawerStatusChanged(boolean isOpen);
     }
+
+
 
 
 }

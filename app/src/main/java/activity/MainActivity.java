@@ -1,6 +1,5 @@
 package activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,33 +7,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 
+import adapter.NavigationDrawerOtherCallbacks;
 import fragment.DeletedItemFragment;
 import fragment.NavigationDrawerFragment;
 import com.example.juniper.myerlistandroid.R;
+import com.umeng.analytics.MobclickAgent;
 
 
 import fragment.ToDoFragment;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import helper.AppHelper;
 import helper.ConfigHelper;
-import helper.ContextUtil;
 import helper.PostHelper;
-import helper.PostHelper.OnGetSchedulesListener;
+import helper.PostHelper.OnGetSchedulesCallback;
 import adapter.NavigationDrawerCallbacks;
 import adapter.ToDoListAdapter;
 import helper.SerializerHelper;
@@ -44,15 +33,17 @@ import model.ScheduleList;
 
 public class MainActivity extends ActionBarActivity implements
         NavigationDrawerCallbacks,
-        OnGetSchedulesListener,
-        PostHelper.OnLoginResponseListener,
-        PostHelper.OnAddedMemoListener,
-        PostHelper.OnSetOrderListener,
-        PostHelper.OnDoneListener,
-        PostHelper.OnDeleteListener,
+        OnGetSchedulesCallback,
+        PostHelper.OnLoginResponseCallback,
+        PostHelper.OnAddedMemoCallback,
+        PostHelper.OnSetOrderCallback,
+        PostHelper.OnDoneCallback,
+        PostHelper.OnDeleteCallback,
         NavigationDrawerFragment.DrawerStatusListener,
+        NavigationDrawerOtherCallbacks,
         DeletedItemFragment.OnCreatedViewListener,
-        ToDoFragment.OnCreatedTodoViewListener
+        ToDoFragment.OnCreatedTodoViewListener,
+        PostHelper.OnUpdateContentCallback
 {
 
     /**
@@ -132,11 +123,24 @@ public class MainActivity extends ActionBarActivity implements
 
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
 
     @Override
     public void onNavigationDrawerItemSelected(int position)
     {
-
         switch (position)
         {
             case 0:
@@ -172,15 +176,36 @@ public class MainActivity extends ActionBarActivity implements
             };break;
             case 2:
             {
+
+            };break;
+            case 3:
+            {
+
+            };break;
+            case 4:
+            {
+
+            };break;
+        }
+    }
+
+
+    @Override
+    public void OnSelectedOther(int position)
+    {
+        switch (position)
+        {
+            case 0:
+            {
                 Intent intent=new Intent(getApplicationContext(),SettingActivity.class);
                 startActivity(intent);
             };break;
-            case 3:
+            case 1:
             {
                 Intent intent=new Intent(getApplicationContext(),AboutActivity.class);
                 startActivity(intent);
             };break;
-            case 4:
+            case 2:
             {
                 AlertDialog.Builder builder=new AlertDialog.Builder(this);
                 builder.setTitle(R.string.logout_title);
@@ -213,8 +238,6 @@ public class MainActivity extends ActionBarActivity implements
             };break;
         }
     }
-
-
 
     @Override
     public void onBackPressed()
@@ -340,5 +363,10 @@ public class MainActivity extends ActionBarActivity implements
                 mToDoFragment.SetUpData(ScheduleList.TodosList);
             }
         }
+    }
+
+    @Override
+    public void OnUpdateContent(boolean isSuccess)
+    {
     }
 }

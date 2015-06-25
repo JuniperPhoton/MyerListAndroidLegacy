@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.example.juniper.myerlistandroid.R;
+import com.umeng.analytics.MobclickAgent;
 
 import activity.LoginActivity;
 import activity.MainActivity;
@@ -51,6 +52,20 @@ public class StartActivity extends AppCompatActivity
             layoutParamsForBottom.height=100;
             toMainCard.setLayoutParams(layoutParamsForBottom);
         }
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     public void toLoginClick(View v)

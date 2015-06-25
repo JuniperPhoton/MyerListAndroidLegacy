@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.example.juniper.myerlistandroid.R;
+import com.umeng.analytics.MobclickAgent;
 
 
 public class AboutActivity extends AppCompatActivity
@@ -34,6 +35,19 @@ public class AboutActivity extends AppCompatActivity
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerList Android feedback");
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
         startActivity(Intent.createChooser(emailIntent, "Choose app to send an email"));
+    }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
 }

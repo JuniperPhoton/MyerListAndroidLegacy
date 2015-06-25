@@ -27,6 +27,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     private List<NavigationItem> mData;
     private NavigationDrawerCallbacks mNavigationDrawerCallbacks;
+    private NavigationDrawerOtherCallbacks mNavigationDrawerOtherCallbacks;
     private View mSelectedView;
     private int mSelectedPosition;
 
@@ -43,6 +44,16 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     public void setNavigationDrawerCallbacks(NavigationDrawerCallbacks navigationDrawerCallbacks)
     {
         mNavigationDrawerCallbacks = navigationDrawerCallbacks;
+    }
+
+    public NavigationDrawerOtherCallbacks getOtherNavigationDrawerCallbacks()
+    {
+        return mNavigationDrawerOtherCallbacks;
+    }
+
+    public void setOtherNavigationDrawerCallbacks(NavigationDrawerOtherCallbacks navigationDrawerCallbacks)
+    {
+        mNavigationDrawerOtherCallbacks = navigationDrawerCallbacks;
     }
 
     @Override
@@ -69,7 +80,13 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
                                                            mSelectedView = (CardView)v.getParent();
 
                                                            if (mNavigationDrawerCallbacks != null)
+                                                           {
                                                                mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(viewHolder.getPosition());
+                                                           }
+                                                           if(mNavigationDrawerOtherCallbacks!=null)
+                                                           {
+                                                               mNavigationDrawerOtherCallbacks.OnSelectedOther(viewHolder.getPosition());
+                                                           }
                                                        }
                                                    }
         );
@@ -91,7 +108,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         }
 
         viewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
-        if (mSelectedPosition == i && i!=4 && i!=3 && i!=2)
+        if (mSelectedPosition == i && mNavigationDrawerCallbacks!=null)
         {
             if (mSelectedView != null)
             {
@@ -140,4 +157,5 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
             linearLayout=(LinearLayout) cardView.findViewById(R.id.navigationitem_layout);
         }
     }
+
 }

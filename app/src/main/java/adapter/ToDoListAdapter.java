@@ -2,6 +2,9 @@ package adapter;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -10,7 +13,10 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,6 +24,8 @@ import com.example.juniper.myerlistandroid.R;
 
 import java.util.ArrayList;
 
+import activity.MainActivity;
+import activity.StartActivity;
 import fragment.ToDoFragment;
 import helper.ConfigHelper;
 import helper.ContextUtil;
@@ -38,6 +46,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
 
     private boolean mIsGreenOn=false;
     private boolean mIsRedOn=false;
+
+    private boolean mIsInSwipe=false;
+
+    private android.support.v7.app.AlertDialog mDialog;
+    private EditText mNewMemoText;
 
     public ToDoListAdapter(ArrayList<Schedule> data,Activity activity,ToDoFragment fragment)
     {
@@ -71,6 +84,88 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             public void onClick(View view)
             {
                 deleteToDos(mMySchedules.get(position));
+            }
+        });
+
+        holder.relativeLayout.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                if(mIsInSwipe)
+                {
+                    return;
+                }
+                View dialogView=(View)LayoutInflater.from(mCurrentActivity).inflate(R.layout.add_todo_dialog, (ViewGroup) mCurrentActivity.findViewById(R.id.dialog_title));
+
+                TextView titleText=(TextView)dialogView.findViewById(R.id.dialog_title_text);
+                titleText.setText(mCurrentActivity.getResources().getString(R.string.new_memo_title));
+
+                mNewMemoText=(EditText)dialogView.findViewById(R.id.newMemoEdit);
+                mNewMemoText.setHint(R.string.new_memo_hint);
+                mNewMemoText.setText(holder.textView.getText().toString());
+
+                Button okBtn=(Button)dialogView.findViewById(R.id.add_ok_btn);
+                okBtn.setText(R.string.ok_btn);
+                okBtn.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        mDialog.dismiss();
+                        String targetID=holder.getID();
+                        int index=0;
+                        for(int i=0;i<mMySchedules.size();i++)
+                        {
+                            Schedule s=mMySchedules.get(i);
+                            if(s.getID().equals(targetID))
+                            {
+                                index=i;
+                                break;
+                            }
+                        }
+                        mMySchedules.get(index).setContent(mNewMemoText.getText().toString());
+                        notifyItemChanged(index);
+
+                        if(!ConfigHelper.ISOFFLINEMODE)
+                        {
+                            PostHelper.UpdateContent(mCurrentActivity,ConfigHelper.getString(mCurrentActivity,"sid"),targetID,mNewMemoText.getText().toString());
+                        }
+                        else
+                        {
+                            SerializerHelper.SerializeToFile(mCurrentActivity,mMySchedules,SerializerHelper.todosFileName);
+                        }
+
+                    }
+                });
+
+                Button cancelBtn=(Button)dialogView.findViewById(R.id.add_cancel_btn);
+                cancelBtn.setText(R.string.cancel_btn);
+                cancelBtn.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        if (mDialog != null)
+                        {
+                            mDialog.dismiss();
+                        }
+                    }
+                });
+
+                if(!ConfigHelper.getBoolean(ContextUtil.getInstance(),"HandHobbit"))
+                {
+                    LinearLayout linearLayout=(LinearLayout)dialogView.findViewById(R.id.dialog_btn_layout);
+
+                    RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+                    layoutParams.setMargins(20,0,0,0);
+                    layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                    linearLayout.setLayoutParams(layoutParams);
+                }
+
+                android.support.v7.app.AlertDialog.Builder builder=new android.support.v7.app.AlertDialog.Builder(mCurrentActivity);
+                mDialog=builder.setView((dialogView)).show();
+
             }
         });
 
@@ -161,6 +256,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
 
                 if(!mCanOperate) break;
 
+                mIsInSwipe=true;
+
                 int dx=(int)event.getRawX()-lastX;
 
                 scrollleft=v.getScrollX();
@@ -174,11 +271,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
 
                 lastX=(int)event.getRawX();
 
-                if(scrollleft<-100 && !mIsGreenOn)
+                if(scrollleft<-150 && !mIsGreenOn)
                 {
                     SetColorAnim((ImageView) root.findViewById(R.id.greenImageView),true);
                 }
-                else if(scrollleft>100 && !mIsRedOn)
+                else if(scrollleft>150 && !mIsRedOn)
                 {
                     SetColorAnim((ImageView) root.findViewById(R.id.redImageView),false);
                 }
@@ -217,7 +314,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         if(mCurrentSchedule==null) return;
 
         //Finish
-        if(scrollLeft<-100)
+        if(scrollLeft<-150)
         {
 
             ImageView lineview=(ImageView)v.findViewById(R.id.lineView);
@@ -240,7 +337,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
 
         }
         //Delete
-        else if(scrollLeft>100)
+        else if(scrollLeft>150)
         {
             deleteToDos(mCurrentSchedule);
         }
@@ -268,9 +365,10 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             public void onAnimationUpdate(ValueAnimator valueAnimator)
             {
                 v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
-                if(((int)valueAnimator.getAnimatedValue()-left)<10)
+                if(Math.abs((int)valueAnimator.getAnimatedValue())<10)
                 {
                     mCurrentFragment.EnableRefresh();
+                    mIsInSwipe=false;
                 }
             }
         });

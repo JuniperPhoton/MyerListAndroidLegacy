@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.juniper.myerlistandroid"
-          android:versionCode="2"
-          android:versionName="1.0">
-
-    <uses-permission android:name="android.permission.INTERNET" />
+          android:versionCode="10"
+          android:versionName="1.1">
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
     <application
         android:name="helper.ContextUtil"
@@ -43,6 +45,9 @@
             android:label="@string/title_activity_setting"
             android:theme="@style/AppTheme" >
         </activity>
+        <meta-data android:value="5586bbfc67e58ea9c800004f" android:name="UMENG_APPKEY"></meta-data>
+        <meta-data android:value="Wandoujia" android:name="UMENG_CHANNEL"/>
+
     </application>
 
 </manifest>

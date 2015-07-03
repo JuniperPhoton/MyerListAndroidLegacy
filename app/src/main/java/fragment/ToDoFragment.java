@@ -201,7 +201,6 @@ public class ToDoFragment extends Fragment
         if(mRefreshLayout!=null)
         {
             mRefreshLayout.setRefreshing(true);
-
         }
     }
 
@@ -253,7 +252,6 @@ public class ToDoFragment extends Fragment
     public void onDetach()
     {
         super.onDetach();
-
     }
 
     public interface OnCreatedTodoViewListener

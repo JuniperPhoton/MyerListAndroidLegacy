@@ -19,9 +19,12 @@ import com.umeng.analytics.MobclickAgent;
 import fragment.ToDoFragment;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import helper.AppHelper;
 import helper.ConfigHelper;
+import helper.ContextUtil;
 import helper.PostHelper;
 import helper.PostHelper.OnGetSchedulesCallback;
 import adapter.NavigationDrawerCallbacks;
@@ -147,15 +150,15 @@ public class MainActivity extends ActionBarActivity implements
             {
                    try
                    {
-                       if(mToDoFragment==null)
-                       {
-                           mToDoFragment=new ToDoFragment();
-                       }
+                               if (mToDoFragment == null)
+                               {
+                                   mToDoFragment = new ToDoFragment();
+                               }
+                               // mToDoFragment.GetAllSchedules();
+                               getFragmentManager().beginTransaction()
+                                       .replace(R.id.fragment_container, mToDoFragment).commit();
 
-                       getFragmentManager().beginTransaction()
-                               .replace(R.id.fragment_container,mToDoFragment).commit();
-
-                       getSupportActionBar().setTitle("MyerList");
+                               getSupportActionBar().setTitle("MyerList");
                    }
                    catch (Exception E)
                    {
@@ -172,18 +175,6 @@ public class MainActivity extends ActionBarActivity implements
 
                 getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDeletedItemFragment).commit();
                 getSupportActionBar().setTitle(getResources().getString(R.string.deleteditems));
-
-            };break;
-            case 2:
-            {
-
-            };break;
-            case 3:
-            {
-
-            };break;
-            case 4:
-            {
 
             };break;
         }
@@ -266,6 +257,9 @@ public class MainActivity extends ActionBarActivity implements
             ScheduleList.TodosList=mytodosList;
             mToDoFragment.SetUpData(mytodosList);
             mToDoFragment.StopRefreshing();
+
+            SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ScheduleList.TodosList, SerializerHelper.todosFileName);
+
         }
     }
 
@@ -329,7 +323,7 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void OnCreated(boolean b)
+    public void OnCreatedDeleted(boolean b)
     {
         mDeletedItemFragment.SetUpData(ScheduleList.DeletedList);
         if(ScheduleList.DeletedList.size()==0)
@@ -343,8 +337,10 @@ public class MainActivity extends ActionBarActivity implements
     public void OnCreatedToDo(boolean b)
     {
         ArrayList<Schedule> list= SerializerHelper.DeSerializeFromFile(this, SerializerHelper.todosFileName);
-        if(list==null) list=new ArrayList<>();
-        ScheduleList.TodosList=list;
+        if(list!=null)
+        {
+            ScheduleList.TodosList=list;
+        }
 
         if(ConfigHelper.ISLOADLISTONCE)
         {

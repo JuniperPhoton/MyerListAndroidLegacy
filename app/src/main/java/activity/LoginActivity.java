@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.juniper.myerlistandroid.R;
@@ -39,11 +41,22 @@ public class LoginActivity extends AppCompatActivity implements PostHelper.OnChe
         super.onCreate(savedInstanceState);
 
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
         setContentView(R.layout.activity_login);
+
+        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.LOLLIPOP)
+        {
+            CardView toLoginCard=(CardView)findViewById(R.id.loginBtn_cardview);
+            LinearLayout.LayoutParams layoutParamsForTop=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParamsForTop.setMargins(40,60,40,0);
+            layoutParamsForTop.height=140;
+            toLoginCard.setLayoutParams(layoutParamsForTop);
+        }
+
 
         mEmailBox=(EditText)findViewById(R.id.emailbox);
         mPasswordBox=(EditText)findViewById(R.id.psbox);

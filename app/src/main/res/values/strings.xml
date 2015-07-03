@@ -50,7 +50,7 @@
     <string name="vaild_email">请输入有效的电子邮件</string>
     <string name="valid_password">两次输入的密码无效</string>
     <string name="about_myerlist">关于 MyerList</string>
-    <string name="credit">感谢</string>
+    <string name="credit">开发者</string>
     <string name="feedback">反馈</string>
     <string name="version">版本</string>
     <string name="feedback_content">请通过邮件尽情反馈。</string>
@@ -61,7 +61,7 @@
     <string name="add_success">添加成功</string>
     <string name="login_success">登录成功</string>
     <string name="rebootHint">重启应用以生效</string>
-    <string name="version_value">1.1</string>
+    <string name="version_value">1.2</string>
     <string name="hello_blank_fragment">现在登录</string>
     <string name="now_to_login">现在登录</string>
     <string name="user_dont_exist">用户不存在</string>
@@ -74,4 +74,7 @@
     <string name="no_content">没有内容</string>
     <string name="no_deleted_content_hint">删除了的待办事项将会出现在这里</string>
     <string name="no_todo_content_hint">点击按钮以添加</string>
+    <string name="deleteall_alert">这将清空已删除列表</string>
+    <string name="open_src">开源项目</string>
+    <string name="modify_memo_title">修改待办事项</string>
 </resources>

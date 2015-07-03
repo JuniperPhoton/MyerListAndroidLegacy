@@ -1,11 +1,13 @@
 package adapter;
 
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +15,8 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -99,7 +103,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
                 View dialogView=(View)LayoutInflater.from(mCurrentActivity).inflate(R.layout.add_todo_dialog, (ViewGroup) mCurrentActivity.findViewById(R.id.dialog_title));
 
                 TextView titleText=(TextView)dialogView.findViewById(R.id.dialog_title_text);
-                titleText.setText(mCurrentActivity.getResources().getString(R.string.new_memo_title));
+                titleText.setText(mCurrentActivity.getResources().getString(R.string.modify_memo_title));
 
                 mNewMemoText=(EditText)dialogView.findViewById(R.id.newMemoEdit);
                 mNewMemoText.setHint(R.string.new_memo_hint);
@@ -359,19 +363,20 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
     {
         ValueAnimator valueAnimator=ValueAnimator.ofInt((int)left,0);
         valueAnimator.setDuration(700);
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
-        {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator)
-            {
-                v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
-                if(Math.abs((int)valueAnimator.getAnimatedValue())<10)
                 {
-                    mCurrentFragment.EnableRefresh();
-                    mIsInSwipe=false;
-                }
-            }
-        });
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator valueAnimator)
+                    {
+                        v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
+                        if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10)
+                        {
+                            mCurrentFragment.EnableRefresh();
+                            mIsInSwipe = false;
+                        }
+                    }
+                });
         valueAnimator.start();
     }
 

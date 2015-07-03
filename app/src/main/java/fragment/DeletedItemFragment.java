@@ -1,7 +1,8 @@
 package fragment;
 
 import android.app.Activity;
-import android.net.Uri;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,7 +14,6 @@ import android.widget.LinearLayout;
 
 import com.example.juniper.myerlistandroid.R;
 
-import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;
 
 import adapter.DeletedListAdapter;
@@ -68,11 +68,30 @@ public class DeletedItemFragment extends Fragment
             @Override
             public void onClick(View view)
             {
-                ((DeletedListAdapter)mDeletedListRecyclerView.getAdapter()).DeleteAll();
+                AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.logout_title);
+                builder.setMessage(R.string.deleteall_alert);
+                builder.setPositiveButton(R.string.ok_btn, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        ((DeletedListAdapter) mDeletedListRecyclerView.getAdapter()).DeleteAll();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.create().show();
             }
         });
         mNoItemHintLayout=(LinearLayout)view.findViewById(R.id.no_deleteditem_layout);
-        mActivity.OnCreated(true);
+        mActivity.OnCreatedDeleted(true);
 
         return view;
     }
@@ -125,6 +144,6 @@ public class DeletedItemFragment extends Fragment
 
     public interface OnCreatedViewListener
     {
-        void OnCreated(boolean b);
+        void OnCreatedDeleted(boolean b);
     }
 }

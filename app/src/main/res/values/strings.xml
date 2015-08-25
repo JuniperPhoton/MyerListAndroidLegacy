@@ -77,4 +77,7 @@
     <string name="deleteall_alert">这将清空已删除列表</string>
     <string name="open_src">开源项目</string>
     <string name="modify_memo_title">修改待办事项</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="UndoHint">未完成：</string>
 </resources>

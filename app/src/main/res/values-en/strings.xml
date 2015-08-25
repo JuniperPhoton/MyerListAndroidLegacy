@@ -80,4 +80,5 @@
     <string name="deleteall_alert">You are going to delete all items.</string>
     <string name="open_src">OPEN SRC</string>
     <string name="modify_memo_title">MODIFY MEMO</string>
+    <string name="UndoHint">Undo:</string>
 </resources>

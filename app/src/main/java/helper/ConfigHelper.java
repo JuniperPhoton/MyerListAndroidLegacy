@@ -9,11 +9,14 @@ import android.util.DisplayMetrics;
 
 import java.util.Locale;
 
+import service.ListWidgetService;
+
 public  class ConfigHelper
 {
     private static String name="config";
     public static boolean ISOFFLINEMODE=true;
     public static boolean ISLOADLISTONCE=false;
+
 
     public  static  void ConfigAppSetting()
     {

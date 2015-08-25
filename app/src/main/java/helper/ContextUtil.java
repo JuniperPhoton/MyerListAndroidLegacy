@@ -6,6 +6,7 @@ import android.content.Intent;
 import activity.MainActivity;
 import activity.StartActivity;
 import model.ScheduleList;
+import service.ListWidgetService;
 
 public class ContextUtil extends Application {
     private static ContextUtil instance;
@@ -13,6 +14,9 @@ public class ContextUtil extends Application {
     public static ContextUtil getInstance() {
         return instance;
     }
+
+    public static ListWidgetService.ListViewsFactory globalListViewFactory;
+
 
     @Override
     public void onCreate()

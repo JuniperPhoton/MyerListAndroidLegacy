@@ -27,6 +27,7 @@ import java.util.TimerTask;
 import activity.MainActivity;
 import helper.ConfigHelper;
 import helper.ContextUtil;
+import helper.GetScheduleAsyncTask;
 import helper.PostHelper;
 import adapter.ToDoListAdapter;
 import model.Schedule;
@@ -230,7 +231,9 @@ public class ToDoFragment extends Fragment
 
     public void GetAllSchedules()
     {
-        PostHelper.GetOrderedSchedules(getActivity(), ConfigHelper.getString(getActivity(), "sid"),ConfigHelper.getString(getActivity(),"access_token"));
+        //ArrayList newlist=new GetScheduleAsyncTask(this).execute().get();
+        //getActivity().OnGotScheduleResponse(newlist);
+        //PostHelper.GetOrderedSchedules(getActivity(), ConfigHelper.getString(getActivity(), "sid"),ConfigHelper.getString(getActivity(),"access_token"));
     }
 
 

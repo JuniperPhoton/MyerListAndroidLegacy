@@ -21,10 +21,12 @@ import fragment.ToDoFragment;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 import helper.AppHelper;
 import helper.ConfigHelper;
 import helper.ContextUtil;
+import helper.GetScheduleAsyncTask;
 import helper.PostHelper;
 import helper.PostHelper.OnGetSchedulesCallback;
 import adapter.NavigationDrawerCallbacks;
@@ -102,12 +104,9 @@ public class MainActivity extends ActionBarActivity implements
 
     private void InitialFragment(Bundle savedInstanceState,boolean isLogined)
     {
+
         if (findViewById(R.id.fragment_container) != null)
         {
-
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
             if (savedInstanceState != null)
             {
                 return;
@@ -120,7 +119,19 @@ public class MainActivity extends ActionBarActivity implements
             if(isLogined)
             {
                 mToDoFragment.ShowRefreshing();
-                PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
+                //PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
+                try
+                {
+                    ArrayList list= new GetScheduleAsyncTask(this).execute().get();
+                    if(list!=null)
+                    {
+                       OnGotScheduleResponse(list);
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
             }
         }
 
@@ -259,7 +270,6 @@ public class MainActivity extends ActionBarActivity implements
             mToDoFragment.StopRefreshing();
 
             SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ScheduleList.TodosList, SerializerHelper.todosFileName);
-
         }
     }
 
@@ -268,7 +278,16 @@ public class MainActivity extends ActionBarActivity implements
     {
         if(value)
         {
-            PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
+            try
+            {
+                ArrayList list=new GetScheduleAsyncTask(this).execute().get();
+                OnGotScheduleResponse(list);
+            }
+           catch (Exception e)
+           {
+
+           }
+            //PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
         }
         else
         {
@@ -352,7 +371,18 @@ public class MainActivity extends ActionBarActivity implements
             if(!ConfigHelper.ISOFFLINEMODE)
             {
                 mToDoFragment.ShowRefreshing();
-                PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
+
+                try
+                {
+                    ArrayList newlist=new GetScheduleAsyncTask(this).execute().get();
+                    OnGotScheduleResponse(newlist);
+                    //PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
+                }
+                catch (Exception e)
+                {
+
+                }
+
             }
             else
             {

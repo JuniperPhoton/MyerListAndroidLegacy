@@ -17,9 +17,8 @@ import java.util.Calendar;
 import model.Schedule;
 
 public class PostHelper
+
 {
-
-
     public final static String domain = "121.41.21.21";
     public static String UserCheckExist = "http://" + domain + "/schedule/User/CheckUserExist/v1?";
     public static String UserRegisterUri = "http://" + domain + "/schedule/User/Register/v1?";
@@ -153,7 +152,7 @@ public class PostHelper
                             ConfigHelper.putString(ContextUtil.getInstance(), "password", password);
                             ConfigHelper.putString(ContextUtil.getInstance(),"salt",salt);
 
-                            mOnRegisteredListener.OnRegisteredResponse(true,salt);
+                            mOnRegisteredListener.OnRegisteredResponse(true, salt);
                         } else mOnRegisteredListener.OnRegisteredResponse(false, null);
                     } else mOnRegisteredListener.OnRegisteredResponse(false, null);
                 }
@@ -225,9 +224,9 @@ public class PostHelper
         });
     }
 
-    public static void GetOrderedSchedules(Context context,final String sid, final String access_token)
+    public static void GetOrderedSchedules(Context callback,final String sid, final String access_token)
     {
-        mOnGetSchedulesCallback =(OnGetSchedulesCallback)context;
+        mOnGetSchedulesCallback =(OnGetSchedulesCallback)callback;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
@@ -467,6 +466,7 @@ public class PostHelper
 
         });
     }
+
 
     public interface OnCheckResponseCallback
     {

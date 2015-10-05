@@ -1,13 +1,8 @@
 package adapter;
 
-import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,38 +22,50 @@ import com.example.juniper.myerlistandroid.R;
 
 import java.util.ArrayList;
 
-import activity.MainActivity;
-import activity.StartActivity;
 import fragment.ToDoFragment;
 import helper.ConfigHelper;
 import helper.ContextUtil;
 import helper.PostHelper;
 import helper.SerializerHelper;
-import model.Schedule;
-import model.ScheduleList;
+import model.ToDo;
+import model.ToDoListHelper;
 
 
 public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHolder> implements View.OnTouchListener
 {
+    //能否操作列表项目
     private boolean mCanOperate=true;
+
+    //当前所在的 Activity
     private Activity mCurrentActivity;
+
+    //当前所在的 Fragment
     private ToDoFragment mCurrentFragment;
-    private ArrayList<Schedule> mMySchedules;
-    private Schedule mCurrentSchedule=null;
+
+    //表示的列表
+    private ArrayList<ToDo> mMyToDos;
+
+    //当前操控的项目
+    private ToDo mCurrentToDo =null;
+
     int lastX;
 
-    private boolean mIsGreenOn=false;
-    private boolean mIsRedOn=false;
+    private boolean mIsInGreen =false;
+    private boolean mIsInRed =false;
+    private boolean mIsSwiping =false;
 
-    private boolean mIsInSwipe=false;
-
+    //修改的时候弹出的对话框
     private android.support.v7.app.AlertDialog mDialog;
+
+    //修改的时候文本框
     private EditText mNewMemoText;
 
-    public ToDoListAdapter(ArrayList<Schedule> data,Activity activity,ToDoFragment fragment)
+    //构造函数
+    //传入当前的列表
+    public ToDoListAdapter(ArrayList<ToDo> data,Activity activity,ToDoFragment fragment)
     {
         mCurrentActivity=activity;
-        mMySchedules=data;
+        mMyToDos =data;
         mCurrentFragment=fragment;
     }
 
@@ -72,31 +78,94 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         return viewHolder;
     }
 
+    //创建每一项的布局
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position)
     {
-        //bind data to UI component
-        holder.textView.setText(mMySchedules.get(position).getContent());
-        holder.setID(mMySchedules.get(position).getID());
-        if(!mMySchedules.get(position).getIsDone())
+        //设置文字
+        holder.textView.setText(mMyToDos.get(position).getContent());
+
+        //设置类别
+        int cate= mMyToDos.get(position).getCate();
+        switch (cate)
+        {
+            case 0:holder.cateImageView.setImageResource(R.drawable.cate_default);break;
+            case 1:holder.cateImageView.setImageResource(R.drawable.cate_work);break;
+            case 2:holder.cateImageView.setImageResource(R.drawable.cate_life);break;
+            case 3:holder.cateImageView.setImageResource(R.drawable.cate_family);break;
+            case 4:holder.cateImageView.setImageResource(R.drawable.cate_enter);break;
+        }
+
+        holder.cateImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                String targetID=holder.getID();
+                int index=0;
+
+                //根据ID 找到项目
+                for(int i=0;i< mMyToDos.size();i++)
+                {
+                    ToDo s= mMyToDos.get(i);
+                    if(s.getID().equals(targetID))
+                    {
+                        index=i;
+                        break;
+                    }
+                }
+
+                ToDo currentItem=mMyToDos.get(index);
+                int cate=currentItem.getCate();
+                currentItem.setCate(++cate);
+                if(cate>=5) currentItem.setCate(0);
+                switch (currentItem.getCate())
+                {
+                    case 0:holder.cateImageView.setImageResource(R.drawable.cate_default);break;
+                    case 1:holder.cateImageView.setImageResource(R.drawable.cate_work);break;
+                    case 2:holder.cateImageView.setImageResource(R.drawable.cate_life);break;
+                    case 3:holder.cateImageView.setImageResource(R.drawable.cate_family);break;
+                    case 4:holder.cateImageView.setImageResource(R.drawable.cate_enter);break;
+                }
+
+                //要notify UI 才会更新
+                notifyItemChanged(index);
+
+                if(!ConfigHelper.ISOFFLINEMODE)
+                {
+                    PostHelper.UpdateContent(mCurrentActivity,ConfigHelper.getString(mCurrentActivity, "sid"),targetID,currentItem.getContent(),cate);
+                }
+                else
+                {
+                    SerializerHelper.SerializeToFile(mCurrentActivity, mMyToDos,SerializerHelper.todosFileName);
+                }
+            }
+        });
+
+        holder.setID(mMyToDos.get(position).getID());
+
+        //设置是否完成
+        if(!mMyToDos.get(position).getIsDone())
         {
             holder.lineView.setVisibility(View.GONE);
         }
+
+        //设置删除
         holder.deleteView.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                deleteToDos(mMySchedules.get(position));
+                deleteToDos(mMyToDos.get(position));
             }
         });
 
+        //设置点击修改
         holder.relativeLayout.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                if(mIsInSwipe)
+                if(mIsSwiping)
                 {
                     return;
                 }
@@ -119,25 +188,32 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
                         mDialog.dismiss();
                         String targetID=holder.getID();
                         int index=0;
-                        for(int i=0;i<mMySchedules.size();i++)
+
+                        //根据ID 找到项目
+                        for(int i=0;i< mMyToDos.size();i++)
                         {
-                            Schedule s=mMySchedules.get(i);
+                            ToDo s= mMyToDos.get(i);
                             if(s.getID().equals(targetID))
                             {
                                 index=i;
                                 break;
                             }
                         }
-                        mMySchedules.get(index).setContent(mNewMemoText.getText().toString());
+
+                        //更新项目
+                        ToDo currentItem=mMyToDos.get(index);
+                        currentItem.setContent(mNewMemoText.getText().toString());
+
+                        //要notify UI 才会更新
                         notifyItemChanged(index);
 
                         if(!ConfigHelper.ISOFFLINEMODE)
                         {
-                            PostHelper.UpdateContent(mCurrentActivity,ConfigHelper.getString(mCurrentActivity,"sid"),targetID,mNewMemoText.getText().toString());
+                            PostHelper.UpdateContent(mCurrentActivity,ConfigHelper.getString(mCurrentActivity,"sid"),targetID,mNewMemoText.getText().toString(),currentItem.getCate());
                         }
                         else
                         {
-                            SerializerHelper.SerializeToFile(mCurrentActivity,mMySchedules,SerializerHelper.todosFileName);
+                            SerializerHelper.SerializeToFile(mCurrentActivity, mMyToDos,SerializerHelper.todosFileName);
                         }
 
                     }
@@ -188,27 +264,28 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         mCanOperate=!isDraweOpen;
     }
 
-    public void addToDos(Schedule todoToAdd)
+    public void addToDos(ToDo todoToAdd)
     {
+        if(todoToAdd==null) return;
         if(ConfigHelper.getBoolean(ContextUtil.getInstance(),"AddToBottom"))
         {
-            mMySchedules.add(todoToAdd);
-            notifyItemInserted(mMySchedules.size()-1);
+            mMyToDos.add(todoToAdd);
+            notifyItemInserted(mMyToDos.size()-1);
         }
         else
         {
-            mMySchedules.add(0, todoToAdd);
+            mMyToDos.add(0, todoToAdd);
             notifyItemInserted(0);
         }
-        SerializerHelper.SerializeToFile(mCurrentActivity, mMySchedules, SerializerHelper.todosFileName);
+        SerializerHelper.SerializeToFile(mCurrentActivity, mMyToDos, SerializerHelper.todosFileName);
     }
 
-    public void deleteToDos(Schedule todoToDelete)
+    public void deleteToDos(ToDo todoToDelete)
     {
         int index=0;
-        for(int i=0;i<mMySchedules.size();i++)
+        for(int i=0;i< mMyToDos.size();i++)
         {
-           Schedule s=mMySchedules.get(i);
+           ToDo s= mMyToDos.get(i);
             if(s.getID().equals(todoToDelete.getID()))
             {
                 index=i;
@@ -216,14 +293,14 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             }
         }
         notifyItemRemoved(index);
-        mMySchedules.remove(todoToDelete);
+        mMyToDos.remove(todoToDelete);
 
-        ScheduleList.DeletedList.add(0, todoToDelete);
-        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ScheduleList.DeletedList, SerializerHelper.deletedFileName);
+        ToDoListHelper.DeletedList.add(0, todoToDelete);
+        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListHelper.DeletedList, SerializerHelper.deletedFileName);
 
         if(ConfigHelper.ISOFFLINEMODE)
         {
-            SerializerHelper.SerializeToFile(mCurrentActivity, mMySchedules, SerializerHelper.todosFileName);
+            SerializerHelper.SerializeToFile(mCurrentActivity, mMyToDos, SerializerHelper.todosFileName);
         }
         else PostHelper.SetDelete(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), todoToDelete.getID());
 
@@ -232,12 +309,12 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
     @Override
     public int getItemCount()
     {
-        return mMySchedules!=null?mMySchedules.size():0;
+        return mMyToDos !=null? mMyToDos.size():0;
     }
 
-    public ArrayList<Schedule> getListSrc()
+    public ArrayList<ToDo> getListSrc()
     {
-        return mMySchedules;
+        return mMyToDos;
     }
 
 
@@ -260,7 +337,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
 
                 if(!mCanOperate) break;
 
-                mIsInSwipe=true;
+                mIsSwiping =true;
 
                 int dx=(int)event.getRawX()-lastX;
 
@@ -275,11 +352,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
 
                 lastX=(int)event.getRawX();
 
-                if(scrollleft<-150 && !mIsGreenOn)
+                if(scrollleft<-150 && !mIsInGreen)
                 {
                     SetColorAnim((ImageView) root.findViewById(R.id.greenImageView),true);
                 }
-                else if(scrollleft>150 && !mIsRedOn)
+                else if(scrollleft>150 && !mIsInRed)
                 {
                     SetColorAnim((ImageView) root.findViewById(R.id.redImageView),false);
                 }
@@ -307,35 +384,35 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
     {
         //Find the current schedule
 
-        for (Schedule s:mMySchedules)
+        for (ToDo s: mMyToDos)
         {
             if(s.getID().equals(id))
             {
-                mCurrentSchedule=s;
+                mCurrentToDo =s;
                 break;
             }
         }
-        if(mCurrentSchedule==null) return;
+        if(mCurrentToDo ==null) return;
 
         //Finish
         if(scrollLeft<-150)
         {
 
             ImageView lineview=(ImageView)v.findViewById(R.id.lineView);
-            if(mCurrentSchedule.getIsDone())
+            if(mCurrentToDo.getIsDone())
             {
                 lineview.setVisibility(View.GONE);
-                mCurrentSchedule.setIsDone(false);
+                mCurrentToDo.setIsDone(false);
             }
             else
             {
                 lineview.setVisibility(View.VISIBLE);
-                mCurrentSchedule.setIsDone(true);
+                mCurrentToDo.setIsDone(true);
             }
 
             if(!ConfigHelper.ISOFFLINEMODE)
             {
-                PostHelper.SetDone(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), id, mCurrentSchedule.getIsDone() ? "1" : "0");
+                PostHelper.SetDone(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), id, mCurrentToDo.getIsDone() ? "1" : "0");
             }
 
 
@@ -343,20 +420,20 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         //Delete
         else if(scrollLeft>150)
         {
-            deleteToDos(mCurrentSchedule);
+            deleteToDos(mCurrentToDo);
         }
 
-        if(mIsGreenOn)
+        if(mIsInGreen)
         {
             UnSetColorAnim((ImageView) v.findViewById(R.id.greenImageView),true);
         }
-        else if(mIsRedOn)
+        else if(mIsInRed)
         {
             UnSetColorAnim((ImageView)v.findViewById(R.id.redImageView),false);
         }
 
         SetBackAnim(v, scrollLeft);
-        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mMySchedules, SerializerHelper.todosFileName);
+        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mMyToDos, SerializerHelper.todosFileName);
     }
 
     private void SetBackAnim(final View v, final float left)
@@ -373,7 +450,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
                         if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10)
                         {
                             mCurrentFragment.EnableRefresh();
-                            mIsInSwipe = false;
+                            mIsSwiping = false;
                         }
                     }
                 });
@@ -410,8 +487,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         animationSet.addAnimation(alphaAnimation);
         v.startAnimation(animationSet);
 
-        if(isGreen) mIsGreenOn=true;
-        else mIsRedOn=true;
+        if(isGreen) mIsInGreen =true;
+        else mIsInRed =true;
     }
 
     private void UnSetColorAnim(final ImageView v, final boolean isGreen)
@@ -431,8 +508,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             public void onAnimationEnd(Animation animation)
             {
                 v.setVisibility(View.INVISIBLE);
-                if(isGreen) mIsGreenOn=false;
-                else mIsRedOn=false;
+                if(isGreen) mIsInGreen =false;
+                else mIsInRed =false;
             }
 
             @Override
@@ -454,6 +531,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         public RelativeLayout relativeLayout;
         public ImageView greenImageView;
         public ImageView redImageView;
+        public ImageView cateImageView;
 
         public ViewHolder(View itemView)
         {
@@ -464,6 +542,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             redImageView=(ImageView)itemView.findViewById(R.id.redImageView);
             deleteView=(ImageView)itemView.findViewById(R.id.deleteView);
             relativeLayout=(RelativeLayout)itemView.findViewById(R.id.todo_layout);
+            cateImageView=(ImageView)itemView.findViewById(R.id.cateCircleImage);
         }
 
         public String getID()

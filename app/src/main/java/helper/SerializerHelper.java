@@ -6,20 +6,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-import model.Schedule;
+import model.ToDo;
 
 public class SerializerHelper
 {
@@ -45,7 +38,7 @@ public class SerializerHelper
         }
     }
 
-    public static  ArrayList<Schedule> DeSerializeFromFile(Context context, String fileName)
+    public static  ArrayList<ToDo> DeSerializeFromFile(Context context, String fileName)
     {
         try
         {
@@ -64,9 +57,9 @@ public class SerializerHelper
             Gson gson=new Gson();
             GsonBuilder builder = new GsonBuilder();
             gson = builder.enableComplexMapKeySerialization().create();
-            Type listType = new TypeToken<ArrayList<Schedule>>() {}.getType();
+            Type listType = new TypeToken<ArrayList<ToDo>>() {}.getType();
 
-            ArrayList<Schedule> list=gson.fromJson(byteArrayOutputStream.toString(), listType);
+            ArrayList<ToDo> list=gson.fromJson(byteArrayOutputStream.toString(), listType);
 
             return list;
 

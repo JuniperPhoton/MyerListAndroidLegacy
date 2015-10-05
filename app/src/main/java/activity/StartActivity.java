@@ -1,7 +1,5 @@
 package activity;
 
-import android.animation.TimeInterpolator;
-import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Build;
@@ -14,18 +12,13 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.juniper.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import activity.LoginActivity;
-import activity.MainActivity;
 import helper.ConfigHelper;
+import moe.feng.material.statusbar.StatusBarCompat;
 
 
 public class StartActivity extends AppCompatActivity
@@ -42,14 +35,15 @@ public class StartActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
 
+        StatusBarCompat.setUpActivity(this);
+
+        //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+//        {
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        }
 
         setContentView(R.layout.activity_start);
-
 
         mRootLinearLayout=(LinearLayout)findViewById(R.id.rootLinearLayout);
         mRootLinearLayout.setAlpha(0f);
@@ -75,7 +69,6 @@ public class StartActivity extends AppCompatActivity
 
             toMainCard.setLayoutParams(layoutParamsForBottom);
         }
-        //startNavigatedToAnim();
     }
 
     private void startNavigatedToAnim()

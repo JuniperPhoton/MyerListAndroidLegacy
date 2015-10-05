@@ -1,7 +1,5 @@
 package helper;
 
-import java.util.regex.Pattern;
-
 /**
  * Created by juniperphoton on 6/5/2015.
  */

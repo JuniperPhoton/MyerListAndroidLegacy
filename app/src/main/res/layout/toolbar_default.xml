@@ -4,4 +4,5 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorPrimary"
+    android:paddingTop="22sp"
     android:minHeight="@dimen/abc_action_bar_default_height_material"/>

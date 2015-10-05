@@ -14,11 +14,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import model.Schedule;
+import interfaces.IRequestCallbacks;
+import model.ToDo;
 
 public class PostHelper
 {
-
 
     public final static String domain = "121.41.21.21";
     public static String UserCheckExist = "http://" + domain + "/schedule/User/CheckUserExist/v1?";
@@ -34,21 +34,21 @@ public class PostHelper
     public static String ScheduleSetOrderUri = "http://" + domain + "/schedule/Schedule/SetMyOrder/v1?";
 
     private static boolean mExist=false;
-    public static OnCheckResponseCallback mOnCheckResponseCallback;
-    public static OnGetSaltResponseCallback mOnGetSaltResponseCallback;
-    public static OnLoginResponseCallback mOnLoginResponseCallback;
-    public static OnGetSchedulesCallback mOnGetSchedulesCallback;
-    public static OnAddedMemoCallback mOnAddedCallback;
-    public static OnSetOrderCallback mOnSetOrderCallback;
-    public static OnRegisterCallback mOnRegisteredListener;
-    public static OnDoneCallback mOnDoneCallback;
-    public static OnDeleteCallback mOnDeleteCallback;
-    public static OnUpdateContentCallback mOnUpdateCallback;
-
+//    public static OnCheckResponseCallback mOnCheckResponseCallback;
+//    public static OnGetSaltResponseCallback mOnGetSaltResponseCallback;
+//    public static OnLoginResponseCallback mOnLoginResponseCallback;
+//    public static OnGetSchedulesCallback mOnGetSchedulesCallback;
+//    public static OnAddedMemoCallback mOnAddedCallback;
+//    public static OnSetOrderCallback mOnSetOrderCallback;
+//    public static OnRegisterCallback mOnRegisteredListener;
+//    public static OnDoneCallback mOnDoneCallback;
+//    public static OnDeleteCallback mOnDeleteCallback;
+//    public static OnUpdateContentCallback mOnUpdateCallback;
+    public static IRequestCallbacks mRequestCallback;
 
     public  static void CheckExist(Context context,final String email)
     {
-        mOnCheckResponseCallback =(OnCheckResponseCallback)context;
+        mRequestCallback =(IRequestCallbacks)context;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams requestParams=new RequestParams();
@@ -66,16 +66,16 @@ public class PostHelper
                         boolean isExist=response.getBoolean("isExist");
                         if(isExist)
                         {
-                            mOnCheckResponseCallback.OnCheckResponse(true);
+                            mRequestCallback.OnCheckResponse(true);
                         }
-                        else mOnCheckResponseCallback.OnCheckResponse(false);
+                        else mRequestCallback.OnCheckResponse(false);
                     }
-                    else mOnCheckResponseCallback.OnCheckResponse(false);
+                    else mRequestCallback.OnCheckResponse(false);
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
-                    mOnCheckResponseCallback.OnCheckResponse(false);
+                    mRequestCallback.OnCheckResponse(false);
                 }
             }
 
@@ -84,14 +84,14 @@ public class PostHelper
 
     public static void GetSalt(Context context,String email)
     {
-        mOnGetSaltResponseCallback =(OnGetSaltResponseCallback)context;
+        mRequestCallback =(IRequestCallbacks)context;
+
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
         params.put("email", email);
         client.post(UserGetSalt,params,new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
                 try
                 {
                     boolean isSuccess=response.getBoolean("isSuccessed");
@@ -99,23 +99,11 @@ public class PostHelper
                     {
                         String salt=response.getString("Salt");
 
-                        mOnGetSaltResponseCallback.OnGetSaltResponse(salt);
+                        mRequestCallback.OnGetSaltResponse(salt);
                     }
-                    else mOnGetSaltResponseCallback.OnGetSaltResponse(null);
+                    else mRequestCallback.OnGetSaltResponse(null);
                 }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                    try
-                    {
-                        mOnGetSaltResponseCallback.OnGetSaltResponse(null);
-                    }
-                    catch (NoSuchAlgorithmException e1)
-                    {
-                        e1.printStackTrace();
-                    }
-                }
-                catch (NoSuchAlgorithmException e)
+                catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -125,7 +113,7 @@ public class PostHelper
 
     public static void Register(Context context,final String email, final String password)
     {
-        mOnRegisteredListener=(OnRegisterCallback)context;
+        mRequestCallback =(IRequestCallbacks)context;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
@@ -153,27 +141,27 @@ public class PostHelper
                             ConfigHelper.putString(ContextUtil.getInstance(), "password", password);
                             ConfigHelper.putString(ContextUtil.getInstance(),"salt",salt);
 
-                            mOnRegisteredListener.OnRegisteredResponse(true,salt);
-                        } else mOnRegisteredListener.OnRegisteredResponse(false, null);
-                    } else mOnRegisteredListener.OnRegisteredResponse(false, null);
+                            mRequestCallback.OnRegisteredResponse(true,salt);
+                        } else mRequestCallback.OnRegisteredResponse(false, null);
+                    } else mRequestCallback.OnRegisteredResponse(false, null);
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
-                    mOnRegisteredListener.OnRegisteredResponse(false, null);
+                    mRequestCallback.OnRegisteredResponse(false, null);
                 }
             }
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object)
             {
-                mOnRegisteredListener.OnRegisteredResponse(false, null);
+                mRequestCallback.OnRegisteredResponse(false, null);
             }
         });
     }
 
     public static void Login(Context context, final String email, final String password, final String salt) throws NoSuchAlgorithmException
     {
-        mOnLoginResponseCallback =(OnLoginResponseCallback)context;
+        mRequestCallback =(IRequestCallbacks)context;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
@@ -205,21 +193,21 @@ public class PostHelper
                             ConfigHelper.putString(ContextUtil.getInstance(),"salt",salt);
                             ConfigHelper.putString(ContextUtil.getInstance(), "sid", sid);
                             ConfigHelper.putString(ContextUtil.getInstance(), "access_token", access_token);
-                            mOnLoginResponseCallback.OnLoginResponse(true);
-                        } else mOnLoginResponseCallback.OnLoginResponse(false);
-                    } else mOnLoginResponseCallback.OnLoginResponse((false));
+                            mRequestCallback.OnLoginResponse(true);
+                        } else mRequestCallback.OnLoginResponse(false);
+                    } else mRequestCallback.OnLoginResponse((false));
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
-                    mOnLoginResponseCallback.OnLoginResponse((false));
+                    mRequestCallback.OnLoginResponse((false));
                 }
 
             }
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object)
             {
-                mOnLoginResponseCallback.OnLoginResponse((false));
+                mRequestCallback.OnLoginResponse((false));
             }
 
         });
@@ -227,7 +215,7 @@ public class PostHelper
 
     public static void GetOrderedSchedules(Context context,final String sid, final String access_token)
     {
-        mOnGetSchedulesCallback =(OnGetSchedulesCallback)context;
+        mRequestCallback =(IRequestCallbacks)context;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
@@ -248,7 +236,7 @@ public class PostHelper
 
                         if(array!=null)
                         {
-                            final ArrayList<Schedule> todosList=Schedule.parseJsonObjFromArray(array);
+                            final ArrayList<ToDo> todosList= ToDo.parseJsonObjFromArray(array);
 
                             AsyncHttpClient client=new AsyncHttpClient();
                             RequestParams params=new RequestParams();
@@ -264,8 +252,8 @@ public class PostHelper
                                         if(isSuccess)
                                         {
                                             String orderStr=response.getJSONArray(("OrderList")).getJSONObject(0).getString("list_order");
-                                            ArrayList<Schedule> listToReturn=Schedule.setOrderByString(todosList,orderStr);
-                                            mOnGetSchedulesCallback.OnGotScheduleResponse(listToReturn);
+                                            ArrayList<ToDo> listToReturn= ToDo.setOrderByString(todosList, orderStr);
+                                            mRequestCallback.OnGotScheduleResponse(listToReturn);
                                         }
                                     }
                                     catch (JSONException e)
@@ -288,9 +276,9 @@ public class PostHelper
         });
     }
 
-    public static void AddMemo(Context context,String sid,String content,String isDone)
+    public static void AddToDo(Context context, String sid, String content, String isDone,int cate)
     {
-        mOnAddedCallback =(OnAddedMemoCallback)context;
+        mRequestCallback =(IRequestCallbacks)context;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
@@ -298,6 +286,7 @@ public class PostHelper
         params.put("time", Calendar.getInstance().getTime().toString());
         params.put("content",content);
         params.put("isdone",isDone);
+        params.put("cate",String.valueOf(cate));
         client.post(ScheduleAddUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context,"access_token"), params, new JsonHttpResponseHandler()
         {
             @Override
@@ -309,14 +298,14 @@ public class PostHelper
                     isSuccess = response.getBoolean("isSuccessed");
                     if (isSuccess)
                     {
-                        Schedule newSche=Schedule.parseJsonObjToObj(response);
-                        mOnAddedCallback.OnAddedResponse(true, newSche);
+                        ToDo newSche= ToDo.parseJsonObjToObj(response.getJSONObject("ScheduleInfo"));
+                        mRequestCallback.OnAddedResponse(true, newSche);
                     }
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
-                    mOnAddedCallback.OnAddedResponse(false, null);
+                    mRequestCallback.OnAddedResponse(false, null);
                 }
 
             }
@@ -326,7 +315,7 @@ public class PostHelper
 
     public static void SetListOrder(Context context,String sid,String order)
     {
-        mOnSetOrderCallback =(OnSetOrderCallback)context;
+        mRequestCallback =(IRequestCallbacks)context;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
@@ -343,14 +332,14 @@ public class PostHelper
                     isSuccess = response.getBoolean("isSuccessed");
                     if (isSuccess)
                     {
-                        Schedule newSche=Schedule.parseJsonObjToObj(response);
-                        mOnSetOrderCallback.OnSetOrderResponse(true);
+                        ToDo newSche= ToDo.parseJsonObjToObj(response);
+                        mRequestCallback.OnSetOrderResponse(true);
                     }
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
-                    mOnSetOrderCallback.OnSetOrderResponse(false);
+                    mRequestCallback.OnSetOrderResponse(false);
                 }
 
             }
@@ -360,7 +349,7 @@ public class PostHelper
 
     public static void SetDone(Context context,String sid,String id,String isDone)
     {
-        mOnDoneCallback =(OnDoneCallback)context;
+        mRequestCallback =(IRequestCallbacks)context;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
@@ -377,17 +366,17 @@ public class PostHelper
                     isSuccess = response.getBoolean("isSuccessed");
                     if (isSuccess)
                     {
-                        mOnDoneCallback.OnDoneResponse(true);
+                        mRequestCallback.OnDoneResponse(true);
                     }
                     else
                     {
-                        mOnDoneCallback.OnDoneResponse(false);
+                        mRequestCallback.OnDoneResponse(false);
                     }
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
-                    mOnDoneCallback.OnDoneResponse(false);
+                    mRequestCallback.OnDoneResponse(false);
                 }
 
             }
@@ -397,7 +386,7 @@ public class PostHelper
 
     public static void SetDelete(Context context,String sid,String id)
     {
-        mOnDeleteCallback =(OnDeleteCallback)context;
+        mRequestCallback =(IRequestCallbacks)context;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
@@ -413,17 +402,17 @@ public class PostHelper
                     isSuccess = response.getBoolean("isSuccessed");
                     if (isSuccess)
                     {
-                        mOnDeleteCallback.OnDeleteResponse(true);
+                        mRequestCallback.OnDeleteResponse(true);
                     }
                     else
                     {
-                        mOnDeleteCallback.OnDeleteResponse(false);
+                        mRequestCallback.OnDeleteResponse(false);
                     }
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
-                    mOnDeleteCallback.OnDeleteResponse(false);
+                    mRequestCallback.OnDeleteResponse(false);
                 }
 
             }
@@ -431,14 +420,15 @@ public class PostHelper
         });
     }
 
-    public static void UpdateContent(Context context,String sid,String id,String content)
+    public static void UpdateContent(Context context,String sid,String id,String content,int cate)
     {
-        mOnUpdateCallback =(OnUpdateContentCallback)context;
+        mRequestCallback =(IRequestCallbacks)context;
 
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
         params.put("id",id);
         params.put("content",content);
+        params.put("cate",String.valueOf(cate));
         client.post(ScheduleUpdateUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context,"access_token"), params, new JsonHttpResponseHandler()
         {
             @Override
@@ -450,17 +440,17 @@ public class PostHelper
                     isSuccess = response.getBoolean("isSuccessed");
                     if (isSuccess)
                     {
-                        mOnUpdateCallback.OnUpdateContent(true);
+                        mRequestCallback.OnUpdateContent(true);
                     }
                     else
                     {
-                        mOnUpdateCallback.OnUpdateContent(false);
+                        mRequestCallback.OnUpdateContent(false);
                     }
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
-                    mOnUpdateCallback.OnUpdateContent(false);
+                    mRequestCallback.OnUpdateContent(false);
                 }
 
             }
@@ -468,53 +458,53 @@ public class PostHelper
         });
     }
 
-    public interface OnCheckResponseCallback
-    {
-        void OnCheckResponse(boolean check);
-    }
-
-    public interface OnGetSaltResponseCallback
-    {
-        void OnGetSaltResponse(String str) throws NoSuchAlgorithmException;
-    }
-
-    public interface OnLoginResponseCallback
-    {
-        void OnLoginResponse(boolean value);
-    }
-
-    public interface OnGetSchedulesCallback
-    {
-        void OnGotScheduleResponse(ArrayList<Schedule> mytodosList);
-    }
-
-    public interface OnAddedMemoCallback
-    {
-        void OnAddedResponse(boolean isSuccess,Schedule newTodo);
-    }
-
-    public interface OnSetOrderCallback
-    {
-        void OnSetOrderResponse(boolean isSuccess);
-    }
-
-    public interface OnRegisterCallback
-    {
-        void OnRegisteredResponse(boolean isSuccess,String salt);
-    }
-
-    public interface OnDoneCallback
-    {
-        void OnDoneResponse(boolean isSuccess);
-    }
-
-    public interface OnDeleteCallback
-    {
-        void OnDeleteResponse(boolean isSuccess);
-    }
-
-    public interface OnUpdateContentCallback
-    {
-        void OnUpdateContent(boolean isSuccess);
-    }
+//    public interface OnCheckResponseCallback
+//    {
+//        void OnCheckResponse(boolean check);
+//    }
+//
+//    public interface OnGetSaltResponseCallback
+//    {
+//        void OnGetSaltResponse(String str) throws NoSuchAlgorithmException;
+//    }
+//
+//    public interface OnLoginResponseCallback
+//    {
+//        void OnLoginResponse(boolean value);
+//    }
+//
+//    public interface OnGetSchedulesCallback
+//    {
+//        void OnGotScheduleResponse(ArrayList<ToDo> mytodosList);
+//    }
+//
+//    public interface OnAddedMemoCallback
+//    {
+//        void OnAddedResponse(boolean isSuccess, ToDo newTodo);
+//    }
+//
+//    public interface OnSetOrderCallback
+//    {
+//        void OnSetOrderResponse(boolean isSuccess);
+//    }
+//
+//    public interface OnRegisterCallback
+//    {
+//        void OnRegisteredResponse(boolean isSuccess,String salt);
+//    }
+//
+//    public interface OnDoneCallback
+//    {
+//        void OnDoneResponse(boolean isSuccess);
+//    }
+//
+//    public interface OnDeleteCallback
+//    {
+//        void OnDeleteResponse(boolean isSuccess);
+//    }
+//
+//    public interface OnUpdateContentCallback
+//    {
+//        void OnUpdateContent(boolean isSuccess);
+//    }
 }

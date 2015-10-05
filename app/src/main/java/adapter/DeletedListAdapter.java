@@ -17,51 +17,51 @@ import helper.ConfigHelper;
 import helper.ContextUtil;
 import helper.PostHelper;
 import helper.SerializerHelper;
-import model.Schedule;
-import model.ScheduleList;
+import model.ToDo;
+import model.ToDoListHelper;
 
 
-public class DeletedListAdapter  extends RecyclerView.Adapter<DeletedListAdapter.ViewHolder>
+public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.ViewHolder>
 {
     private Activity mCurrentActivity;
     private DeletedItemFragment mDeletedItemFragment;
-    private ArrayList<Schedule> mDeleteSchedules;
+    private ArrayList<ToDo> mDeleteToDos;
 
-    public DeletedListAdapter(Activity activity, DeletedItemFragment deletedItemFragment,ArrayList<Schedule> deletedList)
+    public DeletedListAdapter(Activity activity, DeletedItemFragment deletedItemFragment, ArrayList<ToDo> deletedList)
     {
-        mDeletedItemFragment=deletedItemFragment;
-        mCurrentActivity=activity;
-        mDeleteSchedules=deletedList;
+        mDeletedItemFragment = deletedItemFragment;
+        mCurrentActivity = activity;
+        mDeleteToDos = deletedList;
     }
 
     @Override
     public DeletedListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.row_deleted,parent,false);
-        ViewHolder viewHolder=new ViewHolder(v);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_deleted, parent, false);
+        ViewHolder viewHolder = new ViewHolder(v);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(final DeletedListAdapter.ViewHolder holder, final int position)
     {
-        holder.mTextView.setText(mDeleteSchedules.get(position).getContent());
+        holder.mTextView.setText(mDeleteToDos.get(position).getContent());
         holder.mDeleteView.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
 
-                Schedule sToDelete=mDeleteSchedules.get(position);
-                mDeleteSchedules.remove(sToDelete);
+                ToDo sToDelete = mDeleteToDos.get(position);
+                mDeleteToDos.remove(sToDelete);
                 notifyItemRemoved(position);
 
-                if(mDeleteSchedules.size()==0)
+                if (mDeleteToDos.size() == 0)
                 {
                     mDeletedItemFragment.ShowNoItemHint();
                 }
 
-                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mDeleteSchedules, SerializerHelper.deletedFileName);
+                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
             }
         });
         holder.mReDoView.setOnClickListener(new View.OnClickListener()
@@ -69,26 +69,25 @@ public class DeletedListAdapter  extends RecyclerView.Adapter<DeletedListAdapter
             @Override
             public void onClick(View view)
             {
-                if(!ConfigHelper.ISOFFLINEMODE)
+                if (!ConfigHelper.ISOFFLINEMODE)
                 {
-                    PostHelper.AddMemo(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(),"sid"),mDeleteSchedules.get(position).getContent(),"0");
-                }
-                else
+                    PostHelper.AddToDo(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), mDeleteToDos.get(position).getContent(), "0", 0);
+                } else
                 {
-                    ScheduleList.TodosList.add(ScheduleList.TodosList.size(),mDeleteSchedules.get(position));
+                    ToDoListHelper.TodosList.add(ToDoListHelper.TodosList.size(), mDeleteToDos.get(position));
                 }
 
-                Schedule sToDelete=mDeleteSchedules.get(position);
-                mDeleteSchedules.remove(sToDelete);
+                ToDo sToDelete = mDeleteToDos.get(position);
+                mDeleteToDos.remove(sToDelete);
                 notifyItemRemoved(position);
 
-                if(mDeleteSchedules.size()==0)
+                if (mDeleteToDos.size() == 0)
                 {
                     mDeletedItemFragment.ShowNoItemHint();
                 }
 
-                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mDeleteSchedules, SerializerHelper.deletedFileName);
-                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ScheduleList.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
+                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListHelper.TodosList, SerializerHelper.todosFileName);
             }
         });
     }
@@ -96,16 +95,16 @@ public class DeletedListAdapter  extends RecyclerView.Adapter<DeletedListAdapter
 
     public void DeleteAll()
     {
-        notifyItemRangeChanged(0, mDeleteSchedules.size());
-        mDeleteSchedules.clear();
+        notifyItemRangeChanged(0, mDeleteToDos.size());
+        mDeleteToDos.clear();
         mDeletedItemFragment.ShowNoItemHint();
-        SerializerHelper.SerializeToFile(ContextUtil.getInstance(),mDeleteSchedules,SerializerHelper.deletedFileName);
+        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
     }
 
     @Override
     public int getItemCount()
     {
-        return mDeleteSchedules!=null?mDeleteSchedules.size():0;
+        return mDeleteToDos != null ? mDeleteToDos.size() : 0;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder
@@ -117,9 +116,9 @@ public class DeletedListAdapter  extends RecyclerView.Adapter<DeletedListAdapter
         public ViewHolder(View itemView)
         {
             super(itemView);
-            mTextView=(TextView)itemView.findViewById(R.id.deletedBlock);
-            mReDoView=(ImageView)itemView.findViewById(R.id.redoView);
-            mDeleteView=(ImageView)itemView.findViewById(R.id.deleteView);
+            mTextView = (TextView) itemView.findViewById(R.id.deletedBlock);
+            mReDoView = (ImageView) itemView.findViewById(R.id.redoView);
+            mDeleteView = (ImageView) itemView.findViewById(R.id.deleteView);
         }
     }
 }

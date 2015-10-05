@@ -1,3 +1,18 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/MyerListGray"
+                tools:context=".LoginActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="24sp"
+        android:layout_alignParentTop="true"
+        android:alpha="0.15"
+        android:elevation="@dimen/statusbar_elevation"
+        android:scaleType="fitXY"
+        android:src="@drawable/black_mask"/>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:orientation="vertical"
@@ -175,24 +190,8 @@
                 android:background="?android:attr/selectableItemBackground"/>
         </LinearLayout>
 
-        <!--<RadioGroup-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content">-->
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent">-->
-                <!--<RadioButton-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="ENGLISH"/>-->
-                <!--<RadioButton-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="中文"/>-->
-            <!--</LinearLayout>-->
-            <!-- -->
-        <!--</RadioGroup>-->
     </LinearLayout>
 
 
 </LinearLayout>
+</RelativeLayout>

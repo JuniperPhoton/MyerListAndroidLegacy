@@ -5,16 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.juniper.myerlistandroid.R;
@@ -25,6 +21,7 @@ import java.util.Locale;
 import helper.AppHelper;
 import helper.ConfigHelper;
 import helper.ContextUtil;
+import moe.feng.material.statusbar.StatusBarCompat;
 
 public class SettingActivity extends ActionBarActivity
 {
@@ -37,55 +34,58 @@ public class SettingActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
-        {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+
+        StatusBarCompat.setUpActivity(this);
+
+        //        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
+        //        {
+        //            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        //        }
         setContentView(R.layout.activity_setting);
 
-        mShowKeyboardSwitch =(com.rey.material.widget.Switch)findViewById(R.id.ShowKeyboardSwitch);
-        mAddToBottomSwitch=(com.rey.material.widget.Switch)findViewById(R.id.AddToBottomSwitch);
-        mHandHobbitSwitch=(com.rey.material.widget.Switch)findViewById(R.id.hand_hobbit_switch);
+        mShowKeyboardSwitch = (com.rey.material.widget.Switch) findViewById(R.id.ShowKeyboardSwitch);
+        mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.AddToBottomSwitch);
+        mHandHobbitSwitch = (com.rey.material.widget.Switch) findViewById(R.id.hand_hobbit_switch);
 
-        mLangText=(TextView)findViewById(R.id.lang_btn);
+        mLangText = (TextView) findViewById(R.id.lang_btn);
 
-        Boolean showKeyboard=ConfigHelper.getBoolean(ContextUtil.getInstance(), "ShowKeyboard");
+        Boolean showKeyboard = ConfigHelper.getBoolean(ContextUtil.getInstance(), "ShowKeyboard");
         mShowKeyboardSwitch.setChecked(showKeyboard);
 
-        Boolean addToBottom=ConfigHelper.getBoolean(ContextUtil.getInstance(),"AddToBottom");
+        Boolean addToBottom = ConfigHelper.getBoolean(ContextUtil.getInstance(), "AddToBottom");
         mAddToBottomSwitch.setChecked(addToBottom);
 
-        Boolean handUse= ConfigHelper.getBoolean(ContextUtil.getInstance(),"HandHobbit");
+        Boolean handUse = ConfigHelper.getBoolean(ContextUtil.getInstance(), "HandHobbit");
         mHandHobbitSwitch.setChecked(handUse);
 
-        final String langStr=ConfigHelper.getString(ContextUtil.getInstance(),"Language");
-        if(langStr.equals("Chinese"))
+        final String langStr = ConfigHelper.getString(ContextUtil.getInstance(), "Language");
+        if (langStr.equals("Chinese"))
         {
             mLangText.setText(getString(R.string.chinese));
-        }
-        else mLangText.setText("English");
+        } else
+            mLangText.setText("English");
 
         mLangText.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                AlertDialog.Builder builder=new AlertDialog.Builder(SettingActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                 builder.setTitle(getString(R.string.change_lang));
-//                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
-//                {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i)
-//                    {
-//                        dialogInterface.dismiss();
-//                    }
-//                });
-                builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)}, langStr.equals("Chinese")?1:0, new DialogInterface.OnClickListener()
+                //                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+                //                {
+                //                    @Override
+                //                    public void onClick(DialogInterface dialogInterface, int i)
+                //                    {
+                //                        dialogInterface.dismiss();
+                //                    }
+                //                });
+                builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)}, langStr.equals("Chinese") ? 1 : 0, new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i)
                     {
-                        if(i==1)
+                        if (i == 1)
                         {
                             Resources resources = getResources();
                             Configuration config = resources.getConfiguration();
@@ -93,8 +93,7 @@ public class SettingActivity extends ActionBarActivity
                             config.locale = Locale.CHINESE;
                             resources.updateConfiguration(config, dm);
                             ConfigHelper.putString(ContextUtil.getInstance(), "Language", "Chinese");
-                        }
-                        else
+                        } else
                         {
                             Resources resources = getResources();
                             Configuration config = resources.getConfiguration();
@@ -103,9 +102,9 @@ public class SettingActivity extends ActionBarActivity
                             resources.updateConfiguration(config, dm);
                             ConfigHelper.putString(ContextUtil.getInstance(), "Language", "English");
                         }
-                        Intent intent=new Intent(SettingActivity.this,MainActivity.class);
-                        intent.putExtra("LOGIN_STATE","AboutToLogin");
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Intent intent = new Intent(SettingActivity.this, MainActivity.class);
+                        intent.putExtra("LOGIN_STATE", "AboutToLogin");
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
                 });
@@ -153,6 +152,7 @@ public class SettingActivity extends ActionBarActivity
         super.onResume();
         MobclickAgent.onResume(this);
     }
+
     @Override
 
     public void onPause()

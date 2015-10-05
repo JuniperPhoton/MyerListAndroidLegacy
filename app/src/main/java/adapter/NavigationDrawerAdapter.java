@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Locale;
 
 import helper.ContextUtil;
+import interfaces.INavigationDrawerCallbacks;
+import interfaces.INavigationDrawerCateCallbacks;
+import interfaces.INavigationDrawerOtherCallbacks;
 import model.NavigationItem;
 
 
@@ -26,8 +29,9 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 {
 
     private List<NavigationItem> mData;
-    private NavigationDrawerCallbacks mNavigationDrawerCallbacks;
-    private NavigationDrawerOtherCallbacks mNavigationDrawerOtherCallbacks;
+    private INavigationDrawerCallbacks mINavigationDrawerCallbacks;
+    private INavigationDrawerOtherCallbacks mINavigationDrawerOtherCallbacks;
+    private INavigationDrawerCateCallbacks mINavigationDrawerCateCallbacks;
     private View mSelectedView;
     private int mSelectedPosition;
 
@@ -36,24 +40,34 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         mData = data;
     }
 
-    public NavigationDrawerCallbacks getNavigationDrawerCallbacks()
+    public INavigationDrawerCallbacks getNavigationDrawerCallbacks()
     {
-        return mNavigationDrawerCallbacks;
+        return mINavigationDrawerCallbacks;
     }
 
-    public void setNavigationDrawerCallbacks(NavigationDrawerCallbacks navigationDrawerCallbacks)
+    public INavigationDrawerOtherCallbacks getOtherNavigationDrawerCallbacks()
     {
-        mNavigationDrawerCallbacks = navigationDrawerCallbacks;
+        return mINavigationDrawerOtherCallbacks;
     }
 
-    public NavigationDrawerOtherCallbacks getOtherNavigationDrawerCallbacks()
+    public INavigationDrawerCateCallbacks getCateNavigationDrawerCallbacks()
     {
-        return mNavigationDrawerOtherCallbacks;
+        return mINavigationDrawerCateCallbacks;
     }
 
-    public void setOtherNavigationDrawerCallbacks(NavigationDrawerOtherCallbacks navigationDrawerCallbacks)
+    public void setNavigationDrawerCallbacks(INavigationDrawerCallbacks INavigationDrawerCallbacks)
     {
-        mNavigationDrawerOtherCallbacks = navigationDrawerCallbacks;
+        mINavigationDrawerCallbacks = INavigationDrawerCallbacks;
+    }
+
+    public void setOtherNavigationDrawerCallbacks(INavigationDrawerOtherCallbacks navigationDrawerCallbacks)
+    {
+        mINavigationDrawerOtherCallbacks = navigationDrawerCallbacks;
+    }
+
+    public void setCateNavigationDrawerCallbacks(INavigationDrawerCateCallbacks navigationDrawerCallbacks)
+    {
+        mINavigationDrawerCateCallbacks = navigationDrawerCallbacks;
     }
 
     @Override
@@ -70,22 +84,22 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
                                                            if (mSelectedView != null)
                                                            {
-                                                               ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
-                                                               ((ImageView)mSelectedView.findViewById(R.id.item_select)).setVisibility(View.INVISIBLE);
+                                                               ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
+                                                               ((ImageView) mSelectedView.findViewById(R.id.item_select)).setVisibility(View.INVISIBLE);
                                                            }
 
 
                                                            //v.setSelected(true);
 
-                                                           mSelectedView = (CardView)v.getParent();
+                                                           mSelectedView = (CardView) v.getParent();
 
-                                                           if (mNavigationDrawerCallbacks != null)
+                                                           if (mINavigationDrawerCallbacks != null)
                                                            {
-                                                               mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(viewHolder.getPosition());
+                                                               mINavigationDrawerCallbacks.onNavigationDrawerItemSelected(viewHolder.getPosition());
                                                            }
-                                                           if(mNavigationDrawerOtherCallbacks!=null)
+                                                           if (mINavigationDrawerOtherCallbacks != null)
                                                            {
-                                                               mNavigationDrawerOtherCallbacks.OnSelectedOther(viewHolder.getPosition());
+                                                               mINavigationDrawerOtherCallbacks.OnSelectedOther(viewHolder.getPosition());
                                                            }
                                                        }
                                                    }
@@ -98,26 +112,39 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     @Override
     public void onBindViewHolder(NavigationDrawerAdapter.ViewHolder viewHolder, int i)
     {
+        //设置抽屉每一项的 UI
         viewHolder.textView.setText(mData.get(i).getText());
+
         Resources resources = ContextUtil.getInstance().getResources();
         Configuration config = resources.getConfiguration();
-        if(config.locale==Locale.SIMPLIFIED_CHINESE)
+
+        //中文字体下加粗
+        if (config.locale == Locale.SIMPLIFIED_CHINESE)
         {
-            TextPaint textPaint=viewHolder.textView.getPaint();
+            TextPaint textPaint = viewHolder.textView.getPaint();
             textPaint.setFakeBoldText(false);
         }
 
         viewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
-        if (mSelectedPosition == i && mNavigationDrawerCallbacks!=null)
+
+        if (mData.get(i).getText().equals(""))
+        {
+            viewHolder.selectRectImage.setVisibility(View.INVISIBLE);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(80, LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParams.setMargins(0, 0, 0, 0);
+            viewHolder.imageView.setLayoutParams(layoutParams);
+        }
+
+        if (mSelectedPosition == i && mINavigationDrawerCallbacks != null)
         {
             if (mSelectedView != null)
             {
-                ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
+                ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
             }
             mSelectedPosition = i;
             mSelectedView = viewHolder.cardView;
-            ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.MyerListGray));
-            ((ImageView)mSelectedView.findViewById(R.id.item_select)).setVisibility(View.VISIBLE);
+            ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.MyerListGray));
+            ((ImageView) mSelectedView.findViewById(R.id.item_select)).setVisibility(View.VISIBLE);
         }
     }
 
@@ -127,13 +154,6 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         mSelectedPosition = position;
         notifyItemChanged(position);
     }
-
-    public void deleteToDo(String id)
-    {
-
-    }
-
-
 
     @Override
     public int getItemCount()
@@ -147,14 +167,16 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         public ImageView imageView;
         public CardView cardView;
         public LinearLayout linearLayout;
+        public ImageView selectRectImage;
 
         public ViewHolder(View itemView)
         {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.item_name);
-            imageView=(ImageView) itemView.findViewById(R.id.item_icon);
-            cardView=(CardView)itemView.findViewById(R.id.navigation_card_view);
-            linearLayout=(LinearLayout) cardView.findViewById(R.id.navigationitem_layout);
+            imageView = (ImageView) itemView.findViewById(R.id.item_icon);
+            cardView = (CardView) itemView.findViewById(R.id.navigation_card_view);
+            linearLayout = (LinearLayout) cardView.findViewById(R.id.navigationitem_layout);
+            selectRectImage = (ImageView) itemView.findViewById(R.id.item_select);
         }
     }
 

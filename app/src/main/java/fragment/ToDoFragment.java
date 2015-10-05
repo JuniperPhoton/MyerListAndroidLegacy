@@ -29,14 +29,14 @@ import helper.ConfigHelper;
 import helper.ContextUtil;
 import helper.PostHelper;
 import adapter.ToDoListAdapter;
-import model.Schedule;
+import model.ToDo;
 
 public class ToDoFragment extends Fragment
 {
     private Activity mActivity;
     public RecyclerView mToDoRecyclerView;
     private View mFragmentContainerView;
-    private ArrayList<Schedule> mMySchedules;
+    private ArrayList<ToDo> mMyToDos;
     private SwipeRefreshLayout mRefreshLayout;
     private com.getbase.floatingactionbutton.FloatingActionButton add_fab;
 
@@ -45,7 +45,7 @@ public class ToDoFragment extends Fragment
 
     public ToDoFragment()
     {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -114,7 +114,7 @@ public class ToDoFragment extends Fragment
                             mDialog.dismiss();
                             if(ConfigHelper.ISOFFLINEMODE)
                             {
-                                Schedule newToAdd=new Schedule();
+                                ToDo newToAdd=new ToDo();
                                 newToAdd.setContent(mNewMemoText.getText().toString());
                                 newToAdd.setIsDone(false);
                                 newToAdd.setID(java.util.UUID.randomUUID().toString());
@@ -122,7 +122,7 @@ public class ToDoFragment extends Fragment
                             }
                             else
                             {
-                                PostHelper.AddMemo(getActivity(), ConfigHelper.getString(getActivity(), "sid"), mNewMemoText.getText().toString(), "0");
+                                PostHelper.AddToDo(getActivity(), ConfigHelper.getString(getActivity(), "sid"), mNewMemoText.getText().toString(), "0",0);
                             }
 
                         }
@@ -185,12 +185,13 @@ public class ToDoFragment extends Fragment
         return view;
     }
 
-    public void SetUpData(ArrayList<Schedule> data)
+
+    public void SetUpData(ArrayList<ToDo> data)
     {
-        mMySchedules=data;
+        mMyToDos =data;
         if(mToDoRecyclerView!=null)
         {
-            mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMySchedules,mActivity,this));
+            mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMyToDos,mActivity,this));
             StopRefreshing();
         }
     }

@@ -2,32 +2,55 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <include
-        android:id="@+id/toolbar_actionbar"
-        layout="@layout/toolbar_default"
+    android:layout_height="match_parent"
+    >
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
+        android:layout_height="24sp"
+        android:alpha="0.15"
+        android:scaleType="fitXY"
+        android:src="@drawable/black_mask"
+        android:layout_alignParentTop="true"
+        android:elevation="@dimen/statusbar_elevation"/>
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar_actionbar">
+        android:layout_gravity="start">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                     android:id="@+id/fragment_container"
-                     android:layout_width="match_parent"
-                     android:layout_height="match_parent"
-                     android:background="?android:attr/selectableItemBackground"
-            />
+                <include
+                    android:id="@+id/toolbar_actionbar"
+                    layout="@layout/toolbar_default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0sp"/>
 
-        <!-- android:layout_marginTop="?android:attr/actionBarSize"-->
+
+
+            </RelativeLayout>
+
+
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                         android:id="@+id/fragment_container"
+                         android:layout_width="match_parent"
+                         android:layout_height="match_parent"
+                         android:layout_below="@+id/toolbar_actionbar"
+                         android:background="?android:attr/selectableItemBackground"
+                />
+        </LinearLayout>
+
         <fragment
             android:id="@+id/fragment_drawer"
-            android:name="fragment.NavigationDrawerFragment"
+            android:name="fragment.IINavigationDrawerFragment"
             android:layout_width="@dimen/navigation_drawer_width"
             android:layout_height="match_parent"
             android:layout_gravity="start"

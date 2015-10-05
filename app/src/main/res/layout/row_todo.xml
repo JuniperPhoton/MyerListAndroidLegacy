@@ -57,7 +57,13 @@
                 android:orientation="horizontal"
 
                 >
-
+                <ImageView
+                    android:id="@+id/cateCircleImage"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:layout_marginLeft="15sp"
+                    android:src="@drawable/cate_default"
+                    android:layout_gravity="center_vertical"/>
                 <TextView
                     android:id="@+id/todoBlock"
                     android:layout_width="match_parent"

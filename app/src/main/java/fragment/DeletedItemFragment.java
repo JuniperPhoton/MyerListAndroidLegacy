@@ -17,26 +17,19 @@ import com.example.juniper.myerlistandroid.R;
 import java.util.ArrayList;
 
 import adapter.DeletedListAdapter;
-import model.Schedule;
-import model.ScheduleList;
+import model.ToDo;
+import model.ToDoListHelper;
 
 
 public class DeletedItemFragment extends Fragment
 {
 
-    private ArrayList<Schedule> mDeletedData;
+    private ArrayList<ToDo> mDeletedData;
     private RecyclerView mDeletedListRecyclerView;
     private com.getbase.floatingactionbutton.FloatingActionButton mFab;
     private OnCreatedViewListener mActivity;
     private LinearLayout mNoItemHintLayout;
 
-    public static DeletedItemFragment newInstance(String param1, String param2)
-    {
-        DeletedItemFragment fragment = new DeletedItemFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     public DeletedItemFragment()
     {
@@ -97,9 +90,9 @@ public class DeletedItemFragment extends Fragment
     }
 
 
-    public void SetUpData(ArrayList<Schedule> data)
+    public void SetUpData(ArrayList<ToDo> data)
     {
-        ScheduleList.DeletedList=data;
+        ToDoListHelper.DeletedList=data;
         mDeletedData=data;
         DeletedListAdapter deletedListAdapter=new DeletedListAdapter(getActivity(),this,data);
 

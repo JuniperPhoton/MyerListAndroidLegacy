@@ -1,11 +1,8 @@
 package helper;
 
 import android.app.Application;
-import android.content.Intent;
 
-import activity.MainActivity;
-import activity.StartActivity;
-import model.ScheduleList;
+import model.ToDoListHelper;
 
 public class ContextUtil extends Application {
     private static ContextUtil instance;
@@ -23,7 +20,7 @@ public class ContextUtil extends Application {
 
         ConfigHelper.ConfigAppSetting();
 
-        ScheduleList.SetUpSavedData();
+        ToDoListHelper.SetUpSavedData();
 
 //        String email=ConfigHelper.getString(this,"email");
 //        boolean offline=ConfigHelper.getBoolean(this,"offline_mode");

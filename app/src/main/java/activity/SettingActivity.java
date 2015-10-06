@@ -8,9 +8,11 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.juniper.myerlistandroid.R;
@@ -23,12 +25,14 @@ import helper.ConfigHelper;
 import helper.ContextUtil;
 import moe.feng.material.statusbar.StatusBarCompat;
 
-public class SettingActivity extends ActionBarActivity
+public class SettingActivity extends AppCompatActivity
 {
     private com.rey.material.widget.Switch mShowKeyboardSwitch;
     private com.rey.material.widget.Switch mAddToBottomSwitch;
     private com.rey.material.widget.Switch mHandHobbitSwitch;
     private TextView mLangText;
+    private TextView mLogoutText;
+    private ImageView mMaskView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -37,18 +41,28 @@ public class SettingActivity extends ActionBarActivity
 
         StatusBarCompat.setUpActivity(this);
 
-        //        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
-        //        {
-        //            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        //        }
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+        {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
         setContentView(R.layout.activity_setting);
 
+        mMaskView=(ImageView)findViewById(R.id.activity_setting_mask);
+        if(Build.VERSION.SDK_INT<=Build.VERSION_CODES.KITKAT)
+        {
+            mMaskView.setVisibility(View.GONE);
+        }
+
+
+        //找到开关控件
         mShowKeyboardSwitch = (com.rey.material.widget.Switch) findViewById(R.id.ShowKeyboardSwitch);
         mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.AddToBottomSwitch);
         mHandHobbitSwitch = (com.rey.material.widget.Switch) findViewById(R.id.hand_hobbit_switch);
 
         mLangText = (TextView) findViewById(R.id.lang_btn);
 
+        //找到设置里的值
         Boolean showKeyboard = ConfigHelper.getBoolean(ContextUtil.getInstance(), "ShowKeyboard");
         mShowKeyboardSwitch.setChecked(showKeyboard);
 
@@ -58,6 +72,7 @@ public class SettingActivity extends ActionBarActivity
         Boolean handUse = ConfigHelper.getBoolean(ContextUtil.getInstance(), "HandHobbit");
         mHandHobbitSwitch.setChecked(handUse);
 
+        //找到语言
         final String langStr = ConfigHelper.getString(ContextUtil.getInstance(), "Language");
         if (langStr.equals("Chinese"))
         {
@@ -72,14 +87,6 @@ public class SettingActivity extends ActionBarActivity
             {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                 builder.setTitle(getString(R.string.change_lang));
-                //                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
-                //                {
-                //                    @Override
-                //                    public void onClick(DialogInterface dialogInterface, int i)
-                //                    {
-                //                        dialogInterface.dismiss();
-                //                    }
-                //                });
                 builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)}, langStr.equals("Chinese") ? 1 : 0, new DialogInterface.OnClickListener()
                 {
                     @Override
@@ -110,10 +117,45 @@ public class SettingActivity extends ActionBarActivity
                 });
 
                 builder.create().show();
-
             }
         });
 
+        mLogoutText=(TextView)findViewById(R.id.logout_text);
+        mLogoutText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                builder.setTitle(R.string.logout_title);
+                builder.setMessage(R.string.logout_content);
+                builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        ConfigHelper.putBoolean(getApplicationContext(), "offline_mode", false);
+                        ConfigHelper.DeleteKey(getApplicationContext(), "email");
+                        ConfigHelper.DeleteKey(getApplicationContext(), "salt");
+                        ConfigHelper.DeleteKey(getApplicationContext(), "access_token");
+                        Intent intent = new Intent(getApplicationContext(), StartActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        dialogInterface.dismiss();
+
+                    }
+                });
+                builder.create().show();
+            }
+        });
+
+        //开关改变的时候
         mShowKeyboardSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener()
         {
             @Override

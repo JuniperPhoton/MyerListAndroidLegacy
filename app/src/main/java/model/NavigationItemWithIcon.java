@@ -3,12 +3,12 @@ package model;
 
 import android.graphics.drawable.Drawable;
 
-public class NavigationItem
+public class NavigationItemWithIcon
 {
     private String mText;
     private Drawable mDrawable;
 
-    public NavigationItem(String text, Drawable drawable)
+    public NavigationItemWithIcon(String text, Drawable drawable)
     {
         mText = text;
         mDrawable = drawable;

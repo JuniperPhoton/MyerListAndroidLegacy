@@ -2,6 +2,7 @@ package activity;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,7 @@ public class StartActivity extends AppCompatActivity
     private Button mLoginBtnView;
     private Button mRegisterBtnView;
     private Button mOfflineBtnView;
+    private ImageView mMaskView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,15 +40,21 @@ public class StartActivity extends AppCompatActivity
 
         StatusBarCompat.setUpActivity(this);
 
-        //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-//        {
-//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        }
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+        {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
 
         setContentView(R.layout.activity_start);
 
         mRootLinearLayout=(LinearLayout)findViewById(R.id.rootLinearLayout);
         mRootLinearLayout.setAlpha(0f);
+
+        mMaskView=(ImageView)findViewById(R.id.activity_start_mask);
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+        {
+            mMaskView.setVisibility(View.GONE);
+        }
 
         if(Build.VERSION.SDK_INT<Build.VERSION_CODES.LOLLIPOP)
         {

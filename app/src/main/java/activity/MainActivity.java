@@ -1,16 +1,33 @@
 package activity;
 
-import android.content.DialogInterface;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import interfaces.INavigationDrawerOtherCallbacks;
+import interfaces.IDrawerStatusChanged;
+import interfaces.INavigationDrawerSubCallbacks;
 import fragment.DeletedItemFragment;
-import fragment.IINavigationDrawerFragment;
+import fragment.NavigationDrawerFragment;
 
 import com.example.juniper.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
@@ -18,37 +35,44 @@ import com.umeng.analytics.MobclickAgent;
 import fragment.ToDoFragment;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import helper.AppHelper;
 import helper.ConfigHelper;
 import helper.ContextUtil;
 import helper.PostHelper;
-import interfaces.INavigationDrawerCallbacks;
+import interfaces.INavigationDrawerMainCallbacks;
 import adapter.ToDoListAdapter;
 import helper.SerializerHelper;
+import interfaces.IOnAddedToDo;
+import interfaces.IOnReAddedToDo;
 import interfaces.IRequestCallbacks;
 import model.ToDo;
 import model.ToDoListHelper;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 
-public class MainActivity extends ActionBarActivity implements
-        INavigationDrawerCallbacks,
+public class MainActivity extends AppCompatActivity implements
+        INavigationDrawerMainCallbacks,
         IRequestCallbacks,
-        IINavigationDrawerFragment.DrawerStatusListener,
-        INavigationDrawerOtherCallbacks,
-        DeletedItemFragment.OnCreatedViewListener,
-        ToDoFragment.OnCreatedTodoViewListener
+        INavigationDrawerSubCallbacks,
+        IDrawerStatusChanged,
+        IOnReAddedToDo,
+        IOnAddedToDo
 {
-
-
-    private IINavigationDrawerFragment mNavigationDrawerFragment;
+    private NavigationDrawerFragment mNavigationDrawerFragment;
     private ToDoFragment mToDoFragment;
     private DeletedItemFragment mDeletedItemFragment;
-
     private Toolbar mToolbar;
-    private MainActivity mInstance;
 
+    private AlertDialog mDialog;
+
+    private boolean isAddingPaneShown = false;
+    private LinearLayout mAddingPaneLayout;
+    private EditText mEditedText;
+    private Button mOKBtn;
+    private Button mCancelBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -56,15 +80,45 @@ public class MainActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         StatusBarCompat.setUpActivity(this);
 
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
+        {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
         setContentView(R.layout.activity_main);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
 
-        mNavigationDrawerFragment = (IINavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.fragment_drawer);
-        mNavigationDrawerFragment.setup(R.id.fragment_drawer, (DrawerLayout) findViewById(R.id.drawer), mToolbar);
+        mAddingPaneLayout = (LinearLayout) findViewById(R.id.fragment_todo_adding_pane);
+        mEditedText=(EditText)findViewById(R.id.add_editText);
+        mOKBtn=(Button)findViewById(R.id.add_ok_btn);
+        mCancelBtn=(Button)findViewById(R.id.add_cancel_btn);
 
-        mInstance = this;
+        mOKBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                OKClick(v);
+            }
+        });
+        mCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                CancelClick(v);
+            }
+        });
+
+        ImageView mMaskView = (ImageView) findViewById(R.id.activity_main_mask);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+        {
+            mMaskView.setVisibility(View.GONE);
+            mToolbar.setPadding(0, 0, 0, 0);
+        }
+
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.fragment_drawer);
+        mNavigationDrawerFragment.setup(R.id.fragment_drawer, (DrawerLayout) findViewById(R.id.drawer), mToolbar);
 
         String access_token = ConfigHelper.getString(this, "access_token");
         boolean offline = ConfigHelper.getBoolean(this, "offline_mode");
@@ -113,64 +167,256 @@ public class MainActivity extends ActionBarActivity implements
 
     }
 
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        mToDoFragment.GetAllSchedules();
-        MobclickAgent.onResume(this);
-    }
 
     @Override
-
-    public void onPause()
+    public void OnDrawerMainItemSelected(int position)
     {
-        super.onPause();
-        MobclickAgent.onPause(this);
-    }
-
-
-    @Override
-    public void onNavigationDrawerItemSelected(int position)
-    {
-        switch (position)
+        try
         {
-            case 0:
+            switch (position)
             {
-                try
+                case 0:
                 {
                     if (mToDoFragment == null)
                     {
                         mToDoFragment = new ToDoFragment();
+                    } else
+                    {
+                        mToDoFragment.UpdateData(ToDoListHelper.TodosList);
                     }
-                    // mToDoFragment.GetAllSchedules();
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, mToDoFragment).commit();
+                    ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
+                    if (adapter != null)
+                        adapter.SetCanChangeCate(true);
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment).commit();
 
-                    getSupportActionBar().setTitle("MyerList");
-                } catch (Exception E)
+                    mToolbar.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
+                    mToolbar.setTitle(getResources().getString(R.string.cate_default));
+                } break;
+                case 1:
                 {
-                    E.printStackTrace();
+                    FilterListByCate(1);
+                    mToolbar.setBackgroundColor(getResources().getColor(R.color.WorkColor));
+                    mToolbar.setTitle(getResources().getString(R.string.cate_work));
                 }
-
-            } ; break;
-            case 1:
-            {
-                if (mDeletedItemFragment == null)
+                break;
+                case 2:
                 {
-                    mDeletedItemFragment = new DeletedItemFragment();
+                    FilterListByCate(2);
+                    mToolbar.setBackgroundColor(getResources().getColor(R.color.LifeColor));
+                    mToolbar.setTitle(getResources().getString(R.string.cate_life));
                 }
+                break;
+                case 3:
+                {
+                    FilterListByCate(3);
+                    mToolbar.setBackgroundColor(getResources().getColor(R.color.FamilyColor));
+                    mToolbar.setTitle(getResources().getString(R.string.cate_family));
+                }
+                break;
+                case 4:
+                {
+                    FilterListByCate(4);
+                    mToolbar.setBackgroundColor(getResources().getColor(R.color.EnterColor));
+                    mToolbar.setTitle(getResources().getString(R.string.cate_enter));
+                }
+                break;
+            }
 
-                getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDeletedItemFragment).commit();
-                getSupportActionBar().setTitle(getResources().getString(R.string.deleteditems));
+        } catch (Exception e)
+        {
 
-            } ; break;
         }
     }
 
+    public void FilterListByCate(int cate)
+    {
+        ArrayList<ToDo> newList = new ArrayList<>();
+        for (ToDo todo : ToDoListHelper.TodosList)
+        {
+            if (todo.getCate() == cate)
+            {
+                newList.add(todo);
+            }
+        }
+        if (mToDoFragment != null)
+        {
+            mToDoFragment.UpdateData(newList);
+            ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
+            if (adapter != null)
+                adapter.SetCanChangeCate(false);
+        }
+    }
+
+    public void SwitchToDeleteFragment()
+    {
+        if (mDeletedItemFragment == null)
+        {
+            mDeletedItemFragment = new DeletedItemFragment();
+        }
+
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDeletedItemFragment).commit();
+    }
+
+    public void ShowAddingPane()
+    {
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+        {
+            isAddingPaneShown = true;
+
+            // get the center for the clipping circle
+            int cx = mAddingPaneLayout.getWidth() - 200;
+            int cy = mAddingPaneLayout.getHeight() - 200;
+
+            // get the final radius for the clipping circle
+            int finalRadius = Math.max(mAddingPaneLayout.getWidth(), mAddingPaneLayout.getHeight());
+
+            // create the animator for this view (the start radius is zero)
+            Animator anim;
+            anim = ViewAnimationUtils.createCircularReveal(mAddingPaneLayout, cx, cy, 0, finalRadius);
+
+            // make the view visible and start the animation
+            mAddingPaneLayout.setVisibility(View.VISIBLE);
+            anim.start();
+
+            if (ConfigHelper.getBoolean(ContextUtil.getInstance(), "ShowKeyboard"))
+            {
+                mEditedText.requestFocus();
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask()
+                {
+                    @Override
+                    public void run()
+                    {
+                        InputMethodManager inputMethodManager = (InputMethodManager) mEditedText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.showSoftInput(mEditedText, 0);
+                    }
+                }, 333);
+            }
+        } else
+        {
+            View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_adding_pane, (ViewGroup) this.findViewById(R.id.dialog_title));
+
+            TextView titleText = (TextView) dialogView.findViewById(R.id.dialog_title_text);
+            titleText.setText(getResources().getString(R.string.new_memo_title));
+
+            mEditedText = (EditText) dialogView.findViewById(R.id.newMemoEdit);
+            mEditedText.setHint(R.string.new_memo_hint);
+
+            Button okBtn = (Button) dialogView.findViewById(R.id.add_ok_btn);
+            okBtn.setText(R.string.ok_btn);
+            okBtn.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                   OKClick(view);
+                }
+            });
+
+            Button cancelBtn = (Button) dialogView.findViewById(R.id.add_cancel_btn);
+            cancelBtn.setText(R.string.cancel_btn);
+            cancelBtn.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                   CancelClick(view);
+                }
+            });
+
+            if (!ConfigHelper.getBoolean(ContextUtil.getInstance(), "HandHobbit"))
+            {
+                LinearLayout linearLayout = (LinearLayout) dialogView.findViewById(R.id.dialog_btn_layout);
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                layoutParams.setMargins(20, 0, 0, 0);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                linearLayout.setLayoutParams(layoutParams);
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            mDialog = builder.setView((dialogView)).show();
+
+            if (ConfigHelper.getBoolean(ContextUtil.getInstance(), "ShowKeyboard"))
+            {
+                mEditedText.requestFocus();
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask()
+                {
+                    @Override
+                    public void run()
+                    {
+                        InputMethodManager inputMethodManager = (InputMethodManager) mEditedText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.showSoftInput(mEditedText, 0);
+                    }
+                }, 333);
+            }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void HideAddingPane()
+    {
+        isAddingPaneShown = false;
+
+        // get the center for the clipping circle
+        int cx = mAddingPaneLayout.getWidth() - 200;
+        int cy = mAddingPaneLayout.getHeight() - 200;
+
+        // get the initial radius for the clipping circle
+        int initialRadius = Math.max(mAddingPaneLayout.getWidth(), mAddingPaneLayout.getHeight());
+
+        // create the animation (the final radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(mAddingPaneLayout, cx, cy, initialRadius, 0);
+
+        // make the view invisible when the animation is done
+        anim.addListener(new AnimatorListenerAdapter()
+        {
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                super.onAnimationEnd(animation);
+                mAddingPaneLayout.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        // start the animation
+        anim.start();
+    }
+
+    public void OKClick(View v)
+    {
+        if(mDialog!=null) mDialog.dismiss();
+        if(isAddingPaneShown) HideAddingPane();
+        if (ConfigHelper.ISOFFLINEMODE)
+        {
+            ToDo newToAdd = new ToDo();
+            newToAdd.setContent(mEditedText.getText().toString());
+            newToAdd.setIsDone(false);
+            newToAdd.setID(java.util.UUID.randomUUID().toString());
+            OnAddedResponse(true, newToAdd);
+        } else
+        {
+            PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), mEditedText.getText().toString(), "0", 0);
+        }
+
+        CancelClick(null);
+    }
+
+    public void CancelClick(View  v)
+    {
+        if(mDialog!=null) mDialog.dismiss();
+        if(isAddingPaneShown) HideAddingPane();
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
+        mEditedText.setText("");
+    }
 
     @Override
-    public void OnSelectedOther(int position)
+    public void OnDrawerSubItemSelected(int position)
     {
         switch (position)
         {
@@ -184,37 +430,6 @@ public class MainActivity extends ActionBarActivity implements
                 Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
                 startActivity(intent);
             } ; break;
-            case 2:
-            {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.logout_title);
-                builder.setMessage(R.string.logout_content);
-                builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
-                        ConfigHelper.putBoolean(getApplicationContext(), "offline_mode", false);
-                        ConfigHelper.DeleteKey(getApplicationContext(), "email");
-                        ConfigHelper.DeleteKey(getApplicationContext(), "salt");
-                        ConfigHelper.DeleteKey(getApplicationContext(), "access_token");
-                        Intent intent = new Intent(getApplicationContext(), StartActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                });
-                builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
-                        dialogInterface.dismiss();
-
-                    }
-                });
-                builder.create().show();
-
-            } ; break;
         }
     }
 
@@ -224,24 +439,44 @@ public class MainActivity extends ActionBarActivity implements
         if (mNavigationDrawerFragment.isDrawerOpen())
         {
             mNavigationDrawerFragment.closeDrawer();
-        } else if (mNavigationDrawerFragment.getCurrentSelectedPosition() == 1)
+        }
+        else if (mNavigationDrawerFragment.getCurrentSelectedPosition() == 1)
         {
             mNavigationDrawerFragment.openDrawer();
-        } else
+        }
+        else if(isAddingPaneShown)
+        {
+            HideAddingPane();
+        }
+        else
         {
             super.onBackPressed();
         }
 
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
 
     @Override
-    public void OnGotScheduleResponse(ArrayList<ToDo> mytodosList)
+
+    public void onPause()
     {
-        if (mytodosList != null)
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public void OnGotScheduleResponse(ArrayList<ToDo> list)
+    {
+        if (list != null)
         {
-            ToDoListHelper.TodosList = mytodosList;
-            mToDoFragment.SetUpData(mytodosList);
+            ToDoListHelper.TodosList = list;
+            mToDoFragment.UpdateData(list);
             mToDoFragment.StopRefreshing();
 
             SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListHelper.TodosList, SerializerHelper.todosFileName);
@@ -278,10 +513,10 @@ public class MainActivity extends ActionBarActivity implements
         if (isSuccess)
         {
             ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
-            adapter.addToDos(newTodo);
+            adapter.AddToDos(newTodo);
             AppHelper.ShowShortToast(getResources().getString(R.string.add_success));
 
-            PostHelper.SetListOrder(this, ConfigHelper.getString(this, "sid"), ToDo.getOrderString(adapter.getListSrc()));
+            PostHelper.SetListOrder(this, ConfigHelper.getString(this, "sid"), ToDo.getOrderString(adapter.GetListSrc()));
         } else
         {
             AppHelper.ShowShortToast("Fail to add memo :-(");
@@ -291,11 +526,6 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void OnSetOrderResponse(boolean isSuccess)
     {
-        if (isSuccess)
-        {
-
-        }
-
     }
 
     @Override
@@ -321,18 +551,7 @@ public class MainActivity extends ActionBarActivity implements
     {
         ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
         if (adapter != null)
-            adapter.SetCanOperate(isOpen);
-    }
-
-    @Override
-    public void OnCreatedDeleted(boolean b)
-    {
-        mDeletedItemFragment.SetUpData(ToDoListHelper.DeletedList);
-        if (ToDoListHelper.DeletedList.size() == 0)
-        {
-            mDeletedItemFragment.ShowNoItemHint();
-        } else
-            mDeletedItemFragment.HideNoItemHint();
+            adapter.SetEnable(isOpen);
     }
 
     @Override
@@ -346,7 +565,7 @@ public class MainActivity extends ActionBarActivity implements
 
         if (ConfigHelper.ISLOADLISTONCE)
         {
-            mToDoFragment.SetUpData(ToDoListHelper.TodosList);
+            mToDoFragment.UpdateData(ToDoListHelper.TodosList);
         } else
         {
             ConfigHelper.ISLOADLISTONCE = true;
@@ -356,9 +575,20 @@ public class MainActivity extends ActionBarActivity implements
                 PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
             } else
             {
-                mToDoFragment.SetUpData(ToDoListHelper.TodosList);
+                mToDoFragment.UpdateData(ToDoListHelper.TodosList);
             }
         }
+    }
+
+    @Override
+    public void OnReCreatedToDo(boolean b)
+    {
+        mDeletedItemFragment.SetUpData(ToDoListHelper.DeletedList);
+        if (ToDoListHelper.DeletedList.size() == 0)
+        {
+            mDeletedItemFragment.ShowNoItemHint();
+        } else
+            mDeletedItemFragment.HideNoItemHint();
     }
 
     @Override

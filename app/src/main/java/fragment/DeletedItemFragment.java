@@ -17,6 +17,8 @@ import com.example.juniper.myerlistandroid.R;
 import java.util.ArrayList;
 
 import adapter.DeletedListAdapter;
+import interfaces.IOnAddedToDo;
+import interfaces.IOnReAddedToDo;
 import model.ToDo;
 import model.ToDoListHelper;
 
@@ -27,9 +29,8 @@ public class DeletedItemFragment extends Fragment
     private ArrayList<ToDo> mDeletedData;
     private RecyclerView mDeletedListRecyclerView;
     private com.getbase.floatingactionbutton.FloatingActionButton mFab;
-    private OnCreatedViewListener mActivity;
+    private IOnReAddedToDo mActivity;
     private LinearLayout mNoItemHintLayout;
-
 
     public DeletedItemFragment()
     {
@@ -84,7 +85,7 @@ public class DeletedItemFragment extends Fragment
             }
         });
         mNoItemHintLayout=(LinearLayout)view.findViewById(R.id.no_deleteditem_layout);
-        mActivity.OnCreatedDeleted(true);
+        mActivity.OnReCreatedToDo(true);
 
         return view;
     }
@@ -120,7 +121,7 @@ public class DeletedItemFragment extends Fragment
         super.onAttach(activity);
         try
         {
-            mActivity=(OnCreatedViewListener)activity;
+            mActivity=(IOnReAddedToDo)activity;
         }
         catch (ClassCastException e)
         {
@@ -135,8 +136,4 @@ public class DeletedItemFragment extends Fragment
         super.onDetach();
     }
 
-    public interface OnCreatedViewListener
-    {
-        void OnCreatedDeleted(boolean b);
-    }
 }

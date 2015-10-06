@@ -9,6 +9,7 @@ import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -35,6 +36,8 @@ public class LoginActivity extends AppCompatActivity implements
     private EditText mConfirmPsBox;
     private TextView mTitleView;
     private ProgressDialog progressDialog;
+    private ImageView mMaskView;
+
 
     private boolean isToRegister = true;
 
@@ -47,16 +50,22 @@ public class LoginActivity extends AppCompatActivity implements
         StatusBarCompat.setUpActivity(this);
 
 
-        //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        //        {
-        //            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        //        }
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+        {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS );
+        }
 
         setContentView(R.layout.activity_login);
 
+        mMaskView=(ImageView)findViewById(R.id.activity_login_mask);
+        if(Build.VERSION.SDK_INT<=Build.VERSION_CODES.KITKAT)
+        {
+            mMaskView.setVisibility(View.GONE);
+        }
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
         {
-            CardView toLoginCard = (CardView) findViewById(R.id.loginBtn_cardview);
+            CardView toLoginCard = (CardView) findViewById(R.id.activity_login_btn_cardView);
             LinearLayout.LayoutParams layoutParamsForTop = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             layoutParamsForTop.setMargins(40, 60, 40, 0);
             layoutParamsForTop.height = 140;
@@ -64,9 +73,9 @@ public class LoginActivity extends AppCompatActivity implements
         }
 
 
-        mEmailBox = (EditText) findViewById(R.id.emailbox);
-        mPasswordBox = (EditText) findViewById(R.id.psbox);
-        mConfirmPsBox = (EditText) findViewById(R.id.confirmpsbox);
+        mEmailBox = (EditText) findViewById(R.id.activity_login_emailText);
+        mPasswordBox = (EditText) findViewById(R.id.activity_login_psText);
+        mConfirmPsBox = (EditText) findViewById(R.id.activity_login_reInputPsText);
         mTitleView = (TextView) findViewById(R.id.logintitle);
 
         Intent intent = getIntent();

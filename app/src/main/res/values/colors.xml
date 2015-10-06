@@ -1,12 +1,4 @@
 <resources>
-
-    <!--
-        Check Android Theme colors for color reference:
-        https://developer.android.com/training/material/images/ThemeColors.png
-
-        Refer also to Color palette for the UI colors you should use:
-        http://www.google.com/design/spec/style/color.html#color-ui-color-palette
-    -->
     <color name="MyerListBlue">#FF4096C9</color>
     <color name="MyerListBlueLight">#FF47A5DD</color>
     <color name="MyerListBlueDark">#338dc3</color>

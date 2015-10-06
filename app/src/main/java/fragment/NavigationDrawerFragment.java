@@ -16,56 +16,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import activity.StartActivity;
 import adapter.NavigationDrawerAdapter;
-import interfaces.INavigationDrawerCallbacks;
-import interfaces.INavigationDrawerCateCallbacks;
-import interfaces.INavigationDrawerOtherCallbacks;
-import model.NavigationItem;
+import interfaces.IDrawerStatusChanged;
+import interfaces.INavigationDrawerMainCallbacks;
+import interfaces.INavigationDrawerSubCallbacks;
+import model.NavigationItemWithIcon;
 import com.example.juniper.myerlistandroid.R;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import helper.ConfigHelper;
 
-/**
- * Fragment used for managing interactions for and presentation of a navigation drawer.
- * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
- * design guidelines</a> for a complete explanation of the behaviors implemented here.
- */
-public class IINavigationDrawerFragment extends Fragment implements INavigationDrawerCallbacks, INavigationDrawerOtherCallbacks, INavigationDrawerCateCallbacks
+public class NavigationDrawerFragment extends Fragment implements INavigationDrawerMainCallbacks, INavigationDrawerSubCallbacks
 {
 
-    /**
-     * Remember the position of the selected item.
-     */
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 
-    /**
-     * Per the design guidelines, you should show the drawer on launch until the user manually
-     * expands it. This shared preference tracks this.
-     */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
-    /**
-     * A pointer to the current callbacks instance (the Activity).
-     */
-    private INavigationDrawerCallbacks mCallbacks;
-    private INavigationDrawerOtherCallbacks mOtherCallbacks;
+    private INavigationDrawerMainCallbacks mCallbacks;
+    private INavigationDrawerSubCallbacks mOtherCallbacks;
 
-    private DrawerStatusListener mDrawerStatusListener;
+    private IDrawerStatusChanged mDrawerStatusListener;
 
-    /**
-     * Helper component that ties the action bar to the navigation drawer.
-     */
     private ActionBarDrawerToggle mActionBarDrawerToggle;
 
     //表示抽屉里各种控件
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerRecyclerView;
-    private RecyclerView mCateRecyclerView;
     private RecyclerView mDrawerOtherRecyclerView;
     private View mFragmentContainerView;
     private TextView mEmailView;
@@ -79,11 +57,8 @@ public class IINavigationDrawerFragment extends Fragment implements INavigationD
     {
         super.onCreate(savedInstanceState);
 
-        // Read in the flag indicating whether or not the user has demonstrated awareness of the
-        // drawer. See PREF_USER_LEARNED_DRAWER for details.
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
-
 
         if (savedInstanceState != null)
         {
@@ -111,27 +86,14 @@ public class IINavigationDrawerFragment extends Fragment implements INavigationD
         mDrawerRecyclerView.setLayoutManager(layoutManager);
         mDrawerRecyclerView.setHasFixedSize(true);
 
-        final List<NavigationItem> navigationItems = getMenu();
+        final List<NavigationItemWithIcon> navigationItemWithIcons = getCateList();
 
-        NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(navigationItems);
+        NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(navigationItemWithIcons);
         adapter.setNavigationDrawerCallbacks(this);
         mDrawerRecyclerView.setAdapter(adapter);
 
         //默认项是所有待办事项
         selectItem(mCurrentSelectedPosition);
-
-        //显示分类的几个项目
-        LinearLayoutManager layoutManagerCate=new LinearLayoutManager(getActivity());
-        layoutManagerCate.setOrientation(LinearLayoutManager.HORIZONTAL);
-
-        mCateRecyclerView=(RecyclerView)view.findViewById(R.id.cateList);
-        mCateRecyclerView.setLayoutManager(layoutManagerCate);
-        mCateRecyclerView.setHasFixedSize(true);
-
-        final List<NavigationItem> cateItems=getCateList();
-        NavigationDrawerAdapter adapterCate=new NavigationDrawerAdapter(cateItems);
-        adapterCate.setCateNavigationDrawerCallbacks(this);
-        mCateRecyclerView.setAdapter(adapterCate);
 
         //显示底部的3个项目
         LinearLayoutManager layoutManagerOther = new LinearLayoutManager(getActivity());
@@ -141,7 +103,7 @@ public class IINavigationDrawerFragment extends Fragment implements INavigationD
         mDrawerOtherRecyclerView.setLayoutManager(layoutManagerOther);
         mDrawerOtherRecyclerView.setHasFixedSize(true);
 
-        final List<NavigationItem> otherItems=getOtherMenu();
+        final List<NavigationItemWithIcon> otherItems=getOtherMenu();
         NavigationDrawerAdapter adapterOther=new NavigationDrawerAdapter(otherItems);
         adapterOther.setOtherNavigationDrawerCallbacks(this);
         mDrawerOtherRecyclerView.setAdapter(adapterOther);
@@ -165,56 +127,39 @@ public class IINavigationDrawerFragment extends Fragment implements INavigationD
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int position)
+    public void OnDrawerMainItemSelected(int position)
     {
         selectItem(position);
     }
 
     @Override
-    public void OnSelectedOther(int position)
+    public void OnDrawerSubItemSelected(int position)
     {
         selectOtherItem(position);
     }
 
-    public List<NavigationItem> getMenu()
-    {
-        List<NavigationItem> items = new ArrayList<NavigationItem>();
-        items.add(new NavigationItem(getResources().getString(R.string.title_section1),getResources().getDrawable(R.drawable.accept)));
-        items.add(new NavigationItem(getResources().getString(R.string.title_section2), getResources().getDrawable(R.drawable.delete)));
 
+    public List<NavigationItemWithIcon> getCateList()
+    {
+        List<NavigationItemWithIcon> items=new ArrayList<>();
+        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_default),getResources().getDrawable(R.drawable.cate_default)));
+        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_work),getResources().getDrawable(R.drawable.cate_work)));
+        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_life),getResources().getDrawable(R.drawable.cate_life)));
+        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_family),getResources().getDrawable(R.drawable.cate_family)));
+        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_enter),getResources().getDrawable(R.drawable.cate_enter)));
         return items;
     }
 
-    public List<NavigationItem> getCateList()
+    public List<NavigationItemWithIcon> getOtherMenu()
     {
-        List<NavigationItem> items=new ArrayList<>();
-        items.add(new NavigationItem("",getResources().getDrawable(R.drawable.cate_default)));
-        items.add(new NavigationItem("",getResources().getDrawable(R.drawable.cate_work)));
-        items.add(new NavigationItem("",getResources().getDrawable(R.drawable.cate_life)));
-        items.add(new NavigationItem("",getResources().getDrawable(R.drawable.cate_family)));
-        items.add(new NavigationItem("",getResources().getDrawable(R.drawable.cate_enter)));
+        List<NavigationItemWithIcon> items = new ArrayList<>();
 
+        items.add(new NavigationItemWithIcon(getResources().getString(R.string.title_section3), getResources().getDrawable(R.drawable.settings)));
+        items.add(new NavigationItemWithIcon(getResources().getString(R.string.title_section4), getResources().getDrawable(R.drawable.like)));
         return items;
     }
 
-    public List<NavigationItem> getOtherMenu()
-    {
-        List<NavigationItem> items = new ArrayList<NavigationItem>();
 
-        items.add(new NavigationItem(getResources().getString(R.string.title_section3), getResources().getDrawable(R.drawable.settings)));
-        items.add(new NavigationItem(getResources().getString(R.string.title_section4), getResources().getDrawable(R.drawable.like)));
-        items.add(new NavigationItem(getResources().getString(R.string.title_section5), getResources().getDrawable(R.drawable.alert)));
-
-        return items;
-    }
-
-    /**
-     * Users of this fragment must call this method to set up the navigation drawer interactions.
-     *
-     * @param fragmentId   The android:id of this fragment in its activity's layout.
-     * @param drawerLayout The DrawerLayout containing this fragment's UI.
-     * @param toolbar      The Toolbar of the activity.
-     */
     public void setup(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar)
     {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
@@ -252,14 +197,12 @@ public class IINavigationDrawerFragment extends Fragment implements INavigationD
             }
         };
 
-        // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
-        // per the navigation drawer design guidelines.
+
         if (!mUserLearnedDrawer && !mFromSavedInstanceState)
         {
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
 
-        // Defer code dependent on restoration of previous instance state.
         mDrawerLayout.post(new Runnable()
         {
             @Override
@@ -298,7 +241,7 @@ public class IINavigationDrawerFragment extends Fragment implements INavigationD
 
         if (mCallbacks != null)
         {
-            mCallbacks.onNavigationDrawerItemSelected(position);
+            mCallbacks.OnDrawerMainItemSelected(position);
         }
 
         ((NavigationDrawerAdapter) mDrawerRecyclerView.getAdapter()).selectPosition(position);
@@ -313,7 +256,7 @@ public class IINavigationDrawerFragment extends Fragment implements INavigationD
     {
         if(mOtherCallbacks!=null)
         {
-            mOtherCallbacks.OnSelectedOther(position);
+            mOtherCallbacks.OnDrawerSubItemSelected(position);
         }
         if (mDrawerLayout != null)
         {
@@ -325,7 +268,6 @@ public class IINavigationDrawerFragment extends Fragment implements INavigationD
     public void openDrawer()
     {
         mDrawerLayout.openDrawer(mFragmentContainerView);
-
     }
 
     public void closeDrawer()
@@ -339,13 +281,13 @@ public class IINavigationDrawerFragment extends Fragment implements INavigationD
         super.onAttach(activity);
         try
         {
-            mCallbacks = (INavigationDrawerCallbacks) activity;
-            mOtherCallbacks=(INavigationDrawerOtherCallbacks)activity;
-            mDrawerStatusListener=(DrawerStatusListener)activity;
+            mCallbacks = (INavigationDrawerMainCallbacks) activity;
+            mOtherCallbacks=(INavigationDrawerSubCallbacks)activity;
+            mDrawerStatusListener=(IDrawerStatusChanged)activity;
         }
         catch (ClassCastException e)
         {
-            throw new ClassCastException("Activity must implement INavigationDrawerCallbacks.");
+            throw new ClassCastException("Activity must implement INavigationDrawerMainCallbacks.");
         }
     }
 
@@ -368,23 +310,7 @@ public class IINavigationDrawerFragment extends Fragment implements INavigationD
     public void onConfigurationChanged(Configuration newConfig)
     {
         super.onConfigurationChanged(newConfig);
-        // Forward the new configuration the drawer toggle component.
         mActionBarDrawerToggle.onConfigurationChanged(newConfig);
     }
-
-    @Override
-    public void OnSelectedCate(int position)
-    {
-
-    }
-
-
-    public interface DrawerStatusListener
-    {
-        void OnDrawerStatusChanged(boolean isOpen);
-    }
-
-
-
 
 }

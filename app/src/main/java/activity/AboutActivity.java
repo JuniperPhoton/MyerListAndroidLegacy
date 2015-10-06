@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.example.juniper.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
@@ -15,6 +16,7 @@ import moe.feng.material.statusbar.StatusBarCompat;
 
 public class AboutActivity extends AppCompatActivity
 {
+    private ImageView mMaskView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -23,10 +25,18 @@ public class AboutActivity extends AppCompatActivity
 
         StatusBarCompat.setUpActivity(this);
 
-        //        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-        //            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        //        }
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+        {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
         setContentView(R.layout.activity_about);
+
+        mMaskView=(ImageView)findViewById(R.id.activity_about_mask);
+        if(Build.VERSION.SDK_INT<=Build.VERSION_CODES.KITKAT)
+        {
+            mMaskView.setVisibility(View.GONE);
+        }
     }
 
     public void EmailClick(View view)

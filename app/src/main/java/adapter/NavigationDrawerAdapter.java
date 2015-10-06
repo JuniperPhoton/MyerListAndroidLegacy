@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,65 +15,52 @@ import android.widget.TextView;
 import com.example.juniper.myerlistandroid.R;
 
 import java.util.List;
-import java.util.Locale;
 
 import helper.ContextUtil;
-import interfaces.INavigationDrawerCallbacks;
-import interfaces.INavigationDrawerCateCallbacks;
-import interfaces.INavigationDrawerOtherCallbacks;
-import model.NavigationItem;
+import interfaces.INavigationDrawerMainCallbacks;
+import interfaces.INavigationDrawerSubCallbacks;
+import model.NavigationItemWithIcon;
 
 
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.ViewHolder>
 {
 
-    private List<NavigationItem> mData;
-    private INavigationDrawerCallbacks mINavigationDrawerCallbacks;
-    private INavigationDrawerOtherCallbacks mINavigationDrawerOtherCallbacks;
-    private INavigationDrawerCateCallbacks mINavigationDrawerCateCallbacks;
+    private List<NavigationItemWithIcon> mData;
+
+    //这些是 MainActivity
+    private INavigationDrawerMainCallbacks mINavigationDrawerMainCallbacks;
+    private INavigationDrawerSubCallbacks mINavigationDrawerSubCallbacks;
+
+    //选中的 View
     private View mSelectedView;
+
+    //选中的项
     private int mSelectedPosition;
 
-    public NavigationDrawerAdapter(List<NavigationItem> data)
+    public NavigationDrawerAdapter(List<NavigationItemWithIcon> data)
     {
         mData = data;
     }
 
-    public INavigationDrawerCallbacks getNavigationDrawerCallbacks()
+    //设置2个回调
+    public void setNavigationDrawerCallbacks(INavigationDrawerMainCallbacks INavigationDrawerMainCallbacks)
     {
-        return mINavigationDrawerCallbacks;
+        mINavigationDrawerMainCallbacks = INavigationDrawerMainCallbacks;
     }
 
-    public INavigationDrawerOtherCallbacks getOtherNavigationDrawerCallbacks()
+    public void setOtherNavigationDrawerCallbacks(INavigationDrawerSubCallbacks navigationDrawerCallbacks)
     {
-        return mINavigationDrawerOtherCallbacks;
+        mINavigationDrawerSubCallbacks = navigationDrawerCallbacks;
     }
 
-    public INavigationDrawerCateCallbacks getCateNavigationDrawerCallbacks()
-    {
-        return mINavigationDrawerCateCallbacks;
-    }
-
-    public void setNavigationDrawerCallbacks(INavigationDrawerCallbacks INavigationDrawerCallbacks)
-    {
-        mINavigationDrawerCallbacks = INavigationDrawerCallbacks;
-    }
-
-    public void setOtherNavigationDrawerCallbacks(INavigationDrawerOtherCallbacks navigationDrawerCallbacks)
-    {
-        mINavigationDrawerOtherCallbacks = navigationDrawerCallbacks;
-    }
-
-    public void setCateNavigationDrawerCallbacks(INavigationDrawerCateCallbacks navigationDrawerCallbacks)
-    {
-        mINavigationDrawerCateCallbacks = navigationDrawerCallbacks;
-    }
-
+    //创建每一项的容器
     @Override
     public NavigationDrawerAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
     {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_drawer, viewGroup, false);
         final ViewHolder viewHolder = new ViewHolder(v);
+
+        //点击选中的时候发生
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener()
                                                    {
                                                        @Override
@@ -85,27 +71,21 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
                                                            if (mSelectedView != null)
                                                            {
                                                                ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
-                                                               ((ImageView) mSelectedView.findViewById(R.id.item_select)).setVisibility(View.INVISIBLE);
                                                            }
-
-
-                                                           //v.setSelected(true);
 
                                                            mSelectedView = (CardView) v.getParent();
 
-                                                           if (mINavigationDrawerCallbacks != null)
+                                                           if (mINavigationDrawerMainCallbacks != null)
                                                            {
-                                                               mINavigationDrawerCallbacks.onNavigationDrawerItemSelected(viewHolder.getPosition());
+                                                               mINavigationDrawerMainCallbacks.OnDrawerMainItemSelected(viewHolder.getPosition());
                                                            }
-                                                           if (mINavigationDrawerOtherCallbacks != null)
+                                                           if (mINavigationDrawerSubCallbacks != null)
                                                            {
-                                                               mINavigationDrawerOtherCallbacks.OnSelectedOther(viewHolder.getPosition());
+                                                               mINavigationDrawerSubCallbacks.OnDrawerSubItemSelected(viewHolder.getPosition());
                                                            }
                                                        }
                                                    }
         );
-        //viewHolder.cardView.setCardBackgroundColor(R.drawable.row_selector);
-
         return viewHolder;
     }
 
@@ -115,27 +95,9 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         //设置抽屉每一项的 UI
         viewHolder.textView.setText(mData.get(i).getText());
 
-        Resources resources = ContextUtil.getInstance().getResources();
-        Configuration config = resources.getConfiguration();
-
-        //中文字体下加粗
-        if (config.locale == Locale.SIMPLIFIED_CHINESE)
-        {
-            TextPaint textPaint = viewHolder.textView.getPaint();
-            textPaint.setFakeBoldText(false);
-        }
-
         viewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
 
-        if (mData.get(i).getText().equals(""))
-        {
-            viewHolder.selectRectImage.setVisibility(View.INVISIBLE);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(80, LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParams.setMargins(0, 0, 0, 0);
-            viewHolder.imageView.setLayoutParams(layoutParams);
-        }
-
-        if (mSelectedPosition == i && mINavigationDrawerCallbacks != null)
+        if (mSelectedPosition == i && mINavigationDrawerMainCallbacks != null)
         {
             if (mSelectedView != null)
             {
@@ -144,7 +106,6 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
             mSelectedPosition = i;
             mSelectedView = viewHolder.cardView;
             ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.MyerListGray));
-            ((ImageView) mSelectedView.findViewById(R.id.item_select)).setVisibility(View.VISIBLE);
         }
     }
 
@@ -161,6 +122,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         return mData != null ? mData.size() : 0;
     }
 
+    //表示 Recycler 里的每一项的容器
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
         public TextView textView;

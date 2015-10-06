@@ -8,6 +8,7 @@
               android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/activity_about_mask"
         android:layout_width="match_parent"
         android:layout_height="24sp"
         android:layout_alignParentTop="true"
@@ -28,7 +29,8 @@
             android:layout_marginTop="-10sp"
             android:layout_marginRight="-10sp"
             card_view:cardCornerRadius="0dp">
-            <RelativeLayout
+
+        <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="150sp"
                 android:background="@color/MyerListBlueLight">

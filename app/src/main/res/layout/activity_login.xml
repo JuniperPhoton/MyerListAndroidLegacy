@@ -6,6 +6,7 @@
                 tools:context=".LoginActivity">
 
     <ImageView
+        android:id="@+id/activity_login_mask"
         android:layout_width="match_parent"
         android:layout_height="24sp"
         android:layout_alignParentTop="true"
@@ -40,8 +41,9 @@
 
                 <TextView
                     android:id="@+id/logintitle"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:layout_alignParentBottom="true"
                     android:layout_marginLeft="10sp"
                     android:gravity="left"
@@ -51,8 +53,9 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:layout_alignParentBottom="true"
                     android:layout_marginLeft="10sp"
                     android:fontFamily="@string/FontLight"
@@ -71,57 +74,60 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/emailbox"
+                android:id="@+id/activity_login_emailText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20sp"
                 android:layout_marginRight="20sp"
                 android:layout_marginTop="20sp"
                 android:hint="@string/emailHint"
+                android:textColorHint="@android:color/black"
                 android:singleLine="true"
                 android:textColor="@android:color/black"
                 android:textSize="12sp"/>
 
             <EditText
-                android:id="@+id/psbox"
+                android:id="@+id/activity_login_psText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20sp"
                 android:layout_marginRight="20sp"
-                android:layout_marginTop="20sp"
+                android:layout_marginTop="5sp"
                 android:hint="@string/passwordHint"
                 android:password="true"
+                android:textColorHint="@android:color/black"
                 android:singleLine="true"
                 android:textColor="@android:color/black"
                 android:textSize="12sp"/>
 
             <EditText
-                android:id="@+id/confirmpsbox"
+                android:id="@+id/activity_login_reInputPsText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20sp"
                 android:layout_marginRight="20sp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="5dp"
                 android:hint="@string/repasswordHint"
+                android:textColorHint="@android:color/black"
                 android:password="true"
                 android:singleLine="true"
                 android:textColor="@android:color/black"
                 android:textSize="12sp"/>
 
             <android.support.v7.widget.CardView
-                android:id="@+id/loginBtn_cardview"
+                android:id="@+id/activity_login_btn_cardView"
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="40sp"
                 android:layout_marginLeft="20sp"
                 android:layout_marginRight="20sp"
-                android:layout_marginTop="30sp"
+                android:layout_marginTop="5sp"
                 card_view:cardBackgroundColor="@color/MyerListBlueLight"
                 card_view:cardCornerRadius="2dp"
                 card_view:cardElevation="3dp">
 
                 <Button
-                    android:id="@+id/loginBtn"
+                    android:id="@+id/activity_login_loginBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"

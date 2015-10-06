@@ -4,25 +4,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
     <ImageView
+        android:id="@+id/activity_main_mask"
         android:layout_width="match_parent"
         android:layout_height="24sp"
-        android:alpha="0.15"
-        android:scaleType="fitXY"
-        android:src="@drawable/black_mask"
         android:layout_alignParentTop="true"
-        android:elevation="@dimen/statusbar_elevation"/>
+        android:alpha="0.1"
+        android:elevation="@dimen/statusbar_elevation"
+        android:scaleType="fitXY"
+        android:src="@drawable/black_mask"/>
+
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            android:background="@color/MyerListGray"
+            android:orientation="vertical">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -34,13 +39,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0sp"/>
 
-
-
             </RelativeLayout>
 
-
-            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                         android:id="@+id/fragment_container"
+            <FrameLayout android:id="@+id/fragment_container"
+                         xmlns:android="http://schemas.android.com/apk/res/android"
                          android:layout_width="match_parent"
                          android:layout_height="match_parent"
                          android:layout_below="@+id/toolbar_actionbar"
@@ -50,11 +52,120 @@
 
         <fragment
             android:id="@+id/fragment_drawer"
-            android:name="fragment.IINavigationDrawerFragment"
+            android:name="fragment.NavigationDrawerFragment"
             android:layout_width="@dimen/navigation_drawer_width"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             app:layout="@layout/fragment_navigation_drawer"/>
     </android.support.v4.widget.DrawerLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_todo_adding_pane"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:background="@color/MyerListBlue">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0sp"
+            android:orientation="vertical"
+            android:background="@color/MyerListBlue">
+
+            <TextView
+                android:id="@+id/dialog_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25sp"
+                android:layout_marginStart="25sp"
+                android:text="@string/adding_title"
+                android:layout_marginTop="100sp"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/add_editText"
+                android:background="@android:color/white"
+                android:layout_width="match_parent"
+                android:layout_height="35sp"
+                android:layout_marginLeft="20sp"
+                android:layout_marginStart="20sp"
+                android:layout_marginRight="10sp"
+                android:layout_marginEnd="10sp"
+                android:layout_marginTop="10sp"
+                android:hint="@string/adding_hint"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/black"
+                android:paddingLeft="10sp"
+                android:textSize="12sp"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50sp"
+                android:layout_marginTop="10sp">
+
+                <LinearLayout
+                    android:id="@+id/dialog_btn_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="20sp"
+                    android:layout_marginRight="20sp"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.CardView
+                        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                        android:layout_width="120sp"
+                        android:layout_height="40sp"
+                        android:layout_marginRight="10sp"
+                        android:textSize="15sp"
+                        card_view:cardBackgroundColor="@color/MyerListBlueLight"
+                        card_view:cardCornerRadius="2dp"
+                        card_view:cardElevation="0dp"
+                        >
+
+                        <Button
+                            android:id="@+id/add_ok_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:text="@string/ok_btn"
+                            android:textColor="@color/MyerListGray"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                        android:layout_width="70sp"
+                        android:layout_height="40sp"
+                        card_view:cardBackgroundColor="@color/MyerListBlueDark"
+                        card_view:cardCornerRadius="2dp"
+                        card_view:cardElevation="0dp">
+
+                        <Button
+                            android:id="@+id/add_cancel_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:text="@string/cancel_btn"
+                            android:textColor="@android:color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
+                    </android.support.v7.widget.CardView>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 </RelativeLayout>

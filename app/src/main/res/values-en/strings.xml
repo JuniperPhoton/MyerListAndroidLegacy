@@ -11,29 +11,22 @@
     <string name="emailHint">EMAIL</string>
     <string name="passwordHint">PASSWORD</string>
     <string name="repasswordHint">CONFIRM YOUR PASSWORD</string>
-
     <string name="title_activity_login">login</string>
     <string name="FontLight">sans-serif-light</string>
     <string name="title_activity_start">StartActivity</string>
     <string name="title_activity_main">MyerList</string>
     <string name="account_text">ACCOUNT</string>
-
     <string name="title_section1">TO-DOS</string>
     <string name="title_section2">DELETED</string>
     <string name="title_section3">SETTINGS</string>
     <string name="title_section4">ABOUT</string>
-    <string name="title_section5">LOGOUT</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="deleteditems">DELETED ITEMS</string>
     <string name="settings">SETTINGS</string>
     <string name="about">ABOUT</string>
-
     <string name="drawer_open">Menu opened</string>
     <string name="drawer_close">Menu closed</string>
-
     <string name="shared_logininfo_file">login_info</string>
     <string name="logout_content">Confirm to logout?</string>
     <string name="logout_title">NOTICE</string>
@@ -62,8 +55,6 @@
     <string name="add_success">New memo added ;-)</string>
     <string name="login_success">Login successfully</string>
     <string name="rebootHint">Roboot app to make it work</string>
-
-<!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="version_value">1.1</string>
     <string name="now_to_login">Now to login</string>
@@ -74,10 +65,19 @@
     <string name="confirm_ps_lost">Please confirm your password.</string>
     <string name="ps_lost">Please input your password.</string>
     <string name="email_invalid">Please input a valid email.</string>
-    <string name="no_content">No Content</string>
+    <string name="no_content">No to-dos</string>
     <string name="no_deleted_content_hint">Deleted items will show up here.</string>
-    <string name="no_todo_content_hint">Add a memo right now.</string>
+    <string name="no_todo_content_hint">Enjoy your day ;-)</string>
     <string name="deleteall_alert">You are going to delete all items.</string>
     <string name="open_src">OPEN SRC</string>
     <string name="modify_memo_title">MODIFY MEMO</string>
+    <string name="cate_default">To-Do</string>
+    <string name="cate_work">Work</string>
+    <string name="cate_life">Life</string>
+    <string name="cate_family">Family</string>
+    <string name="cate_enter">Entertainment</string>
+    <string name="account_concern">Account</string>
+    <string name="logout">Logout</string>
+    <string name="adding_hint">e.g. Grab a coffee with my friends.</string>
+    <string name="adding_title">Add a new memo</string>
 </resources>

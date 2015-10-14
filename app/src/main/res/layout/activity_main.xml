@@ -31,7 +31,14 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
+                <FrameLayout android:id="@+id/fragment_container"
+                             xmlns:android="http://schemas.android.com/apk/res/android"
+                             android:layout_width="match_parent"
+                             android:layout_height="match_parent"
+                             android:layout_below="@+id/toolbar_actionbar"
+                             android:background="?android:attr/selectableItemBackground"
+                             android:layout_marginTop="0sp"
+                    />
                 <include
                     android:id="@+id/toolbar_actionbar"
                     layout="@layout/toolbar_default"
@@ -41,13 +48,7 @@
 
             </RelativeLayout>
 
-            <FrameLayout android:id="@+id/fragment_container"
-                         xmlns:android="http://schemas.android.com/apk/res/android"
-                         android:layout_width="match_parent"
-                         android:layout_height="match_parent"
-                         android:layout_below="@+id/toolbar_actionbar"
-                         android:background="?android:attr/selectableItemBackground"
-                />
+
         </LinearLayout>
 
         <fragment
@@ -100,6 +101,7 @@
                 android:textColor="@android:color/black"
                 android:textColorHint="@android:color/black"
                 android:paddingLeft="10sp"
+                android:paddingStart="10sp"
                 android:textSize="12sp"
                 />
 

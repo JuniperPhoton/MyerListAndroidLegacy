@@ -6,4 +6,5 @@
     android:background="?attr/colorPrimary"
     android:minHeight="@dimen/abc_action_bar_default_height_material"
     android:paddingTop="22sp"
+    android:elevation="3dp"
     android:title="@string/cate_default"/>

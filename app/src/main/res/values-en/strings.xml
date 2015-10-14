@@ -22,7 +22,7 @@
     <string name="title_section4">ABOUT</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="deleteditems">DELETED ITEMS</string>
+    <string name="deleteditems">Deleted</string>
     <string name="settings">SETTINGS</string>
     <string name="about">ABOUT</string>
     <string name="drawer_open">Menu opened</string>
@@ -80,4 +80,5 @@
     <string name="logout">Logout</string>
     <string name="adding_hint">e.g. Grab a coffee with my friends.</string>
     <string name="adding_title">Add a new memo</string>
+    <string name="no_deleted">No items</string>
 </resources>

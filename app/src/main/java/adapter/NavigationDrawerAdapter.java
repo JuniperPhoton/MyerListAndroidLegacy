@@ -1,8 +1,6 @@
 package adapter;
 
 
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +20,7 @@ import interfaces.INavigationDrawerSubCallbacks;
 import model.NavigationItemWithIcon;
 
 
-public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.ViewHolder>
+public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.DrawerViewHolder>
 {
 
     private List<NavigationItemWithIcon> mData;
@@ -55,47 +53,47 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     //创建每一项的容器
     @Override
-    public NavigationDrawerAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
+    public DrawerViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
     {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_drawer, viewGroup, false);
-        final ViewHolder viewHolder = new ViewHolder(v);
+        final DrawerViewHolder drawerViewHolder = new DrawerViewHolder(v);
 
         //点击选中的时候发生
-        viewHolder.linearLayout.setOnClickListener(new View.OnClickListener()
-                                                   {
-                                                       @Override
-                                                       public void onClick(View v)
-                                                       {
-                                                           mSelectedPosition = viewHolder.getPosition();
+        drawerViewHolder.linearLayout.setOnClickListener(new View.OnClickListener()
+                                                         {
+                                                             @Override
+                                                             public void onClick(View v)
+                                                             {
+                                                                 mSelectedPosition = drawerViewHolder.getPosition();
 
-                                                           if (mSelectedView != null)
-                                                           {
-                                                               ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
-                                                           }
+                                                                 if (mSelectedView != null)
+                                                                 {
+                                                                     ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
+                                                                 }
 
-                                                           mSelectedView = (CardView) v.getParent();
+                                                                 mSelectedView = (CardView) v.getParent();
 
-                                                           if (mINavigationDrawerMainCallbacks != null)
-                                                           {
-                                                               mINavigationDrawerMainCallbacks.OnDrawerMainItemSelected(viewHolder.getPosition());
-                                                           }
-                                                           if (mINavigationDrawerSubCallbacks != null)
-                                                           {
-                                                               mINavigationDrawerSubCallbacks.OnDrawerSubItemSelected(viewHolder.getPosition());
-                                                           }
-                                                       }
-                                                   }
+                                                                 if (mINavigationDrawerMainCallbacks != null)
+                                                                 {
+                                                                     mINavigationDrawerMainCallbacks.OnDrawerMainItemSelected(drawerViewHolder.getPosition());
+                                                                 }
+                                                                 if (mINavigationDrawerSubCallbacks != null)
+                                                                 {
+                                                                     mINavigationDrawerSubCallbacks.OnDrawerSubItemSelected(drawerViewHolder.getPosition());
+                                                                 }
+                                                             }
+                                                         }
         );
-        return viewHolder;
+        return drawerViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(NavigationDrawerAdapter.ViewHolder viewHolder, int i)
+    public void onBindViewHolder(DrawerViewHolder drawerViewHolder, int i)
     {
         //设置抽屉每一项的 UI
-        viewHolder.textView.setText(mData.get(i).getText());
+        drawerViewHolder.textView.setText(mData.get(i).getText());
 
-        viewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
+        drawerViewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
 
         if (mSelectedPosition == i && mINavigationDrawerMainCallbacks != null)
         {
@@ -104,7 +102,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
                 ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
             }
             mSelectedPosition = i;
-            mSelectedView = viewHolder.cardView;
+            mSelectedView = drawerViewHolder.cardView;
             ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.MyerListGray));
         }
     }
@@ -123,7 +121,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     }
 
     //表示 Recycler 里的每一项的容器
-    public static class ViewHolder extends RecyclerView.ViewHolder
+    public static class DrawerViewHolder extends RecyclerView.ViewHolder
     {
         public TextView textView;
         public ImageView imageView;
@@ -131,7 +129,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         public LinearLayout linearLayout;
         public ImageView selectRectImage;
 
-        public ViewHolder(View itemView)
+        public DrawerViewHolder(View itemView)
         {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.item_name);

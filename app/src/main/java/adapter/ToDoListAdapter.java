@@ -32,7 +32,7 @@ import model.ToDo;
 import model.ToDoListHelper;
 
 
-public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHolder> implements View.OnTouchListener
+public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoItemViewHolder> implements View.OnTouchListener
 {
     //能否操作列表项目
     private boolean mIsEnable = true;
@@ -72,15 +72,15 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    public ToDoItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_todo, parent, false);
-        return  new ViewHolder(v);
+        return  new ToDoItemViewHolder(v);
     }
 
     //创建每一项的布局
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position)
+    public void onBindViewHolder(final ToDoItemViewHolder holder, final int position)
     {
         //设置文字
         holder.textView.setText(mMyToDos.get(position).getContent());
@@ -169,7 +169,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             @Override
             public void onClick(View view)
             {
-                DeleteToDos(mMyToDos.get(position));
+                DeleteToDo(mMyToDos.get(position));
             }
         });
 
@@ -282,7 +282,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         mCanChangeCate=canChange;
     }
 
-    public void AddToDos(ToDo todoToAdd)
+    public void AddToDo(ToDo todoToAdd)
     {
         if (todoToAdd == null)
             return;
@@ -298,7 +298,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         SerializerHelper.SerializeToFile(mCurrentActivity, mMyToDos, SerializerHelper.todosFileName);
     }
 
-    public void DeleteToDos(ToDo todoToDelete)
+    public void DeleteToDo(ToDo todoToDelete)
     {
         int index = 0;
         for (int i = 0; i < mMyToDos.size(); i++)
@@ -371,30 +371,30 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
 
                 if (scrollLeft < -150 && !mIsInGreen)
                 {
-                    SetColorAnim((ImageView) root.findViewById(R.id.greenImageView), true);
+                    PlayColorChangeAnimation((ImageView) root.findViewById(R.id.greenImageView), true);
                 } else if (scrollLeft > 150 && !mIsInRed)
                 {
-                    SetColorAnim((ImageView) root.findViewById(R.id.redImageView), false);
+                    PlayColorChangeAnimation((ImageView) root.findViewById(R.id.redImageView), false);
                 }
 
 
                 break;
             case MotionEvent.ACTION_UP:
 
-                SetMoveComplete(v, v.getScrollX(), id);
+                OnMoveComplete(v, v.getScrollX(), id);
 
                 break;
 
             case MotionEvent.ACTION_CANCEL:
 
-                SetMoveComplete(v, v.getScrollX(), id);
+                OnMoveComplete(v, v.getScrollX(), id);
                 break;
         }
 
         return false;
     }
 
-    private void SetMoveComplete(View v, float scrollLeft, String id)
+    private void OnMoveComplete(View v, float scrollLeft, String id)
     {
         //Find the current schedule
 
@@ -434,22 +434,22 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         //Delete
         else if (scrollLeft > 150)
         {
-            DeleteToDos(mCurrentToDo);
+            DeleteToDo(mCurrentToDo);
         }
 
         if (mIsInGreen)
         {
-            UnSetColorAnim((ImageView) v.findViewById(R.id.greenImageView), true);
+            PlayFadebackAnimation((ImageView) v.findViewById(R.id.greenImageView), true);
         } else if (mIsInRed)
         {
-            UnSetColorAnim((ImageView) v.findViewById(R.id.redImageView), false);
+            PlayFadebackAnimation((ImageView) v.findViewById(R.id.redImageView), false);
         }
 
-        SetBackAnim(v, scrollLeft);
+        PlayGoBackAnimation(v, scrollLeft);
         SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mMyToDos, SerializerHelper.todosFileName);
     }
 
-    private void SetBackAnim(final View v, final float left)
+    private void PlayGoBackAnimation(final View v, final float left)
     {
         ValueAnimator valueAnimator = ValueAnimator.ofInt((int) left, 0);
         valueAnimator.setDuration(700);
@@ -470,7 +470,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         valueAnimator.start();
     }
 
-    private void SetColorAnim(final ImageView v, boolean isGreen)
+    private void PlayColorChangeAnimation(final ImageView v, boolean isGreen)
     {
         v.setAlpha(1f);
         AnimationSet animationSet = new AnimationSet(false);
@@ -506,7 +506,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
             mIsInRed = true;
     }
 
-    private void UnSetColorAnim(final ImageView v, final boolean isGreen)
+    private void PlayFadebackAnimation(final ImageView v, final boolean isGreen)
     {
         AnimationSet animationSet = new AnimationSet(false);
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
@@ -539,7 +539,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         v.startAnimation(animationSet);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder
+    public static class ToDoItemViewHolder extends RecyclerView.ViewHolder
     {
         private String id;
         public TextView textView;
@@ -551,7 +551,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         public ImageView cateImage;
         public RelativeLayout cateBtn;
 
-        public ViewHolder(View itemView)
+        public ToDoItemViewHolder(View itemView)
         {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.todoBlock);

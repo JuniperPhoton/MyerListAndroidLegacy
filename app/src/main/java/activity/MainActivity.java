@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,6 +31,7 @@ import fragment.DeletedItemFragment;
 import fragment.NavigationDrawerFragment;
 
 import com.example.juniper.myerlistandroid.R;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.umeng.analytics.MobclickAgent;
 
 import fragment.ToDoFragment;
@@ -58,8 +60,7 @@ public class MainActivity extends AppCompatActivity implements
         IRequestCallbacks,
         INavigationDrawerSubCallbacks,
         IDrawerStatusChanged,
-        IOnReAddedToDo,
-        IOnAddedToDo
+        IOnReAddedToDo
 {
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private ToDoFragment mToDoFragment;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements
     private boolean isAddingPaneShown = false;
     private LinearLayout mAddingPaneLayout;
     private EditText mEditedText;
+    private FrameLayout mFragmentLayout;
     private Button mOKBtn;
     private Button mCancelBtn;
 
@@ -86,23 +88,30 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         setContentView(R.layout.activity_main);
+        PgyCrashManager.register(this);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
 
-        mAddingPaneLayout = (LinearLayout) findViewById(R.id.fragment_todo_adding_pane);
-        mEditedText=(EditText)findViewById(R.id.add_editText);
-        mOKBtn=(Button)findViewById(R.id.add_ok_btn);
-        mCancelBtn=(Button)findViewById(R.id.add_cancel_btn);
+        mFragmentLayout=(FrameLayout)findViewById(R.id.fragment_container);
 
-        mOKBtn.setOnClickListener(new View.OnClickListener() {
+
+
+        mAddingPaneLayout = (LinearLayout) findViewById(R.id.fragment_todo_adding_pane);
+        mEditedText = (EditText) findViewById(R.id.add_editText);
+        mOKBtn = (Button) findViewById(R.id.add_ok_btn);
+        mCancelBtn = (Button) findViewById(R.id.add_cancel_btn);
+
+        mOKBtn.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
                 OKClick(v);
             }
         });
-        mCancelBtn.setOnClickListener(new View.OnClickListener() {
+        mCancelBtn.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
@@ -131,10 +140,12 @@ public class MainActivity extends AppCompatActivity implements
                     Intent.FLAG_ACTIVITY_CLEAR_TASK |
                     Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        } else if (access_token != null)
+        }
+        else if (access_token != null)
         {
             InitialFragment(savedInstanceState, true);
-        } else
+        }
+        else
         {
             ConfigHelper.ISOFFLINEMODE = true;
             mNavigationDrawerFragment.SetupOfflineMode();
@@ -218,6 +229,13 @@ public class MainActivity extends AppCompatActivity implements
                     FilterListByCate(4);
                     mToolbar.setBackgroundColor(getResources().getColor(R.color.EnterColor));
                     mToolbar.setTitle(getResources().getString(R.string.cate_enter));
+                }
+                break;
+                case 5:
+                {
+                    SwitchToDeleteFragment();
+                    mToolbar.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
+                    mToolbar.setTitle(getResources().getString(R.string.deleteditems));
                 }
                 break;
             }
@@ -310,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View view)
                 {
-                   OKClick(view);
+                    OKClick(view);
                 }
             });
 
@@ -321,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View view)
                 {
-                   CancelClick(view);
+                    CancelClick(view);
                 }
             });
 
@@ -383,12 +401,16 @@ public class MainActivity extends AppCompatActivity implements
 
         // start the animation
         anim.start();
+
+
     }
 
     public void OKClick(View v)
     {
-        if(mDialog!=null) mDialog.dismiss();
-        if(isAddingPaneShown) HideAddingPane();
+        if (mDialog != null)
+            mDialog.dismiss();
+        if (isAddingPaneShown)
+            HideAddingPane();
         if (ConfigHelper.ISOFFLINEMODE)
         {
             ToDo newToAdd = new ToDo();
@@ -404,13 +426,15 @@ public class MainActivity extends AppCompatActivity implements
         CancelClick(null);
     }
 
-    public void CancelClick(View  v)
+    public void CancelClick(View v)
     {
-        if(mDialog!=null) mDialog.dismiss();
-        if(isAddingPaneShown) HideAddingPane();
+        if (mDialog != null)
+            mDialog.dismiss();
+        if (isAddingPaneShown)
+            HideAddingPane();
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 
         mEditedText.setText("");
     }
@@ -439,16 +463,13 @@ public class MainActivity extends AppCompatActivity implements
         if (mNavigationDrawerFragment.isDrawerOpen())
         {
             mNavigationDrawerFragment.closeDrawer();
-        }
-        else if (mNavigationDrawerFragment.getCurrentSelectedPosition() == 1)
+        } else if (mNavigationDrawerFragment.getCurrentSelectedPosition() == 1)
         {
             mNavigationDrawerFragment.openDrawer();
-        }
-        else if(isAddingPaneShown)
+        } else if (isAddingPaneShown)
         {
             HideAddingPane();
-        }
-        else
+        } else
         {
             super.onBackPressed();
         }
@@ -513,7 +534,7 @@ public class MainActivity extends AppCompatActivity implements
         if (isSuccess)
         {
             ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
-            adapter.AddToDos(newTodo);
+            adapter.AddToDo(newTodo);
             AppHelper.ShowShortToast(getResources().getString(R.string.add_success));
 
             PostHelper.SetListOrder(this, ConfigHelper.getString(this, "sid"), ToDo.getOrderString(adapter.GetListSrc()));
@@ -554,8 +575,7 @@ public class MainActivity extends AppCompatActivity implements
             adapter.SetEnable(isOpen);
     }
 
-    @Override
-    public void OnCreatedToDo(boolean b)
+    public void OnInitial(boolean b)
     {
         ArrayList<ToDo> list = SerializerHelper.DeSerializeFromFile(this, SerializerHelper.todosFileName);
         if (list != null)
@@ -563,21 +583,16 @@ public class MainActivity extends AppCompatActivity implements
             ToDoListHelper.TodosList = list;
         }
 
-        if (ConfigHelper.ISLOADLISTONCE)
+        if (!ConfigHelper.ISOFFLINEMODE)
         {
+            mToDoFragment.ShowRefreshing();
             mToDoFragment.UpdateData(ToDoListHelper.TodosList);
+            PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
         } else
         {
-            ConfigHelper.ISLOADLISTONCE = true;
-            if (!ConfigHelper.ISOFFLINEMODE)
-            {
-                mToDoFragment.ShowRefreshing();
-                PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
-            } else
-            {
-                mToDoFragment.UpdateData(ToDoListHelper.TodosList);
-            }
+            mToDoFragment.UpdateData(ToDoListHelper.TodosList);
         }
+
     }
 
     @Override

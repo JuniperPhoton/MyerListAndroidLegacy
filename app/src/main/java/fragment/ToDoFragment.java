@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -43,8 +44,6 @@ public class ToDoFragment extends Fragment
     private ArrayList<ToDo> mMyToDos;
     private SwipeRefreshLayout mRefreshLayout;
     private FloatingActionButton add_fab;
-
-
 
     private LinearLayout mNoItemLayout;
     private LinearLayout mAddingPaneLayout;
@@ -84,6 +83,22 @@ public class ToDoFragment extends Fragment
 
         mToDoRecyclerView.setLayoutManager(layoutManager);
         mToDoRecyclerView.setHasFixedSize(true);
+//        mToDoRecyclerView.setItemAnimator(null);
+//        DragSortRecycler dragSortRecycler = new DragSortRecycler();
+//        dragSortRecycler.setViewHandleId(R.id.imageView); //View you wish to use as the handle
+//
+//        dragSortRecycler.setOnItemMovedListener(new DragSortRecycler.OnItemMovedListener()
+//        {
+//            @Override
+//            public void onItemMoved(int from, int to)
+//            {
+//                Log.d(TAG, "onItemMoved " + from + " to " + to);
+//            }
+//        });
+//
+//        mToDoRecyclerView.addItemDecoration(dragSortRecycler);
+//        mToDoRecyclerView.addOnItemTouchListener(dragSortRecycler);
+//        mToDoRecyclerView.setOnScrollListener(dragSortRecycler.getScrollListener());
 
         //设置下拉刷新控件
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
@@ -120,7 +135,7 @@ public class ToDoFragment extends Fragment
             add_fab.setLayoutParams(layoutParams);
         }
 
-        ((IOnAddedToDo) mActivity).OnCreatedToDo(true);
+        ((MainActivity)mActivity).OnInitial(true);
 
         return view;
     }
@@ -194,7 +209,8 @@ public class ToDoFragment extends Fragment
         try
         {
             mActivity = activity;
-        } catch (ClassCastException e)
+        }
+        catch (ClassCastException e)
         {
 
         }

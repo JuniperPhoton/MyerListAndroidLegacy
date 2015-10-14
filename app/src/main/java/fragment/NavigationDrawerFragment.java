@@ -147,6 +147,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_life),getResources().getDrawable(R.drawable.cate_life)));
         items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_family),getResources().getDrawable(R.drawable.cate_family)));
         items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_enter),getResources().getDrawable(R.drawable.cate_enter)));
+        items.add(new NavigationItemWithIcon(getResources().getString(R.string.deleteditems),getResources().getDrawable(R.drawable.cate_deleted)));
         return items;
     }
 

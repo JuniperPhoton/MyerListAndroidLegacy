@@ -86,7 +86,7 @@
             android:layout_marginTop="30sp"
             card_view:cardBackgroundColor="@color/MyerListBlueLight"
             card_view:cardCornerRadius="2dp"
-            card_view:cardElevation="3dp">
+            card_view:cardElevation="3sp">
 
             <Button
                 android:id="@+id/tologinBtn"
@@ -111,7 +111,7 @@
             android:background="#ffdbdbdb"
             card_view:cardBackgroundColor="#ffdbdbdb"
             card_view:cardCornerRadius="2dp"
-            card_view:cardElevation="3dp">
+            card_view:cardElevation="3sp">
 
             <Button
                 android:id="@+id/toRegisterBtn"
@@ -137,7 +137,7 @@
             android:background="#ffc5c5c5"
             card_view:cardBackgroundColor="#ffdbdbdb"
             card_view:cardCornerRadius="2dp"
-            card_view:cardElevation="3dp">
+            card_view:cardElevation="3sp">
 
             <Button
                 android:id="@+id/toMainBtn"

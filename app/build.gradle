@@ -8,8 +8,8 @@ android {
         applicationId "com.example.juniper.myerlistandroid"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "2.0"
     }
     buildTypes {
         release {
@@ -21,6 +21,7 @@ android {
 repositories
 {
     jcenter()
+    maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
 
 }
 
@@ -39,6 +40,8 @@ dependencies
             compile 'com.umeng.analytics:analytics:latest.integration'
             compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
             compile 'it.sephiroth.android.library.viewrevealanimator:view-reveal-animator:+'
+            compile 'com.pgyersdk:sdk:2.2'
+
         }
 
 

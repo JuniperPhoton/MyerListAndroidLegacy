@@ -2,9 +2,12 @@ package helper;
 
 import android.app.Application;
 
+import com.pgyersdk.crash.PgyCrashManager;
+
 import model.ToDoListHelper;
 
-public class ContextUtil extends Application {
+public class ContextUtil extends Application
+{
     private static ContextUtil instance;
 
     public static ContextUtil getInstance() {
@@ -21,26 +24,7 @@ public class ContextUtil extends Application {
         ConfigHelper.ConfigAppSetting();
 
         ToDoListHelper.SetUpSavedData();
+        PgyCrashManager.register(this);
 
-//        String email=ConfigHelper.getString(this,"email");
-//        boolean offline=ConfigHelper.getBoolean(this,"offline_mode");
-//        if(offline || email!=null )
-//        {
-//            ConfigHelper.ISOFFLINEMODE=offline;
-//            Intent intent=new Intent(this, MainActivity.class);
-//            intent.putExtra("LOGIN_STATE",offline?"Offline":"AboutToLogin");
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-//                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
-//                    Intent.FLAG_ACTIVITY_NEW_TASK);
-//            startActivity(intent);
-//        }
-//        else
-//        {
-//            Intent intent=new Intent(this, StartActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-//                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
-//                    Intent.FLAG_ACTIVITY_NEW_TASK);
-//            startActivity(intent);
-//        }
     }
 }

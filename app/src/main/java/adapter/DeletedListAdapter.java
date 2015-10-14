@@ -21,7 +21,7 @@ import model.ToDo;
 import model.ToDoListHelper;
 
 
-public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.ViewHolder>
+public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.DeleteItemViewHolder>
 {
     private Activity mCurrentActivity;
     private DeletedItemFragment mDeletedItemFragment;
@@ -35,15 +35,15 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
     }
 
     @Override
-    public DeletedListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    public DeleteItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_deleted, parent, false);
-        ViewHolder viewHolder = new ViewHolder(v);
-        return viewHolder;
+        DeleteItemViewHolder deleteItemViewHolder = new DeleteItemViewHolder(v);
+        return deleteItemViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(final DeletedListAdapter.ViewHolder holder, final int position)
+    public void onBindViewHolder(final DeleteItemViewHolder holder, final int position)
     {
         holder.mTextView.setText(mDeleteToDos.get(position).getContent());
         holder.mDeleteView.setOnClickListener(new View.OnClickListener()
@@ -107,13 +107,13 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
         return mDeleteToDos != null ? mDeleteToDos.size() : 0;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder
+    public static class DeleteItemViewHolder extends RecyclerView.ViewHolder
     {
         private TextView mTextView;
         private ImageView mReDoView;
         private ImageView mDeleteView;
 
-        public ViewHolder(View itemView)
+        public DeleteItemViewHolder(View itemView)
         {
             super(itemView);
             mTextView = (TextView) itemView.findViewById(R.id.deletedBlock);

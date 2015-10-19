@@ -1,40 +1,27 @@
 package fragment;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.example.juniper.myerlistandroid.R;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import activity.MainActivity;
 import helper.ConfigHelper;
 import helper.ContextUtil;
 import helper.PostHelper;
 import adapter.ToDoListAdapter;
-import interfaces.IOnAddedToDo;
 import model.ToDo;
 
 public class ToDoFragment extends Fragment
@@ -43,7 +30,7 @@ public class ToDoFragment extends Fragment
     public RecyclerView mToDoRecyclerView;
     private ArrayList<ToDo> mMyToDos;
     private SwipeRefreshLayout mRefreshLayout;
-    private FloatingActionButton add_fab;
+    private FloatingActionButton mAddingFab;
 
     private LinearLayout mNoItemLayout;
     private LinearLayout mAddingPaneLayout;
@@ -66,8 +53,7 @@ public class ToDoFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_to_do, container, false);
 
@@ -117,13 +103,13 @@ public class ToDoFragment extends Fragment
         });
 
         //设置 FAB
-        add_fab = (FloatingActionButton) view.findViewById(R.id.pink_icon);
-        add_fab.setOnClickListener(new View.OnClickListener()
+        mAddingFab = (FloatingActionButton) view.findViewById(R.id.pink_icon);
+        mAddingFab.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                ((MainActivity)mActivity).ShowAddingPane();
+                ((MainActivity) mActivity).ShowAddingPane();
             }
         });
         if (!ConfigHelper.getBoolean(ContextUtil.getInstance(), "HandHobbit"))
@@ -132,12 +118,24 @@ public class ToDoFragment extends Fragment
             layoutParams.setMargins(16, 0, 0, 16);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            add_fab.setLayoutParams(layoutParams);
+            mAddingFab.setLayoutParams(layoutParams);
         }
 
         ((MainActivity)mActivity).OnInitial(true);
 
         return view;
+    }
+
+    //TODO
+    public void UpdateFABColor(int currentIndex)
+    {
+        switch(currentIndex)
+        {
+            case 0:
+            {
+
+            }break;
+        }
     }
 
     public void ShowNoItemHint(boolean show)

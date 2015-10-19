@@ -47,7 +47,6 @@ import helper.PostHelper;
 import interfaces.INavigationDrawerMainCallbacks;
 import adapter.ToDoListAdapter;
 import helper.SerializerHelper;
-import interfaces.IOnAddedToDo;
 import interfaces.IOnReAddedToDo;
 import interfaces.IRequestCallbacks;
 import model.ToDo;
@@ -70,11 +69,14 @@ public class MainActivity extends AppCompatActivity implements
     private AlertDialog mDialog;
 
     private boolean isAddingPaneShown = false;
-    private LinearLayout mAddingPaneLayout;
     private EditText mEditedText;
     private FrameLayout mFragmentLayout;
     private Button mOKBtn;
     private Button mCancelBtn;
+
+    private LinearLayout mAddingPaneLayout;
+
+    private int mCurrentCate = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -93,9 +95,7 @@ public class MainActivity extends AppCompatActivity implements
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
 
-        mFragmentLayout=(FrameLayout)findViewById(R.id.fragment_container);
-
-
+        mFragmentLayout = (FrameLayout) findViewById(R.id.fragment_container);
 
         mAddingPaneLayout = (LinearLayout) findViewById(R.id.fragment_todo_adding_pane);
         mEditedText = (EditText) findViewById(R.id.add_editText);
@@ -182,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void OnDrawerMainItemSelected(int position)
     {
+        mCurrentCate = position;
         try
         {
             switch (position)
@@ -191,7 +192,8 @@ public class MainActivity extends AppCompatActivity implements
                     if (mToDoFragment == null)
                     {
                         mToDoFragment = new ToDoFragment();
-                    } else
+                    }
+                    else
                     {
                         mToDoFragment.UpdateData(ToDoListHelper.TodosList);
                     }
@@ -202,39 +204,45 @@ public class MainActivity extends AppCompatActivity implements
 
                     mToolbar.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
                     mToolbar.setTitle(getResources().getString(R.string.cate_default));
-                } break;
+                    mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
+                }
+                break;
                 case 1:
                 {
-                    FilterListByCate(1);
+                    UpdateListByCate();
                     mToolbar.setBackgroundColor(getResources().getColor(R.color.WorkColor));
                     mToolbar.setTitle(getResources().getString(R.string.cate_work));
+                    mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.WorkColor));
                 }
                 break;
                 case 2:
                 {
-                    FilterListByCate(2);
+                    UpdateListByCate();
                     mToolbar.setBackgroundColor(getResources().getColor(R.color.LifeColor));
                     mToolbar.setTitle(getResources().getString(R.string.cate_life));
+                    mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.LifeColor));
                 }
                 break;
                 case 3:
                 {
-                    FilterListByCate(3);
+                    UpdateListByCate();
                     mToolbar.setBackgroundColor(getResources().getColor(R.color.FamilyColor));
                     mToolbar.setTitle(getResources().getString(R.string.cate_family));
+                    mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.FamilyColor));
                 }
                 break;
                 case 4:
                 {
-                    FilterListByCate(4);
+                    UpdateListByCate();
                     mToolbar.setBackgroundColor(getResources().getColor(R.color.EnterColor));
                     mToolbar.setTitle(getResources().getString(R.string.cate_enter));
+                    mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.EnterColor));
                 }
                 break;
                 case 5:
                 {
                     SwitchToDeleteFragment();
-                    mToolbar.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
+                    mToolbar.setBackgroundColor(getResources().getColor(R.color.DeletedColor));
                     mToolbar.setTitle(getResources().getString(R.string.deleteditems));
                 }
                 break;
@@ -246,23 +254,32 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void FilterListByCate(int cate)
+    public void UpdateListByCate()
     {
+        if(mCurrentCate==5) return;
         ArrayList<ToDo> newList = new ArrayList<>();
-        for (ToDo todo : ToDoListHelper.TodosList)
+        if(mCurrentCate==0) newList=ToDoListHelper.TodosList;
+        else
         {
-            if (todo.getCate() == cate)
+            for (ToDo todo : ToDoListHelper.TodosList)
             {
-                newList.add(todo);
+                if (todo.getCate() == mCurrentCate)
+                {
+                    newList.add(todo);
+                }
             }
         }
+
         if (mToDoFragment != null)
         {
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment).commit();
+
             mToDoFragment.UpdateData(newList);
             ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
             if (adapter != null)
                 adapter.SetCanChangeCate(false);
         }
+
     }
 
     public void SwitchToDeleteFragment()
@@ -283,8 +300,8 @@ public class MainActivity extends AppCompatActivity implements
             isAddingPaneShown = true;
 
             // get the center for the clipping circle
-            int cx = mAddingPaneLayout.getWidth() - 200;
-            int cy = mAddingPaneLayout.getHeight() - 200;
+            int cx = mAddingPaneLayout.getWidth() - 160;
+            int cy = mAddingPaneLayout.getHeight() - 160;
 
             // get the final radius for the clipping circle
             int finalRadius = Math.max(mAddingPaneLayout.getWidth(), mAddingPaneLayout.getHeight());
@@ -311,7 +328,8 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 }, 333);
             }
-        } else
+        }
+        else
         {
             View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_adding_pane, (ViewGroup) this.findViewById(R.id.dialog_title));
 
@@ -378,8 +396,8 @@ public class MainActivity extends AppCompatActivity implements
         isAddingPaneShown = false;
 
         // get the center for the clipping circle
-        int cx = mAddingPaneLayout.getWidth() - 200;
-        int cy = mAddingPaneLayout.getHeight() - 200;
+        int cx = mAddingPaneLayout.getWidth() - 160;
+        int cy = mAddingPaneLayout.getHeight() - 160;
 
         // get the initial radius for the clipping circle
         int initialRadius = Math.max(mAddingPaneLayout.getWidth(), mAddingPaneLayout.getHeight());
@@ -401,8 +419,6 @@ public class MainActivity extends AppCompatActivity implements
 
         // start the animation
         anim.start();
-
-
     }
 
     public void OKClick(View v)
@@ -417,10 +433,12 @@ public class MainActivity extends AppCompatActivity implements
             newToAdd.setContent(mEditedText.getText().toString());
             newToAdd.setIsDone(false);
             newToAdd.setID(java.util.UUID.randomUUID().toString());
+            newToAdd.setCate(mCurrentCate);
             OnAddedResponse(true, newToAdd);
-        } else
+        }
+        else
         {
-            PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), mEditedText.getText().toString(), "0", 0);
+            PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), mEditedText.getText().toString(), "0",mCurrentCate);
         }
 
         CancelClick(null);
@@ -448,12 +466,16 @@ public class MainActivity extends AppCompatActivity implements
             {
                 Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
                 startActivity(intent);
-            } ; break;
+            }
+            ;
+            break;
             case 1:
             {
                 Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
                 startActivity(intent);
-            } ; break;
+            }
+            ;
+            break;
         }
     }
 
@@ -463,13 +485,12 @@ public class MainActivity extends AppCompatActivity implements
         if (mNavigationDrawerFragment.isDrawerOpen())
         {
             mNavigationDrawerFragment.closeDrawer();
-        } else if (mNavigationDrawerFragment.getCurrentSelectedPosition() == 1)
-        {
-            mNavigationDrawerFragment.openDrawer();
-        } else if (isAddingPaneShown)
+        }
+        else if (isAddingPaneShown)
         {
             HideAddingPane();
-        } else
+        }
+        else
         {
             super.onBackPressed();
         }
@@ -501,6 +522,8 @@ public class MainActivity extends AppCompatActivity implements
             mToDoFragment.StopRefreshing();
 
             SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListHelper.TodosList, SerializerHelper.todosFileName);
+
+            UpdateListByCate();
         }
     }
 
@@ -522,7 +545,8 @@ public class MainActivity extends AppCompatActivity implements
         if (value)
         {
             PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
-        } else
+        }
+        else
         {
             AppHelper.ShowShortToast("Fail to login.");
         }
@@ -536,9 +560,10 @@ public class MainActivity extends AppCompatActivity implements
             ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
             adapter.AddToDo(newTodo);
             AppHelper.ShowShortToast(getResources().getString(R.string.add_success));
-
             PostHelper.SetListOrder(this, ConfigHelper.getString(this, "sid"), ToDo.getOrderString(adapter.GetListSrc()));
-        } else
+            UpdateListByCate();
+        }
+        else
         {
             AppHelper.ShowShortToast("Fail to add memo :-(");
         }
@@ -575,6 +600,22 @@ public class MainActivity extends AppCompatActivity implements
             adapter.SetEnable(isOpen);
     }
 
+
+    @Override
+    public void OnReCreatedToDo(boolean b)
+    {
+        mDeletedItemFragment.SetUpData(ToDoListHelper.DeletedList);
+        if (ToDoListHelper.DeletedList.size() == 0)
+            mDeletedItemFragment.ShowNoItemHint();
+        else
+            mDeletedItemFragment.HideNoItemHint();
+    }
+
+    @Override
+    public void OnUpdateContent(boolean isSuccess)
+    {
+    }
+
     public void OnInitial(boolean b)
     {
         ArrayList<ToDo> list = SerializerHelper.DeSerializeFromFile(this, SerializerHelper.todosFileName);
@@ -582,32 +623,17 @@ public class MainActivity extends AppCompatActivity implements
         {
             ToDoListHelper.TodosList = list;
         }
-
+        //已经登陆了
         if (!ConfigHelper.ISOFFLINEMODE)
         {
-            mToDoFragment.ShowRefreshing();
             mToDoFragment.UpdateData(ToDoListHelper.TodosList);
             PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
-        } else
+        }
+        //离线模式
+        else
         {
             mToDoFragment.UpdateData(ToDoListHelper.TodosList);
         }
 
-    }
-
-    @Override
-    public void OnReCreatedToDo(boolean b)
-    {
-        mDeletedItemFragment.SetUpData(ToDoListHelper.DeletedList);
-        if (ToDoListHelper.DeletedList.size() == 0)
-        {
-            mDeletedItemFragment.ShowNoItemHint();
-        } else
-            mDeletedItemFragment.HideNoItemHint();
-    }
-
-    @Override
-    public void OnUpdateContent(boolean isSuccess)
-    {
     }
 }

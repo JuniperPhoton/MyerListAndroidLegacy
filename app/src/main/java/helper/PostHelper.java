@@ -20,7 +20,7 @@ import model.ToDo;
 public class PostHelper
 {
 
-    public final static String domain = "121.41.21.21";
+    public final static String domain = "juniperphoton.net";
     public static String UserCheckExist = "http://" + domain + "/schedule/User/CheckUserExist/v1?";
     public static String UserRegisterUri = "http://" + domain + "/schedule/User/Register/v1?";
     public static String UserLoginUri = "http://" + domain + "/schedule/User/Login/v1?";

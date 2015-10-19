@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="0sp"
             android:orientation="vertical"
-            android:background="@color/MyerListBlue">
+            android:background="@android:color/transparent">
 
             <TextView
                 android:id="@+id/dialog_title_text"
@@ -120,12 +120,13 @@
                     android:orientation="horizontal">
 
                     <android.support.v7.widget.CardView
+                        android:id="@+id/add_ok_btn_cardview"
                         xmlns:card_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="120sp"
                         android:layout_height="40sp"
                         android:layout_marginRight="10sp"
                         android:textSize="15sp"
-                        card_view:cardBackgroundColor="@color/MyerListBlueLight"
+                        card_view:cardBackgroundColor="#20000000"
                         card_view:cardCornerRadius="2dp"
                         card_view:cardElevation="0dp"
                         >
@@ -143,10 +144,11 @@
                     </android.support.v7.widget.CardView>
 
                     <android.support.v7.widget.CardView
+                        android:id="@+id/add_cancel_btn_cardview"
                         xmlns:card_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="70sp"
                         android:layout_height="40sp"
-                        card_view:cardBackgroundColor="@color/MyerListBlueDark"
+                        card_view:cardBackgroundColor="#10000000"
                         card_view:cardCornerRadius="2dp"
                         card_view:cardElevation="0dp">
 

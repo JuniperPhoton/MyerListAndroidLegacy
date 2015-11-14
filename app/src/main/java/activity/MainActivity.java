@@ -157,9 +157,6 @@ public class MainActivity extends AppCompatActivity implements
     {
         if (findViewById(R.id.fragment_container) != null)
         {
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
             if (savedInstanceState != null)
             {
                 return;
@@ -167,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements
 
             mToDoFragment = new ToDoFragment();
 
-            getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment).commit();
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment).commitAllowingStateLoss();
 
             if (isLogined)
             {
@@ -175,8 +172,8 @@ public class MainActivity extends AppCompatActivity implements
                 PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
             }
         }
-
     }
+
 
 
     @Override
@@ -200,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements
                     ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
                     if (adapter != null)
                         adapter.SetCanChangeCate(true);
-                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment).commit();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment).commitAllowingStateLoss();
 
                     mToolbar.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
                     mToolbar.setTitle(getResources().getString(R.string.cate_default));
@@ -272,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if (mToDoFragment != null)
         {
-            getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment).commit();
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment).commitAllowingStateLoss();
 
             mToDoFragment.UpdateData(newList);
             ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
@@ -289,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements
             mDeletedItemFragment = new DeletedItemFragment();
         }
 
-        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDeletedItemFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDeletedItemFragment).commitAllowingStateLoss();
     }
 
     public void ShowAddingPane()
@@ -456,6 +453,14 @@ public class MainActivity extends AppCompatActivity implements
 
         mEditedText.setText("");
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+        //outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
+    }
+
 
     @Override
     public void OnDrawerSubItemSelected(int position)

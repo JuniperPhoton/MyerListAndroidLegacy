@@ -1,2 +1,2 @@
-include ':app', ':MaterialDesign', ':library-java', ':jp.utils', ':jp.utils'
+include ':app', ':library-java'
 //include ':app:MaterialDesignLibrary-master'

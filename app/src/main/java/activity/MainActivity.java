@@ -33,6 +33,7 @@ import fragment.NavigationDrawerFragment;
 import com.example.juniper.myerlistandroid.R;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengUpdateAgent;
 
 import fragment.ToDoFragment;
 
@@ -83,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements
     {
         super.onCreate(savedInstanceState);
         StatusBarCompat.setUpActivity(this);
+
+        UmengUpdateAgent.update(this);
 
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
         {

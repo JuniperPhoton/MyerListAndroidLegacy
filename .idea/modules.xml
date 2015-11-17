@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MaterialDesign/MaterialDesign.iml" filepath="$PROJECT_DIR$/MaterialDesign/MaterialDesign.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyerListAndroid.iml" filepath="$PROJECT_DIR$/MyerListAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jp.utils/jp.utils.iml" filepath="$PROJECT_DIR$/jp.utils/jp.utils.iml" />
       <module fileurl="file://$PROJECT_DIR$/library-java/library-java.iml" filepath="$PROJECT_DIR$/library-java/library-java.iml" />
     </modules>
   </component>

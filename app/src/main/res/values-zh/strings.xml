@@ -83,5 +83,6 @@
     <string name="no_deleted">没有内容</string>
     <string name="about_link">网站</string>
     <string name="umeng_common_icon">图标</string>
+    <string name="tb_munion_tip_download_prefix">正在下载:</string>
     <string name="UMUpdateCheck">2.6.0.1.20150312</string>
 </resources>

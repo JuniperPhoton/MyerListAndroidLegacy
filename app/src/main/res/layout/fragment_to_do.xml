@@ -1,15 +1,15 @@
 <RelativeLayout
-    android:id="@+id/todo_root_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/todo_root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
     android:clickable="true">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swiperefresh"
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true">
@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:clickable="true"
-            android:scrollbars="vertical"/>
+            android:scrollbars="vertical" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -38,7 +38,7 @@
         android:clickable="true"
         fab:fab_colorNormal="@color/pink"
         fab:fab_colorPressed="@color/pink_pressed"
-        fab:fab_icon="@drawable/add"/>
+        fab:fab_icon="@drawable/add" />
 
 
     <LinearLayout
@@ -57,19 +57,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="getRawX"/>
+                android:text="getRawX" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="getRawY"/>
+                android:text="getRawY" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="getLeft"/>
+                android:text="getLeft" />
         </LinearLayout>
 
         <LinearLayout
@@ -81,19 +81,19 @@
                 android:id="@+id/getrawx_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/getrawy_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/getleft_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
         </LinearLayout>
     </LinearLayout>
 
@@ -103,8 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
@@ -113,7 +112,7 @@
             android:gravity="center_horizontal"
             android:text="@string/no_content"
             android:textColor="@android:color/black"
-            android:textSize="40sp"/>
+            android:textSize="40sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -122,9 +121,8 @@
             android:gravity="center_horizontal"
             android:text="@string/no_todo_content_hint"
             android:textColor="@android:color/black"
-            android:textSize="30dp"/>
+            android:textSize="30dp" />
     </LinearLayout>
-
 
 
 </RelativeLayout>

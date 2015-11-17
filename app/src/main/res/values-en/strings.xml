@@ -55,7 +55,7 @@
     <string name="login_success">Login successfully</string>
     <string name="rebootHint">Roboot app to make it work</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="version_value">2.1</string>
+    <string name="version_value">2.12</string>
     <string name="now_to_login">Now to login</string>
     <string name="user_dont_exist">User do not exist</string>
     <string name="fail_to_login">Fail to login :-(</string>
@@ -81,4 +81,6 @@
     <string name="adding_title">Add a new memo</string>
     <string name="no_deleted">No items</string>
     <string name="about_content">MyerList supports Windows 10 and Android devices, which you can sync your ToDos over all of your favourite devices.</string>
+    <string name="about_link">Website</string>
+    <string name="tb_munion_tip_download_prefix">Downloading...</string>
 </resources>

@@ -53,4 +53,5 @@
 
     <style name="Theme.AppCompat.Light.DarkActionBar.TranslucentStatusBar"
            parent="Base.Theme.AppCompat.Light.DarkActionBar.FengMoe"/>
+
 </resources>

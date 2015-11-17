@@ -65,7 +65,7 @@
                       xmlns:tools="http://schemas.android.com/tools"
                       android:layout_width="match_parent"
                       android:layout_height="match_parent"
-                      android:background="@color/MyerListGray"
+                      android:background="@android:color/white"
                       android:orientation="vertical"
                       android:paddingBottom="0dp"
                       android:paddingTop="0dp">
@@ -77,15 +77,14 @@
                 android:layout_marginTop="20sp"
                 android:text="@string/user_hobbit_block"
                 android:textColor="@color/MyerListBlueLight"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+                android:textSize="15sp"
+                android:textStyle="normal"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10sp"
-
-                android:background="@android:color/white"
+                android:background="@android:color/transparent"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -101,8 +100,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:textColor="@android:color/black"
-                        android:text="@string/tap_keyboard_block"/>
+                        android:text="@string/tap_keyboard_block"
+                        android:textColor="@android:color/black"/>
 
                     <com.rey.material.widget.Switch
                         android:id="@+id/ShowKeyboardSwitch"
@@ -110,7 +109,6 @@
                         android:layout_width="40dp"
                         android:layout_height="wrap_content"
                         android:checked="true"/>
-
                 </LinearLayout>
 
                 <ImageView
@@ -135,8 +133,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:textColor="@android:color/black"
-                        android:text="@string/tap_bottom_block"/>
+                        android:text="@string/tap_bottom_block"
+                        android:textColor="@android:color/black"/>
 
                     <com.rey.material.widget.Switch
                         android:id="@+id/AddToBottomSwitch"
@@ -144,7 +142,6 @@
                         android:layout_width="40dp"
                         android:layout_height="wrap_content"
                         android:checked="true"/>
-
                 </LinearLayout>
 
                 <ImageView
@@ -170,8 +167,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:textColor="@android:color/black"
-                        android:text="@string/hand_hobbit_block"/>
+                        android:text="@string/hand_hobbit_block"
+                        android:textColor="@android:color/black"/>
 
                     <com.rey.material.widget.Switch
                         android:id="@+id/hand_hobbit_switch"
@@ -179,7 +176,6 @@
                         android:layout_width="40dp"
                         android:layout_height="wrap_content"
                         android:checked="true"/>
-
                 </LinearLayout>
             </LinearLayout>
 
@@ -191,14 +187,14 @@
                 android:layout_marginTop="20sp"
                 android:text="@string/lang_block"
                 android:textColor="@color/MyerListBlueLight"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+                android:textSize="15sp"
+                android:textStyle="normal"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10sp"
-                android:background="@android:color/white"
+                android:background="@android:color/transparent"
                 android:orientation="vertical">
 
                 <TextView
@@ -207,12 +203,12 @@
                     android:layout_height="40sp"
                     android:layout_marginLeft="0sp"
                     android:layout_marginRight="10sp"
-                    android:textColor="@android:color/black"
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:gravity="center_vertical"
                     android:paddingLeft="20sp"
-                    android:text="English"/>
+                    android:text="English"
+                    android:textColor="@android:color/black"/>
             </LinearLayout>
 
             <TextView
@@ -223,14 +219,14 @@
                 android:layout_marginTop="20sp"
                 android:text="@string/account_concern"
                 android:textColor="@color/MyerListBlueLight"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+                android:textSize="15sp"
+                android:textStyle="normal"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10sp"
-                android:background="@android:color/white"
+                android:background="@android:color/transparent"
                 android:orientation="vertical">
 
                 <TextView
@@ -239,15 +235,13 @@
                     android:layout_height="40sp"
                     android:layout_marginLeft="0sp"
                     android:layout_marginRight="10sp"
-                    android:textColor="@android:color/black"
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:gravity="center_vertical"
                     android:paddingLeft="20sp"
-                    android:text="@string/logout"/>
+                    android:text="@string/logout"
+                    android:textColor="@android:color/black"/>
             </LinearLayout>
         </LinearLayout>
-
-
     </LinearLayout>
 </RelativeLayout>

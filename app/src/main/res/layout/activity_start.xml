@@ -34,8 +34,9 @@
             android:id="@+id/logo_img"
             android:layout_width="wrap_content"
             android:layout_height="160sp"
+            android:layout_gravity="center_horizontal"
             android:contentDescription="logo"
-            android:src="@drawable/logo"/>
+            android:src="@drawable/icon"/>
 
         <LinearLayout
             android:id="@+id/title_textview"
@@ -85,9 +86,8 @@
             android:layout_marginRight="20sp"
             android:layout_marginTop="30sp"
             card_view:cardBackgroundColor="@color/MyerListBlueLight"
-            card_view:cardCornerRadius="2dp"
-            card_view:cardElevation="3sp">
-
+            card_view:cardCornerRadius="2sp"
+            card_view:cardElevation="2sp">
             <Button
                 android:id="@+id/tologinBtn"
                 android:layout_width="match_parent"
@@ -110,8 +110,8 @@
             android:layout_marginTop="10sp"
             android:background="#ffdbdbdb"
             card_view:cardBackgroundColor="#ffdbdbdb"
-            card_view:cardCornerRadius="2dp"
-            card_view:cardElevation="3sp">
+            card_view:cardCornerRadius="2sp"
+            card_view:cardElevation="2sp">
 
             <Button
                 android:id="@+id/toRegisterBtn"
@@ -136,8 +136,8 @@
             android:layout_marginTop="10sp"
             android:background="#ffc5c5c5"
             card_view:cardBackgroundColor="#ffdbdbdb"
-            card_view:cardCornerRadius="2dp"
-            card_view:cardElevation="3sp">
+            card_view:cardCornerRadius="2sp"
+            card_view:cardElevation="2sp">
 
             <Button
                 android:id="@+id/toMainBtn"

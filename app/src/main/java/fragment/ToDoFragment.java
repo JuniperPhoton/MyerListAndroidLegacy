@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import activity.MainActivity;
+import helper.AppHelper;
 import helper.ConfigHelper;
 import helper.ContextUtil;
 import helper.PostHelper;
@@ -69,22 +71,6 @@ public class ToDoFragment extends Fragment
 
         mToDoRecyclerView.setLayoutManager(layoutManager);
         mToDoRecyclerView.setHasFixedSize(true);
-//        mToDoRecyclerView.setItemAnimator(null);
-//        DragSortRecycler dragSortRecycler = new DragSortRecycler();
-//        dragSortRecycler.setViewHandleId(R.id.imageView); //View you wish to use as the handle
-//
-//        dragSortRecycler.setOnItemMovedListener(new DragSortRecycler.OnItemMovedListener()
-//        {
-//            @Override
-//            public void onItemMoved(int from, int to)
-//            {
-//                Log.d(TAG, "onItemMoved " + from + " to " + to);
-//            }
-//        });
-//
-//        mToDoRecyclerView.addItemDecoration(dragSortRecycler);
-//        mToDoRecyclerView.addOnItemTouchListener(dragSortRecycler);
-//        mToDoRecyclerView.setOnScrollListener(dragSortRecycler.getScrollListener());
 
         //设置下拉刷新控件
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
@@ -99,6 +85,8 @@ public class ToDoFragment extends Fragment
                     return;
                 }
                 GetAllSchedules();
+                AppHelper.ShowShortToast(getResources().getString(R.string.Syncing___));
+
             }
         });
 
@@ -121,7 +109,7 @@ public class ToDoFragment extends Fragment
             mAddingFab.setLayoutParams(layoutParams);
         }
 
-        ((MainActivity)mActivity).OnInitial(true);
+        ((MainActivity) mActivity).OnInitial(true);
 
         return view;
     }
@@ -129,12 +117,13 @@ public class ToDoFragment extends Fragment
     //TODO
     public void UpdateFABColor(int currentIndex)
     {
-        switch(currentIndex)
+        switch (currentIndex)
         {
             case 0:
             {
 
-            }break;
+            }
+            break;
         }
     }
 
@@ -207,8 +196,7 @@ public class ToDoFragment extends Fragment
         try
         {
             mActivity = activity;
-        }
-        catch (ClassCastException e)
+        } catch (ClassCastException e)
         {
 
         }

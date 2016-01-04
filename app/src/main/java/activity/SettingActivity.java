@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,7 +32,7 @@ public class SettingActivity extends AppCompatActivity
     private com.rey.material.widget.Switch mAddToBottomSwitch;
     private com.rey.material.widget.Switch mHandHobbitSwitch;
     private TextView mLangText;
-    private TextView mLogoutText;
+    private Button mLogoutBtn;
     private ImageView mMaskView;
 
     @Override
@@ -120,8 +121,8 @@ public class SettingActivity extends AppCompatActivity
             }
         });
 
-        mLogoutText=(TextView)findViewById(R.id.logout_text);
-        mLogoutText.setOnClickListener(new View.OnClickListener() {
+        mLogoutBtn=(Button)findViewById(R.id.logout_btn);
+        mLogoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {

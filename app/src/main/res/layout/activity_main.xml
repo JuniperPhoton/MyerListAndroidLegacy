@@ -1,9 +1,7 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/activity_main_mask"
@@ -13,11 +11,10 @@
         android:alpha="0.1"
         android:elevation="@dimen/statusbar_elevation"
         android:scaleType="fitXY"
-        android:src="@drawable/black_mask"/>
+        android:src="@drawable/black_mask" />
 
-    <android.support.v4.widget.DrawerLayout
+    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/drawer"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start">
@@ -32,15 +29,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <FrameLayout
+                <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:id="@+id/fragment_container"
-                    xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@+id/toolbar_actionbar"
                     android:layout_marginTop="0sp"
-                    android:background="?android:attr/selectableItemBackground"
-                    />
+                    android:background="?android:attr/selectableItemBackground" />
 
                 <include
                     android:id="@+id/toolbar_actionbar"
@@ -60,7 +55,7 @@
             android:layout_width="@dimen/navigation_drawer_width"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            app:layout="@layout/fragment_navigation_drawer"/>
+            app:layout="@layout/fragment_navigation_drawer" />
     </android.support.v4.widget.DrawerLayout>
 
     <LinearLayout
@@ -77,18 +72,33 @@
             android:layout_marginTop="0sp"
             android:background="@android:color/transparent"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/dialog_title_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
                 android:layout_marginLeft="25sp"
                 android:layout_marginStart="25sp"
-                android:layout_marginTop="100sp"
-                android:text="@string/adding_title"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+                android:layout_marginTop="100sp">
+                <TextView
+                    android:id="@+id/dialog_title_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/adding_title"
+                    android:textColor="@android:color/white"
+                    android:textSize="25sp"
+                    android:textStyle="normal"/>
+                <include
+                    android:id="@+id/add_pane_radio"
+                    layout="@layout/radio_add_select_cate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10sp"
+                    android:layout_marginBottom="0sp"
+                    />
+            </LinearLayout>
+
 
             <EditText
                 android:id="@+id/add_editText"
@@ -104,9 +114,8 @@
                 android:paddingLeft="10sp"
                 android:paddingStart="10sp"
                 android:textColor="@android:color/black"
-                android:textColorHint="@android:color/black"
-                android:textSize="12sp"
-                />
+                android:textColorHint="@color/TextHintColor"
+                android:textSize="12sp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -122,17 +131,15 @@
                     android:layout_marginRight="20sp"
                     android:orientation="horizontal">
 
-                    <android.support.v7.widget.CardView
+                    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/add_ok_btn_cardview"
-                        xmlns:card_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="120sp"
                         android:layout_height="40sp"
                         android:layout_marginRight="10sp"
                         android:textSize="15sp"
                         card_view:cardBackgroundColor="#33FFFFFF"
                         card_view:cardCornerRadius="2dp"
-                        card_view:cardElevation="0dp"
-                        >
+                        card_view:cardElevation="0dp">
 
                         <Button
                             android:id="@+id/add_ok_btn"
@@ -143,12 +150,11 @@
                             android:text="@string/ok_btn"
                             android:textColor="@color/MyerListGray"
                             android:textSize="15sp"
-                            android:textStyle="bold"/>
+                            android:textStyle="normal" />
                     </android.support.v7.widget.CardView>
 
-                    <android.support.v7.widget.CardView
+                    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/add_cancel_btn_cardview"
-                        xmlns:card_view="http://schemas.android.com/apk/res-auto"
                         android:layout_width="70sp"
                         android:layout_height="40sp"
                         card_view:cardBackgroundColor="#10000000"
@@ -165,15 +171,10 @@
                             android:text="@string/cancel_btn"
                             android:textColor="@android:color/white"
                             android:textSize="15sp"
-                            android:textStyle="bold"/>
+                            android:textStyle="normal" />
                     </android.support.v7.widget.CardView>
-
                 </LinearLayout>
-
             </RelativeLayout>
         </LinearLayout>
-
-
     </LinearLayout>
-
 </RelativeLayout>

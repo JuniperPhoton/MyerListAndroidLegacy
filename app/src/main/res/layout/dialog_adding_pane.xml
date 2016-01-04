@@ -1,42 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/dialog_title"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_title"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
+    android:clickable="false"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="50sp"
-        >
+        android:layout_height="50sp">
 
         <TextView
             android:id="@+id/dialog_title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="25sp"
             android:text="ADD A MEMO"
-            android:textColor="@color/MyerListBlueLight"
+            android:textColor="@android:color/black"
             android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textStyle="normal" />
 
-    </RelativeLayout>
+            <include
+                android:id="@+id/add_pane_radio_legacy"
+                layout="@layout/radio_add_select_cate"/>
+    </LinearLayout>
 
     <EditText
         android:id="@+id/newMemoEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20sp"
-        android:layout_marginRight="10sp"
+        android:layout_marginRight="20sp"
         android:layout_marginTop="10sp"
-        android:textColorHint="@android:color/darker_gray"
+        android:background="@drawable/shape_text_view_style2"
         android:hint="e.g. Drop by my friends when I get off work."
+        android:padding="10sp"
         android:textColor="@android:color/black"
-        android:textSize="12sp"
-        />
+        android:textColorHint="@color/TextHintColor"
+        android:textSize="12sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -52,34 +57,11 @@
             android:layout_marginRight="20sp"
             android:orientation="horizontal">
 
-            <android.support.v7.widget.CardView
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_width="70sp"
                 android:layout_height="40sp"
                 android:layout_marginRight="10sp"
-                android:textSize="15sp"
-                card_view:cardBackgroundColor="@color/dialog_backgrd"
-                card_view:cardCornerRadius="2dp"
-                card_view:cardElevation="0dp"
-                >
-
-                <Button
-                    android:id="@+id/add_ok_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:text="OK"
-                    android:textColor="@color/MyerListBlueLight"
-                    android:textSize="15sp"
-                    android:textStyle="bold"/>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="70sp"
-                android:layout_height="40sp"
-                card_view:cardBackgroundColor="@color/dialog_backgrd"
+                card_view:cardBackgroundColor="@android:color/white"
                 card_view:cardCornerRadius="2dp"
                 card_view:cardElevation="0dp">
 
@@ -92,8 +74,30 @@
                     android:text="CANCEL"
                     android:textColor="@android:color/black"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:layout_width="70sp"
+                android:layout_height="40sp"
+                android:layout_marginRight="0sp"
+                android:textSize="15sp"
+                card_view:cardBackgroundColor="@color/MyerListBlueLight"
+                card_view:cardCornerRadius="2dp"
+                card_view:cardElevation="2dp">
+
+                <Button
+                    android:id="@+id/add_ok_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:text="OK"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </android.support.v7.widget.CardView>
+
 
         </LinearLayout>
 

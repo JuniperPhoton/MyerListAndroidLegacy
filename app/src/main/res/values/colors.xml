@@ -16,6 +16,7 @@
     <color name="EnterColor">#FF55C1C1</color>
     <color name="FamilyColor">#FFFF395F</color>
     <color name="DeletedColor">#a9a9a9</color>
+    <color name="TextHintColor">#808080</color>
     <drawable name="unpressed">#FFF</drawable>
     <drawable name="pressed_gray">#0c000000</drawable>
     <drawable name="selected_gray">#2c000000</drawable>

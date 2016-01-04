@@ -56,7 +56,7 @@
     <string name="add_success">添加成功</string>
     <string name="login_success">登录成功</string>
     <string name="rebootHint">重启应用以生效</string>
-    <string name="version_value">2.12</string>
+    <string name="version_value">2.30</string>
     <string name="hello_blank_fragment">现在登录</string>
     <string name="now_to_login">现在登录</string>
     <string name="user_dont_exist">用户不存在</string>
@@ -85,4 +85,6 @@
     <string name="umeng_common_icon">图标</string>
     <string name="tb_munion_tip_download_prefix">正在下载:</string>
     <string name="UMUpdateCheck">2.6.0.1.20150312</string>
+    <string name="Syncing...">同步中</string>
+    <string name="Synced">同步完成</string>
 </resources>

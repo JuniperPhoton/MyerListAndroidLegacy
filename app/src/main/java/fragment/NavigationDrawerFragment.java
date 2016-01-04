@@ -13,8 +13,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import activity.StartActivity;
 import adapter.NavigationDrawerAdapter;
@@ -45,6 +47,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerRecyclerView;
     private RecyclerView mDrawerOtherRecyclerView;
+    private RelativeLayout mRootLayout;
     private View mFragmentContainerView;
     private TextView mEmailView;
 
@@ -76,6 +79,16 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         //显示电子邮件
         mEmailView=(TextView)view.findViewById(R.id.account_block);
         mEmailView.setText(ConfigHelper.getString(view.getContext(), "email"));
+
+        mRootLayout=(RelativeLayout)view.findViewById(R.id.drawer_root_layout);
+        mRootLayout.setOnTouchListener(new View.OnTouchListener()
+        {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent)
+            {
+                return true;
+            }
+        });
 
         //显示导航的2项
         mDrawerRecyclerView = (RecyclerView) view.findViewById(R.id.drawerList);

@@ -8,8 +8,8 @@ android {
         applicationId "com.example.juniper.myerlistandroid"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 7
-        versionName "2.12"
+        versionCode 10
+        versionName "2.30"
     }
     buildTypes {
         release {
@@ -19,11 +19,11 @@ android {
     }
 }
 repositories
-{
-    jcenter()
-    maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
+        {
+            jcenter()
+            maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
 
-}
+        }
 
 dependencies
         {
@@ -42,6 +42,7 @@ dependencies
             compile 'it.sephiroth.android.library.viewrevealanimator:view-reveal-animator:+'
             compile 'com.pgyersdk:sdk:2.2'
             compile files('libs/umeng-update-v2.6.0.1.jar')
+
         }
 
 

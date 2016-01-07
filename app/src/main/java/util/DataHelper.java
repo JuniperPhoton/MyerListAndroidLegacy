@@ -1,4 +1,4 @@
-package helper;
+package util;
 
 /**
  * Created by juniperphoton on 6/5/2015.

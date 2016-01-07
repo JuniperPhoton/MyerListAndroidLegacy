@@ -87,4 +87,5 @@
     <string name="UMUpdateCheck">2.6.0.1.20150312</string>
     <string name="Syncing...">同步中</string>
     <string name="Synced">同步完成</string>
+    <string name="NoNetworkHint">没有网络，暂时使用离线模式</string>
 </resources>

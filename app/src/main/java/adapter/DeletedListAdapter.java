@@ -13,12 +13,12 @@ import com.example.juniper.myerlistandroid.R;
 import java.util.ArrayList;
 
 import fragment.DeletedItemFragment;
-import helper.ConfigHelper;
-import helper.ContextUtil;
-import helper.PostHelper;
-import helper.SerializerHelper;
+import util.ConfigHelper;
+import util.ContextUtil;
+import util.PostHelper;
+import util.SerializerHelper;
 import model.ToDo;
-import model.ToDoListHelper;
+import util.ToDoListRef;
 
 
 public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.DeleteItemViewHolder>
@@ -74,7 +74,7 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                     PostHelper.AddToDo(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), mDeleteToDos.get(position).getContent(), "0", 0);
                 } else
                 {
-                    ToDoListHelper.TodosList.add(ToDoListHelper.TodosList.size(), mDeleteToDos.get(position));
+                    ToDoListRef.TodosList.add(ToDoListRef.TodosList.size(), mDeleteToDos.get(position));
                 }
 
                 ToDo sToDelete = mDeleteToDos.get(position);
@@ -87,7 +87,7 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                 }
 
                 SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
-                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListHelper.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
             }
         });
     }

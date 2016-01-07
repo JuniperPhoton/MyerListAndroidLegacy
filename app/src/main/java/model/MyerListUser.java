@@ -19,7 +19,7 @@ public class MyerListUser
 
     public void SetSID(int value)
     {
-        this.sid=value;
+        this.sid = value;
     }
 
     public String GetEmail()
@@ -29,7 +29,7 @@ public class MyerListUser
 
     public void SetEmail(String value)
     {
-        this.email=value;
+        this.email = value;
     }
 
     public String GetPassword()
@@ -39,6 +39,6 @@ public class MyerListUser
 
     public void SetPassworrd(String value)
     {
-        this.password=value;
+        this.password = value;
     }
 }

@@ -26,16 +26,17 @@ import com.example.juniper.myerlistandroid.R;
 import java.util.ArrayList;
 
 import fragment.ToDoFragment;
-import helper.ConfigHelper;
-import helper.ContextUtil;
-import helper.FindRadioBtnHelper;
-import helper.PostHelper;
-import helper.SerializerHelper;
+import util.ConfigHelper;
+import util.ContextUtil;
+import util.FindRadioBtnHelper;
+import util.PostHelper;
+import util.SerializerHelper;
 import model.ToDo;
-import model.ToDoListHelper;
+import util.ToDoListRef;
 
 
-public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoItemViewHolder> implements View.OnTouchListener {
+public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoItemViewHolder> implements View.OnTouchListener
+{
     //能否操作列表项目
     private boolean mIsEnable = true;
     private boolean mCanChangeCate = true;
@@ -64,31 +65,35 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
     //修改的时候文本框
     private EditText mNewMemoText;
 
-    private int cateAboutToModify=0;
+    private int cateAboutToModify = 0;
 
     //构造函数
     //传入当前的列表
-    public ToDoListAdapter(ArrayList<ToDo> data, Activity activity, ToDoFragment fragment) {
+    public ToDoListAdapter(ArrayList<ToDo> data, Activity activity, ToDoFragment fragment)
+    {
         mCurrentActivity = activity;
         mToDosToDisplay = data;
         mCurrentFragment = fragment;
     }
 
     @Override
-    public ToDoItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ToDoItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_todo, parent, false);
         return new ToDoItemViewHolder(v);
     }
 
     //创建每一项的布局
     @Override
-    public void onBindViewHolder(final ToDoItemViewHolder holder, final int position) {
+    public void onBindViewHolder(final ToDoItemViewHolder holder, final int position)
+    {
         //设置文字
         holder.textView.setText(mToDosToDisplay.get(position).getContent());
 
         //设置类别
         final int cate = mToDosToDisplay.get(position).getCate();
-        switch (cate) {
+        switch (cate)
+        {
             case 0:
                 holder.cateImage.setImageResource(R.drawable.cate_default);
                 break;
@@ -106,9 +111,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 break;
         }
 
-        holder.cateBtn.setOnClickListener(new View.OnClickListener() {
+        holder.cateBtn.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
 
                 if (!mCanChangeCate) return;
 
@@ -116,9 +123,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 int index = 0;
 
                 //根据ID 找到项目
-                for (int i = 0; i < mToDosToDisplay.size(); i++) {
+                for (int i = 0; i < mToDosToDisplay.size(); i++)
+                {
                     ToDo s = mToDosToDisplay.get(i);
-                    if (s.getID().equals(targetID)) {
+                    if (s.getID().equals(targetID))
+                    {
                         index = i;
                         break;
                     }
@@ -129,7 +138,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 currentItem.setCate(++cate);
                 if (cate >= 5)
                     currentItem.setCate(0);
-                switch (currentItem.getCate()) {
+                switch (currentItem.getCate())
+                {
                     case 0:
                         holder.cateImage.setImageResource(R.drawable.cate_default);
                         break;
@@ -150,9 +160,12 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 //要notify UI 才会更新
                 notifyItemChanged(index);
 
-                if (!ConfigHelper.ISOFFLINEMODE) {
+                if (!ConfigHelper.ISOFFLINEMODE)
+                {
                     PostHelper.UpdateContent(mCurrentActivity, ConfigHelper.getString(mCurrentActivity, "sid"), targetID, currentItem.getContent(), cate);
-                } else {
+                }
+                else
+                {
                     SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
                 }
             }
@@ -161,23 +174,29 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         holder.setID(mToDosToDisplay.get(position).getID());
 
         //设置是否完成
-        if (!mToDosToDisplay.get(position).getIsDone()) {
+        if (!mToDosToDisplay.get(position).getIsDone())
+        {
             holder.lineView.setVisibility(View.GONE);
         }
 
         //设置删除
-        holder.deleteView.setOnClickListener(new View.OnClickListener() {
+        holder.deleteView.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 DeleteToDo(mToDosToDisplay.get(position));
             }
         });
 
         //设置点击修改
-        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+        holder.relativeLayout.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
-                if (mIsSwiping) {
+            public void onClick(View view)
+            {
+                if (mIsSwiping)
+                {
                     return;
                 }
                 View dialogView = LayoutInflater.from(mCurrentActivity).inflate(R.layout.dialog_adding_pane, (ViewGroup) mCurrentActivity.findViewById(R.id.dialog_title));
@@ -200,11 +219,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                         cateAboutToModify = index;
                     }
                 });
-                int currentBtnID=FindRadioBtnHelper.GetRadioBtnIDByCate(cate);
-                if(currentBtnID!=0)
+                int currentBtnID = FindRadioBtnHelper.GetRadioBtnIDByCate(cate);
+                if (currentBtnID != 0)
                 {
-                    RadioButton btn=(RadioButton)radioGroup.findViewById(currentBtnID);
-                    if(btn!=null) radioGroup.check((currentBtnID));
+                    RadioButton btn = (RadioButton) radioGroup.findViewById(currentBtnID);
+                    if (btn != null) radioGroup.check((currentBtnID));
                 }
 
                 Button okBtn = (Button) dialogView.findViewById(R.id.add_ok_btn);
@@ -253,8 +272,10 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 cancelBtn.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
-                    public void onClick(View view) {
-                        if (mDialog != null) {
+                    public void onClick(View view)
+                    {
+                        if (mDialog != null)
+                        {
                             mDialog.dismiss();
                         }
                     }
@@ -285,34 +306,38 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         holder.relativeLayout.scrollTo(0, 0);
     }
 
-    public void SetEnable(boolean isDrawerOpen) {
-        mIsEnable = !isDrawerOpen;
-    }
-
-    public void SetCanChangeCate(boolean canChange) {
+    public void SetCanChangeCate(boolean canChange)
+    {
         mCanChangeCate = canChange;
     }
 
-    public void AddToDo(ToDo todoToAdd) {
-        if (todoToAdd == null)
-            return;
-        if (ConfigHelper.getBoolean(ContextUtil.getInstance(), "AddToBottom")) {
+    public void AddToDo(ToDo todoToAdd)
+    {
+        if (todoToAdd == null) return;
+
+        if (ConfigHelper.getBoolean(ContextUtil.getInstance(), "AddToBottom"))
+        {
             //mToDosToDisplay.add(todoToAdd);
             notifyItemInserted(mToDosToDisplay.size() - 1);
-            ToDoListHelper.TodosList.add(todoToAdd);
-        } else {
+            ToDoListRef.TodosList.add(todoToAdd);
+        }
+        else
+        {
             //mToDosToDisplay.add(0, todoToAdd);
             notifyItemInserted(0);
-            ToDoListHelper.TodosList.add(0, todoToAdd);
+            ToDoListRef.TodosList.add(0, todoToAdd);
         }
         SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
     }
 
-    public void DeleteToDo(ToDo todoToDelete) {
+    public void DeleteToDo(ToDo todoToDelete)
+    {
         int index = 0;
-        for (int i = 0; i < mToDosToDisplay.size(); i++) {
+        for (int i = 0; i < mToDosToDisplay.size(); i++)
+        {
             ToDo s = mToDosToDisplay.get(i);
-            if (s.getID().equals(todoToDelete.getID())) {
+            if (s.getID().equals(todoToDelete.getID()))
+            {
                 index = i;
                 break;
             }
@@ -320,32 +345,37 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         notifyItemRemoved(index);
         mToDosToDisplay.remove(todoToDelete);
 
-        ToDoListHelper.DeletedList.add(0, todoToDelete);
-        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListHelper.DeletedList, SerializerHelper.deletedFileName);
+        ToDoListRef.DeletedList.add(0, todoToDelete);
+        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.DeletedList, SerializerHelper.deletedFileName);
 
-        if (ConfigHelper.ISOFFLINEMODE) {
+        if (ConfigHelper.ISOFFLINEMODE)
+        {
             SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
-        } else
+        }
+        else
             PostHelper.SetDelete(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), todoToDelete.getID());
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount()
+    {
         return mToDosToDisplay != null ? mToDosToDisplay.size() : 0;
     }
 
-    public ArrayList<ToDo> GetListSrc() {
+    public ArrayList<ToDo> GetListSrc()
+    {
         return mToDosToDisplay;
     }
 
-
-    public boolean onTouch(final View v, MotionEvent event) {
+    public boolean onTouch(final View v, MotionEvent event)
+    {
         RelativeLayout root = (RelativeLayout) v;
 
         int scrollLeft;
         String id = (String) v.getTag();
 
-        switch (event.getAction()) {
+        switch (event.getAction())
+        {
             case MotionEvent.ACTION_DOWN:
 
                 lastX = (int) event.getRawX();
@@ -364,15 +394,19 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
 
                 v.scrollBy(-dx, 0);
 
-                if (scrollLeft < -20) {
+                if (scrollLeft < -20)
+                {
                     mCurrentFragment.DisableRefresh();
                 }
 
                 lastX = (int) event.getRawX();
 
-                if (scrollLeft < -150 && !mIsInGreen) {
+                if (scrollLeft < -150 && !mIsInGreen)
+                {
                     PlayColorChangeAnimation((ImageView) root.findViewById(R.id.greenImageView), true);
-                } else if (scrollLeft > 150 && !mIsInRed) {
+                }
+                else if (scrollLeft > 150 && !mIsInRed)
+                {
                     PlayColorChangeAnimation((ImageView) root.findViewById(R.id.redImageView), false);
                 }
 
@@ -393,11 +427,14 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         return false;
     }
 
-    private void OnMoveComplete(View v, float scrollLeft, String id) {
+    private void OnMoveComplete(View v, float scrollLeft, String id)
+    {
         //Find the current schedule
 
-        for (ToDo s : mToDosToDisplay) {
-            if (s.getID().equals(id)) {
+        for (ToDo s : mToDosToDisplay)
+        {
+            if (s.getID().equals(id))
+            {
                 mCurrentToDo = s;
                 break;
             }
@@ -406,31 +443,40 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             return;
 
         //Finish
-        if (scrollLeft < -150) {
+        if (scrollLeft < -150)
+        {
 
             ImageView lineview = (ImageView) v.findViewById(R.id.lineView);
-            if (mCurrentToDo.getIsDone()) {
+            if (mCurrentToDo.getIsDone())
+            {
                 lineview.setVisibility(View.GONE);
                 mCurrentToDo.setIsDone(false);
-            } else {
+            }
+            else
+            {
                 lineview.setVisibility(View.VISIBLE);
                 mCurrentToDo.setIsDone(true);
             }
 
-            if (!ConfigHelper.ISOFFLINEMODE) {
+            if (!ConfigHelper.ISOFFLINEMODE)
+            {
                 PostHelper.SetDone(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), id, mCurrentToDo.getIsDone() ? "1" : "0");
             }
 
 
         }
         //Delete
-        else if (scrollLeft > 150) {
+        else if (scrollLeft > 150)
+        {
             DeleteToDo(mCurrentToDo);
         }
 
-        if (mIsInGreen) {
+        if (mIsInGreen)
+        {
             PlayFadebackAnimation((ImageView) v.findViewById(R.id.greenImageView), true);
-        } else if (mIsInRed) {
+        }
+        else if (mIsInRed)
+        {
             PlayFadebackAnimation((ImageView) v.findViewById(R.id.redImageView), false);
         }
 
@@ -438,15 +484,19 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mToDosToDisplay, SerializerHelper.todosFileName);
     }
 
-    private void PlayGoBackAnimation(final View v, final float left) {
+    private void PlayGoBackAnimation(final View v, final float left)
+    {
         ValueAnimator valueAnimator = ValueAnimator.ofInt((int) left, 0);
         valueAnimator.setDuration(700);
         valueAnimator.setInterpolator(new DecelerateInterpolator());
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+        {
             @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            public void onAnimationUpdate(ValueAnimator valueAnimator)
+            {
                 v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
-                if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10) {
+                if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10)
+                {
                     mCurrentFragment.EnableRefresh();
                     mIsSwiping = false;
                 }
@@ -455,25 +505,30 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         valueAnimator.start();
     }
 
-    private void PlayColorChangeAnimation(final ImageView v, boolean isGreen) {
+    private void PlayColorChangeAnimation(final ImageView v, boolean isGreen)
+    {
         v.setAlpha(1f);
         AnimationSet animationSet = new AnimationSet(false);
 
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.1f, 1.0f);
         alphaAnimation.setDuration(700);
-        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener()
+        {
             @Override
-            public void onAnimationStart(Animation animation) {
+            public void onAnimationStart(Animation animation)
+            {
                 v.setVisibility(View.VISIBLE);
             }
 
             @Override
-            public void onAnimationEnd(Animation animation) {
+            public void onAnimationEnd(Animation animation)
+            {
 
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {
+            public void onAnimationRepeat(Animation animation)
+            {
 
             }
         });
@@ -486,18 +541,22 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             mIsInRed = true;
     }
 
-    private void PlayFadebackAnimation(final ImageView v, final boolean isGreen) {
+    private void PlayFadebackAnimation(final ImageView v, final boolean isGreen)
+    {
         AnimationSet animationSet = new AnimationSet(false);
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
         alphaAnimation.setDuration(700);
-        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener()
+        {
             @Override
-            public void onAnimationStart(Animation animation) {
+            public void onAnimationStart(Animation animation)
+            {
                 v.setVisibility(View.VISIBLE);
             }
 
             @Override
-            public void onAnimationEnd(Animation animation) {
+            public void onAnimationEnd(Animation animation)
+            {
                 v.setVisibility(View.INVISIBLE);
                 if (isGreen)
                     mIsInGreen = false;
@@ -506,7 +565,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {
+            public void onAnimationRepeat(Animation animation)
+            {
 
             }
         });
@@ -514,7 +574,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         v.startAnimation(animationSet);
     }
 
-    public static class ToDoItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ToDoItemViewHolder extends RecyclerView.ViewHolder
+    {
         private String id;
         public TextView textView;
         public ImageView lineView;
@@ -525,7 +586,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         public ImageView cateImage;
         public RelativeLayout cateBtn;
 
-        public ToDoItemViewHolder(View itemView) {
+        public ToDoItemViewHolder(View itemView)
+        {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.todoBlock);
             lineView = (ImageView) itemView.findViewById(R.id.lineView);
@@ -537,11 +599,13 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             cateImage = (ImageView) itemView.findViewById(R.id.cateImage);
         }
 
-        public String getID() {
+        public String getID()
+        {
             return id;
         }
 
-        public void setID(String id) {
+        public void setID(String id)
+        {
             this.id = id;
         }
     }

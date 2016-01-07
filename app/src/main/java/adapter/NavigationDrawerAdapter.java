@@ -14,7 +14,7 @@ import com.example.juniper.myerlistandroid.R;
 
 import java.util.List;
 
-import helper.ContextUtil;
+import util.ContextUtil;
 import interfaces.INavigationDrawerMainCallbacks;
 import interfaces.INavigationDrawerSubCallbacks;
 import model.NavigationItemWithIcon;

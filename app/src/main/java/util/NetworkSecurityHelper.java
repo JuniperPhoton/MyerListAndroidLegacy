@@ -1,4 +1,4 @@
-package helper;
+package util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -11,7 +11,7 @@ public class NetworkSecurityHelper
     public static String getString(byte[] b)
     {
         StringBuffer sb = new StringBuffer();
-        for(int i = 0; i < b.length; i ++)
+        for (int i = 0; i < b.length; i++)
         {
             sb.append(b[i]);
         }
@@ -47,8 +47,6 @@ public class NetworkSecurityHelper
         }
         return md5StrBuff.toString();
     }
-
-
 
 
 }

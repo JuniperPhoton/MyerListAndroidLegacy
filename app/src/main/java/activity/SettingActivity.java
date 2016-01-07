@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -21,9 +20,9 @@ import com.umeng.analytics.MobclickAgent;
 
 import java.util.Locale;
 
-import helper.AppHelper;
-import helper.ConfigHelper;
-import helper.ContextUtil;
+import util.AppUtil;
+import util.ConfigHelper;
+import util.ContextUtil;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 public class SettingActivity extends AppCompatActivity
@@ -182,7 +181,7 @@ public class SettingActivity extends AppCompatActivity
             public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
             {
                 ConfigHelper.putBoolean(ContextUtil.getInstance(), "HandHobbit", b);
-                AppHelper.ShowShortToast(getResources().getString(R.string.rebootHint));
+                AppUtil.ShowShortToast(getResources().getString(R.string.rebootHint));
             }
         });
 

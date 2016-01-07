@@ -37,7 +37,7 @@ public class CateSelectorAdapter extends RecyclerView.Adapter<CateSelectorAdapte
         public ViewHolder(View itemView)
         {
             super(itemView);
-            mCateImage=(ImageView)itemView.findViewById(R.id.cate_img);
+            mCateImage = (ImageView) itemView.findViewById(R.id.cate_img);
         }
     }
 }

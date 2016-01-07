@@ -13,7 +13,7 @@ public interface IRequestCallbacks
     void OnCheckResponse(boolean check);
     void OnGetSaltResponse(String str);
     void OnLoginResponse(boolean value);
-    void OnGotScheduleResponse(ArrayList<ToDo> mytodosList);
+    void OnGotScheduleResponse(boolean value,ArrayList<ToDo> mytodosList);
     void OnAddedResponse(boolean isSuccess, ToDo newTodo);
     void OnSetOrderResponse(boolean isSuccess);
     void OnRegisteredResponse(boolean isSuccess,String salt);

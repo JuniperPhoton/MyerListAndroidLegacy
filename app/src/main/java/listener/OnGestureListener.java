@@ -10,7 +10,7 @@ public class OnGestureListener implements GestureDetector.OnGestureListener
 
     public OnGestureListener(RelativeLayout r)
     {
-        mRootLayout=r;
+        mRootLayout = r;
     }
 
 
@@ -47,7 +47,7 @@ public class OnGestureListener implements GestureDetector.OnGestureListener
     @Override
     public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1)
     {
-        mRootLayout.scrollBy(-(int)motionEvent1.getRawX(),0);
+        mRootLayout.scrollBy(-(int) motionEvent1.getRawX(), 0);
         return false;
     }
 }

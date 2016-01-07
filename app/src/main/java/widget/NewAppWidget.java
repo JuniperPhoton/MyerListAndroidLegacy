@@ -26,7 +26,7 @@ public class NewAppWidget extends AppWidgetProvider
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
         Intent intent = new Intent(context, ToDoListAdapter.class);
-        views.setRemoteAdapter(R.id.widget_recyclerView,intent);
+        views.setRemoteAdapter(R.id.widget_recyclerView, intent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);

@@ -12,14 +12,14 @@ public class ToDo implements Serializable
 {
     private String id;
     private String sid;
-    private String content="";
-    private int cate=0;
+    private String content = "";
+    private int cate = 0;
     private boolean isDone;
 
     public ToDo(String content, boolean isDone)
     {
-        this.content=content;
-        this.isDone=isDone;
+        this.content = content;
+        this.isDone = isDone;
     }
 
     public ToDo()
@@ -34,7 +34,7 @@ public class ToDo implements Serializable
 
     public void setID(String value)
     {
-        this.id=value;
+        this.id = value;
     }
 
     public String getSID()
@@ -44,7 +44,7 @@ public class ToDo implements Serializable
 
     public void setSID(String value)
     {
-        this.sid=value;
+        this.sid = value;
     }
 
     public String getContent()
@@ -54,7 +54,7 @@ public class ToDo implements Serializable
 
     public void setContent(String value)
     {
-        this.content=value;
+        this.content = value;
     }
 
 
@@ -65,12 +65,12 @@ public class ToDo implements Serializable
 
     public void setIsDone(boolean value)
     {
-        this.isDone=value;
+        this.isDone = value;
     }
 
     public void setCate(int cate)
     {
-        this.cate=cate;
+        this.cate = cate;
     }
 
     public int getCate()
@@ -80,15 +80,15 @@ public class ToDo implements Serializable
 
     public static ArrayList<ToDo> parseJsonObjFromArray(JSONArray array)
     {
-        ArrayList<ToDo> listToReturn=new ArrayList<ToDo>();
-        if(array!=null)
+        ArrayList<ToDo> listToReturn = new ArrayList<ToDo>();
+        if (array != null)
         {
-            for(int i=0;i<array.length();i++)
+            for (int i = 0; i < array.length(); i++)
             {
                 try
                 {
-                    JSONObject item=array.getJSONObject(i);
-                    ToDo newItem=parseJsonObjToObj(item);
+                    JSONObject item = array.getJSONObject(i);
+                    ToDo newItem = parseJsonObjToObj(item);
                     listToReturn.add(newItem);
                 }
                 catch (JSONException e)
@@ -104,13 +104,13 @@ public class ToDo implements Serializable
     {
         try
         {
-            ToDo newItem=new ToDo();
+            ToDo newItem = new ToDo();
             newItem.setID(jsonObject.getString("id"));
             newItem.setSID(jsonObject.getString("sid"));
             newItem.setContent(jsonObject.getString("content"));
             newItem.setIsDone(jsonObject.getString("isdone").equals("1"));
             newItem.setCate(Integer.parseInt(jsonObject.getString("cate")));
-            return  newItem;
+            return newItem;
         }
         catch (Exception e)
         {
@@ -119,20 +119,20 @@ public class ToDo implements Serializable
 
     }
 
-    public static ArrayList<ToDo> setOrderByString(ArrayList<ToDo> oriList,String orderList)
+    public static ArrayList<ToDo> setOrderByString(ArrayList<ToDo> oriList, String orderList)
     {
-        ArrayList<ToDo> listToReturn=new ArrayList<>();
-        String[] orders=orderList.split(",");
-        for(int i=0;i<orders.length;i++)
+        ArrayList<ToDo> listToReturn = new ArrayList<>();
+        String[] orders = orderList.split(",");
+        for (int i = 0; i < orders.length; i++)
         {
-            if(orders[i].equals("") || orders[i].equals(" "))
+            if (orders[i].equals("") || orders[i].equals(" "))
             {
                 continue;
             }
-            String currentOrder=orders[i];
-            for(ToDo s:oriList)
+            String currentOrder = orders[i];
+            for (ToDo s : oriList)
             {
-                if(s.getID().equals(currentOrder))
+                if (s.getID().equals(currentOrder))
                 {
                     listToReturn.add(s);
                     oriList.remove(s);
@@ -140,17 +140,17 @@ public class ToDo implements Serializable
                 }
             }
         }
-        for(ToDo s:oriList)
+        for (ToDo s : oriList)
         {
             listToReturn.add(s);
         }
-        return  listToReturn;
+        return listToReturn;
     }
 
-    public static  String getOrderString(ArrayList<ToDo> list)
+    public static String getOrderString(ArrayList<ToDo> list)
     {
-        StringBuilder builder=new StringBuilder();
-        for(ToDo s:list)
+        StringBuilder builder = new StringBuilder();
+        for (ToDo s : list)
         {
             builder.append(s.getID());
             builder.append(',');

@@ -19,10 +19,10 @@ import com.umeng.analytics.MobclickAgent;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-import helper.AppHelper;
-import helper.ConfigHelper;
-import helper.DataHelper;
-import helper.PostHelper;
+import util.AppUtil;
+import util.ConfigHelper;
+import util.DataHelper;
+import util.PostHelper;
 import interfaces.IRequestCallbacks;
 import model.ToDo;
 import moe.feng.material.statusbar.StatusBarCompat;
@@ -123,9 +123,9 @@ public class LoginActivity extends AppCompatActivity implements
                         progressDialog.show();
                         PostHelper.CheckExist(this, mEmailBox.getText().toString());
                     } else
-                        AppHelper.ShowShortToast("Please input password");
+                        AppUtil.ShowShortToast("Please input password");
                 } else
-                    AppHelper.ShowShortToast("Please input valid email");
+                    AppUtil.ShowShortToast("Please input valid email");
             }
         } else if (isToRegister)
         {
@@ -143,13 +143,13 @@ public class LoginActivity extends AppCompatActivity implements
                                 progressDialog.show();
                                 PostHelper.Register(this, mEmailBox.getText().toString(), mPasswordBox.getText().toString());
                             } else
-                                AppHelper.ShowShortToast(getString(R.string.two_ps_match));
+                                AppUtil.ShowShortToast(getString(R.string.two_ps_match));
                         } else
-                            AppHelper.ShowShortToast(getString(R.string.confirm_ps_lost));
+                            AppUtil.ShowShortToast(getString(R.string.confirm_ps_lost));
                     } else
-                        AppHelper.ShowShortToast(getString(R.string.ps_lost));
+                        AppUtil.ShowShortToast(getString(R.string.ps_lost));
                 } else
-                    AppHelper.ShowShortToast(getString(R.string.email_invalid));
+                    AppUtil.ShowShortToast(getString(R.string.email_invalid));
             }
         }
     }
@@ -162,7 +162,7 @@ public class LoginActivity extends AppCompatActivity implements
         {
             PostHelper.GetSalt(this, mEmailBox.getText().toString());
         } else
-            AppHelper.ShowShortToast(getResources().getString(R.string.user_dont_exist));
+            AppUtil.ShowShortToast(getResources().getString(R.string.user_dont_exist));
 
         progressDialog.dismiss();
     }
@@ -181,7 +181,7 @@ public class LoginActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
         } else
-            AppHelper.ShowShortToast(getResources().getString(R.string.fail_to_login));
+            AppUtil.ShowShortToast(getResources().getString(R.string.fail_to_login));
 
         progressDialog.dismiss();
     }
@@ -191,14 +191,14 @@ public class LoginActivity extends AppCompatActivity implements
     {
         if (value)
         {
-            AppHelper.ShowShortToast(getResources().getString(R.string.login_success));
+            AppUtil.ShowShortToast(getResources().getString(R.string.login_success));
 
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("LOGIN_STATE", "Logined");
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else
-            AppHelper.ShowShortToast(getResources().getString(R.string.fail_to_login));
+            AppUtil.ShowShortToast(getResources().getString(R.string.fail_to_login));
 
         progressDialog.dismiss();
     }
@@ -216,13 +216,13 @@ public class LoginActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
         } else
-            AppHelper.ShowShortToast(getResources().getString(R.string.fail_to_register));
+            AppUtil.ShowShortToast(getResources().getString(R.string.fail_to_register));
 
         progressDialog.dismiss();
     }
 
     @Override
-    public void OnGotScheduleResponse(ArrayList<ToDo> mytodosList)
+    public void OnGotScheduleResponse(boolean isSuccess,ArrayList<ToDo> mytodosList)
     {
 
     }

@@ -1,16 +1,15 @@
-package helper;
+package util;
 
 import android.app.Application;
 
 import com.pgyersdk.crash.PgyCrashManager;
 
-import model.ToDoListHelper;
-
 public class ContextUtil extends Application
 {
     private static ContextUtil instance;
 
-    public static ContextUtil getInstance() {
+    public static ContextUtil getInstance()
+    {
         return instance;
     }
 
@@ -23,8 +22,7 @@ public class ContextUtil extends Application
 
         ConfigHelper.ConfigAppSetting();
 
-        ToDoListHelper.SetUpSavedData();
+        ToDoListRef.RestoreData();
         PgyCrashManager.register(this);
-
     }
 }

@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +18,13 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import activity.MainActivity;
-import helper.AppHelper;
-import helper.ConfigHelper;
-import helper.ContextUtil;
-import helper.PostHelper;
+import util.AppUtil;
+import util.ConfigHelper;
+import util.ContextUtil;
+import util.PostHelper;
 import adapter.ToDoListAdapter;
+import util.SerializerHelper;
+import util.ToDoListRef;
 import model.ToDo;
 
 public class ToDoFragment extends Fragment
@@ -85,8 +86,6 @@ public class ToDoFragment extends Fragment
                     return;
                 }
                 GetAllSchedules();
-                AppHelper.ShowShortToast(getResources().getString(R.string.Syncing___));
-
             }
         });
 
@@ -114,14 +113,12 @@ public class ToDoFragment extends Fragment
         return view;
     }
 
-
     public void ShowNoItemHint(boolean show)
     {
         if (show)
         {
             mNoItemLayout.setVisibility(View.VISIBLE);
-        }
-        else
+        } else
         {
             mNoItemLayout.setVisibility(View.GONE);
         }
@@ -177,8 +174,19 @@ public class ToDoFragment extends Fragment
     public void GetAllSchedules()
     {
         PostHelper.GetOrderedSchedules(getActivity(), ConfigHelper.getString(getActivity(), "sid"), ConfigHelper.getString(getActivity(), "access_token"));
-    }
 
+        if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(ContextUtil.getInstance()))
+        {
+            if (ToDoListRef.StagedList == null) return;
+            ((MainActivity) mActivity).SetIsAddStagedItems(true);
+            for (ToDo todo : ToDoListRef.StagedList)
+            {
+                PostHelper.AddToDo(getActivity(), ConfigHelper.getString(ContextUtil.getInstance(), "sid"), todo.getContent(), "0", todo.getCate());
+            }
+            ToDoListRef.StagedList.clear();
+            SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
+        }
+    }
 
     @Override
     public void onAttach(Activity activity)

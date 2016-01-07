@@ -27,7 +27,7 @@ import model.NavigationItemWithIcon;
 import com.example.juniper.myerlistandroid.R;
 import java.util.ArrayList;
 import java.util.List;
-import helper.ConfigHelper;
+import util.ConfigHelper;
 
 public class NavigationDrawerFragment extends Fragment implements INavigationDrawerMainCallbacks, INavigationDrawerSubCallbacks
 {

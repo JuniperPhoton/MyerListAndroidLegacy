@@ -28,7 +28,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import helper.FindRadioBtnHelper;
+import util.FindRadioBtnHelper;
 import interfaces.IDrawerStatusChanged;
 import interfaces.INavigationDrawerSubCallbacks;
 import fragment.DeletedItemFragment;
@@ -45,18 +45,19 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import helper.AppHelper;
-import helper.ConfigHelper;
-import helper.ContextUtil;
-import helper.PostHelper;
+import util.AppUtil;
+import util.ConfigHelper;
+import util.ContextUtil;
+import util.PostHelper;
 import interfaces.INavigationDrawerMainCallbacks;
 import adapter.ToDoListAdapter;
-import helper.SerializerHelper;
+import util.SerializerHelper;
 import interfaces.IOnReAddedToDo;
 import interfaces.IRequestCallbacks;
 import model.ToDo;
-import model.ToDoListHelper;
+import util.ToDoListRef;
 import moe.feng.material.statusbar.StatusBarCompat;
+import util.ToastService;
 
 public class MainActivity extends AppCompatActivity implements
         INavigationDrawerMainCallbacks,
@@ -85,6 +86,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private int mCurrentCate = 0;
     private int mCateAboutToAdd = 0;
+
+    private ToDo mToDoAboutToAdded;
+    private boolean misAddingStagedItems = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -119,15 +123,18 @@ public class MainActivity extends AppCompatActivity implements
                     Intent.FLAG_ACTIVITY_CLEAR_TASK |
                     Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        } else if (access_token != null)
+        }
+        else if (access_token != null)
         {
             InitialFragment(savedInstanceState, true);
-        } else
+        }
+        else
         {
             ConfigHelper.ISOFFLINEMODE = true;
             mNavigationDrawerFragment.SetupOfflineMode();
             InitialFragment(savedInstanceState, false);
         }
+
     }
 
     //找到需要初始化的控件
@@ -225,8 +232,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-
-
     //初始化 Fragment
     private void InitialFragment(Bundle savedInstanceState, boolean isLogined)
     {
@@ -246,6 +251,21 @@ public class MainActivity extends AppCompatActivity implements
             {
                 mToDoFragment.ShowRefreshing();
                 PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
+            }
+            if (!AppUtil.isNetworkAvailable(getApplicationContext()))
+            {
+                ToastService.ShowShortToast(getResources().getString(R.string.NoNetworkHint));
+            }
+            if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(ContextUtil.getInstance()))
+            {
+                if (ToDoListRef.StagedList == null) return;
+                misAddingStagedItems = true;
+                for (ToDo todo : ToDoListRef.StagedList)
+                {
+                    PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), todo.getContent(), "0", todo.getCate());
+                }
+                ToDoListRef.StagedList.clear();
+                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
             }
         }
     }
@@ -274,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
                     else
                     {
-                        mToDoFragment.UpdateData(ToDoListHelper.TodosList);
+                        mToDoFragment.UpdateData(ToDoListRef.TodosList);
                     }
 //                    ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
 //                    if (adapter != null)
@@ -339,10 +359,10 @@ public class MainActivity extends AppCompatActivity implements
         if (mCurrentCate == 5) return;
 
         ArrayList<ToDo> newList = new ArrayList<>();
-        if (mCurrentCate == 0) newList = ToDoListHelper.TodosList;
+        if (mCurrentCate == 0) newList = ToDoListRef.TodosList;
         else
         {
-            for (ToDo todo : ToDoListHelper.TodosList)
+            for (ToDo todo : ToDoListRef.TodosList)
             {
                 if (todo.getCate() == mCurrentCate)
                 {
@@ -359,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements
             ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
             if (adapter != null)
             {
-                if(mCurrentCate!=0)
+                if (mCurrentCate != 0)
                     adapter.SetCanChangeCate(false);
                 else adapter.SetCanChangeCate(true);
             }
@@ -522,18 +542,28 @@ public class MainActivity extends AppCompatActivity implements
     public void OKClick(View v)
     {
         if (mDialog != null)
+        {
             mDialog.dismiss();
+        }
         if (isAddingPaneShown)
+        {
             HideAddingPane();
+        }
+
+        ToDo newToAdd = new ToDo();
+        newToAdd.setContent(mEditedText.getText().toString());
+        newToAdd.setIsDone(false);
+        newToAdd.setID(java.util.UUID.randomUUID().toString());
+        newToAdd.setCate(mCateAboutToAdd);
+
+        mToDoAboutToAdded = newToAdd;
+
+        //离线模式
         if (ConfigHelper.ISOFFLINEMODE)
         {
-            ToDo newToAdd = new ToDo();
-            newToAdd.setContent(mEditedText.getText().toString());
-            newToAdd.setIsDone(false);
-            newToAdd.setID(java.util.UUID.randomUUID().toString());
-            newToAdd.setCate(mCateAboutToAdd);
             OnAddedResponse(true, newToAdd);
         }
+        //非离线模式，发送请求
         else
         {
             PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), mEditedText.getText().toString(), "0", mCateAboutToAdd);
@@ -555,6 +585,11 @@ public class MainActivity extends AppCompatActivity implements
 
         mEditedText.setText("");
         mCateAboutToAdd = mCurrentCate;
+    }
+
+    public void SetIsAddStagedItems(boolean value)
+    {
+        misAddingStagedItems = value;
     }
 
     @Override
@@ -593,10 +628,12 @@ public class MainActivity extends AppCompatActivity implements
         if (mNavigationDrawerFragment.isDrawerOpen())
         {
             mNavigationDrawerFragment.closeDrawer();
-        } else if (isAddingPaneShown)
+        }
+        else if (isAddingPaneShown)
         {
             HideAddingPane();
-        } else
+        }
+        else
         {
             super.onBackPressed();
         }
@@ -618,19 +655,23 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void OnGotScheduleResponse(ArrayList<ToDo> list)
+    public void OnGotScheduleResponse(boolean isSuccess, ArrayList<ToDo> list)
     {
-        if (list != null)
+        mToDoFragment.StopRefreshing();
+        if (isSuccess)
         {
-            ToDoListHelper.TodosList = list;
+            ToDoListRef.TodosList = list;
             mToDoFragment.UpdateData(list);
-            mToDoFragment.StopRefreshing();
 
-            AppHelper.ShowShortToast(getResources().getString(R.string.Synced));
+            ToastService.ShowShortToast(getResources().getString(R.string.Synced));
 
-            SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListHelper.TodosList, SerializerHelper.todosFileName);
+            SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
 
             UpdateListByCate();
+        }
+        else
+        {
+            ToastService.ShowShortToast(getResources().getString(R.string.NoNetworkHint));
         }
     }
 
@@ -652,9 +693,10 @@ public class MainActivity extends AppCompatActivity implements
         if (value)
         {
             PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
-        } else
+        }
+        else
         {
-            AppHelper.ShowShortToast("Fail to login.");
+            ToastService.ShowShortToast("Fail to login.");
         }
     }
 
@@ -665,13 +707,23 @@ public class MainActivity extends AppCompatActivity implements
         {
             ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
             adapter.AddToDo(newTodo);
-            AppHelper.ShowShortToast(getResources().getString(R.string.add_success));
+
+            ToastService.ShowShortToast(getResources().getString(R.string.add_success));
+
             PostHelper.SetListOrder(this, ConfigHelper.getString(this, "sid"), ToDo.getOrderString(adapter.GetListSrc()));
             UpdateListByCate();
-        } else
-        {
-            AppHelper.ShowShortToast("Fail to add memo :-(");
         }
+        else
+        {
+            if (mToDoAboutToAdded != null)
+            {
+                ToDoListRef.StagedList.add(mToDoAboutToAdded);
+                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
+            }
+            ToDoListRef.TodosList.add(mToDoAboutToAdded);
+            SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
+        }
+        mToDoAboutToAdded = null;
     }
 
     @Override
@@ -700,17 +752,15 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void OnDrawerStatusChanged(boolean isOpen)
     {
-        ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
-        if (adapter != null)
-            adapter.SetEnable(isOpen);
+
     }
 
 
     @Override
     public void OnReCreatedToDo(boolean b)
     {
-        mDeletedItemFragment.SetUpData(ToDoListHelper.DeletedList);
-        if (ToDoListHelper.DeletedList.size() == 0)
+        mDeletedItemFragment.SetUpData(ToDoListRef.DeletedList);
+        if (ToDoListRef.DeletedList.size() == 0)
             mDeletedItemFragment.ShowNoItemHint();
         else
             mDeletedItemFragment.HideNoItemHint();
@@ -723,21 +773,22 @@ public class MainActivity extends AppCompatActivity implements
 
     public void OnInitial(boolean b)
     {
+        //先序列化回来
         ArrayList<ToDo> list = SerializerHelper.DeSerializeFromFile(this, SerializerHelper.todosFileName);
         if (list != null)
         {
-            ToDoListHelper.TodosList = list;
+            ToDoListRef.TodosList = list;
         }
         //已经登陆了
         if (!ConfigHelper.ISOFFLINEMODE)
         {
-            mToDoFragment.UpdateData(ToDoListHelper.TodosList);
+            mToDoFragment.UpdateData(ToDoListRef.TodosList);
             PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
         }
         //离线模式
         else
         {
-            mToDoFragment.UpdateData(ToDoListHelper.TodosList);
+            mToDoFragment.UpdateData(ToDoListRef.TodosList);
         }
     }
 }

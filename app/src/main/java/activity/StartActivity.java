@@ -2,7 +2,6 @@ package activity;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +17,7 @@ import android.widget.TextView;
 import com.example.juniper.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
-import helper.ConfigHelper;
+import util.ConfigHelper;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 

@@ -38,7 +38,7 @@
     <string name="lang_block">Language</string>
     <string name="ok_btn">OK</string>
     <string name="cancel_btn">CANCEL</string>
-    <string name="new_memo_title">ADD A MEMO</string>
+    <string name="new_memo_title">ADDING</string>
     <string name="new_memo_hint">e.g. Drop by my friends when I get off work.</string>
     <string name="loading_hint">Loading...</string>
     <string name="vaild_email">Please input valid email.</string>
@@ -55,7 +55,7 @@
     <string name="login_success">Login successfully</string>
     <string name="rebootHint">Roboot app to make it work</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="version_value">2.30</string>
+    <string name="version_value">2.31</string>
     <string name="now_to_login">Now to login</string>
     <string name="user_dont_exist">User do not exist</string>
     <string name="fail_to_login">Fail to login :-(</string>
@@ -69,7 +69,7 @@
     <string name="no_todo_content_hint">Enjoy your day ;-)</string>
     <string name="deleteall_alert">You are going to delete all items.</string>
     <string name="open_src">OPEN SRC</string>
-    <string name="modify_memo_title">MODIFY MEMO</string>
+    <string name="modify_memo_title">MODIFY</string>
     <string name="cate_default">To-Do</string>
     <string name="cate_work">Work</string>
     <string name="cate_life">Life</string>
@@ -78,7 +78,7 @@
     <string name="account_concern">Account</string>
     <string name="logout">Logout</string>
     <string name="adding_hint">e.g. Grab a coffee with my friends.</string>
-    <string name="adding_title">Add a new memo</string>
+    <string name="adding_title">Adding</string>
     <string name="no_deleted">No items</string>
     <string name="about_content">MyerList supports Windows 10 and Android devices, which you can sync your ToDos over all of your favourite devices.</string>
     <string name="about_link">Website</string>

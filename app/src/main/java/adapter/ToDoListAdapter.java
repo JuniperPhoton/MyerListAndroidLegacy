@@ -110,7 +110,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             @Override
             public void onClick(View view) {
 
-                //if (!mCanChangeCate) return;
+                if (!mCanChangeCate) return;
 
                 String targetID = holder.getID();
                 int index = 0;
@@ -188,6 +188,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 mNewMemoText = (EditText) dialogView.findViewById(R.id.newMemoEdit);
                 mNewMemoText.setHint(R.string.new_memo_hint);
                 mNewMemoText.setText(holder.textView.getText().toString());
+                mNewMemoText.setSelection(holder.textView.getText().length());
 
                 RadioGroup radioGroup = (RadioGroup) dialogView.findViewById(R.id.add_pane_radio_legacy);
                 radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()

@@ -271,13 +271,14 @@ public class MainActivity extends AppCompatActivity implements
                     if (mToDoFragment == null)
                     {
                         mToDoFragment = new ToDoFragment();
-                    } else
+                    }
+                    else
                     {
                         mToDoFragment.UpdateData(ToDoListHelper.TodosList);
                     }
-                    ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
-                    if (adapter != null)
-                        adapter.SetCanChangeCate(true);
+//                    ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
+//                    if (adapter != null)
+//                        adapter.SetCanChangeCate(true);
                     getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment).commitAllowingStateLoss();
 
                     mToolbar.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
@@ -326,7 +327,8 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             }
 
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
 
         }
@@ -356,7 +358,11 @@ public class MainActivity extends AppCompatActivity implements
             mToDoFragment.UpdateData(newList);
             ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
             if (adapter != null)
-                adapter.SetCanChangeCate(false);
+            {
+                if(mCurrentCate!=0)
+                    adapter.SetCanChangeCate(false);
+                else adapter.SetCanChangeCate(true);
+            }
         }
 
     }
@@ -527,7 +533,8 @@ public class MainActivity extends AppCompatActivity implements
             newToAdd.setID(java.util.UUID.randomUUID().toString());
             newToAdd.setCate(mCateAboutToAdd);
             OnAddedResponse(true, newToAdd);
-        } else
+        }
+        else
         {
             PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), mEditedText.getText().toString(), "0", mCateAboutToAdd);
         }

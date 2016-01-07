@@ -11,8 +11,10 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import interfaces.IRequestCallbacks;
 import model.ToDo;
@@ -280,10 +282,13 @@ public class PostHelper
     {
         mRequestCallback =(IRequestCallbacks)context;
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+
         AsyncHttpClient client=new AsyncHttpClient();
         RequestParams params=new RequestParams();
         params.put("sid",sid);
-        params.put("time", Calendar.getInstance().getTime().toString());
+        params.put("time", sdf.format(date));
         params.put("content",content);
         params.put("isdone",isDone);
         params.put("cate",String.valueOf(cate));

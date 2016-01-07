@@ -18,6 +18,7 @@ public class SerializerHelper
 {
     public static final String todosFileName="MyTodos.txt";
     public static final String deletedFileName="Deleted.txt";
+    public static final String stagedFileName="Staged.txt";
 
     public static  void SerializeToFile(Context context, Object o, String fileName)
     {
@@ -30,7 +31,6 @@ public class SerializerHelper
             FileOutputStream outputStream=context.openFileOutput(fileName,context.MODE_PRIVATE);
             outputStream.write(bytes);
             outputStream.close();
-
         }
         catch (Exception e)
         {
@@ -69,8 +69,5 @@ public class SerializerHelper
             e.printStackTrace();
             return null;
         }
-
     }
-
-
 }

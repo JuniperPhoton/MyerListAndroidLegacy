@@ -114,26 +114,17 @@ public class ToDoFragment extends Fragment
         return view;
     }
 
-    //TODO
-    public void UpdateFABColor(int currentIndex)
-    {
-        switch (currentIndex)
-        {
-            case 0:
-            {
-
-            }
-            break;
-        }
-    }
 
     public void ShowNoItemHint(boolean show)
     {
         if (show)
         {
             mNoItemLayout.setVisibility(View.VISIBLE);
-        } else
+        }
+        else
+        {
             mNoItemLayout.setVisibility(View.GONE);
+        }
     }
 
     public void UpdateData(ArrayList<ToDo> data)
@@ -196,7 +187,8 @@ public class ToDoFragment extends Fragment
         try
         {
             mActivity = activity;
-        } catch (ClassCastException e)
+        }
+        catch (ClassCastException e)
         {
 
         }

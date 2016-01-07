@@ -1,0 +1,63 @@
+01-05 16:19:02.718 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.787 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.805 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.820 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.837 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.854 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.871 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.887 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.904 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.921 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.938 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.955 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.972 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:02.989 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:03.006 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:03.023 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:03.039 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:03.056 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:03.073 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:03.090 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:03.107 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:03.124 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:03.310 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:10.532 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:10.921 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
+01-05 16:19:11.483 23336-23336/com.example.juniper.myerlistandroid D/AndroidRuntime: Shutting down VM
+01-05 16:19:11.527 23336-23336/com.example.juniper.myerlistandroid E/AndroidRuntime: FATAL EXCEPTION: main
+                                                                                     Process: com.example.juniper.myerlistandroid, PID: 23336
+                                                                                     java.lang.NullPointerException: Attempt to invoke virtual method 'android.support.v7.widget.RecyclerView$Adapter android.support.v7.widget.RecyclerView.getAdapter()' on a null object reference
+                                                                                         at activity.MainActivity.OnDrawerStatusChanged(MainActivity.java:696)
+                                                                                         at fragment.NavigationDrawerFragment$2.onDrawerOpened(NavigationDrawerFragment.java:210)
+                                                                                         at android.support.v4.widget.DrawerLayout.dispatchOnDrawerOpened(DrawerLayout.java:668)
+                                                                                         at android.support.v4.widget.DrawerLayout.updateDrawerState(DrawerLayout.java:628)
+                                                                                         at android.support.v4.widget.DrawerLayout$ViewDragCallback.onViewDragStateChanged(DrawerLayout.java:1656)
+                                                                                         at android.support.v4.widget.ViewDragHelper.setDragState(ViewDragHelper.java:874)
+                                                                                         at android.support.v4.widget.ViewDragHelper$2.run(ViewDragHelper.java:335)
+                                                                                         at android.os.Handler.handleCallback(Handler.java:739)
+                                                                                         at android.os.Handler.dispatchMessage(Handler.java:95)
+                                                                                         at android.os.Looper.loop(Looper.java:135)
+                                                                                         at android.app.ActivityThread.main(ActivityThread.java:5343)
+                                                                                         at java.lang.reflect.Method.invoke(Native Method)
+                                                                                         at java.lang.reflect.Method.invoke(Method.java:372)
+                                                                                         at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:905)
+                                                                                         at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:700)
+01-05 16:19:11.529 23336-24492/com.example.juniper.myerlistandroid D/PgyerSDK: Transmitting crash data: 
+                                                                               java.lang.NullPointerException: Attempt to invoke virtual method 'android.support.v7.widget.RecyclerView$Adapter android.support.v7.widget.RecyclerView.getAdapter()' on a null object reference
+                                                                                   at activity.MainActivity.OnDrawerStatusChanged(MainActivity.java:696)
+                                                                                   at fragment.NavigationDrawerFragment$2.onDrawerOpened(NavigationDrawerFragment.java:210)
+                                                                                   at android.support.v4.widget.DrawerLayout.dispatchOnDrawerOpened(DrawerLayout.java:668)
+                                                                                   at android.support.v4.widget.DrawerLayout.updateDrawerState(DrawerLayout.java:628)
+                                                                                   at android.support.v4.widget.DrawerLayout$ViewDragCallback.onViewDragStateChanged(DrawerLayout.java:1656)
+                                                                                   at android.support.v4.widget.ViewDragHelper.setDragState(ViewDragHelper.java:874)
+                                                                                   at android.support.v4.widget.ViewDragHelper$2.run(ViewDragHelper.java:335)
+                                                                                   at android.os.Handler.handleCallback(Handler.java:739)
+                                                                                   at android.os.Handler.dispatchMessage(Handler.java:95)
+                                                                                   at android.os.Looper.loop(Looper.java:135)
+                                                                                   at android.app.ActivityThread.main(ActivityThread.java:5343)
+                                                                                   at java.lang.reflect.Method.invoke(Native Method)
+                                                                                   at java.lang.reflect.Method.invoke(Method.java:372)
+                                                                                   at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:905)
+                                                                                   at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:700)
+01-05 16:19:11.727 23336-24492/com.example.juniper.myerlistandroid D/PgyerSDK: Transmission succeeded
+01-05 16:19:12.813 23336-23336/com.example.juniper.myerlistandroid I/Process: Sending signal. PID: 23336 SIG: 9

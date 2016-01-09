@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.pgyersdk.crash.PgyCrashManager;
 
+import service.ListWidgetService;
+
 public class AppExtension extends Application
 {
     private static AppExtension instance;
@@ -12,6 +14,8 @@ public class AppExtension extends Application
     {
         return instance;
     }
+
+    public static ListWidgetService.ListViewsFactory globalListViewFactory;
 
     @Override
     public void onCreate()

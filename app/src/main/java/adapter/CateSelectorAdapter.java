@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 
 /**
  * Created by dengw on 10/5/2015.

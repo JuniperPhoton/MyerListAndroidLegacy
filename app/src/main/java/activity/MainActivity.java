@@ -27,14 +27,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.juniperphoton.myerlistandroid.R;
 
 import util.FindRadioBtnHelper;
 import interfaces.IDrawerStatusChanged;
 import interfaces.INavigationDrawerSubCallbacks;
 import fragment.DeletedItemFragment;
 import fragment.NavigationDrawerFragment;
-
-import com.example.juniper.myerlistandroid.R;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
@@ -47,7 +46,7 @@ import java.util.TimerTask;
 
 import util.AppUtil;
 import util.ConfigHelper;
-import util.ContextUtil;
+import util.AppExtension;
 import util.PostHelper;
 import interfaces.INavigationDrawerMainCallbacks;
 import adapter.ToDoListAdapter;
@@ -256,16 +255,16 @@ public class MainActivity extends AppCompatActivity implements
             {
                 ToastService.ShowShortToast(getResources().getString(R.string.NoNetworkHint));
             }
-            if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(ContextUtil.getInstance()))
+            if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance()))
             {
                 if (ToDoListRef.StagedList == null) return;
                 misAddingStagedItems = true;
                 for (ToDo todo : ToDoListRef.StagedList)
                 {
-                    PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), todo.getContent(), "0", todo.getCate());
+                    PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(AppExtension.getInstance(), "sid"), todo.getContent(), "0", todo.getCate());
                 }
                 ToDoListRef.StagedList.clear();
-                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
+                SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
             }
         }
     }
@@ -419,7 +418,7 @@ public class MainActivity extends AppCompatActivity implements
             mAddingPaneLayout.setVisibility(View.VISIBLE);
             anim.start();
 
-            if (ConfigHelper.getBoolean(ContextUtil.getInstance(), "ShowKeyboard"))
+            if (ConfigHelper.getBoolean(AppExtension.getInstance(), "ShowKeyboard"))
             {
                 mEditedText.requestFocus();
                 Timer timer = new Timer();
@@ -478,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
             });
 
-            if (!ConfigHelper.getBoolean(ContextUtil.getInstance(), "HandHobbit"))
+            if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit"))
             {
                 LinearLayout linearLayout = (LinearLayout) dialogView.findViewById(R.id.dialog_btn_layout);
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -490,7 +489,7 @@ public class MainActivity extends AppCompatActivity implements
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             mDialog = builder.setView((dialogView)).show();
 
-            if (ConfigHelper.getBoolean(ContextUtil.getInstance(), "ShowKeyboard"))
+            if (ConfigHelper.getBoolean(AppExtension.getInstance(), "ShowKeyboard"))
             {
                 mEditedText.requestFocus();
                 Timer timer = new Timer();
@@ -566,7 +565,7 @@ public class MainActivity extends AppCompatActivity implements
         //非离线模式，发送请求
         else
         {
-            PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), mEditedText.getText().toString(), "0", mCateAboutToAdd);
+            PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(AppExtension.getInstance(), "sid"), mEditedText.getText().toString(), "0", mCateAboutToAdd);
         }
 
         CancelClick(null);
@@ -665,7 +664,7 @@ public class MainActivity extends AppCompatActivity implements
 
             ToastService.ShowShortToast(getResources().getString(R.string.Synced));
 
-            SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
+            SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
 
             UpdateListByCate();
         }
@@ -712,16 +711,21 @@ public class MainActivity extends AppCompatActivity implements
 
             PostHelper.SetListOrder(this, ConfigHelper.getString(this, "sid"), ToDo.getOrderString(adapter.GetListSrc()));
             UpdateListByCate();
+
+            if(misAddingStagedItems)
+            {
+                PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
+            }
         }
         else
         {
             if (mToDoAboutToAdded != null)
             {
                 ToDoListRef.StagedList.add(mToDoAboutToAdded);
-                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
+                SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
             }
             ToDoListRef.TodosList.add(mToDoAboutToAdded);
-            SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
+            SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
         }
         mToDoAboutToAdded = null;
     }

@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 
 import java.util.ArrayList;
 

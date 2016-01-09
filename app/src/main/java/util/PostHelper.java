@@ -36,16 +36,7 @@ public class PostHelper
     public static String ScheduleSetOrderUri = "http://" + domain + "/schedule/Schedule/SetMyOrder/v1?";
 
     private static boolean mExist = false;
-    //    public static OnCheckResponseCallback mOnCheckResponseCallback;
-//    public static OnGetSaltResponseCallback mOnGetSaltResponseCallback;
-//    public static OnLoginResponseCallback mOnLoginResponseCallback;
-//    public static OnGetSchedulesCallback mOnGetSchedulesCallback;
-//    public static OnAddedMemoCallback mOnAddedCallback;
-//    public static OnSetOrderCallback mOnSetOrderCallback;
-//    public static OnRegisterCallback mOnRegisteredListener;
-//    public static OnDoneCallback mOnDoneCallback;
-//    public static OnDeleteCallback mOnDeleteCallback;
-//    public static OnUpdateContentCallback mOnUpdateCallback;
+
     public static IRequestCallbacks mRequestCallback;
 
     public static void CheckExist(Context context, final String email)
@@ -142,9 +133,9 @@ public class PostHelper
                         if (userObj != null)
                         {
                             String salt = userObj.getString("Salt");
-                            ConfigHelper.putString(ContextUtil.getInstance(), "email", email);
-                            ConfigHelper.putString(ContextUtil.getInstance(), "password", password);
-                            ConfigHelper.putString(ContextUtil.getInstance(), "salt", salt);
+                            ConfigHelper.putString(AppExtension.getInstance(), "email", email);
+                            ConfigHelper.putString(AppExtension.getInstance(), "password", password);
+                            ConfigHelper.putString(AppExtension.getInstance(), "salt", salt);
 
                             mRequestCallback.OnRegisteredResponse(true, salt);
                         }
@@ -196,11 +187,11 @@ public class PostHelper
                         {
                             String sid = userObj.getString("sid");
                             String access_token = userObj.getString("access_token");
-                            ConfigHelper.putString(ContextUtil.getInstance(), "email", email);
-                            ConfigHelper.DeleteKey(ContextUtil.getInstance(), "password");
-                            ConfigHelper.putString(ContextUtil.getInstance(), "salt", salt);
-                            ConfigHelper.putString(ContextUtil.getInstance(), "sid", sid);
-                            ConfigHelper.putString(ContextUtil.getInstance(), "access_token", access_token);
+                            ConfigHelper.putString(AppExtension.getInstance(), "email", email);
+                            ConfigHelper.DeleteKey(AppExtension.getInstance(), "password");
+                            ConfigHelper.putString(AppExtension.getInstance(), "salt", salt);
+                            ConfigHelper.putString(AppExtension.getInstance(), "sid", sid);
+                            ConfigHelper.putString(AppExtension.getInstance(), "access_token", access_token);
                             mRequestCallback.OnLoginResponse(true);
                         }
                         else mRequestCallback.OnLoginResponse(false);

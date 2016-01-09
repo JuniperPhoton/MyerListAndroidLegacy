@@ -24,7 +24,7 @@ import interfaces.IDrawerStatusChanged;
 import interfaces.INavigationDrawerMainCallbacks;
 import interfaces.INavigationDrawerSubCallbacks;
 import model.NavigationItemWithIcon;
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 import java.util.ArrayList;
 import java.util.List;
 import util.ConfigHelper;

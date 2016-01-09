@@ -3,13 +3,6 @@ package util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.juniper.myerlistandroid.R;
 
 /**
  * Created by juniperphoton on 6/5/2015.

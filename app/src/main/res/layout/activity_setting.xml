@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/activity_setting_mask"
         android:layout_width="match_parent"
-        android:layout_height="24sp"
+        android:layout_height=" sp"
         android:layout_alignParentTop="true"
         android:alpha="0.15"
         android:elevation="@dimen/statusbar_elevation"
@@ -222,27 +222,28 @@
                 android:textSize="15sp"
                 android:textStyle="normal"/>
 
-            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="70sp"
-                android:layout_height="40sp"
-                android:layout_marginRight="0sp"
-                android:layout_marginLeft="20sp"
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10sp"
-                android:textSize="15sp"
-                card_view:cardBackgroundColor="@color/MyerListBlueLight"
-                card_view:cardCornerRadius="2dp"
-                card_view:cardElevation="2dp">
-                <Button
-                    android:id="@+id/logout_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/logout_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="40sp"
+                    android:layout_marginLeft="0sp"
+                    android:layout_marginRight="10sp"
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20sp"
                     android:text="@string/logout"
-                    android:textColor="@android:color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </android.support.v7.widget.CardView>
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -158,7 +158,6 @@
                         android:layout_width="70sp"
                         android:layout_height="40sp"
                         card_view:cardBackgroundColor="#10000000"
-
                         card_view:cardCornerRadius="2dp"
                         card_view:cardElevation="0dp">
 

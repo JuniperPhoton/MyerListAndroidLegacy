@@ -11,19 +11,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.Locale;
 
-import util.AppUtil;
 import util.ConfigHelper;
-import util.ContextUtil;
+import util.AppExtension;
 import moe.feng.material.statusbar.StatusBarCompat;
+import util.ToastService;
 
 public class SettingActivity extends AppCompatActivity
 {
@@ -31,7 +30,7 @@ public class SettingActivity extends AppCompatActivity
     private com.rey.material.widget.Switch mAddToBottomSwitch;
     private com.rey.material.widget.Switch mHandHobbitSwitch;
     private TextView mLangText;
-    private Button mLogoutBtn;
+    private TextView mLogoutBtn;
     private ImageView mMaskView;
 
     @Override
@@ -48,8 +47,8 @@ public class SettingActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_setting);
 
-        mMaskView=(ImageView)findViewById(R.id.activity_setting_mask);
-        if(Build.VERSION.SDK_INT<=Build.VERSION_CODES.KITKAT)
+        mMaskView = (ImageView) findViewById(R.id.activity_setting_mask);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
         {
             mMaskView.setVisibility(View.GONE);
         }
@@ -63,21 +62,22 @@ public class SettingActivity extends AppCompatActivity
         mLangText = (TextView) findViewById(R.id.lang_btn);
 
         //找到设置里的值
-        Boolean showKeyboard = ConfigHelper.getBoolean(ContextUtil.getInstance(), "ShowKeyboard");
+        Boolean showKeyboard = ConfigHelper.getBoolean(AppExtension.getInstance(), "ShowKeyboard");
         mShowKeyboardSwitch.setChecked(showKeyboard);
 
-        Boolean addToBottom = ConfigHelper.getBoolean(ContextUtil.getInstance(), "AddToBottom");
+        Boolean addToBottom = ConfigHelper.getBoolean(AppExtension.getInstance(), "AddToBottom");
         mAddToBottomSwitch.setChecked(addToBottom);
 
-        Boolean handUse = ConfigHelper.getBoolean(ContextUtil.getInstance(), "HandHobbit");
+        Boolean handUse = ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit");
         mHandHobbitSwitch.setChecked(handUse);
 
         //找到语言
-        final String langStr = ConfigHelper.getString(ContextUtil.getInstance(), "Language");
+        final String langStr = ConfigHelper.getString(AppExtension.getInstance(), "Language");
         if (langStr.equals("Chinese"))
         {
             mLangText.setText(getString(R.string.chinese));
-        } else
+        }
+        else
             mLangText.setText("English");
 
         mLangText.setOnClickListener(new View.OnClickListener()
@@ -99,15 +99,16 @@ public class SettingActivity extends AppCompatActivity
                             DisplayMetrics dm = resources.getDisplayMetrics();
                             config.locale = Locale.CHINESE;
                             resources.updateConfiguration(config, dm);
-                            ConfigHelper.putString(ContextUtil.getInstance(), "Language", "Chinese");
-                        } else
+                            ConfigHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
+                        }
+                        else
                         {
                             Resources resources = getResources();
                             Configuration config = resources.getConfiguration();
                             DisplayMetrics dm = resources.getDisplayMetrics();
                             config.locale = Locale.ENGLISH;
                             resources.updateConfiguration(config, dm);
-                            ConfigHelper.putString(ContextUtil.getInstance(), "Language", "English");
+                            ConfigHelper.putString(AppExtension.getInstance(), "Language", "English");
                         }
                         Intent intent = new Intent(SettingActivity.this, MainActivity.class);
                         intent.putExtra("LOGIN_STATE", "AboutToLogin");
@@ -120,8 +121,9 @@ public class SettingActivity extends AppCompatActivity
             }
         });
 
-        mLogoutBtn=(Button)findViewById(R.id.logout_btn);
-        mLogoutBtn.setOnClickListener(new View.OnClickListener() {
+        mLogoutBtn = (TextView) findViewById(R.id.logout_text);
+        mLogoutBtn.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
@@ -161,7 +163,7 @@ public class SettingActivity extends AppCompatActivity
             @Override
             public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
             {
-                ConfigHelper.putBoolean(ContextUtil.getInstance(), "ShowKeyboard", b);
+                ConfigHelper.putBoolean(AppExtension.getInstance(), "ShowKeyboard", b);
             }
         });
 
@@ -170,7 +172,7 @@ public class SettingActivity extends AppCompatActivity
             @Override
             public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
             {
-                ConfigHelper.putBoolean(ContextUtil.getInstance(), "AddToBottom", b);
+                ConfigHelper.putBoolean(AppExtension.getInstance(), "AddToBottom", b);
             }
 
         });
@@ -180,8 +182,8 @@ public class SettingActivity extends AppCompatActivity
             @Override
             public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
             {
-                ConfigHelper.putBoolean(ContextUtil.getInstance(), "HandHobbit", b);
-                AppUtil.ShowShortToast(getResources().getString(R.string.rebootHint));
+                ConfigHelper.putBoolean(AppExtension.getInstance(), "HandHobbit", b);
+                ToastService.ShowShortToast(getResources().getString(R.string.rebootHint));
             }
         });
 

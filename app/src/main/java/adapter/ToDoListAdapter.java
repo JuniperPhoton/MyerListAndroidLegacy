@@ -21,13 +21,13 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 
 import java.util.ArrayList;
 
 import fragment.ToDoFragment;
 import util.ConfigHelper;
-import util.ContextUtil;
+import util.AppExtension;
 import util.FindRadioBtnHelper;
 import util.PostHelper;
 import util.SerializerHelper;
@@ -67,6 +67,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
 
     private int cateAboutToModify = 0;
 
+    private int deletedItemsCount=0;
+
     //构造函数
     //传入当前的列表
     public ToDoListAdapter(ArrayList<ToDo> data, Activity activity, ToDoFragment fragment)
@@ -89,6 +91,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
     {
         //设置文字
         holder.textView.setText(mToDosToDisplay.get(position).getContent());
+        holder.id=mToDosToDisplay.get(position).getID();
 
         //设置类别
         final int cate = mToDosToDisplay.get(position).getCate();
@@ -185,7 +188,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             @Override
             public void onClick(View view)
             {
-                DeleteToDo(mToDosToDisplay.get(position));
+                DeleteToDo(holder.getID());
             }
         });
 
@@ -281,7 +284,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                     }
                 });
 
-                if (!ConfigHelper.getBoolean(ContextUtil.getInstance(), "HandHobbit"))
+                if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit"))
                 {
                     LinearLayout linearLayout = (LinearLayout) dialogView.findViewById(R.id.dialog_btn_layout);
 
@@ -315,7 +318,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
     {
         if (todoToAdd == null) return;
 
-        if (ConfigHelper.getBoolean(ContextUtil.getInstance(), "AddToBottom"))
+        if (ConfigHelper.getBoolean(AppExtension.getInstance(), "AddToBottom"))
         {
             //mToDosToDisplay.add(todoToAdd);
             notifyItemInserted(mToDosToDisplay.size() - 1);
@@ -330,30 +333,38 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
     }
 
-    public void DeleteToDo(ToDo todoToDelete)
+    public void DeleteToDo(String id)
     {
-        int index = 0;
-        for (int i = 0; i < mToDosToDisplay.size(); i++)
+        int index=0;
+        ToDo todoToDelete=null;
+        for(int i=0;i<mToDosToDisplay.size();i++)
         {
-            ToDo s = mToDosToDisplay.get(i);
-            if (s.getID().equals(todoToDelete.getID()))
+            ToDo s=mToDosToDisplay.get(i);
+            if (s.getID().equals(id))
             {
-                index = i;
+                todoToDelete = s;
+                index=i;
                 break;
             }
         }
+        if(todoToDelete!=null)
+            DeleteToDo(index,todoToDelete);
+    }
+
+    private void DeleteToDo(int index,ToDo todoToDelete)
+    {
         notifyItemRemoved(index);
         mToDosToDisplay.remove(todoToDelete);
 
         ToDoListRef.DeletedList.add(0, todoToDelete);
-        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.DeletedList, SerializerHelper.deletedFileName);
+        SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.DeletedList, SerializerHelper.deletedFileName);
 
         if (ConfigHelper.ISOFFLINEMODE)
         {
             SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
         }
         else
-            PostHelper.SetDelete(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), todoToDelete.getID());
+            PostHelper.SetDelete(mCurrentActivity, ConfigHelper.getString(AppExtension.getInstance(), "sid"), todoToDelete.getID());
     }
 
     @Override
@@ -410,7 +421,6 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                     PlayColorChangeAnimation((ImageView) root.findViewById(R.id.redImageView), false);
                 }
 
-
                 break;
             case MotionEvent.ACTION_UP:
 
@@ -429,13 +439,14 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
 
     private void OnMoveComplete(View v, float scrollLeft, String id)
     {
-        //Find the current schedule
-
-        for (ToDo s : mToDosToDisplay)
+        int index=0;
+        for(int i=0;i<mToDosToDisplay.size();i++)
         {
+            ToDo s=mToDosToDisplay.get(i);
             if (s.getID().equals(id))
             {
                 mCurrentToDo = s;
+                index=i;
                 break;
             }
         }
@@ -460,15 +471,13 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
 
             if (!ConfigHelper.ISOFFLINEMODE)
             {
-                PostHelper.SetDone(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), id, mCurrentToDo.getIsDone() ? "1" : "0");
+                PostHelper.SetDone(mCurrentActivity, ConfigHelper.getString(AppExtension.getInstance(), "sid"), id, mCurrentToDo.getIsDone() ? "1" : "0");
             }
-
-
         }
         //Delete
         else if (scrollLeft > 150)
         {
-            DeleteToDo(mCurrentToDo);
+            DeleteToDo(mCurrentToDo.getID());
         }
 
         if (mIsInGreen)
@@ -481,7 +490,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         }
 
         PlayGoBackAnimation(v, scrollLeft);
-        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mToDosToDisplay, SerializerHelper.todosFileName);
+        SerializerHelper.SerializeToFile(AppExtension.getInstance(), mToDosToDisplay, SerializerHelper.todosFileName);
     }
 
     private void PlayGoBackAnimation(final View v, final float left)

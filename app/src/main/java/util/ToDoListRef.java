@@ -17,12 +17,12 @@ public class ToDoListRef
         DeletedList=new ArrayList<>();
         StagedList=new ArrayList<>();
 
-        ArrayList<ToDo> deletedContent= SerializerHelper.DeSerializeFromFile(ContextUtil.getInstance(), SerializerHelper.deletedFileName);
+        ArrayList<ToDo> deletedContent= SerializerHelper.DeSerializeFromFile(AppExtension.getInstance(), SerializerHelper.deletedFileName);
         if(deletedContent!=null)
         {
             DeletedList=deletedContent;
         }
-        ArrayList<ToDo> stagedContent= SerializerHelper.DeSerializeFromFile(ContextUtil.getInstance(), SerializerHelper.stagedFileName);
+        ArrayList<ToDo> stagedContent= SerializerHelper.DeSerializeFromFile(AppExtension.getInstance(), SerializerHelper.stagedFileName);
         if(stagedContent!=null)
         {
             StagedList=stagedContent;

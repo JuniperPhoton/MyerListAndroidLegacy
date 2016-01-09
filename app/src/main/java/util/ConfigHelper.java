@@ -16,34 +16,34 @@ public  class ConfigHelper
 
     public  static  void ConfigAppSetting()
     {
-        if(!checkKey(ContextUtil.getInstance(),"ShowKeyboard"))
+        if(!checkKey(AppExtension.getInstance(),"ShowKeyboard"))
         {
-            putBoolean(ContextUtil.getInstance(),"ShowKeyboard",true);
+            putBoolean(AppExtension.getInstance(),"ShowKeyboard",true);
         }
-        if(!checkKey(ContextUtil.getInstance(),"AddToBottom"))
+        if(!checkKey(AppExtension.getInstance(),"AddToBottom"))
         {
-            putBoolean(ContextUtil.getInstance(),"AddToBottom",true);
+            putBoolean(AppExtension.getInstance(),"AddToBottom",true);
         }
-        if(!checkKey(ContextUtil.getInstance(),"HandHobbit"))
+        if(!checkKey(AppExtension.getInstance(),"HandHobbit"))
         {
-            putBoolean(ContextUtil.getInstance(),"HandHobbit",true);
+            putBoolean(AppExtension.getInstance(),"HandHobbit",true);
         }
 
-        Resources resources = ContextUtil.getInstance().getResources();
+        Resources resources = AppExtension.getInstance().getResources();
         Configuration config = resources.getConfiguration();
         DisplayMetrics dm = resources .getDisplayMetrics();
 
-        if(!checkKey(ContextUtil.getInstance(),"Language"))
+        if(!checkKey(AppExtension.getInstance(),"Language"))
         {
             if(config.locale==Locale.SIMPLIFIED_CHINESE)
             {
-                putString(ContextUtil.getInstance(), "Language", "Chinese");
+                putString(AppExtension.getInstance(), "Language", "Chinese");
             }
-            else putString(ContextUtil.getInstance(),"Language","English");
+            else putString(AppExtension.getInstance(),"Language","English");
         }
         else
         {
-            if(ConfigHelper.getString(ContextUtil.getInstance(), "Language").equals("Chinese"))
+            if(ConfigHelper.getString(AppExtension.getInstance(), "Language").equals("Chinese"))
             {
                 config.locale=Locale.SIMPLIFIED_CHINESE;
                 resources.updateConfiguration(config,dm);

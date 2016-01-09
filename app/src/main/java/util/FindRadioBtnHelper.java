@@ -1,6 +1,6 @@
 package util;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 
 /**
  * Created by dengw on 1/5/2016.

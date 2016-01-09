@@ -1,6 +1,5 @@
 package adapter;
 
-
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,11 +9,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 
 import java.util.List;
 
-import util.ContextUtil;
+import util.AppExtension;
 import interfaces.INavigationDrawerMainCallbacks;
 import interfaces.INavigationDrawerSubCallbacks;
 import model.NavigationItemWithIcon;
@@ -68,7 +67,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
                                                                  if (mSelectedView != null)
                                                                  {
-                                                                     ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
+                                                                     ((CardView) mSelectedView).setCardBackgroundColor(AppExtension.getInstance().getResources().getColor(R.color.myDrawerBackground));
                                                                  }
 
                                                                  mSelectedView = (CardView) v.getParent();
@@ -99,11 +98,11 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         {
             if (mSelectedView != null)
             {
-                ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
+                ((CardView) mSelectedView).setCardBackgroundColor(AppExtension.getInstance().getResources().getColor(R.color.myDrawerBackground));
             }
             mSelectedPosition = i;
             mSelectedView = drawerViewHolder.cardView;
-            ((CardView) mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.MyerListGray));
+            ((CardView) mSelectedView).setCardBackgroundColor(AppExtension.getInstance().getResources().getColor(R.color.MyerListGray));
         }
     }
 

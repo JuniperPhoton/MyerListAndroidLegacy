@@ -5,11 +5,11 @@ android {
     buildToolsVersion '22.0.1'
 
     defaultConfig {
-        applicationId "com.example.juniper.myerlistandroid"
+        applicationId "com.juniperphoton.myerlistandroid"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 11
-        versionName "2.31"
+        versionCode 13
+        versionName "2.41"
     }
     buildTypes {
         release {

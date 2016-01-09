@@ -12,15 +12,15 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.example.juniper.myerlistandroid.R;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.juniperphoton.myerlistandroid.R;
 
 import java.util.ArrayList;
 
 import activity.MainActivity;
 import util.AppUtil;
 import util.ConfigHelper;
-import util.ContextUtil;
+import util.AppExtension;
 import util.PostHelper;
 import adapter.ToDoListAdapter;
 import util.SerializerHelper;
@@ -99,7 +99,7 @@ public class ToDoFragment extends Fragment
                 ((MainActivity) mActivity).ShowAddingPane();
             }
         });
-        if (!ConfigHelper.getBoolean(ContextUtil.getInstance(), "HandHobbit"))
+        if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit"))
         {
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             layoutParams.setMargins(16, 0, 0, 16);
@@ -175,16 +175,16 @@ public class ToDoFragment extends Fragment
     {
         PostHelper.GetOrderedSchedules(getActivity(), ConfigHelper.getString(getActivity(), "sid"), ConfigHelper.getString(getActivity(), "access_token"));
 
-        if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(ContextUtil.getInstance()))
+        if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance()))
         {
             if (ToDoListRef.StagedList == null) return;
             ((MainActivity) mActivity).SetIsAddStagedItems(true);
             for (ToDo todo : ToDoListRef.StagedList)
             {
-                PostHelper.AddToDo(getActivity(), ConfigHelper.getString(ContextUtil.getInstance(), "sid"), todo.getContent(), "0", todo.getCate());
+                PostHelper.AddToDo(getActivity(), ConfigHelper.getString(AppExtension.getInstance(), "sid"), todo.getContent(), "0", todo.getCate());
             }
             ToDoListRef.StagedList.clear();
-            SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
+            SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
         }
     }
 

@@ -4,11 +4,11 @@ import android.app.Application;
 
 import com.pgyersdk.crash.PgyCrashManager;
 
-public class ContextUtil extends Application
+public class AppExtension extends Application
 {
-    private static ContextUtil instance;
+    private static AppExtension instance;
 
-    public static ContextUtil getInstance()
+    public static AppExtension getInstance()
     {
         return instance;
     }
@@ -24,5 +24,10 @@ public class ContextUtil extends Application
 
         ToDoListRef.RestoreData();
         PgyCrashManager.register(this);
+
+//        Thread.setDefaultUncaughtExceptionHandler(
+//                new GlobalExceptionHandler()
+//              );
+
     }
 }

@@ -108,7 +108,7 @@
                     android:padding="10sp"
                     android:singleLine="true"
                     android:textColor="@android:color/black"
-                    android:textColorHint="@android:color/black"
+                    android:textColorHint="@color/TextHintColor"
                     android:textSize="12sp" />
 
                 <EditText
@@ -124,7 +124,7 @@
                     android:password="true"
                     android:singleLine="true"
                     android:textColor="@android:color/black"
-                    android:textColorHint="@android:color/black"
+                    android:textColorHint="@color/TextHintColor"
                     android:textSize="12sp" />
 
                 <EditText
@@ -140,7 +140,7 @@
                     android:password="true"
                     android:singleLine="true"
                     android:textColor="@android:color/black"
-                    android:textColorHint="@android:color/black"
+                    android:textColorHint="@color/TextHintColor"
                     android:textSize="12sp" />
 
                 <android.support.v7.widget.CardView

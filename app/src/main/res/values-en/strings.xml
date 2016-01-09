@@ -55,7 +55,7 @@
     <string name="login_success">Login successfully</string>
     <string name="rebootHint">Roboot app to make it work</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="version_value">2.31</string>
+    <string name="version_value">2.41</string>
     <string name="now_to_login">Now to login</string>
     <string name="user_dont_exist">User do not exist</string>
     <string name="fail_to_login">Fail to login :-(</string>
@@ -70,7 +70,7 @@
     <string name="deleteall_alert">You are going to delete all items.</string>
     <string name="open_src">OPEN SRC</string>
     <string name="modify_memo_title">MODIFY</string>
-    <string name="cate_default">To-Do</string>
+    <string name="cate_default">All</string>
     <string name="cate_work">Work</string>
     <string name="cate_life">Life</string>
     <string name="cate_family">Family</string>
@@ -86,4 +86,6 @@
     <string name="Syncing...">Syncing...</string>
     <string name="Synced">Synced</string>
     <string name="NoNetworkHint">No network connection.</string>
+    <string name="appwidget_text">appwidget_text</string>
+    <string name="add_widget">appwidget_text</string>
 </resources>

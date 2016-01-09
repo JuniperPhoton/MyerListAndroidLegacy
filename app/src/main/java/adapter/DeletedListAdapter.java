@@ -8,13 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 
 import java.util.ArrayList;
 
 import fragment.DeletedItemFragment;
 import util.ConfigHelper;
-import util.ContextUtil;
+import util.AppExtension;
 import util.PostHelper;
 import util.SerializerHelper;
 import model.ToDo;
@@ -45,15 +45,17 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
     @Override
     public void onBindViewHolder(final DeleteItemViewHolder holder, final int position)
     {
-        holder.mTextView.setText(mDeleteToDos.get(position).getContent());
+        final ToDo currentToDo=mDeleteToDos.get(position);
+        if(currentToDo==null) return;
+
+        holder.mTextView.setText(currentToDo.getContent());
         holder.mDeleteView.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
 
-                ToDo sToDelete = mDeleteToDos.get(position);
-                mDeleteToDos.remove(sToDelete);
+                mDeleteToDos.remove(currentToDo);
                 notifyItemRemoved(position);
 
                 if (mDeleteToDos.size() == 0)
@@ -61,7 +63,7 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                     mDeletedItemFragment.ShowNoItemHint();
                 }
 
-                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
+                SerializerHelper.SerializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
             }
         });
         holder.mReDoView.setOnClickListener(new View.OnClickListener()
@@ -71,14 +73,14 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
             {
                 if (!ConfigHelper.ISOFFLINEMODE)
                 {
-                    PostHelper.AddToDo(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), mDeleteToDos.get(position).getContent(), "0", 0);
-                } else
+                    PostHelper.AddToDo(mCurrentActivity, ConfigHelper.getString(AppExtension.getInstance(), "sid"), mDeleteToDos.get(position).getContent(), "0", 0);
+                }
+                else
                 {
                     ToDoListRef.TodosList.add(ToDoListRef.TodosList.size(), mDeleteToDos.get(position));
                 }
 
-                ToDo sToDelete = mDeleteToDos.get(position);
-                mDeleteToDos.remove(sToDelete);
+                mDeleteToDos.remove(currentToDo);
                 notifyItemRemoved(position);
 
                 if (mDeleteToDos.size() == 0)
@@ -86,8 +88,8 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                     mDeletedItemFragment.ShowNoItemHint();
                 }
 
-                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
-                SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.SerializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
+                SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
             }
         });
     }
@@ -95,10 +97,18 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
 
     public void DeleteAll()
     {
-        notifyItemRangeChanged(0, mDeleteToDos.size());
-        mDeleteToDos.clear();
-        mDeletedItemFragment.ShowNoItemHint();
-        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
+        try
+        {
+            //notifyItemRangeChanged(0, mDeleteToDos.size());
+            notifyItemRangeRemoved(0,mDeleteToDos.size());
+            mDeleteToDos.clear();
+            mDeletedItemFragment.ShowNoItemHint();
+            SerializerHelper.SerializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override

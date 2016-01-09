@@ -13,19 +13,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-import util.AppUtil;
 import util.ConfigHelper;
 import util.DataHelper;
 import util.PostHelper;
 import interfaces.IRequestCallbacks;
 import model.ToDo;
 import moe.feng.material.statusbar.StatusBarCompat;
+import util.ToastService;
 
 
 public class LoginActivity extends AppCompatActivity implements
@@ -52,13 +52,13 @@ public class LoginActivity extends AppCompatActivity implements
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
         {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS );
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
         setContentView(R.layout.activity_login);
 
-        mMaskView=(ImageView)findViewById(R.id.activity_login_mask);
-        if(Build.VERSION.SDK_INT<=Build.VERSION_CODES.KITKAT)
+        mMaskView = (ImageView) findViewById(R.id.activity_login_mask);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
         {
             mMaskView.setVisibility(View.GONE);
         }
@@ -85,7 +85,8 @@ public class LoginActivity extends AppCompatActivity implements
             mTitleView.setText(getResources().getString(R.string.loginBtn));
             mConfirmPsBox.setVisibility(View.GONE);
             isToRegister = false;
-        } else
+        }
+        else
             mTitleView.setText(getResources().getString(R.string.registerBtn));
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
@@ -122,12 +123,15 @@ public class LoginActivity extends AppCompatActivity implements
                         progressDialog.setMessage(getResources().getString(R.string.loading_hint));
                         progressDialog.show();
                         PostHelper.CheckExist(this, mEmailBox.getText().toString());
-                    } else
-                        AppUtil.ShowShortToast("Please input password");
-                } else
-                    AppUtil.ShowShortToast("Please input valid email");
+                    }
+                    else
+                        ToastService.ShowShortToast("Please input password");
+                }
+                else
+                    ToastService.ShowShortToast("Please input valid email");
             }
-        } else if (isToRegister)
+        }
+        else if (isToRegister)
         {
             if (!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString()))
             {
@@ -142,14 +146,18 @@ public class LoginActivity extends AppCompatActivity implements
                                 progressDialog.setMessage(getResources().getString(R.string.loading_hint));
                                 progressDialog.show();
                                 PostHelper.Register(this, mEmailBox.getText().toString(), mPasswordBox.getText().toString());
-                            } else
-                                AppUtil.ShowShortToast(getString(R.string.two_ps_match));
-                        } else
-                            AppUtil.ShowShortToast(getString(R.string.confirm_ps_lost));
-                    } else
-                        AppUtil.ShowShortToast(getString(R.string.ps_lost));
-                } else
-                    AppUtil.ShowShortToast(getString(R.string.email_invalid));
+                            }
+                            else
+                                ToastService.ShowShortToast(getString(R.string.two_ps_match));
+                        }
+                        else
+                            ToastService.ShowShortToast(getString(R.string.confirm_ps_lost));
+                    }
+                    else
+                        ToastService.ShowShortToast(getString(R.string.ps_lost));
+                }
+                else
+                    ToastService.ShowShortToast(getString(R.string.email_invalid));
             }
         }
     }
@@ -161,8 +169,9 @@ public class LoginActivity extends AppCompatActivity implements
         if (check)
         {
             PostHelper.GetSalt(this, mEmailBox.getText().toString());
-        } else
-            AppUtil.ShowShortToast(getResources().getString(R.string.user_dont_exist));
+        }
+        else
+            ToastService.ShowShortToast(getResources().getString(R.string.user_dont_exist));
 
         progressDialog.dismiss();
     }
@@ -176,12 +185,14 @@ public class LoginActivity extends AppCompatActivity implements
             try
             {
                 PostHelper.Login(this, mEmailBox.getText().toString(), mPasswordBox.getText().toString(), salt);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 e.printStackTrace();
             }
-        } else
-            AppUtil.ShowShortToast(getResources().getString(R.string.fail_to_login));
+        }
+        else
+            ToastService.ShowShortToast(getResources().getString(R.string.fail_to_login));
 
         progressDialog.dismiss();
     }
@@ -191,14 +202,15 @@ public class LoginActivity extends AppCompatActivity implements
     {
         if (value)
         {
-            AppUtil.ShowShortToast(getResources().getString(R.string.login_success));
+            ToastService.ShowShortToast(getResources().getString(R.string.login_success));
 
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("LOGIN_STATE", "Logined");
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        } else
-            AppUtil.ShowShortToast(getResources().getString(R.string.fail_to_login));
+        }
+        else
+            ToastService.ShowShortToast(getResources().getString(R.string.fail_to_login));
 
         progressDialog.dismiss();
     }
@@ -211,18 +223,20 @@ public class LoginActivity extends AppCompatActivity implements
             try
             {
                 PostHelper.Login(this, ConfigHelper.getString(this, "email"), ConfigHelper.getString(this, "password"), ConfigHelper.getString(this, "salt"));
-            } catch (NoSuchAlgorithmException e)
+            }
+            catch (NoSuchAlgorithmException e)
             {
                 e.printStackTrace();
             }
-        } else
-            AppUtil.ShowShortToast(getResources().getString(R.string.fail_to_register));
+        }
+        else
+            ToastService.ShowShortToast(getResources().getString(R.string.fail_to_register));
 
         progressDialog.dismiss();
     }
 
     @Override
-    public void OnGotScheduleResponse(boolean isSuccess,ArrayList<ToDo> mytodosList)
+    public void OnGotScheduleResponse(boolean isSuccess, ArrayList<ToDo> mytodosList)
     {
 
     }

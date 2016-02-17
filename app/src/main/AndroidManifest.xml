@@ -67,21 +67,7 @@
             android:name="com.umeng.update.UpdateDialogActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
-        <receiver android:name="widget.ListWidgetProvider" >
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="MYERLIST.APPWIDGET_UPDATE"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/list_widget_info"
-                android:previewImage="@drawable/example_appwidget_preview"/>
-        </receiver>
-        <service
-            android:name="service.ListWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
 
     </application>
 

@@ -21,8 +21,7 @@ import util.ConfigHelper;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 
-public class StartActivity extends AppCompatActivity
-{
+public class StartActivity extends AppCompatActivity {
     private LinearLayout mRootLinearLayout;
     private ImageView mLogoImageView;
     private LinearLayout mTitleTextView;
@@ -33,77 +32,68 @@ public class StartActivity extends AppCompatActivity
     private ImageView mMaskView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         StatusBarCompat.setUpActivity(this);
 
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-        {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
         setContentView(R.layout.activity_start);
 
-        mRootLinearLayout=(LinearLayout)findViewById(R.id.rootLinearLayout);
+        mRootLinearLayout = (LinearLayout) findViewById(R.id.rootLinearLayout);
         mRootLinearLayout.setAlpha(0f);
 
-        mMaskView=(ImageView)findViewById(R.id.activity_start_mask);
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-        {
+        mMaskView = (ImageView) findViewById(R.id.activity_start_mask);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             mMaskView.setVisibility(View.GONE);
         }
 
-        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.LOLLIPOP)
-        {
-            CardView toLoginCard=(CardView)findViewById(R.id.toLoginBtn_cardview);
-            LinearLayout.LayoutParams layoutParamsForTop=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParamsForTop.setMargins(40,60,40,0);
-            layoutParamsForTop.height=140;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            CardView toLoginCard = (CardView) findViewById(R.id.toLoginBtn_cardview);
+            LinearLayout.LayoutParams layoutParamsForTop = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParamsForTop.setMargins(40, 60, 40, 0);
+            layoutParamsForTop.height = 140;
             toLoginCard.setLayoutParams(layoutParamsForTop);
 
-            CardView toRegisterCard=(CardView)findViewById(R.id.toRegisterBtn_cardview);
-            LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParams.setMargins(40,0,40,0);
-            layoutParams.height=140;
+            CardView toRegisterCard = (CardView) findViewById(R.id.toRegisterBtn_cardview);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParams.setMargins(40, 0, 40, 0);
+            layoutParams.height = 140;
             toRegisterCard.setLayoutParams(layoutParams);
 
-            CardView toMainCard=(CardView)findViewById(R.id.toMainBtn_cardview);
-            LinearLayout.LayoutParams layoutParamsForBottom=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParamsForBottom.setMargins(40,0,40,10);
-            layoutParamsForBottom.height=140;
+            CardView toMainCard = (CardView) findViewById(R.id.toMainBtn_cardview);
+            LinearLayout.LayoutParams layoutParamsForBottom = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParamsForBottom.setMargins(40, 0, 40, 10);
+            layoutParamsForBottom.height = 140;
 
             toMainCard.setLayoutParams(layoutParamsForBottom);
         }
     }
 
-    private void startNavigatedToAnim()
-    {
-        ValueAnimator  valueAnimator1=new ValueAnimator();
+    private void startNavigatedToAnim() {
+        ValueAnimator valueAnimator1 = new ValueAnimator();
         valueAnimator1.setDuration(500);
         valueAnimator1.setIntValues(100, 0);
         valueAnimator1.setStartDelay(600);
         valueAnimator1.setInterpolator(new DecelerateInterpolator(1.5f));
-        valueAnimator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
-        {
+        valueAnimator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator)
-            {
-                mRootLinearLayout.scrollTo(0,(int)valueAnimator.getAnimatedValue());
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                mRootLinearLayout.scrollTo(0, (int) valueAnimator.getAnimatedValue());
             }
         });
 
-        ValueAnimator  valueAnimator2=new ValueAnimator();
+        ValueAnimator valueAnimator2 = new ValueAnimator();
         valueAnimator2.setDuration(500);
         valueAnimator2.setFloatValues(0f, 1f);
         valueAnimator2.setStartDelay(600);
-        valueAnimator2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
-        {
+        valueAnimator2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator)
-            {
-                mRootLinearLayout.setAlpha((float)valueAnimator.getAnimatedValue());
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                mRootLinearLayout.setAlpha((float) valueAnimator.getAnimatedValue());
             }
         });
         valueAnimator1.start();
@@ -111,39 +101,35 @@ public class StartActivity extends AppCompatActivity
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
         mRootLinearLayout.setAlpha(0f);
         startNavigatedToAnim();
     }
+
     @Override
 
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
     }
 
-    public void toLoginClick(View v)
-    {
-        Intent intent=new Intent(this, LoginActivity.class);
+    public void toLoginClick(View v) {
+        Intent intent = new Intent(this, LoginActivity.class);
         intent.putExtra("LOGIN_STATE", "ToLogin");
         startActivity(intent);
     }
 
-    public void toRegisterClick(View view)
-    {
-        Intent intent=new Intent(this,LoginActivity.class);
+    public void toRegisterClick(View view) {
+        Intent intent = new Intent(this, LoginActivity.class);
         intent.putExtra("LOGIN_STATE", "ToRegister");
         startActivity(intent);
     }
 
-    public void toMainClick(View view)
-    {
-        Intent intent=new Intent(this,MainActivity.class);
-        intent.putExtra("LOGIN_STATE","OfflineMode");
+    public void toMainClick(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("LOGIN_STATE", "OfflineMode");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK |
                 Intent.FLAG_ACTIVITY_NEW_TASK);

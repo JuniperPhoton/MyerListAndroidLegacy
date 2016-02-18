@@ -1,19 +1,43 @@
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_root_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="240sp"
     android:layout_height="match_parent"
-    android:background="@color/myDrawerBackground">
+    android:background="@color/MyerListBlue">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="150sp">
+        android:layout_height="250sp">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/login_background"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20sp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/undoneCount_textview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@android:color/white"
+                android:textSize="100sp"
+                android:textStyle="normal"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/undone_hint"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="normal"/>
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,16 +50,14 @@
                           android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:layout_alignParentBottom="true"
-                          android:gravity="center_vertical"
                           android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/item_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="10sp"
                     android:background="?android:attr/selectableItemBackground"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:text="@string/account_text"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
@@ -46,8 +68,9 @@
                 android:id="@+id/account_block"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10sp"
+                android:layout_marginTop="5sp"
                 android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
                 android:text="@string/now_to_login"
                 android:textColor="@android:color/white"/>
         </LinearLayout>
@@ -57,7 +80,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150sp"
+        android:layout_marginBottom="100sp"
+        android:layout_marginTop="260sp"
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
@@ -66,37 +90,83 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="false"
             android:layout_alignParentTop="false"
-            android:background="@color/myDrawerBackground"
             android:clickable="true"
             android:scrollbars="vertical"
             />
     </LinearLayout>
 
-    <LinearLayout
+    <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="100sp"
+        android:layout_height="50sp"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+        android:background="@android:color/transparent"
+        android:columnCount="2"
+        android:rowCount="1">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/line_gray"/>
+        <RelativeLayout
+            android:layout_width="120sp"
+            android:layout_height="match_parent"
+            android:layout_column="0"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_gravity="fill">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/drawerList_other"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="false"
-            android:layout_alignParentTop="false"
-            android:background="@color/myDrawerBackground"
-            android:clickable="true"
-            android:scrollbars="vertical"
-            />
+            <LinearLayout
+                android:id="@+id/drawer_settings_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:orientation="horizontal">
 
-    </LinearLayout>
+                <ImageView
+                    android:layout_width="25sp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/settings"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5sp"
+                    android:text="@string/settings"
+                    android:textColor="@android:color/white"/>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="120sp"
+            android:layout_height="match_parent"
+            android:layout_column="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_gravity="fill">
+
+            <LinearLayout
+                android:id="@+id/drawer_about_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25sp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/like"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5sp"
+                    android:text="@string/about"
+                    android:textColor="@android:color/white"/>
+            </LinearLayout>
+
+
+        </RelativeLayout>
+    </GridLayout>
 
 </RelativeLayout>

@@ -7,18 +7,15 @@ import com.pgyersdk.crash.PgyCrashManager;
 
 import org.xutils.x;
 
-public class AppExtension extends Application
-{
+public class AppExtension extends Application {
     private static AppExtension instance;
 
-    public static AppExtension getInstance()
-    {
+    public static AppExtension getInstance() {
         return instance;
     }
 
     @Override
-    public void onCreate()
-    {
+    public void onCreate() {
         // TODO Auto-generated method stub
         super.onCreate();
         instance = this;

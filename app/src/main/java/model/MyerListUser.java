@@ -1,44 +1,36 @@
 package model;
 
 
-public class MyerListUser
-{
+public class MyerListUser {
     private int sid;
     private String email;
     private String password;
 
-    public MyerListUser()
-    {
+    public MyerListUser() {
 
     }
 
-    public int GetSID()
-    {
+    public int GetSID() {
         return this.sid;
     }
 
-    public void SetSID(int value)
-    {
+    public void SetSID(int value) {
         this.sid = value;
     }
 
-    public String GetEmail()
-    {
+    public String GetEmail() {
         return this.email;
     }
 
-    public void SetEmail(String value)
-    {
+    public void SetEmail(String value) {
         this.email = value;
     }
 
-    public String GetPassword()
-    {
+    public String GetPassword() {
         return this.password;
     }
 
-    public void SetPassworrd(String value)
-    {
+    public void SetPassworrd(String value) {
         this.password = value;
     }
 }

@@ -19,8 +19,7 @@ import java.util.Date;
 import interfaces.IRequestCallbacks;
 import model.ToDo;
 
-public class PostHelper
-{
+public class PostHelper {
 
     public final static String domain = "juniperphoton.net";
     public static String UserCheckExist = "http://" + domain + "/schedule/User/CheckUserExist/v1?";
@@ -39,75 +38,61 @@ public class PostHelper
 
     public static IRequestCallbacks mRequestCallback;
 
-    public static void CheckExist(Context context, final String email)
-    {
+    public static void CheckExist(Context context, final String email) {
         mRequestCallback = (IRequestCallbacks) context;
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams requestParams = new RequestParams();
         requestParams.add("email", email);
-        client.post(UserCheckExist, requestParams, new JsonHttpResponseHandler()
-        {
+        client.post(UserCheckExist, requestParams, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-            {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 // If the response is JSONObject instead of expected JSONArray
-                try
-                {
+                try {
                     boolean isSuccess = response.getBoolean("isSuccessed");
-                    if (isSuccess)
-                    {
+                    if (isSuccess) {
                         boolean isExist = response.getBoolean("isExist");
-                        if (isExist)
-                        {
-                            mRequestCallback.OnCheckResponse(true);
+                        if (isExist) {
+                            mRequestCallback.onCheckResponsenCheckResponse(true);
                         }
-                        else mRequestCallback.OnCheckResponse(false);
+                        else mRequestCallback.onCheckResponsenCheckResponse(false);
                     }
-                    else mRequestCallback.OnCheckResponse(false);
+                    else mRequestCallback.onCheckResponsenCheckResponse(false);
                 }
-                catch (JSONException e)
-                {
+                catch (JSONException e) {
                     e.printStackTrace();
-                    mRequestCallback.OnCheckResponse(false);
+                    mRequestCallback.onCheckResponsenCheckResponse(false);
                 }
             }
 
         });
     }
 
-    public static void GetSalt(Context context, String email)
-    {
+    public static void GetSalt(Context context, String email) {
         mRequestCallback = (IRequestCallbacks) context;
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("email", email);
-        client.post(UserGetSalt, params, new JsonHttpResponseHandler()
-        {
+        client.post(UserGetSalt, params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-            {
-                try
-                {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
                     boolean isSuccess = response.getBoolean("isSuccessed");
-                    if (isSuccess)
-                    {
+                    if (isSuccess) {
                         String salt = response.getString("Salt");
 
-                        mRequestCallback.OnGetSaltResponse(salt);
+                        mRequestCallback.onGetSaltResponse(salt);
                     }
-                    else mRequestCallback.OnGetSaltResponse(null);
+                    else mRequestCallback.onGetSaltResponse(null);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
     }
 
-    public static void Register(Context context, final String email, final String password)
-    {
+    public static void Register(Context context, final String email, final String password) {
         mRequestCallback = (IRequestCallbacks) context;
 
         AsyncHttpClient client = new AsyncHttpClient();
@@ -117,48 +102,40 @@ public class PostHelper
         params.put("email", email);
         params.put("password", psAfterMD5);
 
-        client.post(UserRegisterUri, params, new JsonHttpResponseHandler()
-        {
+        client.post(UserRegisterUri, params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-            {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 boolean isSuccess = false;
-                try
-                {
+                try {
                     isSuccess = response.getBoolean("isSuccessed");
-                    if (isSuccess)
-                    {
+                    if (isSuccess) {
                         JSONObject userObj = response.getJSONObject("UserInfo");
-                        if (userObj != null)
-                        {
+                        if (userObj != null) {
                             String salt = userObj.getString("Salt");
                             ConfigHelper.putString(AppExtension.getInstance(), "email", email);
                             ConfigHelper.putString(AppExtension.getInstance(), "password", password);
                             ConfigHelper.putString(AppExtension.getInstance(), "salt", salt);
 
-                            mRequestCallback.OnRegisteredResponse(true, salt);
+                            mRequestCallback.onRegisteredResponse(true, salt);
                         }
-                        else mRequestCallback.OnRegisteredResponse(false, null);
+                        else mRequestCallback.onRegisteredResponse(false, null);
                     }
-                    else mRequestCallback.OnRegisteredResponse(false, null);
+                    else mRequestCallback.onRegisteredResponse(false, null);
                 }
-                catch (JSONException e)
-                {
+                catch (JSONException e) {
                     e.printStackTrace();
-                    mRequestCallback.OnRegisteredResponse(false, null);
+                    mRequestCallback.onRegisteredResponse(false, null);
                 }
             }
 
             @Override
-            public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object)
-            {
-                mRequestCallback.OnRegisteredResponse(false, null);
+            public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
+                mRequestCallback.onRegisteredResponse(false, null);
             }
         });
     }
 
-    public static void Login(Context context, final String email, final String password, final String salt) throws NoSuchAlgorithmException
-    {
+    public static void Login(Context context, final String email, final String password, final String salt) throws NoSuchAlgorithmException {
         mRequestCallback = (IRequestCallbacks) context;
 
         AsyncHttpClient client = new AsyncHttpClient();
@@ -170,20 +147,15 @@ public class PostHelper
         params.put("email", email);
         params.put("password", psToPost);
 
-        client.post(UserLoginUri, params, new JsonHttpResponseHandler()
-        {
+        client.post(UserLoginUri, params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-            {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 boolean isSuccess = false;
-                try
-                {
+                try {
                     isSuccess = response.getBoolean("isSuccessed");
-                    if (isSuccess)
-                    {
+                    if (isSuccess) {
                         JSONObject userObj = response.getJSONObject("UserInfo");
-                        if (userObj != null)
-                        {
+                        if (userObj != null) {
                             String sid = userObj.getString("sid");
                             String access_token = userObj.getString("access_token");
                             ConfigHelper.putString(AppExtension.getInstance(), "email", email);
@@ -191,81 +163,67 @@ public class PostHelper
                             ConfigHelper.putString(AppExtension.getInstance(), "salt", salt);
                             ConfigHelper.putString(AppExtension.getInstance(), "sid", sid);
                             ConfigHelper.putString(AppExtension.getInstance(), "access_token", access_token);
-                            mRequestCallback.OnLoginResponse(true);
+                            mRequestCallback.onLoginResponse(true);
                         }
-                        else mRequestCallback.OnLoginResponse(false);
+                        else mRequestCallback.onLoginResponse(false);
                     }
-                    else mRequestCallback.OnLoginResponse((false));
+                    else mRequestCallback.onLoginResponse((false));
                 }
-                catch (JSONException e)
-                {
+                catch (JSONException e) {
                     e.printStackTrace();
-                    mRequestCallback.OnLoginResponse((false));
+                    mRequestCallback.onLoginResponse((false));
                 }
 
             }
 
             @Override
-            public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object)
-            {
-                mRequestCallback.OnLoginResponse((false));
+            public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
+                mRequestCallback.onLoginResponse((false));
             }
 
         });
     }
 
-    public static void GetOrderedSchedules(Context context, final String sid, final String access_token)
-    {
+    public static void GetOrderedSchedules(Context context, final String sid, final String access_token) {
         mRequestCallback = (IRequestCallbacks) context;
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("sid", sid);
 
-        client.post(ScheduleGetUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler()
-        {
+        client.post(ScheduleGetUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
-            public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object)
-            {
-                mRequestCallback.OnGotScheduleResponse(false, null);
+            public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
+                mRequestCallback.onGotScheduleResponse(false, null);
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-            {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Boolean isSuccess = null;
-                try
-                {
+                try {
                     isSuccess = response.getBoolean("isSuccessed");
-                    if (isSuccess)
-                    {
+                    if (isSuccess) {
                         JSONArray array = response.getJSONArray("ScheduleInfo");
 
-                        if (array != null)
-                        {
+                        if (array != null) {
                             final ArrayList<ToDo> todosList = ToDo.parseJsonObjFromArray(array);
 
                             AsyncHttpClient client = new AsyncHttpClient();
                             RequestParams params = new RequestParams();
                             params.put("sid", sid);
-                            client.post(ScheduleGetOrderUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler()
-                            {
+                            client.post(ScheduleGetOrderUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
                                 @Override
-                                public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-                                {
-                                    try
-                                    {
+                                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                    try {
                                         boolean isSuccess = response.getBoolean("isSuccessed");
-                                        if (isSuccess)
-                                        {
+                                        if (isSuccess) {
                                             String orderStr = response.getJSONArray(("OrderList")).getJSONObject(0).getString("list_order");
                                             ArrayList<ToDo> listToReturn = ToDo.setOrderByString(todosList, orderStr);
-                                            mRequestCallback.OnGotScheduleResponse(true, listToReturn);
+                                            mRequestCallback.onGotScheduleResponse(true, listToReturn);
                                         }
                                     }
-                                    catch (Exception e)
-                                    {
-                                        mRequestCallback.OnGotScheduleResponse(false, null);
+                                    catch (Exception e) {
+                                        mRequestCallback.onGotScheduleResponse(false, null);
                                         e.printStackTrace();
                                     }
                                 }
@@ -275,9 +233,8 @@ public class PostHelper
                     }
 
                 }
-                catch (Exception e)
-                {
-                    mRequestCallback.OnGotScheduleResponse(false, null);
+                catch (Exception e) {
+                    mRequestCallback.onGotScheduleResponse(false, null);
                     e.printStackTrace();
                 }
 
@@ -286,8 +243,7 @@ public class PostHelper
         });
     }
 
-    public static void AddToDo(Context context, String sid, String content, String isDone, int cate)
-    {
+    public static void AddToDo(Context context, String sid, String content, String isDone, int cate) {
         mRequestCallback = (IRequestCallbacks) context;
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -301,65 +257,53 @@ public class PostHelper
         params.put("content", content);
         params.put("isdone", isDone);
         params.put("cate", String.valueOf(cate));
-        client.post(ScheduleAddUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context, "access_token"), params, new JsonHttpResponseHandler()
-        {
+        client.post(ScheduleAddUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context, "access_token"), params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-            {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Boolean isSuccess = null;
-                try
-                {
+                try {
                     isSuccess = response.getBoolean("isSuccessed");
-                    if (isSuccess)
-                    {
+                    if (isSuccess) {
                         ToDo newToDo = ToDo.parseJsonObjToObj(response.getJSONObject("ScheduleInfo"));
-                        mRequestCallback.OnAddedResponse(true, newToDo);
+                        mRequestCallback.onAddedResponse(true, newToDo);
                     }
                 }
-                catch (JSONException e)
-                {
+                catch (JSONException e) {
                     e.printStackTrace();
-                    mRequestCallback.OnAddedResponse(false, null);
+                    mRequestCallback.onAddedResponse(false, null);
                 }
 
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse)
-            {
-                mRequestCallback.OnAddedResponse(false, null);
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                mRequestCallback.onAddedResponse(false, null);
             }
         });
 
     }
 
-    public static void SetListOrder(Context context, String sid, String order)
-    {
+    public static void SetListOrder(Context context, String sid, String order) {
         mRequestCallback = (IRequestCallbacks) context;
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("sid", sid);
         params.put("order", order);
-        client.post(ScheduleSetOrderUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context, "access_token"), params, new JsonHttpResponseHandler()
-        {
+        client.post(ScheduleSetOrderUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context, "access_token"), params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-            {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Boolean isSuccess = null;
-                try
-                {
+                try {
                     isSuccess = response.getBoolean("isSuccessed");
-                    if (isSuccess)
-                    {
+                    if (isSuccess) {
                         ToDo newSche = ToDo.parseJsonObjToObj(response);
-                        mRequestCallback.OnSetOrderResponse(true);
+                        mRequestCallback.onSetOrderResponse(true);
                     }
                 }
-                catch (JSONException e)
-                {
+                catch (JSONException e) {
                     e.printStackTrace();
-                    mRequestCallback.OnSetOrderResponse(false);
+                    mRequestCallback.onSetOrderResponse(false);
                 }
 
             }
@@ -367,36 +311,29 @@ public class PostHelper
         });
     }
 
-    public static void SetDone(Context context, String sid, String id, String isDone)
-    {
+    public static void SetDone(Context context, String sid, String id, String isDone) {
         mRequestCallback = (IRequestCallbacks) context;
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("id", id);
         params.put("isdone", isDone);
-        client.post(ScheduleFinishUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context, "access_token"), params, new JsonHttpResponseHandler()
-        {
+        client.post(ScheduleFinishUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context, "access_token"), params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-            {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Boolean isSuccess = null;
-                try
-                {
+                try {
                     isSuccess = response.getBoolean("isSuccessed");
-                    if (isSuccess)
-                    {
-                        mRequestCallback.OnDoneResponse(true);
+                    if (isSuccess) {
+                        mRequestCallback.onDoneResponse(true);
                     }
-                    else
-                    {
-                        mRequestCallback.OnDoneResponse(false);
+                    else {
+                        mRequestCallback.onDoneResponse(false);
                     }
                 }
-                catch (JSONException e)
-                {
+                catch (JSONException e) {
                     e.printStackTrace();
-                    mRequestCallback.OnDoneResponse(false);
+                    mRequestCallback.onDoneResponse(false);
                 }
 
             }
@@ -404,35 +341,28 @@ public class PostHelper
         });
     }
 
-    public static void SetDelete(Context context, String sid, String id)
-    {
+    public static void SetDelete(Context context, String sid, String id) {
         mRequestCallback = (IRequestCallbacks) context;
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("id", id);
-        client.post(ScheduleDeleteUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context, "access_token"), params, new JsonHttpResponseHandler()
-        {
+        client.post(ScheduleDeleteUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context, "access_token"), params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-            {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Boolean isSuccess = null;
-                try
-                {
+                try {
                     isSuccess = response.getBoolean("isSuccessed");
-                    if (isSuccess)
-                    {
-                        mRequestCallback.OnDeleteResponse(true);
+                    if (isSuccess) {
+                        mRequestCallback.onDeleteResponse(true);
                     }
-                    else
-                    {
-                        mRequestCallback.OnDeleteResponse(false);
+                    else {
+                        mRequestCallback.onDeleteResponse(false);
                     }
                 }
-                catch (JSONException e)
-                {
+                catch (JSONException e) {
                     e.printStackTrace();
-                    mRequestCallback.OnDeleteResponse(false);
+                    mRequestCallback.onDeleteResponse(false);
                 }
 
             }
@@ -440,8 +370,7 @@ public class PostHelper
         });
     }
 
-    public static void UpdateContent(Context context, String sid, String id, String content, int cate)
-    {
+    public static void UpdateContent(Context context, String sid, String id, String content, int cate) {
         mRequestCallback = (IRequestCallbacks) context;
 
         AsyncHttpClient client = new AsyncHttpClient();
@@ -449,28 +378,22 @@ public class PostHelper
         params.put("id", id);
         params.put("content", content);
         params.put("cate", String.valueOf(cate));
-        client.post(ScheduleUpdateUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context, "access_token"), params, new JsonHttpResponseHandler()
-        {
+        client.post(ScheduleUpdateUri + "sid=" + sid + "&access_token=" + ConfigHelper.getString(context, "access_token"), params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-            {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Boolean isSuccess = null;
-                try
-                {
+                try {
                     isSuccess = response.getBoolean("isSuccessed");
-                    if (isSuccess)
-                    {
-                        mRequestCallback.OnUpdateContent(true);
+                    if (isSuccess) {
+                        mRequestCallback.onUpdateContent(true);
                     }
-                    else
-                    {
-                        mRequestCallback.OnUpdateContent(false);
+                    else {
+                        mRequestCallback.onUpdateContent(false);
                     }
                 }
-                catch (JSONException e)
-                {
+                catch (JSONException e) {
                     e.printStackTrace();
-                    mRequestCallback.OnUpdateContent(false);
+                    mRequestCallback.onUpdateContent(false);
                 }
 
             }
@@ -480,51 +403,51 @@ public class PostHelper
 
 //    public interface OnCheckResponseCallback
 //    {
-//        void OnCheckResponse(boolean check);
+//        void onCheckResponsenCheckResponse(boolean check);
 //    }
 //
 //    public interface OnGetSaltResponseCallback
 //    {
-//        void OnGetSaltResponse(String str) throws NoSuchAlgorithmException;
+//        void onGetSaltResponse(String str) throws NoSuchAlgorithmException;
 //    }
 //
 //    public interface OnLoginResponseCallback
 //    {
-//        void OnLoginResponse(boolean value);
+//        void onLoginResponse(boolean value);
 //    }
 //
 //    public interface OnGetSchedulesCallback
 //    {
-//        void OnGotScheduleResponse(ArrayList<ToDo> mytodosList);
+//        void onGotScheduleResponse(ArrayList<ToDo> mytodosList);
 //    }
 //
 //    public interface OnAddedMemoCallback
 //    {
-//        void OnAddedResponse(boolean isSuccess, ToDo newTodo);
+//        void onAddedResponse(boolean isSuccess, ToDo newTodo);
 //    }
 //
 //    public interface OnSetOrderCallback
 //    {
-//        void OnSetOrderResponse(boolean isSuccess);
+//        void onSetOrderResponse(boolean isSuccess);
 //    }
 //
 //    public interface OnRegisterCallback
 //    {
-//        void OnRegisteredResponse(boolean isSuccess,String salt);
+//        void onRegisteredResponse(boolean isSuccess,String salt);
 //    }
 //
 //    public interface OnDoneCallback
 //    {
-//        void OnDoneResponse(boolean isSuccess);
+//        void onDoneResponse(boolean isSuccess);
 //    }
 //
 //    public interface OnDeleteCallback
 //    {
-//        void OnDeleteResponse(boolean isSuccess);
+//        void onDeleteResponse(boolean isSuccess);
 //    }
 //
 //    public interface OnUpdateContentCallback
 //    {
-//        void OnUpdateContent(boolean isSuccess);
+//        void onUpdateContent(boolean isSuccess);
 //    }
 }

@@ -22,8 +22,7 @@ import model.ToDo;
 import util.ToDoListRef;
 
 
-public class DeletedItemFragment extends Fragment
-{
+public class DeletedItemFragment extends Fragment {
 
     private ArrayList<ToDo> mDeletedData;
     private RecyclerView mDeletedListRecyclerView;
@@ -31,23 +30,20 @@ public class DeletedItemFragment extends Fragment
     private IOnReAddedToDo mActivity;
     private LinearLayout mNoItemHintLayout;
 
-    public DeletedItemFragment()
-    {
+    public DeletedItemFragment() {
         // Required empty public constructor
     }
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
-    {
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_deleted_item, container, false);
         mDeletedListRecyclerView = (RecyclerView) view.findViewById(R.id.deletedList);
 
@@ -56,27 +52,21 @@ public class DeletedItemFragment extends Fragment
         mDeletedListRecyclerView.setLayoutManager(layoutManager);
         mDeletedListRecyclerView.setHasFixedSize(true);
         mFab = (com.getbase.floatingactionbutton.FloatingActionButton) view.findViewById(R.id.delete_all_fab);
-        mFab.setOnClickListener(new View.OnClickListener()
-        {
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle(R.string.logout_title);
                 builder.setMessage(R.string.deleteall_alert);
-                builder.setPositiveButton(R.string.ok_btn, new DialogInterface.OnClickListener()
-                {
+                builder.setPositiveButton(R.string.ok_btn, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         ((DeletedListAdapter) mDeletedListRecyclerView.getAdapter()).DeleteAll();
                     }
                 });
-                builder.setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener()
-                {
+                builder.setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
                     }
                 });
@@ -90,48 +80,40 @@ public class DeletedItemFragment extends Fragment
     }
 
 
-    public void SetUpData(ArrayList<ToDo> data)
-    {
+    public void SetUpData(ArrayList<ToDo> data) {
         ToDoListRef.DeletedList = data;
         mDeletedData = data;
         DeletedListAdapter deletedListAdapter = new DeletedListAdapter(getActivity(), this, data);
 
         mDeletedListRecyclerView.setAdapter(deletedListAdapter);
 
-        if (data.size() == 0)
-        {
+        if (data.size() == 0) {
             ShowNoItemHint();
         }
     }
 
-    public void ShowNoItemHint()
-    {
+    public void ShowNoItemHint() {
         mNoItemHintLayout.setVisibility(View.VISIBLE);
     }
 
-    public void HideNoItemHint()
-    {
+    public void HideNoItemHint() {
         mNoItemHintLayout.setVisibility(View.GONE);
     }
 
     @Override
-    public void onAttach(Activity activity)
-    {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try
-        {
+        try {
             mActivity = (IOnReAddedToDo) activity;
         }
-        catch (ClassCastException e)
-        {
+        catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
 
     @Override
-    public void onDetach()
-    {
+    public void onDetach() {
         super.onDetach();
     }
 

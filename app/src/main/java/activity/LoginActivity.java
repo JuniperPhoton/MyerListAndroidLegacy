@@ -29,8 +29,7 @@ import util.ToastService;
 
 
 public class LoginActivity extends AppCompatActivity implements
-        IRequestCallbacks
-{
+        IRequestCallbacks {
     private EditText mEmailBox;
     private EditText mPasswordBox;
     private EditText mConfirmPsBox;
@@ -44,27 +43,23 @@ public class LoginActivity extends AppCompatActivity implements
     private final boolean DEBUG_ENABLE = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StatusBarCompat.setUpActivity(this);
 
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-        {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
         setContentView(R.layout.activity_login);
 
         mMaskView = (ImageView) findViewById(R.id.activity_login_mask);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-        {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             mMaskView.setVisibility(View.GONE);
         }
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-        {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CardView toLoginCard = (CardView) findViewById(R.id.activity_login_btn_cardView);
             LinearLayout.LayoutParams layoutParamsForTop = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             layoutParamsForTop.setMargins(40, 60, 40, 0);
@@ -80,8 +75,7 @@ public class LoginActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         String state = intent.getStringExtra("LOGIN_STATE");
-        if (state.equals("ToLogin"))
-        {
+        if (state.equals("ToLogin")) {
             mTitleView.setText(getResources().getString(R.string.loginBtn));
             mConfirmPsBox.setVisibility(View.GONE);
             isToRegister = false;
@@ -95,31 +89,24 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
     }
 
     @Override
 
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
     }
 
-    public void Login_Click(View view) throws NoSuchAlgorithmException
-    {
+    public void Login_Click(View view) throws NoSuchAlgorithmException {
 
-        if (!isToRegister)
-        {
-            if (!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString()))
-            {
-                if (DataHelper.IsEmailFormat(mEmailBox.getText().toString()))
-                {
-                    if (!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString()))
-                    {
+        if (!isToRegister) {
+            if (!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString())) {
+                if (DataHelper.IsEmailFormat(mEmailBox.getText().toString())) {
+                    if (!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString())) {
                         progressDialog.setMessage(getResources().getString(R.string.loading_hint));
                         progressDialog.show();
                         PostHelper.CheckExist(this, mEmailBox.getText().toString());
@@ -131,18 +118,12 @@ public class LoginActivity extends AppCompatActivity implements
                     ToastService.ShowShortToast("Please input valid email");
             }
         }
-        else if (isToRegister)
-        {
-            if (!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString()))
-            {
-                if (DataHelper.IsEmailFormat(mEmailBox.getText().toString()))
-                {
-                    if (!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString()))
-                    {
-                        if (!DataHelper.IsStringNullOrEmpty(mConfirmPsBox.getText().toString()))
-                        {
-                            if (mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString()))
-                            {
+        else if (isToRegister) {
+            if (!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString())) {
+                if (DataHelper.IsEmailFormat(mEmailBox.getText().toString())) {
+                    if (!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString())) {
+                        if (!DataHelper.IsStringNullOrEmpty(mConfirmPsBox.getText().toString())) {
+                            if (mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString())) {
                                 progressDialog.setMessage(getResources().getString(R.string.loading_hint));
                                 progressDialog.show();
                                 PostHelper.Register(this, mEmailBox.getText().toString(), mPasswordBox.getText().toString());
@@ -164,10 +145,8 @@ public class LoginActivity extends AppCompatActivity implements
 
 
     @Override
-    public void OnCheckResponse(boolean check)
-    {
-        if (check)
-        {
+    public void onCheckResponsenCheckResponse(boolean check) {
+        if (check) {
             PostHelper.GetSalt(this, mEmailBox.getText().toString());
         }
         else
@@ -177,17 +156,13 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void OnGetSaltResponse(String str)
-    {
+    public void onGetSaltResponse(String str) {
         String salt = str;
-        if (!DataHelper.IsStringNullOrEmpty(salt))
-        {
-            try
-            {
+        if (!DataHelper.IsStringNullOrEmpty(salt)) {
+            try {
                 PostHelper.Login(this, mEmailBox.getText().toString(), mPasswordBox.getText().toString(), salt);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -198,10 +173,8 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void OnLoginResponse(boolean value)
-    {
-        if (value)
-        {
+    public void onLoginResponse(boolean value) {
+        if (value) {
             ToastService.ShowShortToast(getResources().getString(R.string.login_success));
 
             Intent intent = new Intent(this, MainActivity.class);
@@ -216,16 +189,12 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void OnRegisteredResponse(boolean isSuccess, String salt)
-    {
-        if (isSuccess)
-        {
-            try
-            {
+    public void onRegisteredResponse(boolean isSuccess, String salt) {
+        if (isSuccess) {
+            try {
                 PostHelper.Login(this, ConfigHelper.getString(this, "email"), ConfigHelper.getString(this, "password"), ConfigHelper.getString(this, "salt"));
             }
-            catch (NoSuchAlgorithmException e)
-            {
+            catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
         }
@@ -236,39 +205,33 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void OnGotScheduleResponse(boolean isSuccess, ArrayList<ToDo> mytodosList)
-    {
+    public void onGotScheduleResponse(boolean isSuccess, ArrayList<ToDo> mytodosList) {
 
     }
 
     @Override
-    public void OnAddedResponse(boolean isSuccess, ToDo newTodo)
-    {
+    public void onAddedResponse(boolean isSuccess, ToDo newTodo) {
 
     }
 
     @Override
-    public void OnSetOrderResponse(boolean isSuccess)
-    {
+    public void onSetOrderResponse(boolean isSuccess) {
 
     }
 
 
     @Override
-    public void OnDoneResponse(boolean isSuccess)
-    {
+    public void onDoneResponse(boolean isSuccess) {
 
     }
 
     @Override
-    public void OnDeleteResponse(boolean isSuccess)
-    {
+    public void onDeleteResponse(boolean isSuccess) {
 
     }
 
     @Override
-    public void OnUpdateContent(boolean isSuccess)
-    {
+    public void onUpdateContent(boolean isSuccess) {
 
     }
 }

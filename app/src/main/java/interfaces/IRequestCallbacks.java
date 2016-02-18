@@ -8,17 +8,25 @@ import model.ToDo;
 /**
  * Created by dengw on 10/5/2015.
  */
-public interface IRequestCallbacks
-{
-    void OnCheckResponse(boolean check);
-    void OnGetSaltResponse(String str);
-    void OnLoginResponse(boolean value);
-    void OnGotScheduleResponse(boolean value,ArrayList<ToDo> mytodosList);
-    void OnAddedResponse(boolean isSuccess, ToDo newTodo);
-    void OnSetOrderResponse(boolean isSuccess);
-    void OnRegisteredResponse(boolean isSuccess,String salt);
-    void OnDoneResponse(boolean isSuccess);
-    void OnDeleteResponse(boolean isSuccess);
-    void OnUpdateContent(boolean isSuccess);
+public interface IRequestCallbacks {
+    void onCheckResponsenCheckResponse(boolean check);
+
+    void onGetSaltResponse(String str);
+
+    void onLoginResponse(boolean value);
+
+    void onGotScheduleResponse(boolean value, ArrayList<ToDo> mytodosList);
+
+    void onAddedResponse(boolean isSuccess, ToDo newTodo);
+
+    void onSetOrderResponse(boolean isSuccess);
+
+    void onRegisteredResponse(boolean isSuccess, String salt);
+
+    void onDoneResponse(boolean isSuccess);
+
+    void onDeleteResponse(boolean isSuccess);
+
+    void onUpdateContent(boolean isSuccess);
 
 }

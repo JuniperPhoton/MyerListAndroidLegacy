@@ -90,4 +90,5 @@
     <string name="NoNetworkHint">没有网络，暂时使用离线模式</string>
     <string name="appwidget_text">appwidget_text</string>
     <string name="add_widget">appwidget_text</string>
+    <string name="undone_hint">个未完成的</string>
 </resources>

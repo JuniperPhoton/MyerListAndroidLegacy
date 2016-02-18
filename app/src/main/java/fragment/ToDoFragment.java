@@ -27,8 +27,7 @@ import util.SerializerHelper;
 import util.ToDoListRef;
 import model.ToDo;
 
-public class ToDoFragment extends Fragment
-{
+public class ToDoFragment extends Fragment {
     private Activity mActivity;
     public RecyclerView mToDoRecyclerView;
     private ArrayList<ToDo> mMyToDos;
@@ -38,26 +37,22 @@ public class ToDoFragment extends Fragment
     private LinearLayout mNoItemLayout;
     private LinearLayout mAddingPaneLayout;
 
-    public ToDoFragment()
-    {
+    public ToDoFragment() {
 
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_to_do, container, false);
 
         //拿到主列表控件
@@ -75,13 +70,10 @@ public class ToDoFragment extends Fragment
 
         //设置下拉刷新控件
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-        {
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh()
-            {
-                if (ConfigHelper.ISOFFLINEMODE)
-                {
+            public void onRefresh() {
+                if (ConfigHelper.ISOFFLINEMODE) {
                     mRefreshLayout.setRefreshing(false);
                     return;
                 }
@@ -91,16 +83,13 @@ public class ToDoFragment extends Fragment
 
         //设置 FAB
         mAddingFab = (FloatingActionButton) view.findViewById(R.id.pink_icon);
-        mAddingFab.setOnClickListener(new View.OnClickListener()
-        {
+        mAddingFab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 ((MainActivity) mActivity).ShowAddingPane();
             }
         });
-        if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit"))
-        {
+        if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             layoutParams.setMargins(16, 0, 0, 16);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -113,22 +102,18 @@ public class ToDoFragment extends Fragment
         return view;
     }
 
-    public void ShowNoItemHint(boolean show)
-    {
-        if (show)
-        {
+    public void ShowNoItemHint(boolean show) {
+        if (show) {
             mNoItemLayout.setVisibility(View.VISIBLE);
-        } else
-        {
+        }
+        else {
             mNoItemLayout.setVisibility(View.GONE);
         }
     }
 
-    public void UpdateData(ArrayList<ToDo> data)
-    {
+    public void UpdateData(ArrayList<ToDo> data) {
         mMyToDos = data;
-        if (mToDoRecyclerView != null)
-        {
+        if (mToDoRecyclerView != null) {
             mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMyToDos, mActivity, this));
             StopRefreshing();
             if (data.size() == 0)
@@ -139,48 +124,37 @@ public class ToDoFragment extends Fragment
     }
 
 
-    public void ShowRefreshing()
-    {
-        if (mRefreshLayout != null)
-        {
+    public void ShowRefreshing() {
+        if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(true);
         }
     }
 
-    public void StopRefreshing()
-    {
-        if (mRefreshLayout != null)
-        {
+    public void StopRefreshing() {
+        if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(false);
         }
     }
 
-    public void EnableRefresh()
-    {
-        if (mRefreshLayout != null)
-        {
+    public void EnableRefresh() {
+        if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(true);
         }
     }
 
-    public void DisableRefresh()
-    {
-        if (mRefreshLayout != null)
-        {
+    public void DisableRefresh() {
+        if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(false);
         }
     }
 
-    public void GetAllSchedules()
-    {
+    public void GetAllSchedules() {
         PostHelper.GetOrderedSchedules(getActivity(), ConfigHelper.getString(getActivity(), "sid"), ConfigHelper.getString(getActivity(), "access_token"));
 
-        if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance()))
-        {
+        if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
             if (ToDoListRef.StagedList == null) return;
             ((MainActivity) mActivity).SetIsAddStagedItems(true);
-            for (ToDo todo : ToDoListRef.StagedList)
-            {
+            for (ToDo todo : ToDoListRef.StagedList) {
                 PostHelper.AddToDo(getActivity(), ConfigHelper.getString(AppExtension.getInstance(), "sid"), todo.getContent(), "0", todo.getCate());
             }
             ToDoListRef.StagedList.clear();
@@ -189,22 +163,18 @@ public class ToDoFragment extends Fragment
     }
 
     @Override
-    public void onAttach(Activity activity)
-    {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try
-        {
+        try {
             mActivity = activity;
         }
-        catch (ClassCastException e)
-        {
+        catch (ClassCastException e) {
 
         }
     }
 
     @Override
-    public void onDetach()
-    {
+    public void onDetach() {
         super.onDetach();
     }
 

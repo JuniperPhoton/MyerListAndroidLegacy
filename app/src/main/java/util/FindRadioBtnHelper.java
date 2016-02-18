@@ -5,10 +5,8 @@ import com.juniperphoton.myerlistandroid.R;
 /**
  * Created by dengw on 1/5/2016.
  */
-public class FindRadioBtnHelper
-{
-    public static int GetCateByRadioBtnID(int i)
-    {
+public class FindRadioBtnHelper {
+    public static int GetCateByRadioBtnID(int i) {
         int index = 0;
         if (i == R.id.radio_default_btn) index = 0;
         else if (i == R.id.radio_work_btn) index = 1;
@@ -19,8 +17,7 @@ public class FindRadioBtnHelper
         return index;
     }
 
-    public static int GetRadioBtnIDByCate(int cate)
-    {
+    public static int GetRadioBtnIDByCate(int cate) {
         int id = 0;
         if (cate == 0) id = R.id.radio_default_btn;
         else if (cate == 1) id = R.id.radio_work_btn;

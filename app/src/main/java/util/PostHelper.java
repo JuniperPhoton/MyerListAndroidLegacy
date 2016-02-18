@@ -42,7 +42,6 @@ public class PostHelper
     public static void CheckExist(Context context, final String email)
     {
         mRequestCallback = (IRequestCallbacks) context;
-
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams requestParams = new RequestParams();
         requestParams.add("email", email);

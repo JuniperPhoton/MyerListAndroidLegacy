@@ -2,7 +2,10 @@ package util;
 
 import android.app.Application;
 
+import com.juniperphoton.myerlistandroid.BuildConfig;
 import com.pgyersdk.crash.PgyCrashManager;
+
+import org.xutils.x;
 
 public class AppExtension extends Application
 {
@@ -25,6 +28,8 @@ public class AppExtension extends Application
         ToDoListRef.RestoreData();
         PgyCrashManager.register(this);
 
+        x.Ext.init(this);
+        x.Ext.setDebug(BuildConfig.DEBUG);
 //        Thread.setDefaultUncaughtExceptionHandler(
 //                new GlobalExceptionHandler()
 //              );

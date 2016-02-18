@@ -42,7 +42,7 @@ dependencies
             compile 'it.sephiroth.android.library.viewrevealanimator:view-reveal-animator:+'
             compile 'com.pgyersdk:sdk:2.2'
             compile files('libs/umeng-update-v2.6.0.1.jar')
-
+            compile 'org.xutils:xutils:3.3.16'
         }
 
 

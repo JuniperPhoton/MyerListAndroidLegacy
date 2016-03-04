@@ -9,6 +9,9 @@ import model.ToDo;
  * Created by dengw on 10/5/2015.
  */
 public interface IRequestCallbacks {
+
+    void onResponse(String responseString);
+
     void onCheckResponsenCheckResponse(boolean check);
 
     void onGetSaltResponse(String str);
@@ -28,5 +31,4 @@ public interface IRequestCallbacks {
     void onDeleteResponse(boolean isSuccess);
 
     void onUpdateContent(boolean isSuccess);
-
 }

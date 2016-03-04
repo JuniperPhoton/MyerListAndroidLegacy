@@ -19,6 +19,8 @@ import com.umeng.analytics.MobclickAgent;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
+import api.APIUtil;
+import api.CloudServices;
 import util.ConfigHelper;
 import util.DataHelper;
 import util.PostHelper;
@@ -109,7 +111,8 @@ public class LoginActivity extends AppCompatActivity implements
                     if (!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString())) {
                         progressDialog.setMessage(getResources().getString(R.string.loading_hint));
                         progressDialog.show();
-                        PostHelper.CheckExist(this, mEmailBox.getText().toString());
+                        boolean isOK=CloudServices.CheckExist(mEmailBox.getText().toString());
+                        //PostHelper.CheckExist(this, mEmailBox.getText().toString());
                     }
                     else
                         ToastService.ShowShortToast("Please input password");

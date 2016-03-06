@@ -30,6 +30,8 @@ import android.widget.TextView;
 
 import com.juniperphoton.myerlistandroid.R;
 
+import api.CloudServices;
+import interfaces.IRequestCallback;
 import util.FindRadioBtnHelper;
 import interfaces.IDrawerStatusChanged;
 import fragment.DeletedItemFragment;
@@ -38,6 +40,10 @@ import fragment.NavigationDrawerFragment;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import fragment.ToDoFragment;
 
@@ -48,22 +54,16 @@ import java.util.TimerTask;
 import util.AppUtil;
 import util.ConfigHelper;
 import util.AppExtension;
-import util.PostHelper;
 import interfaces.INavigationDrawerMainCallbacks;
 import adapter.ToDoListAdapter;
 import util.SerializerHelper;
-import interfaces.IOnReAddedToDo;
-import interfaces.IRequestCallbacks;
 import model.ToDo;
 import util.ToDoListRef;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
 
-public class MainActivity extends AppCompatActivity implements
-        INavigationDrawerMainCallbacks,
-        IRequestCallbacks,
-        IDrawerStatusChanged,
-        IOnReAddedToDo {
+public class MainActivity extends AppCompatActivity implements INavigationDrawerMainCallbacks,
+        IDrawerStatusChanged {
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private ToDoFragment mToDoFragment;
     private DeletedItemFragment mDeletedItemFragment;
@@ -178,8 +178,10 @@ public class MainActivity extends AppCompatActivity implements
             mToolbar.setPadding(0, 0, 0, 0);
         }
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.fragment_drawer);
-        mNavigationDrawerFragment.setup(R.id.fragment_drawer, (DrawerLayout) findViewById(R.id.drawer), mToolbar);
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager()
+                .findFragmentById(R.id.fragment_drawer);
+        mNavigationDrawerFragment.setup(R.id.fragment_drawer,
+                (DrawerLayout) findViewById(R.id.drawer), mToolbar);
     }
 
     private void UpdateAddingPaneColor(int i) {
@@ -217,12 +219,13 @@ public class MainActivity extends AppCompatActivity implements
 
             mToDoFragment = new ToDoFragment();
 
-            getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment).commitAllowingStateLoss();
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment)
+                    .commitAllowingStateLoss();
 
             //登录了的，马上同步
             if (isLogined) {
                 mToDoFragment.ShowRefreshing();
-                PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
+                SyncList();
             }
             if (!AppUtil.isNetworkAvailable(getApplicationContext())) {
                 ToastService.ShowShortToast(getResources().getString(R.string.NoNetworkHint));
@@ -231,7 +234,15 @@ public class MainActivity extends AppCompatActivity implements
                 if (ToDoListRef.StagedList == null) return;
                 misAddingStagedItems = true;
                 for (ToDo todo : ToDoListRef.StagedList) {
-                    PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(AppExtension.getInstance(), "sid"), todo.getContent(), "0", todo.getCate());
+                    CloudServices.AddToDo(ConfigHelper.getString(this, "sid"),
+                            ConfigHelper.getString(this, "access_token"),
+                            todo.getContent(), "0", todo.getCate(),
+                            new IRequestCallback() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    onAddedResponse(jsonObject);
+                                }
+                            });
                 }
                 ToDoListRef.StagedList.clear();
                 SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
@@ -337,11 +348,11 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
-        int count=0;
-        for (ToDo toDo:newList){
-            if(!toDo.getIsDone()) count++;
+        int count = 0;
+        for (ToDo toDo : newList) {
+            if (!toDo.getIsDone()) count++;
         }
-        if(mNavigationDrawerFragment!=null){
+        if (mNavigationDrawerFragment != null) {
             mNavigationDrawerFragment.updateUndoneTextView(String.valueOf(count));
         }
 
@@ -488,6 +499,17 @@ public class MainActivity extends AppCompatActivity implements
         anim.start();
     }
 
+    //从服务器同步列表，并排序
+    public void SyncList(){
+        CloudServices.GetLatestSchedules(ConfigHelper.getString(this, "sid"),
+                ConfigHelper.getString(this, "access_token"), new IRequestCallback() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        onGotLatestScheduleResponse(jsonObject);
+                    }
+                });
+    }
+
     //添加面板点击确认
     public void OKClick(View v) {
         if (mDialog != null) {
@@ -507,18 +529,30 @@ public class MainActivity extends AppCompatActivity implements
 
         //离线模式
         if (ConfigHelper.ISOFFLINEMODE) {
-            onAddedResponse(true, newToAdd);
+            addNewToDoToList(newToAdd);
         }
         //非离线模式，发送请求
         else {
-            PostHelper.AddToDo(MainActivity.this, ConfigHelper.getString(AppExtension.getInstance(), "sid"), mEditedText.getText().toString(), "0", mCateAboutToAdd);
+            CloudServices.AddToDo(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
+                    ConfigHelper.getString(this, "access_token"),
+                    mEditedText.getText().toString(), "0", mCateAboutToAdd,
+                    new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            onAddedResponse(jsonObject);
+                        }
+                    });
         }
 
-        CancelClick(null);
+        dismissDialog();
     }
 
     //添加面板点击取消
     public void CancelClick(View v) {
+        dismissDialog();
+    }
+
+    private void dismissDialog(){
         if (mDialog != null)
             mDialog.dismiss();
         if (isAddingPaneShown)
@@ -534,6 +568,199 @@ public class MainActivity extends AppCompatActivity implements
     public void SetIsAddStagedItems(boolean value) {
         misAddingStagedItems = value;
     }
+
+    private void onGotLatestScheduleResponse(JSONObject response) {
+        mToDoFragment.StopRefreshing();
+        Boolean isSuccess = null;
+        try {
+            isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                JSONArray array = response.getJSONArray("ScheduleInfo");
+
+                if (array != null) {
+                    final ArrayList<ToDo> todosList = ToDo.parseJsonObjFromArray(array);
+                    CloudServices.GetListOrder(ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"), new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            onGotListOrder(jsonObject, todosList);
+                        }
+                    });
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onGotListOrder(JSONObject response, final ArrayList<ToDo> originalList) {
+        try {
+            boolean isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                String orderStr = response.getJSONArray(("OrderList")).getJSONObject(0).getString("list_order");
+                ArrayList<ToDo> listInOrder = ToDo.setOrderByString(originalList, orderStr);
+                ToDoListRef.TodosList = listInOrder;
+                mToDoFragment.UpdateData(listInOrder);
+
+                ToastService.ShowShortToast(getResources().getString(R.string.Synced));
+
+                SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
+
+                UpdateListByCate();
+            }
+        }
+        catch (JSONException e) {
+
+        }
+    }
+
+    public void onAddedResponse(JSONObject response) {
+        Boolean isSuccess = null;
+        try {
+            isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                ToDo newToDo = ToDo.parseJsonObjToObj(response.getJSONObject("ScheduleInfo"));
+                addNewToDoToList(newToDo);
+                ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
+                CloudServices.SetListOrder(ConfigHelper.getString(this, "sid"),
+                        ConfigHelper.getString(this, "access_token"),
+                        ToDo.getOrderString(adapter.GetListSrc()),
+                        new IRequestCallback() {
+                            @Override
+                            public void onResponse(JSONObject jsonObject) {
+                                onUpdateOrder(jsonObject);
+                            }
+                        });
+            }
+            else {
+                if (mToDoAboutToAdded != null) {
+                    ToDoListRef.StagedList.add(mToDoAboutToAdded);
+                    SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
+                }
+                ToDoListRef.TodosList.add(mToDoAboutToAdded);
+                SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
+
+            }
+            mToDoAboutToAdded = null;
+
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addNewToDoToList(ToDo newToDo){
+        ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
+        adapter.AddToDo(newToDo);
+
+        ToastService.ShowShortToast(getResources().getString(R.string.add_success));
+
+        UpdateListByCate();
+
+        if (misAddingStagedItems) {
+            SyncList();
+        }
+    }
+
+    private void onUpdateOrder(JSONObject response) {
+        Boolean isSuccess = null;
+        try {
+            isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void OnSetDone(JSONObject response) {
+        Boolean isSuccess = null;
+        try {
+            isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+            }
+            else {
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onDelete(JSONObject response) {
+        Boolean isSuccess = null;
+        try {
+            isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+            }
+            else {
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onUpdateContent(JSONObject response) {
+        Boolean isSuccess = null;
+        try {
+            isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+            }
+            else {
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void OnReCreatedToDo(JSONObject response) {
+        onAddedResponse(response);
+        mDeletedItemFragment.SetUpData(ToDoListRef.DeletedList);
+        if (ToDoListRef.DeletedList.size() == 0)
+            mDeletedItemFragment.ShowNoItemHint();
+        else
+            mDeletedItemFragment.HideNoItemHint();
+    }
+
+    public void OnInitial(boolean b) {
+        //先序列化回来
+        ArrayList<ToDo> list = SerializerHelper.DeSerializeFromFile(this, SerializerHelper.todosFileName);
+        if (list != null) {
+            ToDoListRef.TodosList = list;
+        }
+        //已经登陆了
+        if (!ConfigHelper.ISOFFLINEMODE) {
+            mToDoFragment.UpdateData(ToDoListRef.TodosList);
+            SyncList();
+        }
+        //离线模式
+        else {
+            mToDoFragment.UpdateData(ToDoListRef.TodosList);
+        }
+    }
+
+    @Override
+    public void OnDrawerStatusChanged(boolean isOpen) {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -552,138 +779,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         else {
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    @Override
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
-    }
-
-    @Override
-    public void onGotScheduleResponse(boolean isSuccess, ArrayList<ToDo> list) {
-        mToDoFragment.StopRefreshing();
-        if (isSuccess) {
-            ToDoListRef.TodosList = list;
-            mToDoFragment.UpdateData(list);
-
-            ToastService.ShowShortToast(getResources().getString(R.string.Synced));
-
-            SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
-
-            UpdateListByCate();
-        }
-        else {
-            ToastService.ShowShortToast(getResources().getString(R.string.NoNetworkHint));
-        }
-    }
-
-    @Override
-    public void onCheckResponsenCheckResponse(boolean check) {
-
-    }
-
-    @Override
-    public void onGetSaltResponse(String str) {
-
-    }
-
-    @Override
-    public void onLoginResponse(boolean value) {
-        if (value) {
-            PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
-        }
-        else {
-            ToastService.ShowShortToast("Fail to login.");
-        }
-    }
-
-    @Override
-    public void onAddedResponse(boolean isSuccess, ToDo newTodo) {
-        if (isSuccess) {
-            ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
-            adapter.AddToDo(newTodo);
-
-            ToastService.ShowShortToast(getResources().getString(R.string.add_success));
-
-            PostHelper.SetListOrder(this, ConfigHelper.getString(this, "sid"), ToDo.getOrderString(adapter.GetListSrc()));
-            UpdateListByCate();
-
-            if (misAddingStagedItems) {
-                PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
-            }
-        }
-        else {
-            if (mToDoAboutToAdded != null) {
-                ToDoListRef.StagedList.add(mToDoAboutToAdded);
-                SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
-            }
-            ToDoListRef.TodosList.add(mToDoAboutToAdded);
-            SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
-        }
-        mToDoAboutToAdded = null;
-    }
-
-    @Override
-    public void onSetOrderResponse(boolean isSuccess) {
-    }
-
-    @Override
-    public void onRegisteredResponse(boolean isSuccess, String salt) {
-
-    }
-
-    @Override
-    public void onDoneResponse(boolean isSuccess) {
-
-    }
-
-    @Override
-    public void onDeleteResponse(boolean isSuccess) {
-
-    }
-
-    @Override
-    public void OnDrawerStatusChanged(boolean isOpen) {
-
-    }
-
-
-    @Override
-    public void OnReCreatedToDo(boolean b) {
-        mDeletedItemFragment.SetUpData(ToDoListRef.DeletedList);
-        if (ToDoListRef.DeletedList.size() == 0)
-            mDeletedItemFragment.ShowNoItemHint();
-        else
-            mDeletedItemFragment.HideNoItemHint();
-    }
-
-    @Override
-    public void onUpdateContent(boolean isSuccess) {
-    }
-
-    public void OnInitial(boolean b) {
-        //先序列化回来
-        ArrayList<ToDo> list = SerializerHelper.DeSerializeFromFile(this, SerializerHelper.todosFileName);
-        if (list != null) {
-            ToDoListRef.TodosList = list;
-        }
-        //已经登陆了
-        if (!ConfigHelper.ISOFFLINEMODE) {
-            mToDoFragment.UpdateData(ToDoListRef.TodosList);
-            PostHelper.GetOrderedSchedules(this, ConfigHelper.getString(this, "sid"), ConfigHelper.getString(this, "access_token"));
-        }
-        //离线模式
-        else {
-            mToDoFragment.UpdateData(ToDoListRef.TodosList);
         }
     }
 }

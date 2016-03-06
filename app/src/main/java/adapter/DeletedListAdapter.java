@@ -10,12 +10,16 @@ import android.widget.TextView;
 
 import com.juniperphoton.myerlistandroid.R;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
+import activity.MainActivity;
+import api.CloudServices;
 import fragment.DeletedItemFragment;
+import interfaces.IRequestCallback;
 import util.ConfigHelper;
 import util.AppExtension;
-import util.PostHelper;
 import util.SerializerHelper;
 import model.ToDo;
 import util.ToDoListRef;
@@ -63,7 +67,15 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
             @Override
             public void onClick(View view) {
                 if (!ConfigHelper.ISOFFLINEMODE) {
-                    PostHelper.AddToDo(mCurrentActivity, ConfigHelper.getString(AppExtension.getInstance(), "sid"), mDeleteToDos.get(position).getContent(), "0", 0);
+                    CloudServices.AddToDo(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
+                            ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
+                            mDeleteToDos.get(position).getContent(), "0", 0,
+                            new IRequestCallback() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    ((MainActivity)mCurrentActivity).OnReCreatedToDo(jsonObject);
+                                }
+                            });
                 }
                 else {
                     ToDoListRef.TodosList.add(ToDoListRef.TodosList.size(), mDeleteToDos.get(position));

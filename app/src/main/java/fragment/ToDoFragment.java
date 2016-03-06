@@ -15,13 +15,17 @@ import android.widget.RelativeLayout;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.juniperphoton.myerlistandroid.R;
 
+import org.json.JSONObject;
+
+import java.nio.channels.NonWritableChannelException;
 import java.util.ArrayList;
 
 import activity.MainActivity;
+import api.CloudServices;
+import interfaces.IRequestCallback;
 import util.AppUtil;
 import util.ConfigHelper;
 import util.AppExtension;
-import util.PostHelper;
 import adapter.ToDoListAdapter;
 import util.SerializerHelper;
 import util.ToDoListRef;
@@ -149,13 +153,24 @@ public class ToDoFragment extends Fragment {
     }
 
     public void GetAllSchedules() {
-        PostHelper.GetOrderedSchedules(getActivity(), ConfigHelper.getString(getActivity(), "sid"), ConfigHelper.getString(getActivity(), "access_token"));
+        ((MainActivity)mActivity).SyncList();
 
         if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
             if (ToDoListRef.StagedList == null) return;
             ((MainActivity) mActivity).SetIsAddStagedItems(true);
             for (ToDo todo : ToDoListRef.StagedList) {
-                PostHelper.AddToDo(getActivity(), ConfigHelper.getString(AppExtension.getInstance(), "sid"), todo.getContent(), "0", todo.getCate());
+                CloudServices.AddToDo(
+                        ConfigHelper.getString(AppExtension.getInstance(), "sid"),
+                        ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
+                        todo.getContent(),
+                        "0",
+                        todo.getCate(),
+                        new IRequestCallback() {
+                            @Override
+                            public void onResponse(JSONObject jsonObject) {
+                                ((MainActivity)mActivity).onAddedResponse(jsonObject);
+                            }
+                        });
             }
             ToDoListRef.StagedList.clear();
             SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);

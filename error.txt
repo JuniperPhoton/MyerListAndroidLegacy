@@ -1,63 +1,274 @@
-01-05 16:19:02.718 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.787 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.805 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.820 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.837 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.854 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.871 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.887 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.904 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.921 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.938 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.955 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.972 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:02.989 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:03.006 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:03.023 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:03.039 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:03.056 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:03.073 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:03.090 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:03.107 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:03.124 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:03.310 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:10.532 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:10.921 23336-23336/com.example.juniper.myerlistandroid E/RecyclerView: No adapter attached; skipping layout
-01-05 16:19:11.483 23336-23336/com.example.juniper.myerlistandroid D/AndroidRuntime: Shutting down VM
-01-05 16:19:11.527 23336-23336/com.example.juniper.myerlistandroid E/AndroidRuntime: FATAL EXCEPTION: main
-                                                                                     Process: com.example.juniper.myerlistandroid, PID: 23336
-                                                                                     java.lang.NullPointerException: Attempt to invoke virtual method 'android.support.v7.widget.RecyclerView$Adapter android.support.v7.widget.RecyclerView.getAdapter()' on a null object reference
-                                                                                         at activity.MainActivity.OnDrawerStatusChanged(MainActivity.java:696)
-                                                                                         at fragment.NavigationDrawerFragment$2.onDrawerOpened(NavigationDrawerFragment.java:210)
-                                                                                         at android.support.v4.widget.DrawerLayout.dispatchOnDrawerOpened(DrawerLayout.java:668)
-                                                                                         at android.support.v4.widget.DrawerLayout.updateDrawerState(DrawerLayout.java:628)
-                                                                                         at android.support.v4.widget.DrawerLayout$ViewDragCallback.onViewDragStateChanged(DrawerLayout.java:1656)
-                                                                                         at android.support.v4.widget.ViewDragHelper.setDragState(ViewDragHelper.java:874)
-                                                                                         at android.support.v4.widget.ViewDragHelper$2.run(ViewDragHelper.java:335)
-                                                                                         at android.os.Handler.handleCallback(Handler.java:739)
-                                                                                         at android.os.Handler.dispatchMessage(Handler.java:95)
-                                                                                         at android.os.Looper.loop(Looper.java:135)
-                                                                                         at android.app.ActivityThread.main(ActivityThread.java:5343)
-                                                                                         at java.lang.reflect.Method.invoke(Native Method)
-                                                                                         at java.lang.reflect.Method.invoke(Method.java:372)
-                                                                                         at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:905)
-                                                                                         at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:700)
-01-05 16:19:11.529 23336-24492/com.example.juniper.myerlistandroid D/PgyerSDK: Transmitting crash data: 
-                                                                               java.lang.NullPointerException: Attempt to invoke virtual method 'android.support.v7.widget.RecyclerView$Adapter android.support.v7.widget.RecyclerView.getAdapter()' on a null object reference
-                                                                                   at activity.MainActivity.OnDrawerStatusChanged(MainActivity.java:696)
-                                                                                   at fragment.NavigationDrawerFragment$2.onDrawerOpened(NavigationDrawerFragment.java:210)
-                                                                                   at android.support.v4.widget.DrawerLayout.dispatchOnDrawerOpened(DrawerLayout.java:668)
-                                                                                   at android.support.v4.widget.DrawerLayout.updateDrawerState(DrawerLayout.java:628)
-                                                                                   at android.support.v4.widget.DrawerLayout$ViewDragCallback.onViewDragStateChanged(DrawerLayout.java:1656)
-                                                                                   at android.support.v4.widget.ViewDragHelper.setDragState(ViewDragHelper.java:874)
-                                                                                   at android.support.v4.widget.ViewDragHelper$2.run(ViewDragHelper.java:335)
-                                                                                   at android.os.Handler.handleCallback(Handler.java:739)
-                                                                                   at android.os.Handler.dispatchMessage(Handler.java:95)
-                                                                                   at android.os.Looper.loop(Looper.java:135)
-                                                                                   at android.app.ActivityThread.main(ActivityThread.java:5343)
-                                                                                   at java.lang.reflect.Method.invoke(Native Method)
-                                                                                   at java.lang.reflect.Method.invoke(Method.java:372)
-                                                                                   at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:905)
-                                                                                   at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:700)
-01-05 16:19:11.727 23336-24492/com.example.juniper.myerlistandroid D/PgyerSDK: Transmission succeeded
-01-05 16:19:12.813 23336-23336/com.example.juniper.myerlistandroid I/Process: Sending signal. PID: 23336 SIG: 9
+03-06 17:49:04.887 1412-1412/? I/MotoNetwCtrlr.MotoWifiHndlr: handleMessage: Completed
+03-06 17:49:05.609 956-1585/? I/ActivityManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.example.juniper.myerlistandroid/activity.MainActivity bnds=[540,1167][804,1463] (has extras)} from uid 10059 on display 0
+03-06 17:49:05.612 956-1585/? V/WindowManager: addAppToken: AppWindowToken{22089f04 token=Token{35bb0f17 ActivityRecord{2fbdb796 u0 com.example.juniper.myerlistandroid/activity.MainActivity t1799}}} to stack=1 task=1799 at 0
+03-06 17:49:05.623 956-995/? V/WindowManager: Adding window Window{c3aca0f u0 Starting com.example.juniper.myerlistandroid} at 4 of 10 (after Window{260a284d u0 com.tencent.mm/com.tencent.mm.ui.LauncherUI})
+03-06 17:49:05.635 16441-16456/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:05.636 16441-16456/? W/SearchService: Abort, client detached.
+03-06 17:49:05.664 294-594/? I/SFPerfTracer:      triggers: (rate: 0:61) (4720721 sw vsyncs) (0 skipped) (389:5087983 vsyncs) (391:9888710)
+03-06 17:49:05.682 956-1796/? I/ActivityManager: Start proc 17272:com.example.juniper.myerlistandroid/u0a163 for activity com.example.juniper.myerlistandroid/activity.MainActivity
+03-06 17:49:05.697 16441-17248/? I/DeviceStateChecker: DeviceStateChecker cancelled
+03-06 17:49:05.698 16441-16441/? I/MicroDetector: Keeping mic open: false
+03-06 17:49:05.699 16441-16441/? I/MicrophoneInputStream: mic_close com.google.android.apps.gsa.speech.audio.ae@1f9d249
+03-06 17:49:05.718 17272-17272/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:05.718 17272-17272/? I/Security_Hook: getAppPcManger cta=false;
+03-06 17:49:05.752 365-17252/? D/audio_hw_primary: disable_audio_route: reset and update mixer path: audio-record
+03-06 17:49:05.753 365-17252/? D/audio_hw_primary: disable_snd_device: snd_device(56: voice-rec-mic)
+03-06 17:49:05.758 16441-17249/? I/MicroRecognitionRunner: Detection finished
+03-06 17:49:05.760 16441-16478/? I/MicroRecognitionRunner: Stopping hotword detection.
+03-06 17:49:05.778 16441-16441/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:05.855 17272-17272/? D/PgyerSDK: Looking for exceptions in: /data/data/com.example.juniper.myerlistandroid/files
+03-06 17:49:05.856 17272-17272/? D/PgyerSDK: Current handler class = com.android.internal.os.RuntimeInit$UncaughtHandler
+03-06 17:49:05.960 17272-17272/? I/AppCompatViewInflater: app:theme is now deprecated. Please move to using android:theme instead.
+03-06 17:49:05.962 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): MotorolaMobilePhoneStateListener.onSignalStrengthsChanged: Entered: signalStrength=SignalStrength: 99 0 -120 -160 -120 -1 -1 27 -88 -7 236 2147483647 2147483647 gsm|lte 0 -108 -1 false 0 0 0 0 4 99 99 99 4 0 level=4
+03-06 17:49:05.963 1412-1412/? D/ConnectivityManager: getMobileDataEnabled()+ subId=1
+03-06 17:49:05.966 1797-1815/? D/PhoneInterfaceManager: [PhoneIntfMgr] getDataEnabled: subId=1 phoneId=0
+03-06 17:49:05.967 1797-1815/? D/PhoneInterfaceManager: [PhoneIntfMgr] getDataEnabled: subId=1 retVal=true
+03-06 17:49:05.969 1412-1412/? D/ConnectivityManager: getMobileDataEnabled()- subId=1 retVal=true
+03-06 17:49:05.969 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): isDirty: returns true
+03-06 17:49:05.969 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): notifyListeners: calling SB [0] setMobileDataIndicators (Motorola api): mobileUseMotoUI=true mobileEnabled=true mobileSimIconId=( none ) mobileSignalIconId=0x7f02048a=zz_moto_stat_sys_signal_4_of_4_fully_wide mobileRoamingIconId=( none ) mobileDataTypeIconId=0x7f0203d5=zz_moto_stat_sys_data_suspended_4g_wide mobileDataActivityIconId=0x7f020330=zz_moto_stat_sys_data_activity_empty_wide mobileCarrierDescription="China Mobile" mobileSimDescription="" mobileSignalContentDescription="phone signal full strength" mobileRoamingDescription="" mobileDataTypeContentDescription="4 G" mobileDataActivityContentDescription="mobile suspended for wifi" mobileIsRoaming=false isDataTypeIconWide=true mobileIsBidiDirectionEnabled=true mobileSubId=1
+03-06 17:49:05.970 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): notifyListeners: calling SB [1] setMobileDataIndicators (Motorola api): mobileUseMotoUI=true mobileEnabled=true mobileSimIconId=( none ) mobileSignalIconId=0x7f02048a=zz_moto_stat_sys_signal_4_of_4_fully_wide mobileRoamingIconId=( none ) mobileDataTypeIconId=0x7f0203d5=zz_moto_stat_sys_data_suspended_4g_wide mobileDataActivityIconId=0x7f020330=zz_moto_stat_sys_data_activity_empty_wide mobileCarrierDescription="China Mobile" mobileSimDescription="" mobileSignalContentDescription="phone signal full strength" mobileRoamingDescription="" mobileDataTypeContentDescription="4 G" mobileDataActivityContentDescription="mobile suspended for wifi" mobileIsRoaming=false isDataTypeIconWide=true mobileIsBidiDirectionEnabled=true mobileSubId=1
+03-06 17:49:05.971 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): notifyListeners: calling SB [2] setMobileDataIndicators (Motorola api): mobileUseMotoUI=true mobileEnabled=true mobileSimIconId=( none ) mobileSignalIconId=0x7f02048a=zz_moto_stat_sys_signal_4_of_4_fully_wide mobileRoamingIconId=( none ) mobileDataTypeIconId=0x7f0203d5=zz_moto_stat_sys_data_suspended_4g_wide mobileDataActivityIconId=0x7f020330=zz_moto_stat_sys_data_activity_empty_wide mobileCarrierDescription="China Mobile" mobileSimDescription="" mobileSignalContentDescription="phone signal full strength" mobileRoamingDescription="" mobileDataTypeContentDescription="4 G" mobileDataActivityContentDescription="mobile suspended for wifi" mobileIsRoaming=false isDataTypeIconWide=true mobileIsBidiDirectionEnabled=true mobileSubId=1
+03-06 17:49:05.972 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): MotorolaMobilePhoneStateListener.onSignalStrengthsChanged: completed: level=4
+03-06 17:49:06.064 956-1350/? E/WifiStateMachine: WifiStateMachine CMD_START_SCAN source -2 txSuccessRate=6.02 rxSuccessRate=1.91 targetRoamBSSID=any RSSI=-44
+03-06 17:49:06.064 956-1350/? E/WifiStateMachine: startDelayedScan send -> 7272 milli 20000
+03-06 17:49:06.065 956-1350/? E/WifiStateMachine: WifiStateMachine CMD_START_SCAN with age=40002 interval=30000 maxinterval=300000
+03-06 17:49:06.065 956-1350/? E/WifiStateMachine: WifiStateMachine CMD_START_SCAN try full band scan age=40002 interval=30000 maxinterval=300000
+03-06 17:49:06.065 956-1350/? E/WifiStateMachine: WifiStateMachine CMD_START_SCAN full=true
+03-06 17:49:06.065 956-1350/? E/WifiStateMachine: WifiStateMachine CMD_START_SCAN bump interval =45000
+03-06 17:49:06.066 956-1350/? E/WifiStateMachine: [1,457,257,746,066 ms] noteScanstart no scan source uid -2
+03-06 17:49:06.311 17272-17272/? D/PgyerSDK: Looking for exceptions in: /data/data/com.example.juniper.myerlistandroid/files
+03-06 17:49:06.311 17272-17272/? D/PgyerSDK: Current handler class = com.pgyersdk.crash.a
+03-06 17:49:06.395 17272-17308/? D/OpenGLRenderer: Use EGL_SWAP_BEHAVIOR_PRESERVED: true
+03-06 17:49:06.402 17272-17272/? D/Atlas: Validating map...
+03-06 17:49:06.407 956-3582/? V/WindowManager: Adding window Window{3a6854ff u0 com.example.juniper.myerlistandroid/activity.MainActivity} at 4 of 11 (before Window{c3aca0f u0 Starting com.example.juniper.myerlistandroid})
+03-06 17:49:06.452 294-596/? I/SFPerfTracer:      triggers: (rate: 1:621) (0 sw vsyncs) (0 skipped) (28:1634485 vsyncs) (30:2607614)
+03-06 17:49:06.457 17272-17308/? I/Adreno-EGL: <qeglDrvAPI_eglInitialize:410>: EGL 1.4 QUALCOMM build: AU_LINUX_ANDROID_LA.BF.1.1.1_RB1.05.00.02.042.016_msm8974_LA.BF.1.1.1_RB1__release_AU ()
+                                               OpenGL ES Shader Compiler Version: E031.25.03.00
+                                               Build Date: 02/11/15 Wed
+                                               Local Branch: mybranch7539026
+                                               Remote Branch: quic/LA.BF.1.1.1_rb1.10
+                                               Local Patches: NONE
+                                               Reconstruct Branch: AU_LINUX_ANDROID_LA.BF.1.1.1_RB1.05.00.02.042.016 + 62ca4eb + acd831d + 9f8b442 + e027a02 + cba30ba + 53c303a + a649d79 + 23e16f8 + 5e97da7 + cbd2a44 + 33d072a + 7aacf06 + 72b33e7 + 28f6f60 + b4c13d8 +  NOTHING
+03-06 17:49:06.458 17272-17308/? I/OpenGLRenderer: Initialized EGL, version 1.4
+03-06 17:49:06.477 17272-17308/? D/OpenGLRenderer: Enabling debug mode 0
+03-06 17:49:06.627 17272-17272/? D/AndroidRuntime: Shutting down VM
+03-06 17:49:06.653 956-1335/? D/BatteryService: uevent={POWER_SUPPLY_TEMP=296, POWER_SUPPLY_STATUS=Charging, POWER_SUPPLY_CAPACITY=48, ACTION=change, DEVPATH=/devices/qpnp-charger-ed22e400/power_supply/battery, POWER_SUPPLY_VOLTAGE_OCV=-22, POWER_SUPPLY_ONLINE=1, SUBSYSTEM=power_supply, POWER_SUPPLY_NUM_SYSTEM_TEMP_LEVELS=17, POWER_SUPPLY_INPUT_CURRENT_MAX=1300000, POWER_SUPPLY_VOLTAGE_MAX_DESIGN=4350000, POWER_SUPPLY_CHARGE_FULL=2273000, POWER_SUPPLY_NAME=battery, POWER_SUPPLY_VOLTAGE_MIN_DESIGN=4300000, POWER_SUPPLY_VOLTAGE_MIN=4300000, POWER_SUPPLY_HEALTH=Good, POWER_SUPPLY_CYCLE_COUNT=12, POWER_SUPPLY_TECHNOLOGY=Li-ion, POWER_SUPPLY_CHARGE_TYPE=Fast, POWER_SUPPLY_PRESENT=1, POWER_SUPPLY_INPUT_CURRENT_SETTLED=0, POWER_SUPPLY_MODEL_NAME=EY30-LG, POWER_SUPPLY_VOLTAGE_NOW=3978579, SEQNUM=21557, POWER_SUPPLY_TEMP_WARM=450, POWER_SUPPLY_TEMP_COOL=0, POWER_SUPPLY_CHARGE_FULL_DESIGN=2281000, POWER_SUPPLY_CURRENT_NOW=-716293, POWER_SUPPLY_CHARGE_COUNTER=1160756, POWER_SUPPLY_SYSTEM_TEMP_LEVEL=0, POWER_SUPPLY_INPUT_CURRENT_TRIM=30, POWER_SUPPLY_VOLTAGE_EMPTY=3000000, POWER_SUPPLY_CHARGE_RATE=Normal, POWER_SUPPLY_INPUT_VOLTAGE_REGULATION=1, POWER_SUPPLY_CHARGING_ENABLED=1}
+03-06 17:49:06.692 12933-12983/? D/HeadsetStateMachine: Disconnected process message: 10, size: 0
+03-06 17:49:06.716 17272-17272/? E/AndroidRuntime: FATAL EXCEPTION: main
+                                                   Process: com.example.juniper.myerlistandroid, PID: 17272
+                                                   java.lang.NullPointerException: Attempt to invoke virtual method 'java.lang.String model.ToDo.getContent()' on a null object reference
+                                                       at adapter.ToDoListAdapter.onBindViewHolder(ToDoListAdapter.java:93)
+                                                       at adapter.ToDoListAdapter.onBindViewHolder(ToDoListAdapter.java:38)
+                                                       at android.support.v7.widget.RecyclerView$Adapter.bindViewHolder(RecyclerView.java:5084)
+                                                       at android.support.v7.widget.RecyclerView$Recycler.getViewForPosition(RecyclerView.java:4385)
+                                                       at android.support.v7.widget.RecyclerView$Recycler.getViewForPosition(RecyclerView.java:4278)
+                                                       at android.support.v7.widget.LinearLayoutManager$LayoutState.next(LinearLayoutManager.java:1947)
+                                                       at android.support.v7.widget.LinearLayoutManager.layoutChunk(LinearLayoutManager.java:1359)
+                                                       at android.support.v7.widget.LinearLayoutManager.fill(LinearLayoutManager.java:1322)
+                                                       at android.support.v7.widget.LinearLayoutManager.onLayoutChildren(LinearLayoutManager.java:556)
+                                                       at android.support.v7.widget.RecyclerView.dispatchLayout(RecyclerView.java:2673)
+                                                       at android.support.v7.widget.RecyclerView.onLayout(RecyclerView.java:2971)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.support.v4.widget.SwipeRefreshLayout.onLayout(SwipeRefreshLayout.java:562)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.widget.RelativeLayout.onLayout(RelativeLayout.java:1076)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.widget.FrameLayout.layoutChildren(FrameLayout.java:579)
+                                                       at android.widget.FrameLayout.onLayout(FrameLayout.java:514)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.widget.RelativeLayout.onLayout(RelativeLayout.java:1076)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.widget.LinearLayout.setChildFrame(LinearLayout.java:1703)
+                                                       at android.widget.LinearLayout.layoutVertical(LinearLayout.java:1557)
+                                                       at android.widget.LinearLayout.onLayout(LinearLayout.java:1466)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.support.v4.widget.DrawerLayout.onLayout(DrawerLayout.java:907)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.widget.RelativeLayout.onLayout(RelativeLayout.java:1076)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.widget.FrameLayout.layoutChildren(FrameLayout.java:579)
+                                                       at android.widget.FrameLayout.onLayout(FrameLayout.java:514)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.widget.LinearLayout.setChildFrame(LinearLayout.java:1703)
+                                                       at android.widget.LinearLayout.layoutVertical(LinearLayout.java:1557)
+                                                       at android.widget.LinearLayout.onLayout(LinearLayout.java:1466)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.widget.FrameLayout.layoutChildren(FrameLayout.java:579)
+                                                       at android.widget.FrameLayout.onLayout(FrameLayout.java:514)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.widget.LinearLayout.setChildFrame(LinearLayout.java:1703)
+                                                       at android.widget.LinearLayout.layoutVertical(LinearLayout.java:1557)
+                                                       at android.widget.LinearLayout.onLayout(LinearLayout.java:1466)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.widget.FrameLayout.layoutChildren(FrameLayout.java:579)
+                                                       at android.widget.FrameLayout.onLayout(FrameLayout.java:514)
+                                                       at android.view.View.layout(View.java:15689)
+                                                       at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                       at android.view.ViewRootImpl.performLayout(ViewRootImpl.java:2116)
+                                                   	at a
+03-06 17:49:06.719 956-1660/? W/ActivityManager:   Force finishing activity 1 com.example.juniper.myerlistandroid/activity.MainActivity
+03-06 17:49:06.720 17272-17316/? D/PgyerSDK: Transmitting crash data: 
+                                             java.lang.NullPointerException: Attempt to invoke virtual method 'java.lang.String model.ToDo.getContent()' on a null object reference
+                                                 at adapter.ToDoListAdapter.onBindViewHolder(ToDoListAdapter.java:93)
+                                                 at adapter.ToDoListAdapter.onBindViewHolder(ToDoListAdapter.java:38)
+                                                 at android.support.v7.widget.RecyclerView$Adapter.bindViewHolder(RecyclerView.java:5084)
+                                                 at android.support.v7.widget.RecyclerView$Recycler.getViewForPosition(RecyclerView.java:4385)
+                                                 at android.support.v7.widget.RecyclerView$Recycler.getViewForPosition(RecyclerView.java:4278)
+                                                 at android.support.v7.widget.LinearLayoutManager$LayoutState.next(LinearLayoutManager.java:1947)
+                                                 at android.support.v7.widget.LinearLayoutManager.layoutChunk(LinearLayoutManager.java:1359)
+                                                 at android.support.v7.widget.LinearLayoutManager.fill(LinearLayoutManager.java:1322)
+                                                 at android.support.v7.widget.LinearLayoutManager.onLayoutChildren(LinearLayoutManager.java:556)
+                                                 at android.support.v7.widget.RecyclerView.dispatchLayout(RecyclerView.java:2673)
+                                                 at android.support.v7.widget.RecyclerView.onLayout(RecyclerView.java:2971)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.support.v4.widget.SwipeRefreshLayout.onLayout(SwipeRefreshLayout.java:562)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.widget.RelativeLayout.onLayout(RelativeLayout.java:1076)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.widget.FrameLayout.layoutChildren(FrameLayout.java:579)
+                                                 at android.widget.FrameLayout.onLayout(FrameLayout.java:514)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.widget.RelativeLayout.onLayout(RelativeLayout.java:1076)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.widget.LinearLayout.setChildFrame(LinearLayout.java:1703)
+                                                 at android.widget.LinearLayout.layoutVertical(LinearLayout.java:1557)
+                                                 at android.widget.LinearLayout.onLayout(LinearLayout.java:1466)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.support.v4.widget.DrawerLayout.onLayout(DrawerLayout.java:907)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.widget.RelativeLayout.onLayout(RelativeLayout.java:1076)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.widget.FrameLayout.layoutChildren(FrameLayout.java:579)
+                                                 at android.widget.FrameLayout.onLayout(FrameLayout.java:514)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.widget.LinearLayout.setChildFrame(LinearLayout.java:1703)
+                                                 at android.widget.LinearLayout.layoutVertical(LinearLayout.java:1557)
+                                                 at android.widget.LinearLayout.onLayout(LinearLayout.java:1466)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.widget.FrameLayout.layoutChildren(FrameLayout.java:579)
+                                                 at android.widget.FrameLayout.onLayout(FrameLayout.java:514)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.widget.LinearLayout.setChildFrame(LinearLayout.java:1703)
+                                                 at android.widget.LinearLayout.layoutVertical(LinearLayout.java:1557)
+                                                 at android.widget.LinearLayout.onLayout(LinearLayout.java:1466)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.widget.FrameLayout.layoutChildren(FrameLayout.java:579)
+                                                 at android.widget.FrameLayout.onLayout(FrameLayout.java:514)
+                                                 at android.view.View.layout(View.java:15689)
+                                                 at android.view.ViewGroup.layout(ViewGroup.java:5040)
+                                                 at android.view.ViewRootImpl.performLayout(ViewRootImpl.java:2116)
+                                             	at android.view.ViewRootImpl.performTraversals(ViewRootImpl.jav
+03-06 17:49:06.725 17272-17286/? I/art: Background sticky concurrent mark sweep GC freed 11388(1201KB) AllocSpace objects, 43(1675KB) LOS objects, 0% free, 76MB/76MB, paused 6.575ms total 32.204ms
+03-06 17:49:06.954 373-452/? I/ThermalEngine: Sensor:batt_therm:29600 mC
+03-06 17:49:07.028 956-1660/? I/WindowManager: Screenshot max retries 4 of Token{35bb0f17 ActivityRecord{2fbdb796 u0 com.example.juniper.myerlistandroid/activity.MainActivity t1799 f}} appWin=Window{3a6854ff u0 com.example.juniper.myerlistandroid/activity.MainActivity} drawState=1
+03-06 17:49:07.048 1412-1412/? I/MotoNetwCtrlr.MotoWifiHndlr: handleMessage: Entered msg.what=1
+03-06 17:49:07.049 1412-1412/? I/MotoNetwCtrlr.MotorolaWifiSignalController: isDirty: returns true
+03-06 17:49:07.051 1412-1412/? I/MotoNetwCtrlr.MotorolaWifiSignalController: notifyListeners: calling SB [0] setWifiIndicators (Motorola api): UseMotoUI=true Vis=true SBSig=0x7f02014c=stat_sys_wifi_signal_4_fully SBAct=0x7f0204e7=zz_moto_stat_sys_wifi_inout_fully_wide DescSig="Wifi signal full." DescAct="wifi in and out" NetName=""Milk""
+03-06 17:49:07.056 1412-1412/? I/MotoNetwCtrlr.MotorolaWifiSignalController: notifyListeners: calling SB [1] setWifiIndicators (Motorola api): UseMotoUI=true Vis=true SBSig=0x7f02014c=stat_sys_wifi_signal_4_fully SBAct=0x7f0204e7=zz_moto_stat_sys_wifi_inout_fully_wide DescSig="Wifi signal full." DescAct="wifi in and out" NetName=""Milk""
+03-06 17:49:07.058 1412-1412/? I/MotoNetwCtrlr.MotorolaWifiSignalController: notifyListeners: calling SB [2] setWifiIndicators (Motorola api): UseMotoUI=true Vis=true SBSig=0x7f02014c=stat_sys_wifi_signal_4_fully SBAct=0x7f0204e7=zz_moto_stat_sys_wifi_inout_fully_wide DescSig="Wifi signal full." DescAct="wifi in and out" NetName=""Milk""
+03-06 17:49:07.060 1412-1412/? I/MotoNetwCtrlr.MotoWifiHndlr: handleMessage: Completed
+03-06 17:49:07.073 12933-12983/? D/HeadsetStateMachine: Disconnected process message: 10, size: 0
+03-06 17:49:07.079 956-988/? W/BroadcastQueue: Skipping deliver [background] BroadcastRecord{aa69dd0 u-1 android.intent.action.BATTERY_CHANGED} to ReceiverList{1d261b5d 17272 com.example.juniper.myerlistandroid/10163/u0 remote:33d3d134}: process crashing
+03-06 17:49:07.098 956-30555/? I/OpenGLRenderer: Initialized EGL, version 1.4
+03-06 17:49:07.242 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): MotorolaMobilePhoneStateListener.onSignalStrengthsChanged: Entered: signalStrength=SignalStrength: 99 0 -120 -160 -120 -1 -1 27 -88 -7 264 2147483647 2147483647 gsm|lte 0 -108 -1 false 0 0 0 0 4 99 99 99 4 0 level=4
+03-06 17:49:07.246 1412-1412/? D/ConnectivityManager: getMobileDataEnabled()+ subId=1
+03-06 17:49:07.248 1797-4226/? D/PhoneInterfaceManager: [PhoneIntfMgr] getDataEnabled: subId=1 phoneId=0
+03-06 17:49:07.249 1797-4226/? D/PhoneInterfaceManager: [PhoneIntfMgr] getDataEnabled: subId=1 retVal=true
+03-06 17:49:07.249 1412-1412/? D/ConnectivityManager: getMobileDataEnabled()- subId=1 retVal=true
+03-06 17:49:07.250 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): isDirty: returns true
+03-06 17:49:07.251 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): notifyListeners: calling SB [0] setMobileDataIndicators (Motorola api): mobileUseMotoUI=true mobileEnabled=true mobileSimIconId=( none ) mobileSignalIconId=0x7f02048a=zz_moto_stat_sys_signal_4_of_4_fully_wide mobileRoamingIconId=( none ) mobileDataTypeIconId=0x7f0203d5=zz_moto_stat_sys_data_suspended_4g_wide mobileDataActivityIconId=0x7f020330=zz_moto_stat_sys_data_activity_empty_wide mobileCarrierDescription="China Mobile" mobileSimDescription="" mobileSignalContentDescription="phone signal full strength" mobileRoamingDescription="" mobileDataTypeContentDescription="4 G" mobileDataActivityContentDescription="mobile suspended for wifi" mobileIsRoaming=false isDataTypeIconWide=true mobileIsBidiDirectionEnabled=true mobileSubId=1
+03-06 17:49:07.253 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): notifyListeners: calling SB [1] setMobileDataIndicators (Motorola api): mobileUseMotoUI=true mobileEnabled=true mobileSimIconId=( none ) mobileSignalIconId=0x7f02048a=zz_moto_stat_sys_signal_4_of_4_fully_wide mobileRoamingIconId=( none ) mobileDataTypeIconId=0x7f0203d5=zz_moto_stat_sys_data_suspended_4g_wide mobileDataActivityIconId=0x7f020330=zz_moto_stat_sys_data_activity_empty_wide mobileCarrierDescription="China Mobile" mobileSimDescription="" mobileSignalContentDescription="phone signal full strength" mobileRoamingDescription="" mobileDataTypeContentDescription="4 G" mobileDataActivityContentDescription="mobile suspended for wifi" mobileIsRoaming=false isDataTypeIconWide=true mobileIsBidiDirectionEnabled=true mobileSubId=1
+03-06 17:49:07.254 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): notifyListeners: calling SB [2] setMobileDataIndicators (Motorola api): mobileUseMotoUI=true mobileEnabled=true mobileSimIconId=( none ) mobileSignalIconId=0x7f02048a=zz_moto_stat_sys_signal_4_of_4_fully_wide mobileRoamingIconId=( none ) mobileDataTypeIconId=0x7f0203d5=zz_moto_stat_sys_data_suspended_4g_wide mobileDataActivityIconId=0x7f020330=zz_moto_stat_sys_data_activity_empty_wide mobileCarrierDescription="China Mobile" mobileSimDescription="" mobileSignalContentDescription="phone signal full strength" mobileRoamingDescription="" mobileDataTypeContentDescription="4 G" mobileDataActivityContentDescription="mobile suspended for wifi" mobileIsRoaming=false isDataTypeIconWide=true mobileIsBidiDirectionEnabled=true mobileSubId=1
+03-06 17:49:07.256 1412-1412/? I/MotoNetwCtrlr.MotoNetwCtrlrImpl.MotorolaMobileSignalController(?1?): MotorolaMobilePhoneStateListener.onSignalStrengthsChanged: completed: level=4
+03-06 17:49:07.536 956-988/? W/ActivityManager: Activity pause timeout for ActivityRecord{2fbdb796 u0 com.example.juniper.myerlistandroid/activity.MainActivity t1799 f}
+03-06 17:49:07.615 16441-16441/? W/LocationOracle: Best location was null
+03-06 17:49:07.659 7086-7086/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:07.673 16441-16475/? W/LocationOracle: Best location was null
+03-06 17:49:07.675 16441-16441/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:07.676 16441-16441/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:07.677 16441-16441/? E/LocationReceiver: Received bad location: null
+03-06 17:49:07.688 16441-16475/? W/LocationOracle: Best location was null
+03-06 17:49:07.694 7086-7972/? I/Icing: Usage reports 2 indexed 0 rejected 0 imm upload true
+03-06 17:49:07.698 7086-7086/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:07.871 515-556/? D/TCMD: NL - Read 56 bytes from update socket.
+03-06 17:49:07.871 515-556/? D/TCMD: NL - message type is RTM_NEWLINK
+03-06 17:49:07.871 515-556/? D/TCMD: Listening for incoming client connection request
+03-06 17:49:07.881 1412-1412/? I/MotoNetwCtrlr: onReceive: Received intent=Intent { act=android.net.wifi.RSSI_CHANGED flg=0x4000010 (has extras) } Action=android.net.wifi.RSSI_CHANGED
+03-06 17:49:07.881 1412-1412/? I/MotoNetwCtrlr.MotoWifiSignalCtrlr: handleBroadcast: Entered: Intent=Intent { act=android.net.wifi.RSSI_CHANGED flg=0x4000010 (has extras) } Action=android.net.wifi.RSSI_CHANGED
+03-06 17:49:07.882 1412-1412/? I/MotoNetwCtrlr.MotorolaWifiSignalController: isDirty: returns false
+03-06 17:49:07.882 1412-1412/? I/MotoNetwCtrlr.MotoWifiSignalCtrlr: handleBroadcast: Completed
+03-06 17:49:07.883 1412-1412/? I/MotoNetwCtrlr: onReceive: Completed intent=Intent { act=android.net.wifi.RSSI_CHANGED flg=0x4000010 (has extras) } Action=android.net.wifi.RSSI_CHANGED
+03-06 17:49:07.886 956-1350/? E/WifiStateMachine: [1,457,257,747,885 ms] noteScanEnd no scan source onTime=0
+03-06 17:49:07.892 956-1350/? E/WifiStateMachine: wifi setScanResults statecom.android.server.wifi.WifiStateMachine$ConnectedState@3149ab8f sup_state=COMPLETED debouncing=false mConnectionRequests=1 selection=<none>
+03-06 17:49:08.081 17272-17316/? D/PgyerSDK: Transmission succeeded
+03-06 17:49:08.165 1816-2116/? W/OpenGLRenderer: Incorrectly called buildLayer on View: ShortcutAndWidgetContainer, destroying layer...
+03-06 17:49:08.165 1816-2116/? W/OpenGLRenderer: Incorrectly called buildLayer on View: ShortcutAndWidgetContainer, destroying layer...
+03-06 17:49:08.562 1412-1412/? W/ResourceType: No package identifier when getting value for resource number 0x00000000
+03-06 17:49:08.562 1412-1412/? W/PackageManager: Failure retrieving resources for com.example.juniper.myerlistandroid: Resource ID #0x0
+03-06 17:49:08.624 17272-17272/? I/Process: Sending signal. PID: 17272 SIG: 9
+03-06 17:49:08.648 956-1796/? W/InputMethodManagerService: Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@3fb4d8a9 attribute=null, token = android.os.BinderProxy@3e392724
+03-06 17:49:08.662 16441-16456/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:08.679 16441-16441/? W/LocationOracle: Best location was null
+03-06 17:49:08.679 16441-16441/? I/MicroDetectionWorker: Micro detection mode: [mDetectionMode: [1]].
+03-06 17:49:08.699 16441-17329/? I/MicroRecognitionRunner: Starting detection.
+03-06 17:49:08.702 16441-17330/? I/MicrophoneInputStream: mic_starting com.google.android.apps.gsa.speech.audio.ae@ebee7b6
+03-06 17:49:08.705 365-17332/? I/AudioFlinger: AudioFlinger's thread 0xb7d85408 ready to run
+03-06 17:49:08.707 956-2040/? D/Security_AppPcService: inWhiteLis packageName=;code=1;uid=10059;pid=16441
+03-06 17:49:08.707 956-2040/? D/Security_PermControlService: inWhiteList(int code, int uid, int pid)
+03-06 17:49:08.707 956-2040/? D/Security_PermControlService: getPackageName from mPermCheck.mUidPackageNameMaps=com.google.android.googlequicksearchbox
+03-06 17:49:08.709 956-1340/? W/InputDispatcher: channel '3a6854ff com.example.juniper.myerlistandroid/activity.MainActivity (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+03-06 17:49:08.709 956-1340/? E/InputDispatcher: channel '3a6854ff com.example.juniper.myerlistandroid/activity.MainActivity (server)' ~ Channel is unrecoverably broken and will be disposed!
+03-06 17:49:08.710 956-1796/? I/WindowState: WIN DEATH: Window{3a6854ff u0 com.example.juniper.myerlistandroid/activity.MainActivity}
+03-06 17:49:08.710 956-1796/? W/InputDispatcher: Attempted to unregister already unregistered input channel '3a6854ff com.example.juniper.myerlistandroid/activity.MainActivity (server)'
+03-06 17:49:08.713 16441-17330/? I/MicrophoneInputStream: mic_started com.google.android.apps.gsa.speech.audio.ae@ebee7b6
+03-06 17:49:08.722 365-17332/? D/audio_hw_primary: select_devices: out_snd_device(0: none) in_snd_device(56: voice-rec-mic)
+03-06 17:49:08.722 365-17332/? D/msm8974_platform: platform_send_audio_calibration: sending audio calibration for snd_device(56) acdb_id(61)
+03-06 17:49:08.722 365-17332/? E/ACDB-LOADER: Error: ACDB AudProc vol returned = -19
+03-06 17:49:08.722 365-17332/? D/audio_hw_primary: enable_snd_device: snd_device(56: voice-rec-mic)
+03-06 17:49:08.724 294-294/? I/SFPerfTracer:      triggers: (rate: 3887:681139) (compose: 0:31) (post: 0:74) (render: 1:799) (22:2409754 frames) (23:2603948)
+03-06 17:49:08.725 294-294/? D/SFPerfTracer:        layers: (6:14) (FocusedStackFrame (0xb8d45ac8): 0:19870)* (DimLayer (0xb8dab4b8): 3:246) (DimLayer (0xb8dad980): 0:21)* (DimLayer (0xb8db13f0): 0:13313)* (DimLayer (0xb8dc0348): 0:4805)* (StatusBar (0xb8dd3f18): 0:186739) (com.android.systemui.ImageWallpaper (0xb8e15e40): 0:5321) (NavigationBar (0xb8dc2b28): 0:49) (Application Error: com.example.juniper.myerlistandroid (0xb8df4750): 0:53)- (com.google.android.googlequicksearchbox/com.google.android.launcher.GEL (0xb8e05260): 0:26)- (Starting com.example.juniper.myerlistandroid (0xb8dd7870): 0:59)- (com.example.juniper.myerlistandroid/activity.MainActivity (0xb8dd92e8): 0:36)* (Application Error: com.example.juniper.myerlistandroid (0xb8df4750): 23:44) (com.google.android.googlequicksearchbox/com.google.android.launcher.GEL (0xb8e08f90): 1:10) 
+03-06 17:49:08.727 365-17332/? D/audio_hw_primary: enable_audio_route: apply and update mixer path: audio-record
+03-06 17:49:08.750 956-1466/? I/ActivityManager: Process com.example.juniper.myerlistandroid (pid 17272) has died
+03-06 17:49:08.762 16441-16475/? W/LocationOracle: Best location was null
+03-06 17:49:08.776 16441-16475/? W/LocationOracle: Best location was null
+03-06 17:49:08.778 16441-16441/? E/LocationReceiver: Received bad location: null
+03-06 17:49:08.782 16441-16441/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:08.782 16441-16441/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:08.785 7086-7086/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:08.793 7086-7086/? E/Parcel: Reading a NULL string not supported here.
+03-06 17:49:08.815 16441-16441/? I/MicroDetectionWorker: onReady
+03-06 17:49:10.060 1412-1412/? I/MotoNetwCtrlr.MotoWifiHndlr: handleMessage: Entered msg.what=1
+03-06 17:49:10.060 1412-1412/? I/MotoNetwCtrlr.MotorolaWifiSignalController: isDirty: returns true
+03-06 17:49:10.061 1412-1412/? I/MotoNetwCtrlr.MotorolaWifiSignalController: notifyListeners: calling SB [0] setWifiIndicators (Motorola api): UseMotoUI=true Vis=true SBSig=0x7f02014c=stat_sys_wifi_signal_4_fully SBAct=0x7f0204df=zz_moto_stat_sys_wifi_idle_fully_wide DescSig="Wifi signal full." DescAct="wifi idle" NetName=""Milk""
+03-06 17:49:10.065 1412-1412/? I/MotoNetwCtrlr.MotorolaWifiSignalController: notifyListeners: calling SB [1] setWifiIndicators (Motorola api): UseMotoUI=true Vis=true SBSig=0x7f02014c=stat_sys_wifi_signal_4_fully SBAct=0x7f0204df=zz_moto_stat_sys_wifi_idle_fully_wide DescSig="Wifi signal full." DescAct="wifi idle" NetName=""Milk""
+03-06 17:49:10.065 1412-1412/? I/MotoNetwCtrlr.MotorolaWifiSignalController: notifyListeners: calling SB [2] setWifiIndicators (Motorola api): UseMotoUI=true Vis=true SBSig=0x7f02014c=stat_sys_wifi_signal_4_fully SBAct=0x7f0204df=zz_moto_stat_sys_wifi_idle_fully_wide DescSig="Wifi signal full." DescAct="wifi idle" NetName=""Milk""
+03-06 17:49:10.066 1412-1412/? I/MotoNetwCtrlr.MotoWifiHndlr: handleMessage: Completed
+03-06 17:49:10.904 1412-1412/? I/MotoNetwCtrlr: onReceive: Received intent=Intent { act=android.net.wifi.RSSI_CHANGED flg=0x4000010 (has extras) } Action=android.net.wifi.RSSI_CHANGED
+03-06 17:49:10.904 1412-1412/? I/MotoNetwCtrlr.MotoWifiSignalCtrlr: handleBroadcast: Entered: Intent=Intent { act=android.net.wifi.RSSI_CHANGED flg=0x4000010 (has extras) } Action=android.net.wifi.RSSI_CHANGED
+03-06 17:49:10.905 1412-1412/? I/MotoNetwCtrlr.MotorolaWifiSignalController: isDirty: returns false
+03-06 17:49:10.905 1412-1412/? I/MotoNetwCtrlr.MotoWifiSignalCtrlr: handleBroadcast: Completed
+03-06 17:49:10.907 1412-1412/? I/MotoNetwCtrlr: onReceive: Completed intent=Intent { act=android.net.wifi.RSSI_CHANGED flg=0x4000010 (has extras) } Action=android.net.wifi.RSSI_CHANGED

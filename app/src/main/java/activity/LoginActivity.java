@@ -16,29 +16,28 @@ import android.widget.TextView;
 import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import api.APIUtil;
+import java.security.NoSuchAlgorithmException;
+
 import api.CloudServices;
+import exception.APIException;
+import util.AppExtension;
 import util.ConfigHelper;
 import util.DataHelper;
-import util.PostHelper;
-import interfaces.IRequestCallbacks;
-import model.ToDo;
+import interfaces.IRequestCallback;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
 
 
-public class LoginActivity extends AppCompatActivity implements
-        IRequestCallbacks {
+public class LoginActivity extends AppCompatActivity{
     private EditText mEmailBox;
     private EditText mPasswordBox;
     private EditText mConfirmPsBox;
     private TextView mTitleView;
     private ProgressDialog progressDialog;
     private ImageView mMaskView;
-
 
     private boolean isToRegister = true;
 
@@ -104,80 +103,143 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     public void Login_Click(View view) throws NoSuchAlgorithmException {
-
+        if (!IsDataValid()) {
+            return;
+        }
+        //Login directly
         if (!isToRegister) {
-            if (!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString())) {
-                if (DataHelper.IsEmailFormat(mEmailBox.getText().toString())) {
-                    if (!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString())) {
-                        progressDialog.setMessage(getResources().getString(R.string.loading_hint));
-                        progressDialog.show();
-                        boolean isOK=CloudServices.CheckExist(mEmailBox.getText().toString());
-                        //PostHelper.CheckExist(this, mEmailBox.getText().toString());
-                    }
-                    else
-                        ToastService.ShowShortToast("Please input password");
+
+            progressDialog.setMessage(getResources().getString(R.string.loading_hint));
+            progressDialog.show();
+
+            CloudServices.CheckExist(mEmailBox.getText().toString(), new IRequestCallback() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    onCheckEmailResponse(response);
                 }
-                else
-                    ToastService.ShowShortToast("Please input valid email");
-            }
+            });
         }
-        else if (isToRegister) {
-            if (!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString())) {
-                if (DataHelper.IsEmailFormat(mEmailBox.getText().toString())) {
-                    if (!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString())) {
-                        if (!DataHelper.IsStringNullOrEmpty(mConfirmPsBox.getText().toString())) {
-                            if (mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString())) {
-                                progressDialog.setMessage(getResources().getString(R.string.loading_hint));
-                                progressDialog.show();
-                                PostHelper.Register(this, mEmailBox.getText().toString(), mPasswordBox.getText().toString());
-                            }
-                            else
-                                ToastService.ShowShortToast(getString(R.string.two_ps_match));
+        else {
+            progressDialog.setMessage(getResources().getString(R.string.loading_hint));
+            progressDialog.show();
+            CloudServices.Register(mEmailBox.getText().toString(),
+                    mPasswordBox.getText().toString(),
+                    new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            onRegisteredResponse(jsonObject);
                         }
-                        else
-                            ToastService.ShowShortToast(getString(R.string.confirm_ps_lost));
+                    });
+        }
+    }
+
+    private boolean IsDataValid() {
+        if (DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString())) {
+            return false;
+        }
+        if (DataHelper.IsEmailFormat(mEmailBox.getText().toString())) {
+            return false;
+        }
+        if (!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString())) {
+            return false;
+        }
+        if (isToRegister && !DataHelper.IsStringNullOrEmpty(mConfirmPsBox.getText().toString())) {
+            return false;
+        }
+        if (isToRegister && mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString())) {
+
+            return false;
+        }
+        return true;
+    }
+
+    //检查邮件有效性，
+    //然后获得 Salt 后登录
+    private void onCheckEmailResponse(JSONObject response) {
+        try {
+            boolean isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                boolean isExist = response.getBoolean("isExist");
+                if(isExist){
+                    CloudServices.GetSalt(mEmailBox.getText().toString(),
+                            new IRequestCallback() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    onGotSaltResponse(jsonObject);
+                                }
+                            });
+                }
+                else {
+                    ToastService.ShowShortToast(getResources().getString(R.string.user_dont_exist));
+                }
+            }
+            else throw new APIException();
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        catch (APIException e){
+            ToastService.ShowShortToast(getResources().getString(R.string.fail_to_login));
+        }
+        progressDialog.dismiss();
+    }
+
+    //获得 Salt 后并登录
+    private void onGotSaltResponse(final JSONObject response) {
+        try {
+            boolean isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                String salt = response.getString("Salt");
+
+                if (!DataHelper.IsStringNullOrEmpty(salt)) {
+                    try {
+                        CloudServices.Login(mEmailBox.getText().toString(),
+                                mPasswordBox.getText().toString(), salt,
+                                new IRequestCallback() {
+                                    @Override
+                                    public void onResponse(JSONObject jsonObject) {
+                                        onLoginResponse(response);
+                                    }
+                                });
                     }
-                    else
-                        ToastService.ShowShortToast(getString(R.string.ps_lost));
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 else
-                    ToastService.ShowShortToast(getString(R.string.email_invalid));
+                    ToastService.ShowShortToast(getResources().getString(R.string.fail_to_login));
+
+                progressDialog.dismiss();
             }
+
         }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
-
-    @Override
-    public void onCheckResponsenCheckResponse(boolean check) {
-        if (check) {
-            PostHelper.GetSalt(this, mEmailBox.getText().toString());
-        }
-        else
-            ToastService.ShowShortToast(getResources().getString(R.string.user_dont_exist));
-
-        progressDialog.dismiss();
-    }
-
-    @Override
-    public void onGetSaltResponse(String str) {
-        String salt = str;
-        if (!DataHelper.IsStringNullOrEmpty(salt)) {
-            try {
-                PostHelper.Login(this, mEmailBox.getText().toString(), mPasswordBox.getText().toString(), salt);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
+    //发出登录请求之后
+    private void onLoginResponse(JSONObject response) {
+        boolean isSuccess = false;
+        try {
+            isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                JSONObject userObj = response.getJSONObject("UserInfo");
+                if (userObj != null) {
+                    String sid = userObj.getString("sid");
+                    String access_token = userObj.getString("access_token");
+                    ConfigHelper.putString(AppExtension.getInstance(), "email", mEmailBox.getText().toString());
+                    ConfigHelper.putString(AppExtension.getInstance(), "sid", sid);
+                    ConfigHelper.putString(AppExtension.getInstance(), "access_token", access_token);
+                    ConfigHelper.DeleteKey(AppExtension.getInstance(), "password");
+                }
             }
         }
-        else
-            ToastService.ShowShortToast(getResources().getString(R.string.fail_to_login));
-
-        progressDialog.dismiss();
-    }
-
-    @Override
-    public void onLoginResponse(boolean value) {
-        if (value) {
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (isSuccess) {
             ToastService.ShowShortToast(getResources().getString(R.string.login_success));
 
             Intent intent = new Intent(this, MainActivity.class);
@@ -191,11 +253,33 @@ public class LoginActivity extends AppCompatActivity implements
         progressDialog.dismiss();
     }
 
-    @Override
-    public void onRegisteredResponse(boolean isSuccess, String salt) {
+    //发出注册请求之后
+    private void onRegisteredResponse(JSONObject response) {
+        boolean isSuccess = false;
+        try {
+            isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                JSONObject userObj = response.getJSONObject("UserInfo");
+                if (userObj != null) {
+                    String salt = userObj.getString("Salt");
+                    ConfigHelper.putString(AppExtension.getInstance(), "email", mEmailBox.getText().toString());
+                }
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
         if (isSuccess) {
             try {
-                PostHelper.Login(this, ConfigHelper.getString(this, "email"), ConfigHelper.getString(this, "password"), ConfigHelper.getString(this, "salt"));
+                CloudServices.Login(ConfigHelper.getString(this, "email"),
+                        ConfigHelper.getString(this, "password"),
+                        ConfigHelper.getString(this, "salt"),
+                        new IRequestCallback() {
+                            @Override
+                            public void onResponse(JSONObject jsonObject) {
+                                onLoginResponse(jsonObject);
+                            }
+                        });
             }
             catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
@@ -205,36 +289,5 @@ public class LoginActivity extends AppCompatActivity implements
             ToastService.ShowShortToast(getResources().getString(R.string.fail_to_register));
 
         progressDialog.dismiss();
-    }
-
-    @Override
-    public void onGotScheduleResponse(boolean isSuccess, ArrayList<ToDo> mytodosList) {
-
-    }
-
-    @Override
-    public void onAddedResponse(boolean isSuccess, ToDo newTodo) {
-
-    }
-
-    @Override
-    public void onSetOrderResponse(boolean isSuccess) {
-
-    }
-
-
-    @Override
-    public void onDoneResponse(boolean isSuccess) {
-
-    }
-
-    @Override
-    public void onDeleteResponse(boolean isSuccess) {
-
-    }
-
-    @Override
-    public void onUpdateContent(boolean isSuccess) {
-
     }
 }

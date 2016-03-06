@@ -23,13 +23,17 @@ import android.widget.TextView;
 
 import com.juniperphoton.myerlistandroid.R;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
+import activity.MainActivity;
+import api.CloudServices;
 import fragment.ToDoFragment;
+import interfaces.IRequestCallback;
 import util.ConfigHelper;
 import util.AppExtension;
 import util.FindRadioBtnHelper;
-import util.PostHelper;
 import util.SerializerHelper;
 import model.ToDo;
 import util.ToDoListRef;
@@ -154,7 +158,17 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 notifyItemChanged(index);
 
                 if (!ConfigHelper.ISOFFLINEMODE) {
-                    PostHelper.UpdateContent(mCurrentActivity, ConfigHelper.getString(mCurrentActivity, "sid"), targetID, currentItem.getContent(), cate);
+                    CloudServices.UpdateContent(ConfigHelper.getString(mCurrentActivity, "sid"),
+                            ConfigHelper.getString(mCurrentActivity, "access_token"),
+                            targetID,
+                            currentItem.getContent(),
+                            cate,
+                            new IRequestCallback() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    ((MainActivity)mCurrentActivity).onUpdateContent(jsonObject);
+                                }
+                            });
                 }
                 else {
                     SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
@@ -235,7 +249,17 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                         notifyItemChanged(index);
 
                         if (!ConfigHelper.ISOFFLINEMODE) {
-                            PostHelper.UpdateContent(mCurrentActivity, ConfigHelper.getString(mCurrentActivity, "sid"), targetID, mNewMemoText.getText().toString(), currentItem.getCate());
+                            CloudServices.UpdateContent(
+                                    ConfigHelper.getString(mCurrentActivity, "sid"),
+                                    ConfigHelper.getString(mCurrentActivity, "access_token"),
+                                    targetID, mNewMemoText.getText().toString(),
+                                    currentItem.getCate(),
+                                    new IRequestCallback() {
+                                        @Override
+                                        public void onResponse(JSONObject jsonObject) {
+                                            ((MainActivity)mCurrentActivity).onUpdateContent(jsonObject);
+                                        }
+                                    });
                         }
                         else {
                             SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
@@ -324,7 +348,15 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
         }
         else
-            PostHelper.SetDelete(mCurrentActivity, ConfigHelper.getString(AppExtension.getInstance(), "sid"), todoToDelete.getID());
+            CloudServices.SetDelete(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
+                    ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
+                    todoToDelete.getID(),
+                    new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            ((MainActivity)mCurrentActivity).onDelete(jsonObject);
+                        }
+                    });
     }
 
     @Override
@@ -417,7 +449,16 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             }
 
             if (!ConfigHelper.ISOFFLINEMODE) {
-                PostHelper.SetDone(mCurrentActivity, ConfigHelper.getString(AppExtension.getInstance(), "sid"), id, mCurrentToDo.getIsDone() ? "1" : "0");
+                CloudServices.SetDone(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
+                        ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
+                        id,
+                        mCurrentToDo.getIsDone() ? "1" : "0",
+                        new IRequestCallback() {
+                            @Override
+                            public void onResponse(JSONObject jsonObject) {
+                                ((MainActivity)mCurrentActivity).OnSetDone(jsonObject);
+                            }
+                        });
             }
         }
         //Delete

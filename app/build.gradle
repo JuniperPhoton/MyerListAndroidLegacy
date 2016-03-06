@@ -6,10 +6,10 @@ android {
 
     defaultConfig {
         applicationId "com.juniperphoton.myerlistandroid"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 22
         versionCode 13
-        versionName "2.41"
+        versionName "3.0.0"
     }
     buildTypes {
         release {
@@ -42,8 +42,6 @@ dependencies
             compile 'it.sephiroth.android.library.viewrevealanimator:view-reveal-animator:+'
             compile 'com.pgyersdk:sdk:2.2'
             compile files('libs/umeng-update-v2.6.0.1.jar')
-            compile files('libs/xUtils-2.6.14.jar')
-            compile 'com.squareup.okhttp3:okhttp:3.2.0'
         }
 
 

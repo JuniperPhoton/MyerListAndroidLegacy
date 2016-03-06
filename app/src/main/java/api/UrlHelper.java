@@ -1,7 +1,7 @@
 package api;
 
 /**
- * Created by dengw on 3/4/2016.
+ * Created by dengw on 3/6/2016.
  */
 public class UrlHelper {
     public final static String domain = "juniperphoton.net";
@@ -16,5 +16,4 @@ public class UrlHelper {
     public static String ScheduleGetUri = "http://" + domain + "/schedule/Schedule/GetMySchedules/v1?";
     public static String ScheduleGetOrderUri = "http://" + domain + "/schedule/Schedule/GetMyOrder/v1?";
     public static String ScheduleSetOrderUri = "http://" + domain + "/schedule/Schedule/SetMyOrder/v1?";
-
 }

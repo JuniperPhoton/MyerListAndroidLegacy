@@ -162,7 +162,7 @@
                         android:layout_height="wrap_content"
                         android:background="?android:selectableItemBackground"
                         android:clickable="true"
-                        android:onClick="Login_Click"
+                        android:onClick="login_Click"
                         android:text="@string/loginBtn"
                         android:textColor="#ffffff" />
                 </android.support.v7.widget.CardView>

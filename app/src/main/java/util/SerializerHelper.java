@@ -19,7 +19,7 @@ public class SerializerHelper {
     public static final String deletedFileName = "Deleted.txt";
     public static final String stagedFileName = "Staged.txt";
 
-    public static void SerializeToFile(Context context, Object o, String fileName) {
+    public static void serializeToFile(Context context, Object o, String fileName) {
         try {
             Gson gson = new Gson();
             String jsonString = gson.toJson(o, o.getClass());
@@ -34,7 +34,7 @@ public class SerializerHelper {
         }
     }
 
-    public static ArrayList<ToDo> DeSerializeFromFile(Context context, String fileName) {
+    public static ArrayList<ToDo> deSerializeFromFile(Context context, String fileName) {
         try {
             FileInputStream inputStream = context.openFileInput(fileName);
             byte[] bytes = new byte[1024];

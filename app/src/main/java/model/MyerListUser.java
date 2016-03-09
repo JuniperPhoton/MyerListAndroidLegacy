@@ -2,35 +2,35 @@ package model;
 
 
 public class MyerListUser {
-    private int sid;
-    private String email;
-    private String password;
+    private int msid;
+    private String memail;
+    private String mpassword;
 
     public MyerListUser() {
 
     }
 
-    public int GetSID() {
-        return this.sid;
+    public int getSID() {
+        return this.msid;
     }
 
-    public void SetSID(int value) {
-        this.sid = value;
+    public void setSID(int value) {
+        this.msid = value;
     }
 
-    public String GetEmail() {
-        return this.email;
+    public String getEmail() {
+        return this.memail;
     }
 
-    public void SetEmail(String value) {
-        this.email = value;
+    public void setEmail(String value) {
+        this.memail = value;
     }
 
-    public String GetPassword() {
-        return this.password;
+    public String getPassword() {
+        return this.mpassword;
     }
 
-    public void SetPassworrd(String value) {
-        this.password = value;
+    public void setPassworrd(String value) {
+        this.mpassword = value;
     }
 }

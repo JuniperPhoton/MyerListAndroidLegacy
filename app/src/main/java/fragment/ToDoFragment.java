@@ -17,7 +17,6 @@ import com.juniperphoton.myerlistandroid.R;
 
 import org.json.JSONObject;
 
-import java.nio.channels.NonWritableChannelException;
 import java.util.ArrayList;
 
 import activity.MainActivity;
@@ -28,7 +27,7 @@ import util.ConfigHelper;
 import util.AppExtension;
 import adapter.ToDoListAdapter;
 import util.SerializerHelper;
-import util.ToDoListRef;
+import util.ToDoListReference;
 import model.ToDo;
 
 public class ToDoFragment extends Fragment {
@@ -81,7 +80,7 @@ public class ToDoFragment extends Fragment {
                     mRefreshLayout.setRefreshing(false);
                     return;
                 }
-                GetAllSchedules();
+                getAllSchedules();
             }
         });
 
@@ -90,7 +89,7 @@ public class ToDoFragment extends Fragment {
         mAddingFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) mActivity).ShowAddingPane();
+                ((MainActivity) mActivity).showAddingPane();
             }
         });
         if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
@@ -101,7 +100,7 @@ public class ToDoFragment extends Fragment {
             mAddingFab.setLayoutParams(layoutParams);
         }
 
-        ((MainActivity) mActivity).OnInitial(true);
+        ((MainActivity) mActivity).onInitial();
 
         return view;
     }
@@ -119,7 +118,7 @@ public class ToDoFragment extends Fragment {
         mMyToDos = data;
         if (mToDoRecyclerView != null) {
             mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMyToDos, mActivity, this));
-            StopRefreshing();
+            stopRefreshing();
             if (data.size() == 0)
                 ShowNoItemHint(true);
             else
@@ -128,38 +127,38 @@ public class ToDoFragment extends Fragment {
     }
 
 
-    public void ShowRefreshing() {
+    public void showRefreshing() {
         if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(true);
         }
     }
 
-    public void StopRefreshing() {
+    public void stopRefreshing() {
         if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(false);
         }
     }
 
-    public void EnableRefresh() {
+    public void enableRefresh() {
         if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(true);
         }
     }
 
-    public void DisableRefresh() {
+    public void disableRefresh() {
         if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(false);
         }
     }
 
-    public void GetAllSchedules() {
-        ((MainActivity)mActivity).SyncList();
+    public void getAllSchedules() {
+        ((MainActivity) mActivity).syncList();
 
         if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
-            if (ToDoListRef.StagedList == null) return;
-            ((MainActivity) mActivity).SetIsAddStagedItems(true);
-            for (ToDo todo : ToDoListRef.StagedList) {
-                CloudServices.AddToDo(
+            if (ToDoListReference.StagedList == null) return;
+            ((MainActivity) mActivity).setIsAddStagedItems(true);
+            for (ToDo todo : ToDoListReference.StagedList) {
+                CloudServices.addToDo(
                         ConfigHelper.getString(AppExtension.getInstance(), "sid"),
                         ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
                         todo.getContent(),
@@ -168,12 +167,12 @@ public class ToDoFragment extends Fragment {
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
-                                ((MainActivity)mActivity).onAddedResponse(jsonObject);
+                                ((MainActivity) mActivity).onAddedResponse(jsonObject);
                             }
                         });
             }
-            ToDoListRef.StagedList.clear();
-            SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.StagedList, SerializerHelper.stagedFileName);
+            ToDoListReference.StagedList.clear();
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListReference.StagedList, SerializerHelper.stagedFileName);
         }
     }
 

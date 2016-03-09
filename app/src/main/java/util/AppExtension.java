@@ -2,7 +2,6 @@ package util;
 
 import android.app.Application;
 
-import com.juniperphoton.myerlistandroid.BuildConfig;
 import com.pgyersdk.crash.PgyCrashManager;
 
 public class AppExtension extends Application {
@@ -18,9 +17,9 @@ public class AppExtension extends Application {
         super.onCreate();
         instance = this;
 
-        ConfigHelper.ConfigAppSetting();
+        ConfigHelper.configAppSetting();
 
-        ToDoListRef.RestoreData();
+        ToDoListReference.restoreData();
         PgyCrashManager.register(this);
 
     }

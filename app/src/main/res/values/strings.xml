@@ -56,7 +56,7 @@
     <string name="add_success">添加成功</string>
     <string name="login_success">登录成功</string>
     <string name="rebootHint">重启应用以生效</string>
-    <string name="version_value">2.41</string>
+    <string name="version_value">3.0.0</string>
     <string name="hello_blank_fragment">现在登录</string>
     <string name="now_to_login">现在登录</string>
     <string name="user_dont_exist">用户不存在</string>
@@ -90,4 +90,15 @@
     <string name="add_widget">Add widget</string>
     <string name="NoNetworkHint">No network.</string>
     <string name="undone_hint">Left</string>
+    <string name="hint_input_email">Please input email</string>
+    <string name="hint_email_not_exist">Account not existed</string>
+    <string name="hint_email_not_invalid">Invalid email</string>
+    <string name="hint_input_psd">Please input password</string>
+    <string name="hint_input_repsd">Please confirm your passwords</string>
+    <string name="hint_psd_not_match">Confirm your passwords matched</string>
+    <string name="hint_email_exist">The email has been registered</string>
+    <string name="hint_login_successfully">Successfully logined :P</string>
+    <string name="hint_login_fail">Failed to login</string>
+    <string name="hint_register_fail">Failed to register</string>
+    <string name="hint_wrong_psd">Wrong password</string>
 </resources>

@@ -5,10 +5,10 @@ import android.graphics.drawable.Drawable;
 /**
  * Created by dengw on 9/27/2015.
  */
-public class CateNaviItem {
+public class ToDoCategory {
     private Drawable mDrawable;
 
-    public CateNaviItem(Drawable drawable) {
+    public ToDoCategory(Drawable drawable) {
         mDrawable = drawable;
     }
 

@@ -16,22 +16,22 @@ import com.juniperphoton.myerlistandroid.R;
 
 import java.util.ArrayList;
 
+import activity.MainActivity;
 import adapter.DeletedListAdapter;
-import interfaces.IOnReAddedToDo;
 import model.ToDo;
-import util.ToDoListRef;
+import util.ToDoListReference;
 
 
 public class DeletedItemFragment extends Fragment {
 
-    private ArrayList<ToDo> mDeletedData;
+    private ArrayList<ToDo> mDeletedToDos;
     private RecyclerView mDeletedListRecyclerView;
     private com.getbase.floatingactionbutton.FloatingActionButton mFab;
-    private IOnReAddedToDo mActivity;
+    private MainActivity mActivity;
     private LinearLayout mNoItemHintLayout;
 
     public DeletedItemFragment() {
-        // Required empty public constructor
+
     }
 
 
@@ -49,8 +49,10 @@ public class DeletedItemFragment extends Fragment {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
         mDeletedListRecyclerView.setLayoutManager(layoutManager);
         mDeletedListRecyclerView.setHasFixedSize(true);
+
         mFab = (com.getbase.floatingactionbutton.FloatingActionButton) view.findViewById(R.id.delete_all_fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +63,7 @@ public class DeletedItemFragment extends Fragment {
                 builder.setPositiveButton(R.string.ok_btn, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ((DeletedListAdapter) mDeletedListRecyclerView.getAdapter()).DeleteAll();
+                        ((DeletedListAdapter) mDeletedListRecyclerView.getAdapter()).deleteAll();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
@@ -74,29 +76,27 @@ public class DeletedItemFragment extends Fragment {
             }
         });
         mNoItemHintLayout = (LinearLayout) view.findViewById(R.id.no_deleteditem_layout);
-        mActivity.OnReCreatedToDo(true);
 
         return view;
     }
 
 
-    public void SetUpData(ArrayList<ToDo> data) {
-        ToDoListRef.DeletedList = data;
-        mDeletedData = data;
-        DeletedListAdapter deletedListAdapter = new DeletedListAdapter(getActivity(), this, data);
+    public void setupListData(ArrayList<ToDo> data) {
+        ToDoListReference.DeletedList = data;
+        mDeletedToDos = data;
 
-        mDeletedListRecyclerView.setAdapter(deletedListAdapter);
+        mDeletedListRecyclerView.setAdapter(new DeletedListAdapter(mActivity, this, data));
 
         if (data.size() == 0) {
-            ShowNoItemHint();
+            showNoItemHint();
         }
     }
 
-    public void ShowNoItemHint() {
+    public void showNoItemHint() {
         mNoItemHintLayout.setVisibility(View.VISIBLE);
     }
 
-    public void HideNoItemHint() {
+    public void hideNoItemHint() {
         mNoItemHintLayout.setVisibility(View.GONE);
     }
 
@@ -104,7 +104,7 @@ public class DeletedItemFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mActivity = (IOnReAddedToDo) activity;
+            mActivity = (MainActivity) activity;
         }
         catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()

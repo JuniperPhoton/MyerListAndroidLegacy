@@ -35,7 +35,7 @@ public class AboutActivity extends AppCompatActivity {
         }
     }
 
-    public void EmailClick(View view) {
+    public void emailClick(View view) {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("message/rfc822");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"dengweichao@hotmail.com"}); // recipients

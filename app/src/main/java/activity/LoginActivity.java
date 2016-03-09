@@ -31,7 +31,7 @@ import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
 
 
-public class LoginActivity extends AppCompatActivity{
+public class LoginActivity extends AppCompatActivity {
     private EditText mEmailBox;
     private EditText mPasswordBox;
     private EditText mConfirmPsBox;
@@ -102,17 +102,17 @@ public class LoginActivity extends AppCompatActivity{
         MobclickAgent.onPause(this);
     }
 
-    public void Login_Click(View view) throws NoSuchAlgorithmException {
-        if (!IsDataValid()) {
+    public void login_Click(View view) throws NoSuchAlgorithmException {
+        if (!isDataValid()) {
             return;
         }
-        //Login directly
+        //login directly
         if (!isToRegister) {
 
             progressDialog.setMessage(getResources().getString(R.string.loading_hint));
             progressDialog.show();
 
-            CloudServices.CheckExist(mEmailBox.getText().toString(), new IRequestCallback() {
+            CloudServices.checkExist(mEmailBox.getText().toString(), new IRequestCallback() {
                 @Override
                 public void onResponse(JSONObject response) {
                     onCheckEmailResponse(response);
@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity{
         else {
             progressDialog.setMessage(getResources().getString(R.string.loading_hint));
             progressDialog.show();
-            CloudServices.Register(mEmailBox.getText().toString(),
+            CloudServices.register(mEmailBox.getText().toString(),
                     mPasswordBox.getText().toString(),
                     new IRequestCallback() {
                         @Override
@@ -133,21 +133,25 @@ public class LoginActivity extends AppCompatActivity{
         }
     }
 
-    private boolean IsDataValid() {
-        if (DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString())) {
+    private boolean isDataValid() {
+        if (DataHelper.isStringNullOrEmpty(mEmailBox.getText().toString())) {
+            ToastService.showShortToast(getString(R.string.hint_input_email));
             return false;
         }
-        if (DataHelper.IsEmailFormat(mEmailBox.getText().toString())) {
+        if (!DataHelper.isEmailFormat(mEmailBox.getText().toString())) {
+            ToastService.showShortToast(getString(R.string.hint_email_not_invalid));
             return false;
         }
-        if (!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString())) {
+        if (DataHelper.isStringNullOrEmpty(mPasswordBox.getText().toString())) {
+            ToastService.showShortToast(getString(R.string.hint_input_psd));
             return false;
         }
-        if (isToRegister && !DataHelper.IsStringNullOrEmpty(mConfirmPsBox.getText().toString())) {
+        if (isToRegister && DataHelper.isStringNullOrEmpty(mConfirmPsBox.getText().toString())) {
+            ToastService.showShortToast(getString(R.string.hint_input_repsd));
             return false;
         }
-        if (isToRegister && mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString())) {
-
+        if (isToRegister && !(mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString()))) {
+            ToastService.showShortToast(getString(R.string.hint_psd_not_match));
             return false;
         }
         return true;
@@ -157,11 +161,13 @@ public class LoginActivity extends AppCompatActivity{
     //然后获得 Salt 后登录
     private void onCheckEmailResponse(JSONObject response) {
         try {
+            if (response == null) throw new APIException();
+
             boolean isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
                 boolean isExist = response.getBoolean("isExist");
-                if(isExist){
-                    CloudServices.GetSalt(mEmailBox.getText().toString(),
+                if (isExist) {
+                    CloudServices.getSalt(mEmailBox.getText().toString(),
                             new IRequestCallback() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {
@@ -170,59 +176,65 @@ public class LoginActivity extends AppCompatActivity{
                             });
                 }
                 else {
-                    ToastService.ShowShortToast(getResources().getString(R.string.user_dont_exist));
+                    ToastService.showShortToast(getResources().getString(R.string.hint_email_not_exist));
                 }
             }
-            else throw new APIException();
+            else {
+                ToastService.showShortToast(getResources().getString(R.string.hint_email_not_exist));
+            }
         }
         catch (JSONException e) {
             e.printStackTrace();
+            progressDialog.dismiss();
         }
-        catch (APIException e){
-            ToastService.ShowShortToast(getResources().getString(R.string.fail_to_login));
+        catch (APIException e) {
+            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            progressDialog.dismiss();
         }
-        progressDialog.dismiss();
     }
 
     //获得 Salt 后并登录
     private void onGotSaltResponse(final JSONObject response) {
         try {
+            if (response == null) throw new APIException();
+
             boolean isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
                 String salt = response.getString("Salt");
 
-                if (!DataHelper.IsStringNullOrEmpty(salt)) {
-                    try {
-                        CloudServices.Login(mEmailBox.getText().toString(),
-                                mPasswordBox.getText().toString(), salt,
-                                new IRequestCallback() {
-                                    @Override
-                                    public void onResponse(JSONObject jsonObject) {
-                                        onLoginResponse(response);
-                                    }
-                                });
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                if (!DataHelper.isStringNullOrEmpty(salt)) {
+
+                    CloudServices.login(mEmailBox.getText().toString(),
+                            mPasswordBox.getText().toString(),
+                            salt,
+                            new IRequestCallback() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    onLoginResponse(jsonObject);
+                                }
+                            });
                 }
-                else
-                    ToastService.ShowShortToast(getResources().getString(R.string.fail_to_login));
-
-                progressDialog.dismiss();
+                else throw new IllegalArgumentException();
             }
-
+            else throw new IllegalArgumentException();
+        }
+        catch (APIException e) {
+            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            progressDialog.dismiss();
         }
         catch (Exception e) {
             e.printStackTrace();
+            ToastService.showShortToast(getResources().getString(R.string.hint_login_fail));
+            progressDialog.dismiss();
         }
-
     }
 
     //发出登录请求之后
     private void onLoginResponse(JSONObject response) {
-        boolean isSuccess = false;
         try {
+            if (response == null) throw new APIException();
+
+            boolean isSuccess;
             isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
                 JSONObject userObj = response.getJSONObject("UserInfo");
@@ -233,61 +245,69 @@ public class LoginActivity extends AppCompatActivity{
                     ConfigHelper.putString(AppExtension.getInstance(), "sid", sid);
                     ConfigHelper.putString(AppExtension.getInstance(), "access_token", access_token);
                     ConfigHelper.DeleteKey(AppExtension.getInstance(), "password");
+
+                    ToastService.showShortToast(getResources().getString(R.string.login_success));
+
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.putExtra("LOGIN_STATE", "Logined");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 }
+                else throw new IllegalArgumentException();
+            }
+            else {
+                ToastService.showShortToast(getResources().getString(R.string.hint_wrong_psd));
             }
         }
-        catch (JSONException e) {
+        catch (APIException e) {
+            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+        }
+        catch (Exception e) {
             e.printStackTrace();
+            ToastService.showShortToast(getResources().getString(R.string.hint_login_fail));
         }
-        if (isSuccess) {
-            ToastService.ShowShortToast(getResources().getString(R.string.login_success));
-
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("LOGIN_STATE", "Logined");
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+        finally {
+            progressDialog.dismiss();
         }
-        else
-            ToastService.ShowShortToast(getResources().getString(R.string.fail_to_login));
-
-        progressDialog.dismiss();
     }
 
     //发出注册请求之后
     private void onRegisteredResponse(JSONObject response) {
-        boolean isSuccess = false;
         try {
+            if (response == null) throw new APIException();
+
+            boolean isSuccess;
             isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
                 JSONObject userObj = response.getJSONObject("UserInfo");
                 if (userObj != null) {
                     String salt = userObj.getString("Salt");
-                    ConfigHelper.putString(AppExtension.getInstance(), "email", mEmailBox.getText().toString());
+                    ConfigHelper.putString(AppExtension.getInstance(),
+                            "email",
+                            mEmailBox.getText().toString());
+
+                    CloudServices.login(ConfigHelper.getString(this, "email"),
+                            ConfigHelper.getString(this, "password"),
+                            salt,
+                            new IRequestCallback() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    onLoginResponse(jsonObject);
+                                }
+                            });
                 }
             }
+            else throw new APIException();
         }
-        catch (JSONException e) {
+        catch (APIException e) {
+            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+        }
+        catch (Exception e) {
             e.printStackTrace();
+            ToastService.showShortToast(getResources().getString(R.string.hint_register_fail));
         }
-        if (isSuccess) {
-            try {
-                CloudServices.Login(ConfigHelper.getString(this, "email"),
-                        ConfigHelper.getString(this, "password"),
-                        ConfigHelper.getString(this, "salt"),
-                        new IRequestCallback() {
-                            @Override
-                            public void onResponse(JSONObject jsonObject) {
-                                onLoginResponse(jsonObject);
-                            }
-                        });
-            }
-            catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+        finally {
+            progressDialog.dismiss();
         }
-        else
-            ToastService.ShowShortToast(getResources().getString(R.string.fail_to_register));
-
-        progressDialog.dismiss();
     }
 }

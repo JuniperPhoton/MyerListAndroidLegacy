@@ -14,8 +14,8 @@ import com.juniperphoton.myerlistandroid.R;
 
 import java.util.List;
 
+import interfaces.INavigationDrawerCallback;
 import util.AppExtension;
-import interfaces.INavigationDrawerMainCallbacks;
 import model.NavigationItemWithIcon;
 
 
@@ -24,7 +24,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     private List<NavigationItemWithIcon> mData;
 
     //这些是 MainActivity
-    private INavigationDrawerMainCallbacks mINavigationDrawerMainCallbacks;
+    private INavigationDrawerCallback mINavigationDrawerCallback;
 
     //选中的 View
     private View mSelectedView;
@@ -37,8 +37,8 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     }
 
     //设置回调
-    public void setNavigationDrawerCallbacks(INavigationDrawerMainCallbacks INavigationDrawerMainCallbacks) {
-        mINavigationDrawerMainCallbacks = INavigationDrawerMainCallbacks;
+    public void setNavigationDrawerCallbacks(INavigationDrawerCallback INavigationDrawerCallback) {
+        mINavigationDrawerCallback = INavigationDrawerCallback;
     }
 
     //创建每一项的容器
@@ -48,23 +48,24 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         final DrawerViewHolder drawerViewHolder = new DrawerViewHolder(v);
 
         //点击选中的时候发生
-        drawerViewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
-                                                             @Override
-                                                             public void onClick(View v) {
-                                                                 mSelectedPosition = drawerViewHolder.getPosition();
+        drawerViewHolder.linearLayout.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSelectedPosition = drawerViewHolder.getPosition();
 
-                                                                 //上一个选中的变为透明色
-                                                                 if (mSelectedView != null) {
-                                                                     ((CardView) mSelectedView).setCardBackgroundColor(Color.TRANSPARENT);
-                                                                 }
+                        //上一个选中的变为透明色
+                        if (mSelectedView != null) {
+                            ((CardView) mSelectedView).setCardBackgroundColor(Color.TRANSPARENT);
+                        }
 
-                                                                 mSelectedView = (CardView) v.getParent();
+                        mSelectedView = (CardView) v.getParent();
 
-                                                                 if (mINavigationDrawerMainCallbacks != null) {
-                                                                     mINavigationDrawerMainCallbacks.OnDrawerMainItemSelected(drawerViewHolder.getPosition());
-                                                                 }
-                                                             }
-                                                         }
+                        if (mINavigationDrawerCallback != null) {
+                            mINavigationDrawerCallback.onDrawerMainItemSelected(drawerViewHolder.getPosition());
+                        }
+                    }
+                }
         );
         return drawerViewHolder;
     }
@@ -76,10 +77,12 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
         drawerViewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
 
-        if (mSelectedPosition == i && mINavigationDrawerMainCallbacks != null) {
+        if (mSelectedPosition == i && mINavigationDrawerCallback != null) {
             mSelectedPosition = i;
             mSelectedView = drawerViewHolder.cardView;
-            ((CardView) mSelectedView).setCardBackgroundColor(AppExtension.getInstance().getResources().getColor(R.color.DrawerSelectedBackground));
+            ((CardView) mSelectedView).setCardBackgroundColor(
+                    AppExtension.getInstance().getResources().
+                            getColor(R.color.DrawerSelectedBackground));
         }
     }
 

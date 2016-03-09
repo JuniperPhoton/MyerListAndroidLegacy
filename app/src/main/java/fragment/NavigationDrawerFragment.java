@@ -5,8 +5,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,7 +25,7 @@ import activity.SettingActivity;
 import activity.StartActivity;
 import adapter.NavigationDrawerAdapter;
 import interfaces.IDrawerStatusChanged;
-import interfaces.INavigationDrawerMainCallbacks;
+import interfaces.INavigationDrawerCallback;
 import model.NavigationItemWithIcon;
 
 import com.juniperphoton.myerlistandroid.R;
@@ -37,14 +35,15 @@ import java.util.List;
 
 import util.AppExtension;
 import util.ConfigHelper;
+import util.CustomFontHelper;
 
-public class NavigationDrawerFragment extends Fragment implements INavigationDrawerMainCallbacks {
+public class NavigationDrawerFragment extends Fragment implements INavigationDrawerCallback {
 
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
-    private INavigationDrawerMainCallbacks mCallbacks;
+    private INavigationDrawerCallback mCallbacks;
 
     private IDrawerStatusChanged mDrawerStatusListener;
 
@@ -86,6 +85,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
         mUndoneTextView = (TextView) view.findViewById(R.id.undoneCount_textview);
+        CustomFontHelper.setCustomFont(mUndoneTextView,"fonts/AGENCYB.TTF",getActivity());
+
 
         //显示电子邮件
         mEmailView = (TextView) view.findViewById(R.id.account_block);
@@ -152,7 +153,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     }
 
     @Override
-    public void OnDrawerMainItemSelected(int position) {
+    public void onDrawerMainItemSelected(int position) {
         selectItem(position);
     }
 
@@ -182,7 +183,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
 
-                mDrawerStatusListener.OnDrawerStatusChanged(false);
+                mDrawerStatusListener.onDrawerStatusChanged(false);
             }
 
             @Override
@@ -196,7 +197,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-                mDrawerStatusListener.OnDrawerStatusChanged(true);
+                mDrawerStatusListener.onDrawerStatusChanged(true);
             }
         };
 
@@ -235,7 +236,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         mCurrentSelectedPosition = position;
 
         if (mCallbacks != null) {
-            mCallbacks.OnDrawerMainItemSelected(position);
+            mCallbacks.onDrawerMainItemSelected(position);
         }
 
         ((NavigationDrawerAdapter) mDrawerRecyclerView.getAdapter()).selectPosition(position);
@@ -251,8 +252,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         }
     }
 
-    public void updateRootBackgroundColor(int color){
-        if(mRootLayout!=null){
+    public void updateRootBackgroundColor(int color) {
+        if (mRootLayout != null) {
             mRootLayout.setBackgroundColor(color);
         }
     }
@@ -269,11 +270,11 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (INavigationDrawerMainCallbacks) activity;
+            mCallbacks = (INavigationDrawerCallback) activity;
             mDrawerStatusListener = (IDrawerStatusChanged) activity;
         }
         catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement INavigationDrawerMainCallbacks.");
+            throw new ClassCastException("Activity must implement INavigationDrawerCallback.");
         }
     }
 

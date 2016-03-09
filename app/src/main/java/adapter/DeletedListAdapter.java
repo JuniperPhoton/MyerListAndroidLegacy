@@ -18,11 +18,12 @@ import activity.MainActivity;
 import api.CloudServices;
 import fragment.DeletedItemFragment;
 import interfaces.IRequestCallback;
+import util.AppUtil;
 import util.ConfigHelper;
 import util.AppExtension;
 import util.SerializerHelper;
 import model.ToDo;
-import util.ToDoListRef;
+import util.ToDoListReference;
 
 
 public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.DeleteItemViewHolder> {
@@ -57,51 +58,53 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                 notifyItemRemoved(position);
 
                 if (mDeleteToDos.size() == 0) {
-                    mDeletedItemFragment.ShowNoItemHint();
+                    mDeletedItemFragment.showNoItemHint();
                 }
 
-                SerializerHelper.SerializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
             }
         });
         holder.mReDoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!ConfigHelper.ISOFFLINEMODE) {
-                    CloudServices.AddToDo(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
+                //非离线模式下，同步
+                if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
+                    CloudServices.addToDo(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
                             ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
-                            mDeleteToDos.get(position).getContent(), "0", 0,
+                            mDeleteToDos.get(position).getContent(),
+                            "0",
+                            0,
                             new IRequestCallback() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {
-                                    ((MainActivity)mCurrentActivity).OnReCreatedToDo(jsonObject);
+                                    ((MainActivity) mCurrentActivity).onReCreatedToDo(jsonObject);
                                 }
                             });
                 }
                 else {
-                    ToDoListRef.TodosList.add(ToDoListRef.TodosList.size(), mDeleteToDos.get(position));
+                    ToDoListReference.TodosList.add(ToDoListReference.TodosList.size(), mDeleteToDos.get(position));
                 }
 
                 mDeleteToDos.remove(currentToDo);
                 notifyItemRemoved(position);
 
                 if (mDeleteToDos.size() == 0) {
-                    mDeletedItemFragment.ShowNoItemHint();
+                    mDeletedItemFragment.showNoItemHint();
                 }
 
-                SerializerHelper.SerializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
-                SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListReference.TodosList, SerializerHelper.todosFileName);
             }
         });
     }
 
 
-    public void DeleteAll() {
+    public void deleteAll() {
         try {
-            //notifyItemRangeChanged(0, mDeleteToDos.size());
             notifyItemRangeRemoved(0, mDeleteToDos.size());
             mDeleteToDos.clear();
-            mDeletedItemFragment.ShowNoItemHint();
-            SerializerHelper.SerializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
+            mDeletedItemFragment.showNoItemHint();
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
         }
         catch (Exception e) {
             e.printStackTrace();

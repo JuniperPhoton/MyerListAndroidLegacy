@@ -36,7 +36,7 @@ import util.AppExtension;
 import util.FindRadioBtnHelper;
 import util.SerializerHelper;
 import model.ToDo;
-import util.ToDoListRef;
+import util.ToDoListReference;
 
 
 public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoItemViewHolder> implements View.OnTouchListener {
@@ -90,11 +90,14 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
     @Override
     public void onBindViewHolder(final ToDoItemViewHolder holder, final int position) {
         //设置文字
-        holder.textView.setText(mToDosToDisplay.get(position).getContent());
-        holder.id = mToDosToDisplay.get(position).getID();
+        ToDo currentToDo = mToDosToDisplay.get(position);
+        if (currentToDo == null) return;
+
+        holder.textView.setText(currentToDo.getContent());
+        holder.id = currentToDo.getID();
 
         //设置类别
-        final int cate = mToDosToDisplay.get(position).getCate();
+        final int cate = currentToDo.getCate();
         switch (cate) {
             case 0:
                 holder.cateImage.setImageResource(R.drawable.cate_default);
@@ -158,7 +161,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 notifyItemChanged(index);
 
                 if (!ConfigHelper.ISOFFLINEMODE) {
-                    CloudServices.UpdateContent(ConfigHelper.getString(mCurrentActivity, "sid"),
+                    CloudServices.updateContent(ConfigHelper.getString(mCurrentActivity, "sid"),
                             ConfigHelper.getString(mCurrentActivity, "access_token"),
                             targetID,
                             currentItem.getContent(),
@@ -166,12 +169,12 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                             new IRequestCallback() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {
-                                    ((MainActivity)mCurrentActivity).onUpdateContent(jsonObject);
+                                    ((MainActivity) mCurrentActivity).onUpdateContent(jsonObject);
                                 }
                             });
                 }
                 else {
-                    SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
+                    SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
                 }
             }
         });
@@ -187,7 +190,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         holder.deleteView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DeleteToDo(holder.getID());
+                deleteToDo(holder.getID());
             }
         });
 
@@ -212,11 +215,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                        int index = FindRadioBtnHelper.GetCateByRadioBtnID(i);
+                        int index = FindRadioBtnHelper.getCateByRadioBtnID(i);
                         cateAboutToModify = index;
                     }
                 });
-                int currentBtnID = FindRadioBtnHelper.GetRadioBtnIDByCate(cate);
+                int currentBtnID = FindRadioBtnHelper.getRadioBtnIDByCate(cate);
                 if (currentBtnID != 0) {
                     RadioButton btn = (RadioButton) radioGroup.findViewById(currentBtnID);
                     if (btn != null) radioGroup.check((currentBtnID));
@@ -249,7 +252,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                         notifyItemChanged(index);
 
                         if (!ConfigHelper.ISOFFLINEMODE) {
-                            CloudServices.UpdateContent(
+                            CloudServices.updateContent(
                                     ConfigHelper.getString(mCurrentActivity, "sid"),
                                     ConfigHelper.getString(mCurrentActivity, "access_token"),
                                     targetID, mNewMemoText.getText().toString(),
@@ -257,12 +260,12 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                                     new IRequestCallback() {
                                         @Override
                                         public void onResponse(JSONObject jsonObject) {
-                                            ((MainActivity)mCurrentActivity).onUpdateContent(jsonObject);
+                                            ((MainActivity) mCurrentActivity).onUpdateContent(jsonObject);
                                         }
                                     });
                         }
                         else {
-                            SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
+                            SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
                         }
                     }
                 });
@@ -302,27 +305,27 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         holder.relativeLayout.scrollTo(0, 0);
     }
 
-    public void SetCanChangeCate(boolean canChange) {
+    public void setCanChangeCate(boolean canChange) {
         mCanChangeCate = canChange;
     }
 
-    public void AddToDo(ToDo todoToAdd) {
+    public void addToDo(ToDo todoToAdd) {
         if (todoToAdd == null) return;
 
         if (ConfigHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
             //mToDosToDisplay.add(todoToAdd);
             notifyItemInserted(mToDosToDisplay.size() - 1);
-            ToDoListRef.TodosList.add(todoToAdd);
+            ToDoListReference.TodosList.add(todoToAdd);
         }
         else {
             //mToDosToDisplay.add(0, todoToAdd);
             notifyItemInserted(0);
-            ToDoListRef.TodosList.add(0, todoToAdd);
+            ToDoListReference.TodosList.add(0, todoToAdd);
         }
-        SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
+        SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
     }
 
-    public void DeleteToDo(String id) {
+    public void deleteToDo(String id) {
         int index = 0;
         ToDo todoToDelete = null;
         for (int i = 0; i < mToDosToDisplay.size(); i++) {
@@ -334,27 +337,27 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             }
         }
         if (todoToDelete != null)
-            DeleteToDo(index, todoToDelete);
+            deleteToDo(index, todoToDelete);
     }
 
-    private void DeleteToDo(int index, ToDo todoToDelete) {
+    private void deleteToDo(int index, ToDo todoToDelete) {
         notifyItemRemoved(index);
         mToDosToDisplay.remove(todoToDelete);
 
-        ToDoListRef.DeletedList.add(0, todoToDelete);
-        SerializerHelper.SerializeToFile(AppExtension.getInstance(), ToDoListRef.DeletedList, SerializerHelper.deletedFileName);
+        ToDoListReference.DeletedList.add(0, todoToDelete);
+        SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListReference.DeletedList, SerializerHelper.deletedFileName);
 
         if (ConfigHelper.ISOFFLINEMODE) {
-            SerializerHelper.SerializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
+            SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
         }
         else
-            CloudServices.SetDelete(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
+            CloudServices.setDelete(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
                     ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
                     todoToDelete.getID(),
                     new IRequestCallback() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
-                            ((MainActivity)mCurrentActivity).onDelete(jsonObject);
+                            ((MainActivity) mCurrentActivity).onDelete(jsonObject);
                         }
                     });
     }
@@ -364,7 +367,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         return mToDosToDisplay != null ? mToDosToDisplay.size() : 0;
     }
 
-    public ArrayList<ToDo> GetListSrc() {
+    public ArrayList<ToDo> getListSrc() {
         return mToDosToDisplay;
     }
 
@@ -394,35 +397,35 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 v.scrollBy(-dx, 0);
 
                 if (scrollLeft < -20) {
-                    mCurrentFragment.DisableRefresh();
+                    mCurrentFragment.disableRefresh();
                 }
 
                 lastX = (int) event.getRawX();
 
                 if (scrollLeft < -150 && !mIsInGreen) {
-                    PlayColorChangeAnimation((ImageView) root.findViewById(R.id.greenImageView), true);
+                    playColorChangeAnimation((ImageView) root.findViewById(R.id.greenImageView), true);
                 }
                 else if (scrollLeft > 150 && !mIsInRed) {
-                    PlayColorChangeAnimation((ImageView) root.findViewById(R.id.redImageView), false);
+                    playColorChangeAnimation((ImageView) root.findViewById(R.id.redImageView), false);
                 }
 
                 break;
             case MotionEvent.ACTION_UP:
 
-                OnMoveComplete(v, v.getScrollX(), id);
+                onMoveComplete(v, v.getScrollX(), id);
 
                 break;
 
             case MotionEvent.ACTION_CANCEL:
 
-                OnMoveComplete(v, v.getScrollX(), id);
+                onMoveComplete(v, v.getScrollX(), id);
                 break;
         }
 
         return false;
     }
 
-    private void OnMoveComplete(View v, float scrollLeft, String id) {
+    private void onMoveComplete(View v, float scrollLeft, String id) {
         int index = 0;
         for (int i = 0; i < mToDosToDisplay.size(); i++) {
             ToDo s = mToDosToDisplay.get(i);
@@ -449,35 +452,35 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             }
 
             if (!ConfigHelper.ISOFFLINEMODE) {
-                CloudServices.SetDone(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
+                CloudServices.setDone(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
                         ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
                         id,
                         mCurrentToDo.getIsDone() ? "1" : "0",
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
-                                ((MainActivity)mCurrentActivity).OnSetDone(jsonObject);
+                                ((MainActivity) mCurrentActivity).onSetDone(jsonObject);
                             }
                         });
             }
         }
         //Delete
         else if (scrollLeft > 150) {
-            DeleteToDo(mCurrentToDo.getID());
+            deleteToDo(mCurrentToDo.getID());
         }
 
         if (mIsInGreen) {
-            PlayFadebackAnimation((ImageView) v.findViewById(R.id.greenImageView), true);
+            playFadebackAnimation((ImageView) v.findViewById(R.id.greenImageView), true);
         }
         else if (mIsInRed) {
-            PlayFadebackAnimation((ImageView) v.findViewById(R.id.redImageView), false);
+            playFadebackAnimation((ImageView) v.findViewById(R.id.redImageView), false);
         }
 
-        PlayGoBackAnimation(v, scrollLeft);
-        SerializerHelper.SerializeToFile(AppExtension.getInstance(), mToDosToDisplay, SerializerHelper.todosFileName);
+        playGoBackAnimation(v, scrollLeft);
+        SerializerHelper.serializeToFile(AppExtension.getInstance(), mToDosToDisplay, SerializerHelper.todosFileName);
     }
 
-    private void PlayGoBackAnimation(final View v, final float left) {
+    private void playGoBackAnimation(final View v, final float left) {
         ValueAnimator valueAnimator = ValueAnimator.ofInt((int) left, 0);
         valueAnimator.setDuration(700);
         valueAnimator.setInterpolator(new DecelerateInterpolator());
@@ -486,7 +489,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
                 if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10) {
-                    mCurrentFragment.EnableRefresh();
+                    mCurrentFragment.enableRefresh();
                     mIsSwiping = false;
                 }
             }
@@ -494,7 +497,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         valueAnimator.start();
     }
 
-    private void PlayColorChangeAnimation(final ImageView v, boolean isGreen) {
+    private void playColorChangeAnimation(final ImageView v, boolean isGreen) {
         v.setAlpha(1f);
         AnimationSet animationSet = new AnimationSet(false);
 
@@ -525,7 +528,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             mIsInRed = true;
     }
 
-    private void PlayFadebackAnimation(final ImageView v, final boolean isGreen) {
+    private void playFadebackAnimation(final ImageView v, final boolean isGreen) {
         AnimationSet animationSet = new AnimationSet(false);
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
         alphaAnimation.setDuration(700);

@@ -23,12 +23,6 @@ import moe.feng.material.statusbar.StatusBarCompat;
 
 public class StartActivity extends AppCompatActivity {
     private LinearLayout mRootLinearLayout;
-    private ImageView mLogoImageView;
-    private LinearLayout mTitleTextView;
-    private TextView mSubTitleTextView;
-    private Button mLoginBtnView;
-    private Button mRegisterBtnView;
-    private Button mOfflineBtnView;
     private ImageView mMaskView;
 
     @Override

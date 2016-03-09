@@ -55,7 +55,7 @@
     <string name="login_success">Login successfully</string>
     <string name="rebootHint">Roboot app to make it work</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="version_value">2.41</string>
+    <string name="version_value">3.0.0</string>
     <string name="now_to_login">Now to login</string>
     <string name="user_dont_exist">User do not exist</string>
     <string name="fail_to_login">Fail to login :-(</string>
@@ -89,4 +89,17 @@
     <string name="appwidget_text">appwidget_text</string>
     <string name="add_widget">appwidget_text</string>
     <string name="undone_hint">Left</string>
+    <string name="hint_input_email">Please input email</string>
+    <string name="hint_wrong_psd">Wrong password</string>
+    <string name="hint_email_not_exist">Account not existed</string>
+    <string name="hint_email_not_invalid">Invalid email</string>
+    <string name="hint_input_psd">Please input password</string>
+    <string name="hint_input_repsd">Please confirm your passwords</string>
+    <string name="hint_psd_not_match">Confirm your passwords matched</string>
+    <string name="hint_email_exist">The email has been registered</string>
+    <string name="hint_login_successfully">Successfully logined :P</string>
+    <string name="hint_login_fail">Failed to login</string>
+    <string name="hint_register_fail">Failed to register</string>
+    <string name="hint_request_fail">Failed to send request,please check your internet</string>
+
 </resources>

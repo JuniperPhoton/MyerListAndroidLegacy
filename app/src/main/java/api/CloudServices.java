@@ -21,15 +21,16 @@ import util.NetworkSecurityHelper;
  * Created by dengw on 3/4/2016.
  */
 public class CloudServices {
-    public static void CheckExist(final String email,final IRequestCallback callback) {
+    public static void checkExist(final String email, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
-        com.loopj.android.http.RequestParams requestParams = new com.loopj.android.http.RequestParams();
+        RequestParams requestParams = new RequestParams();
         requestParams.add("email", email);
         client.post(UrlHelper.UserCheckExist, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
             }
+
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
                 callback.onResponse(null);
@@ -37,15 +38,16 @@ public class CloudServices {
         });
     }
 
-    public static void GetSalt(String email, final IRequestCallback callback) {
+    public static void getSalt(String email, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
-        com.loopj.android.http.RequestParams params = new com.loopj.android.http.RequestParams();
+        RequestParams params = new RequestParams();
         params.put("email", email);
         client.post(UrlHelper.UserGetSalt, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
             }
+
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
                 callback.onResponse(null);
@@ -53,7 +55,7 @@ public class CloudServices {
         });
     }
 
-    public static void Register(final String email, final String password, final IRequestCallback callback) {
+    public static void register(final String email, final String password, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
         com.loopj.android.http.RequestParams params = new com.loopj.android.http.RequestParams();
 
@@ -74,11 +76,11 @@ public class CloudServices {
         });
     }
 
-    public static void Login(final String email, final String password,
+    public static void login(final String email, final String password,
                              final String salt, final IRequestCallback callback)
             throws NoSuchAlgorithmException {
         AsyncHttpClient client = new AsyncHttpClient();
-        com.loopj.android.http.RequestParams params = new com.loopj.android.http.RequestParams();
+        RequestParams params = new RequestParams();
 
         String psAfterMD5 = NetworkSecurityHelper.get32MD5Str(password);
         String psToPost = NetworkSecurityHelper.get32MD5Str(psAfterMD5 + salt);
@@ -91,6 +93,7 @@ public class CloudServices {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
             }
+
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
                 callback.onResponse(object);
@@ -98,9 +101,10 @@ public class CloudServices {
         });
     }
 
-    public static void GetLatestSchedules(final String sid, final String access_token, final IRequestCallback callback) {
+    public static void getLatestSchedules(final String sid, final String access_token, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
-        com.loopj.android.http.RequestParams params = new com.loopj.android.http.RequestParams();
+        client.setConnectTimeout(2000);
+        RequestParams params = new RequestParams();
         params.put("sid", sid);
 
         client.post(UrlHelper.ScheduleGetUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
@@ -112,12 +116,11 @@ public class CloudServices {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
-
             }
         });
     }
 
-    public static void GetListOrder(String sid,String access_token,final IRequestCallback callback){
+    public static void getListOrder(String sid, String access_token, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
         com.loopj.android.http.RequestParams params = new com.loopj.android.http.RequestParams();
         params.put("sid", sid);
@@ -126,6 +129,7 @@ public class CloudServices {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
             }
+
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
                 callback.onResponse(null);
@@ -133,7 +137,7 @@ public class CloudServices {
         });
     }
 
-    public static void AddToDo(String sid, String content,final String access_token, String isDone,
+    public static void addToDo(String sid, String content, final String access_token, String isDone,
                                int cate, final IRequestCallback callback) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -161,7 +165,7 @@ public class CloudServices {
 
     }
 
-    public static void SetListOrder(String sid,String access_token, String order,final IRequestCallback callback) {
+    public static void setListOrder(String sid, String access_token, String order, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
         com.loopj.android.http.RequestParams params = new com.loopj.android.http.RequestParams();
         params.put("sid", sid);
@@ -171,6 +175,7 @@ public class CloudServices {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 callback.onResponse(null);
@@ -178,7 +183,7 @@ public class CloudServices {
         });
     }
 
-    public static void SetDone(String sid,String access_token, String id, String isDone,final IRequestCallback callback) {
+    public static void setDone(String sid, String access_token, String id, String isDone, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("id", id);
@@ -188,6 +193,7 @@ public class CloudServices {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 callback.onResponse(null);
@@ -196,7 +202,7 @@ public class CloudServices {
         });
     }
 
-    public static void SetDelete(String sid,String access_token, String id,final IRequestCallback callback) {
+    public static void setDelete(String sid, String access_token, String id, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
         com.loopj.android.http.RequestParams params = new com.loopj.android.http.RequestParams();
         params.put("id", id);
@@ -205,6 +211,7 @@ public class CloudServices {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 callback.onResponse(null);
@@ -212,7 +219,7 @@ public class CloudServices {
         });
     }
 
-    public static void UpdateContent(String sid,String access_token, String id, String content, int cate,final IRequestCallback callback) {
+    public static void updateContent(String sid, String access_token, String id, String content, int cate, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
         com.loopj.android.http.RequestParams params = new com.loopj.android.http.RequestParams();
         params.put("id", id);
@@ -223,6 +230,40 @@ public class CloudServices {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
             }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                callback.onResponse(null);
+            }
+        });
+    }
+
+    public static void getCates(String sid, String access_token, final IRequestCallback callback) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        client.get(UrlHelper.UserGetCateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                callback.onResponse(response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                callback.onResponse(null);
+            }
+        });
+    }
+
+    public static void updateCates(String sid, String access_token, String content, final IRequestCallback callback) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.add("cate_info",content);
+        client.post(UrlHelper.UserGetCateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                callback.onResponse(response);
+            }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 callback.onResponse(null);

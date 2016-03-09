@@ -24,8 +24,7 @@ import util.AppExtension;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
 
-public class SettingActivity extends AppCompatActivity
-{
+public class SettingActivity extends AppCompatActivity {
     private com.rey.material.widget.Switch mShowKeyboardSwitch;
     private com.rey.material.widget.Switch mAddToBottomSwitch;
     private com.rey.material.widget.Switch mHandHobbitSwitch;
@@ -34,22 +33,19 @@ public class SettingActivity extends AppCompatActivity
     private ImageView mMaskView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         StatusBarCompat.setUpActivity(this);
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-        {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
         setContentView(R.layout.activity_setting);
 
         mMaskView = (ImageView) findViewById(R.id.activity_setting_mask);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-        {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             mMaskView.setVisibility(View.GONE);
         }
 
@@ -73,27 +69,21 @@ public class SettingActivity extends AppCompatActivity
 
         //找到语言
         final String langStr = ConfigHelper.getString(AppExtension.getInstance(), "Language");
-        if (langStr.equals("Chinese"))
-        {
+        if (langStr.equals("Chinese")) {
             mLangText.setText(getString(R.string.chinese));
         }
         else
             mLangText.setText("English");
 
-        mLangText.setOnClickListener(new View.OnClickListener()
-        {
+        mLangText.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                 builder.setTitle(getString(R.string.change_lang));
-                builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)}, langStr.equals("Chinese") ? 1 : 0, new DialogInterface.OnClickListener()
-                {
+                builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)}, langStr.equals("Chinese") ? 1 : 0, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
-                        if (i == 1)
-                        {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (i == 1) {
                             Resources resources = getResources();
                             Configuration config = resources.getConfiguration();
                             DisplayMetrics dm = resources.getDisplayMetrics();
@@ -101,8 +91,7 @@ public class SettingActivity extends AppCompatActivity
                             resources.updateConfiguration(config, dm);
                             ConfigHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
                         }
-                        else
-                        {
+                        else {
                             Resources resources = getResources();
                             Configuration config = resources.getConfiguration();
                             DisplayMetrics dm = resources.getDisplayMetrics();
@@ -122,19 +111,15 @@ public class SettingActivity extends AppCompatActivity
         });
 
         mLogoutBtn = (TextView) findViewById(R.id.logout_text);
-        mLogoutBtn.setOnClickListener(new View.OnClickListener()
-        {
+        mLogoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                 builder.setTitle(R.string.logout_title);
                 builder.setMessage(R.string.logout_content);
-                builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener()
-                {
+                builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         ConfigHelper.putBoolean(getApplicationContext(), "offline_mode", false);
                         ConfigHelper.DeleteKey(getApplicationContext(), "email");
                         ConfigHelper.DeleteKey(getApplicationContext(), "salt");
@@ -144,11 +129,9 @@ public class SettingActivity extends AppCompatActivity
                         startActivity(intent);
                     }
                 });
-                builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener()
-                {
+                builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
 
                     }
@@ -158,32 +141,26 @@ public class SettingActivity extends AppCompatActivity
         });
 
         //开关改变的时候
-        mShowKeyboardSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener()
-        {
+        mShowKeyboardSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
-            {
+            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
                 ConfigHelper.putBoolean(AppExtension.getInstance(), "ShowKeyboard", b);
             }
         });
 
-        mAddToBottomSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener()
-        {
+        mAddToBottomSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
-            {
+            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
                 ConfigHelper.putBoolean(AppExtension.getInstance(), "AddToBottom", b);
             }
 
         });
 
-        mHandHobbitSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener()
-        {
+        mHandHobbitSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
-            {
+            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
                 ConfigHelper.putBoolean(AppExtension.getInstance(), "HandHobbit", b);
-                ToastService.ShowShortToast(getResources().getString(R.string.rebootHint));
+                ToastService.showShortToast(getResources().getString(R.string.rebootHint));
             }
         });
 
@@ -191,16 +168,14 @@ public class SettingActivity extends AppCompatActivity
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
     }
 
     @Override
 
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
     }

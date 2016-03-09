@@ -13,7 +13,7 @@ public class ConfigHelper {
     public static boolean ISOFFLINEMODE = true;
     public static boolean ISLOADLISTONCE = false;
 
-    public static void ConfigAppSetting() {
+    public static void configAppSetting() {
         if (!checkKey(AppExtension.getInstance(), "ShowKeyboard")) {
             putBoolean(AppExtension.getInstance(), "ShowKeyboard", true);
         }

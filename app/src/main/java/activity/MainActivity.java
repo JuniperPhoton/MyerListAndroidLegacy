@@ -758,12 +758,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     public void onReCreatedToDo(JSONObject response) {
         onAddedResponse(response);
         mDeletedItemFragment.setupListData(ToDoListReference.DeletedList);
-        if (ToDoListReference.DeletedList.size() == 0) {
-            mDeletedItemFragment.showNoItemHint();
-        }
-        else {
-            mDeletedItemFragment.hideNoItemHint();
-        }
     }
 
     public void onInitial() {

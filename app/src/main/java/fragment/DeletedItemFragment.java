@@ -76,6 +76,7 @@ public class DeletedItemFragment extends Fragment {
             }
         });
         mNoItemHintLayout = (LinearLayout) view.findViewById(R.id.no_deleteditem_layout);
+        setupListData(ToDoListReference.DeletedList);
 
         return view;
     }
@@ -85,10 +86,13 @@ public class DeletedItemFragment extends Fragment {
         ToDoListReference.DeletedList = data;
         mDeletedToDos = data;
 
-        mDeletedListRecyclerView.setAdapter(new DeletedListAdapter(mActivity, this, data));
+        mDeletedListRecyclerView.setAdapter(new DeletedListAdapter(mActivity, this, mDeletedToDos));
 
-        if (data.size() == 0) {
-            showNoItemHint();
+        if (ToDoListReference.DeletedList.size() == 0) {
+            this.showNoItemHint();
+        }
+        else {
+            this.hideNoItemHint();
         }
     }
 

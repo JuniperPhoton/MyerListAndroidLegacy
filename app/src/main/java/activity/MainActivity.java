@@ -23,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.myerlistandroid.R;
 
 import api.CloudServices;
@@ -44,6 +46,7 @@ import org.json.JSONObject;
 
 import fragment.ToDoFragment;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -329,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         }
         catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -408,66 +411,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                     }
                 }, 333);
             }
-        }
-        //Android 5.0 以下
-        else {
-//            View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_adding_pane, (ViewGroup) this.findViewById(R.id.dialog_title));
-//
-//            TextView titleText = (TextView) dialogView.findViewById(R.id.dialog_title_text);
-//            titleText.setText(getResources().getString(R.string.new_memo_title));
-//
-//            mEditedText = (EditText) dialogView.findViewById(R.id.newMemoEdit);
-//            mEditedText.setHint(R.string.new_memo_hint);
-//
-//            mAddingCateRadioGroupLegacy = (RadioGroup) dialogView.findViewById(R.id.add_pane_radio_legacy);
-//            mAddingCateRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(RadioGroup radioGroup, int i) {
-//                    int index = FindRadioBtnHelper.getCateByRadioBtnID(i);
-//                    mCateAboutToAdd = index;
-//                }
-//            });
-//
-//            Button okBtn = (Button) dialogView.findViewById(R.id.add_ok_btn);
-//            okBtn.setText(R.string.ok_btn);
-//            okBtn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    okclick(view);
-//                }
-//            });
-//
-//            Button cancelBtn = (Button) dialogView.findViewById(R.id.add_cancel_btn);
-//            cancelBtn.setText(R.string.cancel_btn);
-//            cancelBtn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    cancelClick(view);
-//                }
-//            });
-//
-//            if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
-//                LinearLayout linearLayout = (LinearLayout) dialogView.findViewById(R.id.dialog_btn_layout);
-//                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//                layoutParams.setMargins(20, 0, 0, 0);
-//                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//                linearLayout.setLayoutParams(layoutParams);
-//            }
-//
-//            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//            mDialog = builder.setView((dialogView)).show();
-//
-//            if (ConfigHelper.getBoolean(AppExtension.getInstance(), "ShowKeyboard")) {
-//                mEditedText.requestFocus();
-//                Timer timer = new Timer();
-//                timer.schedule(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        InputMethodManager inputMethodManager = (InputMethodManager) mEditedText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                        inputMethodManager.showSoftInput(mEditedText, 0);
-//                    }
-//                }, 333);
-//            }
         }
     }
 
@@ -761,20 +704,29 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     public void onInitial() {
-        //先序列化回来
-        ArrayList<ToDo> list = SerializerHelper.deSerializeFromFile(this, SerializerHelper.todosFileName);
-        if (list != null) {
-            ToDoListReference.TodosList = list;
+        try {
+            Type type=new TypeToken<ArrayList<ToDo>>(){}.getType();
+            //先序列化回来
+            ArrayList<ToDo> list = SerializerHelper.deSerializeFromFile(
+                    type, this, SerializerHelper.todosFileName);
+
+            if (list != null) {
+                ToDoListReference.TodosList = list;
+            }
+            //已经登陆了
+            if (!ConfigHelper.ISOFFLINEMODE) {
+                mToDoFragment.UpdateData(ToDoListReference.TodosList);
+                syncList();
+            }
+            //离线模式
+            else {
+                mToDoFragment.UpdateData(ToDoListReference.TodosList);
+            }
         }
-        //已经登陆了
-        if (!ConfigHelper.ISOFFLINEMODE) {
-            mToDoFragment.UpdateData(ToDoListReference.TodosList);
-            syncList();
+        catch (Exception e){
+
         }
-        //离线模式
-        else {
-            mToDoFragment.UpdateData(ToDoListReference.TodosList);
-        }
+
     }
 
     @Override

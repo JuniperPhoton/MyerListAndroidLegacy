@@ -24,18 +24,26 @@ import activity.AboutActivity;
 import activity.SettingActivity;
 import activity.StartActivity;
 import adapter.NavigationDrawerAdapter;
+import api.CloudServices;
+import exception.APIException;
 import interfaces.IDrawerStatusChanged;
 import interfaces.INavigationDrawerCallback;
+import interfaces.IRequestCallback;
 import model.NavigationItemWithIcon;
 
 import com.juniperphoton.myerlistandroid.R;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import model.ToDo;
+import model.ToDoCategory;
 import util.AppExtension;
 import util.ConfigHelper;
 import util.CustomFontHelper;
+import util.SerializerHelper;
 
 public class NavigationDrawerFragment extends Fragment implements INavigationDrawerCallback {
 
@@ -66,6 +74,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     private TextView mUndoneTextView;
 
+    private ArrayList<ToDoCategory> mCatesList;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +96,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
         mUndoneTextView = (TextView) view.findViewById(R.id.undoneCount_textview);
         CustomFontHelper.setCustomFont(mUndoneTextView,"fonts/AGENCYB.TTF",getActivity());
-
 
         //显示电子邮件
         mEmailView = (TextView) view.findViewById(R.id.account_block);
@@ -110,16 +119,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         mDrawerRecyclerView.setLayoutManager(layoutManager);
         mDrawerRecyclerView.setHasFixedSize(true);
 
-        //获得类别列表
-        final List<NavigationItemWithIcon> navigationItemWithIcons = getCateList();
-
-        NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(navigationItemWithIcons);
-        adapter.setNavigationDrawerCallbacks(this);
-        mDrawerRecyclerView.setAdapter(adapter);
-
-        //默认项是所有待办事项
-        selectItem(mCurrentSelectedPosition);
-
         //显示设置/关于
         mSettingsLayout = (LinearLayout) view.findViewById(R.id.drawer_settings_layout);
         mAboutLayout = (LinearLayout) view.findViewById(R.id.drawer_about_layout);
@@ -137,6 +136,9 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                 startActivity(intent);
             }
         });
+
+        syncCatesOrDefault();
+
         return view;
     }
 
@@ -201,7 +203,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
             }
         };
 
-
         if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
@@ -255,6 +256,40 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     public void updateRootBackgroundColor(int color) {
         if (mRootLayout != null) {
             mRootLayout.setBackgroundColor(color);
+        }
+    }
+
+    public void syncCatesOrDefault() {
+        if(ConfigHelper.ISOFFLINEMODE)
+        CloudServices.getCates(ConfigHelper.getString(getActivity(), "sid"),
+                ConfigHelper.getString(getActivity(), "access_token"), new IRequestCallback() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        onGotNewestCates(jsonObject);
+                    }
+                });
+    }
+
+    private void restoreCatesFromCache(){
+        //SerializerHelper.<ArrayList<ToDo>>deSerializeFromFile(getActivity(),SerializerHelper.catesFileName);
+    }
+
+    private void onGotNewestCates(JSONObject response) {
+        try {
+            if (response == null) throw new APIException();
+
+            //获得类别列表
+            final List<NavigationItemWithIcon> navigationItemWithIcons = getCateList();
+
+            NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(navigationItemWithIcons);
+            adapter.setNavigationDrawerCallbacks(this);
+            mDrawerRecyclerView.setAdapter(adapter);
+
+            //默认项是所有待办事项
+            selectItem(mCurrentSelectedPosition);
+        }
+        catch (APIException e) {
+
         }
     }
 

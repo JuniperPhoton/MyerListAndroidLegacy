@@ -1,5 +1,8 @@
 package util;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import model.ToDo;
@@ -15,11 +18,19 @@ public class ToDoListReference {
         DeletedList = new ArrayList<>();
         StagedList = new ArrayList<>();
 
-        ArrayList<ToDo> deletedContent = SerializerHelper.deSerializeFromFile(AppExtension.getInstance(), SerializerHelper.deletedFileName);
+        Type type = new TypeToken<ArrayList<ToDo>>() {}.getType();
+
+        ArrayList<ToDo> deletedContent = SerializerHelper.deSerializeFromFile(
+                type,
+                AppExtension.getInstance(),
+                SerializerHelper.deletedFileName);
         if (deletedContent != null) {
             DeletedList = deletedContent;
         }
-        ArrayList<ToDo> stagedContent = SerializerHelper.deSerializeFromFile(AppExtension.getInstance(), SerializerHelper.stagedFileName);
+        ArrayList<ToDo> stagedContent = SerializerHelper.deSerializeFromFile(
+                type,
+                AppExtension.getInstance(),
+                SerializerHelper.stagedFileName);
         if (stagedContent != null) {
             StagedList = stagedContent;
         }

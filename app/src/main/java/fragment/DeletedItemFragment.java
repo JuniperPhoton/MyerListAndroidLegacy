@@ -86,7 +86,7 @@ public class DeletedItemFragment extends Fragment {
         ToDoListReference.DeletedList = data;
         mDeletedToDos = data;
 
-        mDeletedListRecyclerView.setAdapter(new DeletedListAdapter(mActivity, this, mDeletedToDos));
+        mDeletedListRecyclerView.setAdapter(new DeletedListAdapter(mActivity, this, data));
 
         if (ToDoListReference.DeletedList.size() == 0) {
             this.showNoItemHint();

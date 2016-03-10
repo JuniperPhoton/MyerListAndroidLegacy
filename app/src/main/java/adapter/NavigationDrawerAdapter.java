@@ -114,5 +114,4 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
             selectRectImage = (ImageView) itemView.findViewById(R.id.item_select);
         }
     }
-
 }

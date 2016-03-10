@@ -18,6 +18,7 @@ public class SerializerHelper {
     public static final String todosFileName = "MyTodos.txt";
     public static final String deletedFileName = "Deleted.txt";
     public static final String stagedFileName = "Staged.txt";
+    public static final String catesFileName="Cates.txt";
 
     public static void serializeToFile(Context context, Object o, String fileName) {
         try {
@@ -34,7 +35,7 @@ public class SerializerHelper {
         }
     }
 
-    public static ArrayList<ToDo> deSerializeFromFile(Context context, String fileName) {
+    public static <T> T deSerializeFromFile(Type type,Context context, String fileName) {
         try {
             FileInputStream inputStream = context.openFileInput(fileName);
             byte[] bytes = new byte[1024];
@@ -47,16 +48,12 @@ public class SerializerHelper {
             inputStream.close();
             byteArrayOutputStream.close();
 
-            Gson gson = new Gson();
             GsonBuilder builder = new GsonBuilder();
-            gson = builder.enableComplexMapKeySerialization().create();
-            Type listType = new TypeToken<ArrayList<ToDo>>() {
-            }.getType();
+            Gson gson = builder.enableComplexMapKeySerialization().create();
 
-            ArrayList<ToDo> list = gson.fromJson(byteArrayOutputStream.toString(), listType);
+            T result = gson.fromJson(byteArrayOutputStream.toString(), type);
 
-            return list;
-
+            return result;
         }
         catch (Exception e) {
             e.printStackTrace();

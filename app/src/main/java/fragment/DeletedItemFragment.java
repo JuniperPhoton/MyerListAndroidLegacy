@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import activity.MainActivity;
 import adapter.DeletedListAdapter;
 import model.ToDo;
-import util.ToDoListReference;
+import util.ToDoListGlobalLocator;
 
 
 public class DeletedItemFragment extends Fragment {
@@ -76,19 +76,19 @@ public class DeletedItemFragment extends Fragment {
             }
         });
         mNoItemHintLayout = (LinearLayout) view.findViewById(R.id.no_deleteditem_layout);
-        setupListData(ToDoListReference.DeletedList);
+        setupListData(ToDoListGlobalLocator.DeletedList);
 
         return view;
     }
 
 
     public void setupListData(ArrayList<ToDo> data) {
-        ToDoListReference.DeletedList = data;
+        ToDoListGlobalLocator.DeletedList = data;
         mDeletedToDos = data;
 
         mDeletedListRecyclerView.setAdapter(new DeletedListAdapter(mActivity, this, data));
 
-        if (ToDoListReference.DeletedList.size() == 0) {
+        if (ToDoListGlobalLocator.DeletedList.size() == 0) {
             this.showNoItemHint();
         }
         else {

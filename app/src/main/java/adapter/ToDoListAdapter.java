@@ -31,18 +31,19 @@ import activity.MainActivity;
 import api.CloudServices;
 import fragment.ToDoFragment;
 import interfaces.IRequestCallback;
+import model.ToDoCategory;
 import util.ConfigHelper;
 import util.AppExtension;
 import util.FindRadioBtnHelper;
 import util.SerializerHelper;
 import model.ToDo;
-import util.ToDoListReference;
+import util.ToDoListGlobalLocator;
+import view.DrawView;
 
 
 public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoItemViewHolder> implements View.OnTouchListener {
     //能否操作列表项目
     private boolean mIsEnable = true;
-    private boolean mCanChangeCate = true;
 
     //当前所在的 Activity
     private Activity mCurrentActivity;
@@ -97,87 +98,22 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         holder.id = currentToDo.getID();
 
         //设置类别
-        final int cate = currentToDo.getCate();
-        switch (cate) {
-            case 0:
-                holder.cateImage.setImageResource(R.drawable.cate_default);
-                break;
-            case 1:
-                holder.cateImage.setImageResource(R.drawable.cate_work);
-                break;
-            case 2:
-                holder.cateImage.setImageResource(R.drawable.cate_life);
-                break;
-            case 3:
-                holder.cateImage.setImageResource(R.drawable.cate_family);
-                break;
-            case 4:
-                holder.cateImage.setImageResource(R.drawable.cate_enter);
-                break;
+        final int cateID = currentToDo.getCate();
+        ToDoCategory category = ToDoListGlobalLocator.GetCategoryByID(cateID);
+
+        if(cateID==0){
+            holder.cateCircle.setEllipseColor(AppExtension.getInstance().
+                    getResources().getColor(R.color.MyerListBlue));
         }
-
-        holder.cateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (!mCanChangeCate) return;
-
-                String targetID = holder.getID();
-                int index = 0;
-
-                //根据ID 找到项目
-                for (int i = 0; i < mToDosToDisplay.size(); i++) {
-                    ToDo s = mToDosToDisplay.get(i);
-                    if (s.getID().equals(targetID)) {
-                        index = i;
-                        break;
-                    }
-                }
-
-                ToDo currentItem = mToDosToDisplay.get(index);
-                int cate = currentItem.getCate();
-                currentItem.setCate(++cate);
-                if (cate >= 5)
-                    currentItem.setCate(0);
-                switch (currentItem.getCate()) {
-                    case 0:
-                        holder.cateImage.setImageResource(R.drawable.cate_default);
-                        break;
-                    case 1:
-                        holder.cateImage.setImageResource(R.drawable.cate_work);
-                        break;
-                    case 2:
-                        holder.cateImage.setImageResource(R.drawable.cate_life);
-                        break;
-                    case 3:
-                        holder.cateImage.setImageResource(R.drawable.cate_family);
-                        break;
-                    case 4:
-                        holder.cateImage.setImageResource(R.drawable.cate_enter);
-                        break;
-                }
-
-                //要notify UI 才会更新
-                notifyItemChanged(index);
-
-                if (!ConfigHelper.ISOFFLINEMODE) {
-                    CloudServices.updateContent(ConfigHelper.getString(mCurrentActivity, "sid"),
-                            ConfigHelper.getString(mCurrentActivity, "access_token"),
-                            targetID,
-                            currentItem.getContent(),
-                            cate,
-                            new IRequestCallback() {
-                                @Override
-                                public void onResponse(JSONObject jsonObject) {
-                                    ((MainActivity) mCurrentActivity).onUpdateContent(jsonObject);
-                                }
-                            });
-                }
-                else {
-                    SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
-                }
+        else {
+            if(category!=null){
+                holder.cateCircle.setEllipseColor(category.getColor());
             }
-        });
+            else{
+                holder.cateCircle.setEllipseColor(AppExtension.getInstance().
+                        getResources().getColor(R.color.MyerListBlue));
+            }
+        }
 
         holder.setID(mToDosToDisplay.get(position).getID());
 
@@ -219,7 +155,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                         cateAboutToModify = index;
                     }
                 });
-                int currentBtnID = FindRadioBtnHelper.getRadioBtnIDByCate(cate);
+                int currentBtnID = FindRadioBtnHelper.getRadioBtnIDByCate(cateID);
                 if (currentBtnID != 0) {
                     RadioButton btn = (RadioButton) radioGroup.findViewById(currentBtnID);
                     if (btn != null) radioGroup.check((currentBtnID));
@@ -305,22 +241,18 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         holder.relativeLayout.scrollTo(0, 0);
     }
 
-    public void setCanChangeCate(boolean canChange) {
-        mCanChangeCate = canChange;
-    }
-
     public void addToDo(ToDo todoToAdd) {
         if (todoToAdd == null) return;
 
         if (ConfigHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
             //mToDosToDisplay.add(todoToAdd);
             notifyItemInserted(mToDosToDisplay.size() - 1);
-            ToDoListReference.TodosList.add(todoToAdd);
+            ToDoListGlobalLocator.TodosList.add(todoToAdd);
         }
         else {
             //mToDosToDisplay.add(0, todoToAdd);
             notifyItemInserted(0);
-            ToDoListReference.TodosList.add(0, todoToAdd);
+            ToDoListGlobalLocator.TodosList.add(0, todoToAdd);
         }
         SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
     }
@@ -344,8 +276,8 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         notifyItemRemoved(index);
         mToDosToDisplay.remove(todoToDelete);
 
-        ToDoListReference.DeletedList.add(0, todoToDelete);
-        SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListReference.DeletedList, SerializerHelper.deletedFileName);
+        ToDoListGlobalLocator.DeletedList.add(0, todoToDelete);
+        SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.DeletedList, SerializerHelper.deletedFileName);
 
         if (ConfigHelper.ISOFFLINEMODE) {
             SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
@@ -564,8 +496,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         public RelativeLayout relativeLayout;
         public ImageView greenImageView;
         public ImageView redImageView;
-        public ImageView cateImage;
-        public RelativeLayout cateBtn;
+        public DrawView cateCircle;
 
         public ToDoItemViewHolder(View itemView) {
             super(itemView);
@@ -575,8 +506,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             redImageView = (ImageView) itemView.findViewById(R.id.redImageView);
             deleteView = (ImageView) itemView.findViewById(R.id.deleteView);
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.todo_layout);
-            cateBtn = (RelativeLayout) itemView.findViewById(R.id.cateBtn);
-            cateImage = (ImageView) itemView.findViewById(R.id.cateImage);
+            cateCircle = (DrawView) itemView.findViewById(R.id.cateCircle);
         }
 
         public String getID() {

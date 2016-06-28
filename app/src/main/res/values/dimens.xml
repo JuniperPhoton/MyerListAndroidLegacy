@@ -6,7 +6,7 @@
     <dimen name="button_elevation_material">3dp</dimen>
     <dimen name="email_z_index">2dp</dimen>
     <dimen name="card_z_index">1dp</dimen>
-    <dimen name="navigation_drawer_width">240dp</dimen>
+    <dimen name="navigation_drawer_width">290dp</dimen>
     <dimen name="toolbar_elevation">5dp</dimen>
     <dimen name="statusbar_elevation">4dp</dimen>
 

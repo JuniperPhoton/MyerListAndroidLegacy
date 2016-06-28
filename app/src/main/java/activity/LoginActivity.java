@@ -297,7 +297,12 @@ public class LoginActivity extends AppCompatActivity {
                             });
                 }
             }
-            else throw new APIException();
+            else {
+                double code=response.getDouble("error_code");
+                if(code==203){
+                    ToastService.showShortToast(getResources().getString(R.string.hint_email_exist));
+                }
+            }
         }
         catch (APIException e) {
             ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));

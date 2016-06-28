@@ -12,13 +12,13 @@ public class ToDoCategory {
     public static String ModifiedCateJsonStringFore = "{ \"modified\":true, \"cates\":";
 
     private String name;
-    private int id;
-    private Color color;
+    private int mid;
+    private int mcolor;
 
-    public ToDoCategory(String name,int id,Color color) {
+    public ToDoCategory(String name,int id,int color) {
         this.name=name;
-        this.id=id;
-        this.color=color;
+        this.mid=id;
+        this.mcolor=color;
     }
 
     public String getName(){
@@ -26,10 +26,10 @@ public class ToDoCategory {
     }
 
     public int getID(){
-        return this.id;
+        return this.mid;
     }
 
-    public Color getColor(){
-        return this.color;
+    public int getColor(){
+        return this.mcolor;
     }
 }

@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -23,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.myerlistandroid.R;
 
@@ -31,6 +29,7 @@ import api.CloudServices;
 import exception.APIException;
 import interfaces.INavigationDrawerCallback;
 import interfaces.IRequestCallback;
+import model.ToDoCategory;
 import util.FindRadioBtnHelper;
 import interfaces.IDrawerStatusChanged;
 import fragment.DeletedItemFragment;
@@ -57,7 +56,7 @@ import util.AppExtension;
 import adapter.ToDoListAdapter;
 import util.SerializerHelper;
 import model.ToDo;
-import util.ToDoListReference;
+import util.ToDoListGlobalLocator;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
 
@@ -81,8 +80,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private RadioGroup mAddingCateRadioGroup;
     private RadioGroup mAddingCateRadioGroupLegacy;
 
-    private int mCurrentCate = 0;
-    private int mCateAboutToAdd = 0;
+    private int mCurrentCateID = 0;
+    private int mCateIDAboutToAdd = 0;
 
     private ToDo mToDoAboutToAdded;
     private boolean misAddingStagedItems = false;
@@ -107,21 +106,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         String access_token = ConfigHelper.getString(this, "access_token");
         boolean offline = ConfigHelper.getBoolean(this, "offline_mode");
 
-        ConfigHelper.ISOFFLINEMODE = offline;
-
-        //还没有登录/进入离线模式，回到 StartActivity
-        if (!offline && access_token == null) {
-            ConfigHelper.ISOFFLINEMODE = false;
-            Intent intent = new Intent(this, StartActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                    Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-        else if (access_token != null) {
+        if (access_token != null) {
             initialFragment(savedInstanceState, true);
-        }
-        else {
+        } else {
             ConfigHelper.ISOFFLINEMODE = true;
             mNavigationDrawerFragment.setupOfflineMode();
             initialFragment(savedInstanceState, false);
@@ -141,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 int index = FindRadioBtnHelper.getCateByRadioBtnID(i);
-                mCateAboutToAdd = index;
+                mCateIDAboutToAdd = index;
                 updateAddingPaneColor(index);
             }
         });
@@ -162,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mOKBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                okclick(v);
+                okClick(v);
             }
         });
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -185,29 +172,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     //根据选中的颜色改变抽屉的背景色
-    private void updateAddingPaneColor(int i) {
+    private void updateAddingPaneColor(int cateID) {
         if (mAddingPaneLayout == null) return;
-        switch (i) {
-            case 0: {
-                mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
-            }
-            break;
-            case 1: {
-                mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.WorkColor));
-            }
-            break;
-            case 2: {
-                mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.LifeColor));
-            }
-            break;
-            case 3: {
-                mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.FamilyColor));
-            }
-            break;
-            case 4: {
-                mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.EnterColor));
-            }
-            break;
+        ToDoCategory category = ToDoListGlobalLocator.GetCategoryByID(cateID);
+        if (category.getID() != -2) {
+            mAddingPaneLayout.setBackgroundColor(category.getColor());
         }
     }
 
@@ -226,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             //登录了的，马上同步
             if (logined) {
                 mToDoFragment.showRefreshing();
-                syncList();
+                syncCateAndList();
             }
             //没有网络
             if (!AppUtil.isNetworkAvailable(getApplicationContext())) {
@@ -234,9 +203,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
             //暂存区有待办事项的，同步到云端
             if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
-                if (ToDoListReference.StagedList == null) return;
+                if (ToDoListGlobalLocator.StagedList == null) return;
                 misAddingStagedItems = true;
-                for (ToDo todo : ToDoListReference.StagedList) {
+                for (ToDo todo : ToDoListGlobalLocator.StagedList) {
                     CloudServices.addToDo(ConfigHelper.getString(this, "sid"),
                             ConfigHelper.getString(this, "access_token"),
                             todo.getContent(), "0", todo.getCate(),
@@ -247,9 +216,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                                 }
                             });
                 }
-                ToDoListReference.StagedList.clear();
+                ToDoListGlobalLocator.StagedList.clear();
                 SerializerHelper.serializeToFile(AppExtension.getInstance(),
-                        ToDoListReference.StagedList,
+                        ToDoListGlobalLocator.StagedList,
                         SerializerHelper.stagedFileName);
             }
         }
@@ -257,93 +226,55 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     //抽屉选中一个项的时候
     @Override
-    public void onDrawerMainItemSelected(int position) {
-        mCurrentCate = position;
-        mCateAboutToAdd = position;
+    public void onDrawerMainItemSelected(int cateID) {
+        mCurrentCateID = cateID;
+        mCateIDAboutToAdd = cateID;
 
-        RadioButton radioButton = (RadioButton) findViewById(FindRadioBtnHelper.getRadioBtnIDByCate(mCateAboutToAdd));
+        RadioButton radioButton = (RadioButton) findViewById(
+                FindRadioBtnHelper.getRadioBtnIDByCate(mCateIDAboutToAdd));
 
         if (radioButton != null) {
             mAddingCateRadioGroup.check(radioButton.getId());
         }
 
-        updateAddingPaneColor(position);
+        updateAddingPaneColor(cateID);
+        ToDoCategory category = ToDoListGlobalLocator.GetCategoryByID(cateID);
 
         try {
-            switch (position) {
-                case 0: {
-                    if (mToDoFragment == null) {
-                        mToDoFragment = new ToDoFragment();
-                    }
-
-                    updateListByCate();
-
-                    mToolbar.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
-                    mToolbar.setTitle(getResources().getString(R.string.cate_default));
-
-                    mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
-                    mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.MyerListBlue));
+            if (cateID == 0) {
+                if (mToDoFragment == null) {
+                    mToDoFragment = new ToDoFragment();
                 }
-                break;
-                case 1: {
-                    updateListByCate();
-                    mToolbar.setBackgroundColor(getResources().getColor(R.color.WorkColor));
-                    mToolbar.setTitle(getResources().getString(R.string.cate_work));
-                    mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.WorkColor));
-                    mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.WorkColor));
 
-                }
-                break;
-                case 2: {
-                    updateListByCate();
-                    mToolbar.setBackgroundColor(getResources().getColor(R.color.LifeColor));
-                    mToolbar.setTitle(getResources().getString(R.string.cate_life));
-                    mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.LifeColor));
-                    mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.LifeColor));
+                mToolbar.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
+                mToolbar.setTitle(getResources().getString(R.string.cate_default));
 
-                }
-                break;
-                case 3: {
-                    updateListByCate();
-                    mToolbar.setBackgroundColor(getResources().getColor(R.color.FamilyColor));
-                    mToolbar.setTitle(getResources().getString(R.string.cate_family));
-                    mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.FamilyColor));
-                    mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.FamilyColor));
-
-                }
-                break;
-                case 4: {
-                    updateListByCate();
-                    mToolbar.setBackgroundColor(getResources().getColor(R.color.EnterColor));
-                    mToolbar.setTitle(getResources().getString(R.string.cate_enter));
-                    mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.EnterColor));
-                    mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.EnterColor));
-
-                }
-                break;
-                case 5: {
-                    switchToDeleteFragment();
-                    mToolbar.setBackgroundColor(getResources().getColor(R.color.DeletedColor));
-                    mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.DeletedColor));
-                    mToolbar.setTitle(getResources().getString(R.string.deleteditems));
-                }
-                break;
+                mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
+                mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.MyerListBlue));
+            } else if (cateID == -1) {
+                switchToDeleteFragment();
+                mToolbar.setBackgroundColor(getResources().getColor(R.color.DeletedColor));
+                mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.DeletedColor));
+                mToolbar.setTitle(getResources().getString(R.string.deleteditems));
+            } else {
+                mToolbar.setBackgroundColor(category.getColor());
+                mNavigationDrawerFragment.updateRootBackgroundColor(category.getColor());
+                mToolbar.setTitle(category.getName());
             }
-
-        }
-        catch (Exception e) {
+            updateListByCategory();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void updateListByCate() {
-        if (mCurrentCate == 5) return;
+    public void updateListByCategory() {
+        if (mCurrentCateID == -1 || mCurrentCateID==-2) return;
 
         ArrayList<ToDo> newList = new ArrayList<>();
-        if (mCurrentCate == 0) newList = ToDoListReference.TodosList;
+        if (mCurrentCateID == 0) newList = ToDoListGlobalLocator.TodosList;
         else {
-            for (ToDo todo : ToDoListReference.TodosList) {
-                if (todo.getCate() == mCurrentCate) {
+            for (ToDo todo : ToDoListGlobalLocator.TodosList) {
+                if (todo.getCate() == mCurrentCateID) {
                     newList.add(todo);
                 }
             }
@@ -361,14 +292,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment)
                     .commitAllowingStateLoss();
 
-            mToDoFragment.UpdateData(newList);
-
-            ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
-            if (adapter != null) {
-                if (mCurrentCate != 0)
-                    adapter.setCanChangeCate(false);
-                else adapter.setCanChangeCate(true);
-            }
+            mToDoFragment.updateData(newList);
         }
     }
 
@@ -443,6 +367,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     //从服务器同步列表，并排序
+    public void syncCateAndList() {
+        mNavigationDrawerFragment.syncCatesOrDefault();
+    }
+
     public void syncList() {
         CloudServices.getLatestSchedules(ConfigHelper.getString(this, "sid"),
                 ConfigHelper.getString(this, "access_token"), new IRequestCallback() {
@@ -453,8 +381,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 });
     }
 
+
     //添加面板点击确认
-    public void okclick(View v) {
+    public void okClick(View v) {
         if (mDialog != null) {
             mDialog.dismiss();
         }
@@ -466,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         newToAdd.setContent(mEditedText.getText().toString());
         newToAdd.setIsDone(false);
         newToAdd.setID(java.util.UUID.randomUUID().toString());
-        newToAdd.setCate(mCateAboutToAdd);
+        newToAdd.setCate(mCateIDAboutToAdd);
 
         mToDoAboutToAdded = newToAdd;
 
@@ -478,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         else {
             CloudServices.addToDo(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
                     ConfigHelper.getString(this, "access_token"),
-                    mEditedText.getText().toString(), "0", mCateAboutToAdd,
+                    mEditedText.getText().toString(), "0", mCateIDAboutToAdd,
                     new IRequestCallback() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
@@ -505,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 
         mEditedText.setText("");
-        mCateAboutToAdd = mCurrentCate;
+        mCateIDAboutToAdd = mCurrentCateID;
     }
 
     public void setIsAddStagedItems(boolean value) {
@@ -534,12 +463,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                             });
                 }
             }
-        }
-        catch (APIException e) {
+        } catch (APIException e) {
             e.printStackTrace();
             ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -552,20 +479,18 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             if (isSuccess) {
                 String orderStr = response.getJSONArray(("OrderList")).getJSONObject(0).getString("list_order");
                 ArrayList<ToDo> listInOrder = ToDo.setOrderByString(originalList, orderStr);
-                ToDoListReference.TodosList = listInOrder;
-                mToDoFragment.UpdateData(listInOrder);
+                ToDoListGlobalLocator.TodosList = listInOrder;
+                mToDoFragment.updateData(listInOrder);
 
                 ToastService.showShortToast(getResources().getString(R.string.Synced));
 
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListReference.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.TodosList, SerializerHelper.todosFileName);
 
-                updateListByCate();
+                updateListByCategory();
             }
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
-        }
-        catch (APIException e) {
+        } catch (APIException e) {
             e.printStackTrace();
             ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
         }
@@ -589,22 +514,19 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                                 onUpdateOrder(jsonObject);
                             }
                         });
-            }
-            else {
+            } else {
                 if (mToDoAboutToAdded != null) {
-                    ToDoListReference.StagedList.add(mToDoAboutToAdded);
-                    SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListReference.StagedList, SerializerHelper.stagedFileName);
+                    ToDoListGlobalLocator.StagedList.add(mToDoAboutToAdded);
+                    SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.StagedList, SerializerHelper.stagedFileName);
                 }
-                ToDoListReference.TodosList.add(mToDoAboutToAdded);
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListReference.TodosList, SerializerHelper.todosFileName);
+                ToDoListGlobalLocator.TodosList.add(mToDoAboutToAdded);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.TodosList, SerializerHelper.todosFileName);
 
             }
             mToDoAboutToAdded = null;
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
-        }
-        catch (APIException e) {
+        } catch (APIException e) {
             e.printStackTrace();
             ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
         }
@@ -616,10 +538,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         ToastService.showShortToast(getResources().getString(R.string.add_success));
 
-        updateListByCate();
+        updateListByCategory();
 
         if (misAddingStagedItems) {
-            syncList();
+            syncCateAndList();
         }
     }
 
@@ -631,11 +553,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             if (isSuccess) {
 
             }
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
-        }
-        catch (APIException e) {
+        } catch (APIException e) {
             e.printStackTrace();
             ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
         }
@@ -647,14 +567,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             boolean isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
+            } else {
             }
-            else {
-            }
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
-        }
-        catch (APIException e) {
+        } catch (APIException e) {
             e.printStackTrace();
             ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
         }
@@ -666,14 +583,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             boolean isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
+            } else {
             }
-            else {
-            }
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
-        }
-        catch (APIException e) {
+        } catch (APIException e) {
             e.printStackTrace();
             ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
         }
@@ -685,14 +599,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             boolean isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
+            } else {
             }
-            else {
-            }
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
-        }
-        catch (APIException e) {
+        } catch (APIException e) {
             e.printStackTrace();
             ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
         }
@@ -700,30 +611,30 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     public void onReCreatedToDo(JSONObject response) {
         onAddedResponse(response);
-        mDeletedItemFragment.setupListData(ToDoListReference.DeletedList);
+        mDeletedItemFragment.setupListData(ToDoListGlobalLocator.DeletedList);
     }
 
     public void onInitial() {
         try {
-            Type type=new TypeToken<ArrayList<ToDo>>(){}.getType();
+            Type type = new TypeToken<ArrayList<ToDo>>() {
+            }.getType();
             //先序列化回来
             ArrayList<ToDo> list = SerializerHelper.deSerializeFromFile(
                     type, this, SerializerHelper.todosFileName);
 
             if (list != null) {
-                ToDoListReference.TodosList = list;
+                ToDoListGlobalLocator.TodosList = list;
             }
             //已经登陆了
             if (!ConfigHelper.ISOFFLINEMODE) {
-                mToDoFragment.UpdateData(ToDoListReference.TodosList);
-                syncList();
+                mToDoFragment.updateData(ToDoListGlobalLocator.TodosList);
+                syncCateAndList();
             }
             //离线模式
             else {
-                mToDoFragment.UpdateData(ToDoListReference.TodosList);
+                mToDoFragment.updateData(ToDoListGlobalLocator.TodosList);
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -759,11 +670,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     public void onBackPressed() {
         if (mNavigationDrawerFragment.isDrawerOpen()) {
             mNavigationDrawerFragment.closeDrawer();
-        }
-        else if (isAddingPaneShown) {
+        } else if (isAddingPaneShown) {
             hideAddingPane();
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }

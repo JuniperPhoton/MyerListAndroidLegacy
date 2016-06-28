@@ -6,12 +6,27 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import model.ToDo;
+import model.ToDoCategory;
 
 
-public class ToDoListReference {
+public class ToDoListGlobalLocator {
     public static ArrayList<ToDo> TodosList;
     public static ArrayList<ToDo> DeletedList;
     public static ArrayList<ToDo> StagedList;
+    public static ArrayList<ToDoCategory> CategoryList;
+
+    public static ToDoCategory GetCategoryByID(int id){
+        ToDoCategory foundCate=null;
+        if(CategoryList==null){
+            return foundCate;
+        }
+        for(ToDoCategory cate:CategoryList){
+            if(cate.getID()==id){
+                foundCate=cate;
+            }
+        }
+        return foundCate;
+    }
 
     public static void restoreData() {
         TodosList = new ArrayList<>();

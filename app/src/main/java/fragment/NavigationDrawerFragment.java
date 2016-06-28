@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import activity.AboutActivity;
+import activity.MainActivity;
 import activity.SettingActivity;
 import activity.StartActivity;
 import adapter.NavigationDrawerAdapter;
@@ -29,21 +31,20 @@ import exception.APIException;
 import interfaces.IDrawerStatusChanged;
 import interfaces.INavigationDrawerCallback;
 import interfaces.IRequestCallback;
-import model.NavigationItemWithIcon;
 
 import com.juniperphoton.myerlistandroid.R;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import model.ToDo;
 import model.ToDoCategory;
 import util.AppExtension;
 import util.ConfigHelper;
 import util.CustomFontHelper;
-import util.SerializerHelper;
+import util.ToDoListGlobalLocator;
+import util.ToastService;
 
 public class NavigationDrawerFragment extends Fragment implements INavigationDrawerCallback {
 
@@ -92,8 +93,14 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
+        View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        initViews(view);
+
+        return view;
+    }
+
+    private void initViews(View view){
         mUndoneTextView = (TextView) view.findViewById(R.id.undoneCount_textview);
         CustomFontHelper.setCustomFont(mUndoneTextView,"fonts/AGENCYB.TTF",getActivity());
 
@@ -138,8 +145,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         });
 
         syncCatesOrDefault();
-
-        return view;
     }
 
     public boolean isDrawerOpen() {
@@ -159,14 +164,18 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         selectItem(position);
     }
 
-    public List<NavigationItemWithIcon> getCateList() {
-        List<NavigationItemWithIcon> items = new ArrayList<>();
-        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_default), getResources().getDrawable(R.drawable.cate_default)));
-        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_work), getResources().getDrawable(R.drawable.cate_work)));
-        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_life), getResources().getDrawable(R.drawable.cate_life)));
-        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_family), getResources().getDrawable(R.drawable.cate_family)));
-        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_enter), getResources().getDrawable(R.drawable.cate_enter)));
-        items.add(new NavigationItemWithIcon(getResources().getString(R.string.deleteditems), getResources().getDrawable(R.drawable.cate_deleted)));
+    private ArrayList<ToDoCategory> getDefaultCateList() {
+        ArrayList<ToDoCategory> items = new ArrayList<>();
+//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_default),Color.BLUE));
+//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_work), Color.RED));
+//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_life),
+//                getResources().getColor(R.drawable.cate_life)));
+//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_family),
+//                getResources().getColor(R.drawable.cate_family)));
+//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_enter),
+//                getResources().getColor(R.drawable.cate_enter)));
+//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.deleteditems),
+//                getResources().getColor(R.drawable.cate_deleted)));
         return items;
     }
 
@@ -235,9 +244,10 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     public void selectItem(int position) {
         mCurrentSelectedPosition = position;
+        ToDoCategory category = ToDoListGlobalLocator.CategoryList.get(position);
 
         if (mCallbacks != null) {
-            mCallbacks.onDrawerMainItemSelected(position);
+            mCallbacks.onDrawerMainItemSelected(category.getID());
         }
 
         ((NavigationDrawerAdapter) mDrawerRecyclerView.getAdapter()).selectPosition(position);
@@ -260,14 +270,15 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     }
 
     public void syncCatesOrDefault() {
-        if(ConfigHelper.ISOFFLINEMODE)
-        CloudServices.getCates(ConfigHelper.getString(getActivity(), "sid"),
-                ConfigHelper.getString(getActivity(), "access_token"), new IRequestCallback() {
-                    @Override
-                    public void onResponse(JSONObject jsonObject) {
-                        onGotNewestCates(jsonObject);
-                    }
-                });
+        if(!ConfigHelper.ISOFFLINEMODE){
+            CloudServices.getCates(ConfigHelper.getString(getActivity(), "sid"),
+                    ConfigHelper.getString(getActivity(), "access_token"), new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            onGotNewestCates(jsonObject);
+                        }
+                    });
+        }
     }
 
     private void restoreCatesFromCache(){
@@ -278,17 +289,52 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         try {
             if (response == null) throw new APIException();
 
-            //获得类别列表
-            final List<NavigationItemWithIcon> navigationItemWithIcons = getCateList();
+            boolean isOK=response.getBoolean("isSuccessed");
+            if(!isOK){
+                throw new APIException();
+            }
+            String cateInfo=response.getString("Cate_Info");
+            JSONObject cateJson=new JSONObject(cateInfo);
 
-            NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(navigationItemWithIcons);
+            ArrayList<ToDoCategory> categoryList;
+            boolean isModified=cateJson.getBoolean("modified");
+            if(!isModified){
+                categoryList=getDefaultCateList();
+            }
+            else{
+                categoryList=new ArrayList<>();
+                JSONArray array = cateJson.getJSONArray("cates");
+                for(int i=0;i<array.length();i++){
+                    JSONObject cateObj=array.getJSONObject(i);
+                    String name=cateObj.getString("name");
+                    String color=cateObj.getString("color");
+                    int id=cateObj.getInt("id");
+
+                    ToDoCategory category=new ToDoCategory(name,id, Color.parseColor(color));
+                    categoryList.add(category);
+                }
+                categoryList.add(0,
+                        new ToDoCategory("All",0,getResources().getColor(R.color.MyerListBlue)));
+                categoryList.add(categoryList.size(),
+                        new ToDoCategory("Deleted",0,getResources().getColor(R.color.DeletedColor)));
+                categoryList.add(categoryList.size(),
+                        new ToDoCategory("Personalization",0,getResources().getColor(R.color.MyerListBlueDark)));
+            }
+            ToDoListGlobalLocator.CategoryList =categoryList;
+
+            NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(categoryList);
             adapter.setNavigationDrawerCallbacks(this);
             mDrawerRecyclerView.setAdapter(adapter);
 
             //默认项是所有待办事项
             selectItem(mCurrentSelectedPosition);
+
+            ((MainActivity)mCallbacks).syncList();
         }
         catch (APIException e) {
+            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+        }
+        catch (Exception e){
 
         }
     }

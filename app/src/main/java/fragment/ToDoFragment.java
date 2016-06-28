@@ -27,7 +27,7 @@ import util.ConfigHelper;
 import util.AppExtension;
 import adapter.ToDoListAdapter;
 import util.SerializerHelper;
-import util.ToDoListReference;
+import util.ToDoListGlobalLocator;
 import model.ToDo;
 
 public class ToDoFragment extends Fragment {
@@ -105,7 +105,7 @@ public class ToDoFragment extends Fragment {
         return view;
     }
 
-    public void ShowNoItemHint(boolean show) {
+    public void showNoItemHint(boolean show) {
         if (show) {
             mNoItemLayout.setVisibility(View.VISIBLE);
         }
@@ -114,15 +114,15 @@ public class ToDoFragment extends Fragment {
         }
     }
 
-    public void UpdateData(ArrayList<ToDo> data) {
+    public void updateData(ArrayList<ToDo> data) {
         mMyToDos = data;
         if (mToDoRecyclerView != null) {
             mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMyToDos, mActivity, this));
             stopRefreshing();
             if (data.size() == 0)
-                ShowNoItemHint(true);
+                showNoItemHint(true);
             else
-                ShowNoItemHint(false);
+                showNoItemHint(false);
         }
     }
 
@@ -152,12 +152,12 @@ public class ToDoFragment extends Fragment {
     }
 
     public void getAllSchedules() {
-        ((MainActivity) mActivity).syncList();
+        ((MainActivity) mActivity).syncCateAndList();
 
         if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
-            if (ToDoListReference.StagedList == null) return;
+            if (ToDoListGlobalLocator.StagedList == null) return;
             ((MainActivity) mActivity).setIsAddStagedItems(true);
-            for (ToDo todo : ToDoListReference.StagedList) {
+            for (ToDo todo : ToDoListGlobalLocator.StagedList) {
                 CloudServices.addToDo(
                         ConfigHelper.getString(AppExtension.getInstance(), "sid"),
                         ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
@@ -171,8 +171,8 @@ public class ToDoFragment extends Fragment {
                             }
                         });
             }
-            ToDoListReference.StagedList.clear();
-            SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListReference.StagedList, SerializerHelper.stagedFileName);
+            ToDoListGlobalLocator.StagedList.clear();
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.StagedList, SerializerHelper.stagedFileName);
         }
     }
 

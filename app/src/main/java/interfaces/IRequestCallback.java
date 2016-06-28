@@ -11,6 +11,5 @@ import model.ToDo;
  * Created by dengw on 10/5/2015.
  */
 public interface IRequestCallback {
-
     void onResponse(JSONObject jsonObject);
 }

@@ -23,7 +23,7 @@ import util.ConfigHelper;
 import util.AppExtension;
 import util.SerializerHelper;
 import model.ToDo;
-import util.ToDoListReference;
+import util.ToDoListGlobalLocator;
 
 
 public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.DeleteItemViewHolder> {
@@ -82,7 +82,7 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                             });
                 }
                 else {
-                    ToDoListReference.TodosList.add(ToDoListReference.TodosList.size(), mDeleteToDos.get(position));
+                    ToDoListGlobalLocator.TodosList.add(ToDoListGlobalLocator.TodosList.size(), mDeleteToDos.get(position));
                 }
 
                 mDeleteToDos.remove(currentToDo);
@@ -93,7 +93,7 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                 }
 
                 SerializerHelper.serializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListReference.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.TodosList, SerializerHelper.todosFileName);
             }
         });
     }

@@ -159,11 +159,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         return mDrawerLayout;
     }
 
-    @Override
-    public void onDrawerMainItemSelected(int position) {
-        selectItem(position);
-    }
-
     private ArrayList<ToDoCategory> getDefaultCateList() {
         ArrayList<ToDoCategory> items = new ArrayList<>();
 //        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_default),Color.BLUE));
@@ -238,16 +233,11 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         });
     }
 
-    public int getCurrentSelectedPosition() {
-        return mCurrentSelectedPosition;
-    }
-
-    public void selectItem(int position) {
+    private void selectItem(int position) {
         mCurrentSelectedPosition = position;
-        ToDoCategory category = ToDoListGlobalLocator.CategoryList.get(position);
 
         if (mCallbacks != null) {
-            mCallbacks.onDrawerMainItemSelected(category.getID());
+            mCallbacks.onDrawerMainItemSelected(position);
         }
 
         ((NavigationDrawerAdapter) mDrawerRecyclerView.getAdapter()).selectPosition(position);
@@ -327,7 +317,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
             mDrawerRecyclerView.setAdapter(adapter);
 
             //默认项是所有待办事项
-            selectItem(mCurrentSelectedPosition);
+            selectItem(0);
 
             ((MainActivity)mCallbacks).syncList();
         }
@@ -375,5 +365,10 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mActionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onDrawerMainItemSelected(int position) {
+        selectItem(position);
     }
 }

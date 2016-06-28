@@ -226,9 +226,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     //抽屉选中一个项的时候
     @Override
-    public void onDrawerMainItemSelected(int cateID) {
-        mCurrentCateID = cateID;
-        mCateIDAboutToAdd = cateID;
+    public void onDrawerMainItemSelected(int position) {
+        ToDoCategory category = ToDoListGlobalLocator.CategoryList.get(position);
+        mCurrentCateID = category.getID();
+        mCateIDAboutToAdd = category.getID();
 
         RadioButton radioButton = (RadioButton) findViewById(
                 FindRadioBtnHelper.getRadioBtnIDByCate(mCateIDAboutToAdd));
@@ -237,11 +238,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             mAddingCateRadioGroup.check(radioButton.getId());
         }
 
-        updateAddingPaneColor(cateID);
-        ToDoCategory category = ToDoListGlobalLocator.GetCategoryByID(cateID);
+        updateAddingPaneColor(category.getID());
 
         try {
-            if (cateID == 0) {
+            if (category.getID() == 0) {
                 if (mToDoFragment == null) {
                     mToDoFragment = new ToDoFragment();
                 }
@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
                 mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
                 mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.MyerListBlue));
-            } else if (cateID == -1) {
+            } else if (category.getID() == -1) {
                 switchToDeleteFragment();
                 mToolbar.setBackgroundColor(getResources().getColor(R.color.DeletedColor));
                 mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.DeletedColor));

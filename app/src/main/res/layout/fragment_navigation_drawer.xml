@@ -81,7 +81,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100sp"
+        android:layout_marginBottom="70sp"
         android:layout_marginTop="260sp"
         android:orientation="vertical">
 

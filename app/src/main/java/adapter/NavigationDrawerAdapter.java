@@ -57,17 +57,16 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
                         //上一个选中的变为透明色
                         if (mSelectedCardView != null) {
-                            ((CardView) mSelectedCardView).setCardBackgroundColor(Color.TRANSPARENT);
+                            mSelectedCardView.setCardBackgroundColor(Color.TRANSPARENT);
                         }
 
                         mSelectedCardView = (CardView) view.getParent();
-                        mSelectedCardView.setCardBackgroundColor(AppExtension.getInstance().getResources().
-                                getColor(R.color.DrawerSelectedBackground));
+//                        mSelectedCardView.setCardBackgroundColor(AppExtension.getInstance().getResources().
+//                                getColor(R.color.DrawerSelectedBackground));
 
                         if (mINavigationDrawerCallback != null) {
-                            ToDoCategory category = ToDoListGlobalLocator.CategoryList.
-                                    get(drawerViewHolder.getAdapterPosition());
-                            mINavigationDrawerCallback.onDrawerMainItemSelected(category.getID());
+
+                            mINavigationDrawerCallback.onDrawerMainItemSelected(mSelectedPosition);
                         }
                     }
                 }
@@ -81,13 +80,12 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         drawerViewHolder.textView.setText(mData.get(i).getName());
         drawerViewHolder.cateView.setEllipseColor(mData.get(i).getColor());
 
-//        if (mSelectedPosition == i && mINavigationDrawerCallback != null) {
-//            mSelectedPosition = i;
-//            mSelectedCardView = drawerViewHolder.cardView;
-//            ((CardView) mSelectedCardView).setCardBackgroundColor(
-//                    AppExtension.getInstance().getResources().
-//                            getColor(R.color.DrawerSelectedBackground));
-//        }
+        if (mSelectedPosition == i && mINavigationDrawerCallback != null) {
+            mSelectedCardView = drawerViewHolder.cardView;
+            mSelectedCardView.setCardBackgroundColor(
+                    AppExtension.getInstance().getResources().
+                            getColor(R.color.DrawerSelectedBackground));
+        }
     }
 
     public void selectPosition(int position) {

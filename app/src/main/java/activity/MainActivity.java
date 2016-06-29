@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.myerlistandroid.R;
@@ -30,7 +31,6 @@ import exception.APIException;
 import interfaces.INavigationDrawerCallback;
 import interfaces.IRequestCallback;
 import model.ToDoCategory;
-import util.FindRadioBtnHelper;
 import interfaces.IDrawerStatusChanged;
 import fragment.DeletedItemFragment;
 import fragment.NavigationDrawerFragment;
@@ -59,6 +59,7 @@ import model.ToDo;
 import util.ToDoListGlobalLocator;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
+import view.CircleRadioButton;
 
 public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback,
         IDrawerStatusChanged {
@@ -76,9 +77,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private Button mCancelBtn;
 
     private LinearLayout mAddingPaneLayout;
+    private TextView mAddingCateHintTextView;
 
     private RadioGroup mAddingCateRadioGroup;
-    private RadioGroup mAddingCateRadioGroupLegacy;
 
     private int mCurrentCateID = 0;
     private int mCateIDAboutToAdd = 0;
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         PgyCrashManager.register(this);
 
-        initialViews();
+        initViews();
 
         String access_token = ConfigHelper.getString(this, "access_token");
         boolean offline = ConfigHelper.getBoolean(this, "offline_mode");
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     //找到需要初始化的控件
-    private void initialViews() {
+    private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
 
@@ -126,14 +127,17 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mAddingCateRadioGroup = (RadioGroup) findViewById(R.id.add_pane_radio);
         mAddingCateRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                int index = FindRadioBtnHelper.getCateByRadioBtnID(i);
-                mCateIDAboutToAdd = index;
-                updateAddingPaneColor(index);
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                RadioButton button = (RadioButton)radioGroup.findViewById(checkedId);
+                ToDoCategory category = ToDoListGlobalLocator.CategoryList.get(radioGroup.indexOfChild(button));
+                mCateIDAboutToAdd = category.getID();
+                updateAddingPaneColorByCateId(category.getID());
+                mAddingCateHintTextView.setText(category.getName());
             }
         });
 
-        mAddingPaneLayout = (LinearLayout) findViewById(R.id.fragment_todo_adding_pane);
+        mAddingCateHintTextView=(TextView)findViewById(R.id.fragment_adding_pane_cate_textView);
+        mAddingPaneLayout = (LinearLayout) findViewById(R.id.main_a_adding_panel);
         mAddingPaneLayout.setOnTouchListener(new View.OnTouchListener() {
             //防止触控穿透
             @Override
@@ -172,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     //根据选中的颜色改变抽屉的背景色
-    private void updateAddingPaneColor(int cateID) {
+    private void updateAddingPaneColorByCateId(int cateID) {
         if (mAddingPaneLayout == null) return;
         ToDoCategory category = ToDoListGlobalLocator.GetCategoryByID(cateID);
         if (category.getID() != -2) {
@@ -224,6 +228,18 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
     }
 
+    private void updateRatioButtons(){
+        mAddingCateRadioGroup.removeAllViews();
+        for(ToDoCategory category:ToDoListGlobalLocator.CategoryList){
+            if(category.getID()==-1 || category.getID()==-2) continue;
+            CircleRadioButton circleRadioButton=new CircleRadioButton(this);
+            circleRadioButton.setCircleColor(category.getColor());
+            circleRadioButton.setLeft(5);
+            mAddingCateRadioGroup.addView(circleRadioButton);
+        }
+        mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(0).getId());
+    }
+
     //抽屉选中一个项的时候
     @Override
     public void onDrawerMainItemSelected(int position) {
@@ -231,14 +247,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mCurrentCateID = category.getID();
         mCateIDAboutToAdd = category.getID();
 
-        RadioButton radioButton = (RadioButton) findViewById(
-                FindRadioBtnHelper.getRadioBtnIDByCate(mCateIDAboutToAdd));
-
+        RadioButton radioButton = (RadioButton)mAddingCateRadioGroup.getChildAt(position);
         if (radioButton != null) {
             mAddingCateRadioGroup.check(radioButton.getId());
         }
 
-        updateAddingPaneColor(category.getID());
+        updateAddingPaneColorByCateId(category.getID());
 
         try {
             if (category.getID() == 0) {
@@ -371,7 +385,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mNavigationDrawerFragment.syncCatesOrDefault();
     }
 
+    //在同步完类类别后调用
     public void syncList() {
+        updateRatioButtons();
         CloudServices.getLatestSchedules(ConfigHelper.getString(this, "sid"),
                 ConfigHelper.getString(this, "access_token"), new IRequestCallback() {
                     @Override

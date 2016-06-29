@@ -3,49 +3,48 @@
     android:id="@+id/radio_group_add"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="25sp"
     android:layout_gravity="center_vertical"
     android:layout_marginLeft="20sp"
     android:orientation="horizontal"
     >
+    <!--<RadioButton-->
+        <!--android:id="@+id/radio_default_btn"-->
+        <!--android:layout_width="25sp"-->
+        <!--android:layout_height="25sp"-->
+        <!--android:background="@drawable/radio_default_add"-->
+        <!--android:button="@null"-->
+        <!--android:checked="true" />-->
 
-    <RadioButton
-        android:id="@+id/radio_default_btn"
-        android:layout_width="25sp"
-        android:layout_height="25sp"
-        android:background="@drawable/radio_default_add"
-        android:button="@null"
-        android:checked="true" />
+    <!--<RadioButton-->
+        <!--android:id="@+id/radio_work_btn"-->
+        <!--android:layout_width="25sp"-->
+        <!--android:layout_height="25sp"-->
+        <!--android:layout_marginLeft="5sp"-->
+        <!--android:background="@drawable/radio_work_add"-->
+        <!--android:button="@null" />-->
 
-    <RadioButton
-        android:id="@+id/radio_work_btn"
-        android:layout_width="25sp"
-        android:layout_height="25sp"
-        android:layout_marginLeft="5sp"
-        android:background="@drawable/radio_work_add"
-        android:button="@null" />
+    <!--<RadioButton-->
+        <!--android:id="@+id/radio_life_btn"-->
+        <!--android:layout_width="25sp"-->
+        <!--android:layout_height="25sp"-->
+        <!--android:layout_marginLeft="5sp"-->
+        <!--android:background="@drawable/radio_life_add"-->
+        <!--android:button="@null" />-->
 
-    <RadioButton
-        android:id="@+id/radio_life_btn"
-        android:layout_width="25sp"
-        android:layout_height="25sp"
-        android:layout_marginLeft="5sp"
-        android:background="@drawable/radio_life_add"
-        android:button="@null" />
+    <!--<RadioButton-->
+        <!--android:id="@+id/radio_family_btn"-->
+        <!--android:layout_width="25sp"-->
+        <!--android:layout_height="25sp"-->
+        <!--android:layout_marginLeft="5sp"-->
+        <!--android:background="@drawable/radio_family_add"-->
+        <!--android:button="@null" />-->
 
-    <RadioButton
-        android:id="@+id/radio_family_btn"
-        android:layout_width="25sp"
-        android:layout_height="25sp"
-        android:layout_marginLeft="5sp"
-        android:background="@drawable/radio_family_add"
-        android:button="@null" />
-
-    <RadioButton
-        android:id="@+id/radio_enter_btn"
-        android:layout_width="25sp"
-        android:layout_height="25sp"
-        android:layout_marginLeft="5sp"
-        android:background="@drawable/radio_enter_add"
-        android:button="@null" />
+    <!--<RadioButton-->
+        <!--android:id="@+id/radio_enter_btn"-->
+        <!--android:layout_width="25sp"-->
+        <!--android:layout_height="25sp"-->
+        <!--android:layout_marginLeft="5sp"-->
+        <!--android:background="@drawable/radio_enter_add"-->
+        <!--android:button="@null" />-->
 </RadioGroup>

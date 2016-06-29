@@ -34,7 +34,6 @@ import interfaces.IRequestCallback;
 import model.ToDoCategory;
 import util.ConfigHelper;
 import util.AppExtension;
-import util.FindRadioBtnHelper;
 import util.SerializerHelper;
 import model.ToDo;
 import util.ToDoListGlobalLocator;
@@ -151,15 +150,15 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                        int index = FindRadioBtnHelper.getCateByRadioBtnID(i);
-                        cateAboutToModify = index;
+//                        int index = FindRadioBtnHelper.getCateByRadioBtnID(i);
+//                        cateAboutToModify = index;
                     }
                 });
-                int currentBtnID = FindRadioBtnHelper.getRadioBtnIDByCate(cateID);
-                if (currentBtnID != 0) {
-                    RadioButton btn = (RadioButton) radioGroup.findViewById(currentBtnID);
-                    if (btn != null) radioGroup.check((currentBtnID));
-                }
+//                int currentBtnID = FindRadioBtnHelper.getRadioBtnIDByCate(cateID);
+//                if (currentBtnID != 0) {
+//                    RadioButton btn = (RadioButton) radioGroup.findViewById(currentBtnID);
+//                    if (btn != null) radioGroup.check((currentBtnID));
+//                }
 
                 Button okBtn = (Button) dialogView.findViewById(R.id.add_ok_btn);
                 okBtn.setText(R.string.ok_btn);

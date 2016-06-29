@@ -306,9 +306,9 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                 categoryList.add(0,
                         new ToDoCategory("All",0,getResources().getColor(R.color.MyerListBlue)));
                 categoryList.add(categoryList.size(),
-                        new ToDoCategory("Deleted",0,getResources().getColor(R.color.DeletedColor)));
+                        new ToDoCategory("Deleted",-1,getResources().getColor(R.color.DeletedColor)));
                 categoryList.add(categoryList.size(),
-                        new ToDoCategory("Personalization",0,getResources().getColor(R.color.MyerListBlueDark)));
+                        new ToDoCategory("Personalization",-2,getResources().getColor(R.color.MyerListBlueDark)));
             }
             ToDoListGlobalLocator.CategoryList =categoryList;
 

@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/dialog_title"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:clickable="false"
     android:orientation="vertical">
-        <TextView
-            android:id="@+id/dialog_title_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20sp"
-            android:height="50sp"
-            android:gravity="center_vertical"
-            android:text="ADD A MEMO"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:textStyle="normal"/>
+
+    <TextView
+        android:id="@+id/dialog_title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="20sp"
+        android:height="50sp"
+        android:gravity="center_vertical"
+        android:text="ADD A MEMO"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="normal" />
+
     <include
         android:id="@+id/add_pane_radio_legacy"
-        layout="@layout/radio_add_select_cate"/>
+        layout="@layout/radio_add_select_cate" />
+
     <EditText
         android:id="@+id/newMemoEdit"
         android:layout_width="match_parent"
@@ -34,7 +36,7 @@
         android:padding="10sp"
         android:textColor="@android:color/black"
         android:textColorHint="@color/TextHintColor"
-        android:textSize="12sp"/>
+        android:textSize="12sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -51,12 +53,12 @@
             android:orientation="horizontal">
 
             <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                                                android:layout_width="70sp"
-                                                android:layout_height="40sp"
-                                                android:layout_marginRight="10sp"
-                                                card_view:cardBackgroundColor="@android:color/white"
-                                                card_view:cardCornerRadius="2dp"
-                                                card_view:cardElevation="0dp">
+                android:layout_width="70sp"
+                android:layout_height="40sp"
+                android:layout_marginRight="10sp"
+                card_view:cardBackgroundColor="@android:color/white"
+                card_view:cardCornerRadius="2dp"
+                card_view:cardElevation="0dp">
 
                 <Button
                     android:id="@+id/add_cancel_btn"
@@ -67,17 +69,17 @@
                     android:text="CANCEL"
                     android:textColor="@android:color/black"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                                                android:layout_width="70sp"
-                                                android:layout_height="40sp"
-                                                android:layout_marginRight="0sp"
-                                                android:textSize="15sp"
-                                                card_view:cardBackgroundColor="@color/MyerListBlueLight"
-                                                card_view:cardCornerRadius="2dp"
-                                                card_view:cardElevation="2dp">
+                android:layout_width="70sp"
+                android:layout_height="40sp"
+                android:layout_marginRight="0sp"
+                android:textSize="15sp"
+                card_view:cardBackgroundColor="@color/MyerListBlueLight"
+                card_view:cardCornerRadius="2dp"
+                card_view:cardElevation="2dp">
 
                 <Button
                     android:id="@+id/add_ok_btn"
@@ -88,7 +90,7 @@
                     android:text="OK"
                     android:textColor="@android:color/white"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </android.support.v7.widget.CardView>
 
 

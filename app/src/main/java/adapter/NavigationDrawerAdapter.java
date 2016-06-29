@@ -87,6 +87,10 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         }
     }
 
+    /**
+     *
+     * @param position
+     */
     public void selectPosition(int position) {
         mSelectedPosition = position;
         notifyItemChanged(position);

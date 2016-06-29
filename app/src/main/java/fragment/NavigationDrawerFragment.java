@@ -44,6 +44,7 @@ import util.AppExtension;
 import util.ConfigHelper;
 import util.CustomFontHelper;
 import util.GlobalListLocator;
+import util.SerializerHelper;
 import util.ToastService;
 
 public class NavigationDrawerFragment extends Fragment implements INavigationDrawerCallback {
@@ -271,10 +272,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         }
     }
 
-    private void restoreCatesFromCache(){
-        //SerializerHelper.<ArrayList<ToDo>>deSerializeFromFile(getActivity(),SerializerHelper.catesFileName);
-    }
-
     private void onGotNewestCates(JSONObject response) {
         try {
             ArrayList<ToDoCategory> categoryList;
@@ -314,6 +311,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 //                        new ToDoCategory("Personalization",-2,getResources().getColor(R.color.MyerListBlueDark)));
             }
             GlobalListLocator.CategoryList =categoryList;
+
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializerHelper.catesFileName);
 
             NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(categoryList);
             adapter.setNavigationDrawerCallbacks(this);

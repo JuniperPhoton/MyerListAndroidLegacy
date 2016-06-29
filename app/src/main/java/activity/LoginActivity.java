@@ -157,8 +157,7 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    //检查邮件有效性，
-    //然后获得 Salt 后登录
+
     private void onCheckEmailResponse(JSONObject response) {
         try {
             if (response == null) throw new APIException();

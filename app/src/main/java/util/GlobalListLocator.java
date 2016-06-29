@@ -8,24 +8,23 @@ import java.util.ArrayList;
 import model.ToDo;
 import model.ToDoCategory;
 
-
 public class GlobalListLocator {
     public static ArrayList<ToDo> TodosList;
     public static ArrayList<ToDo> DeletedList;
     public static ArrayList<ToDo> StagedList;
     public static ArrayList<ToDoCategory> CategoryList;
 
-    public static ToDoCategory GetCategoryByCateID(int id){
-        ToDoCategory foundCate=null;
-        if(CategoryList==null){
+    public static ToDoCategory GetCategoryByCateID(int id) {
+        ToDoCategory foundCate = null;
+        if (CategoryList == null) {
             return foundCate;
         }
-        for(ToDoCategory cate:CategoryList){
-            if(cate.getID()==id){
-                foundCate=cate;
+        for (ToDoCategory cate : CategoryList) {
+            if (cate.getID() == id) {
+                foundCate = cate;
             }
         }
-        if(foundCate==null){
+        if (foundCate == null) {
             return CategoryList.get(0);
         }
         return foundCate;
@@ -36,7 +35,8 @@ public class GlobalListLocator {
         DeletedList = new ArrayList<>();
         StagedList = new ArrayList<>();
 
-        Type type = new TypeToken<ArrayList<ToDo>>() {}.getType();
+        Type type = new TypeToken<ArrayList<ToDo>>() {
+        }.getType();
 
         ArrayList<ToDo> deletedContent = SerializerHelper.deSerializeFromFile(
                 type,
@@ -51,6 +51,17 @@ public class GlobalListLocator {
                 SerializerHelper.stagedFileName);
         if (stagedContent != null) {
             StagedList = stagedContent;
+        }
+
+        Type type2 = new TypeToken<ArrayList<ToDoCategory>>() {
+        }.getType();
+
+        ArrayList<ToDoCategory> categories = SerializerHelper.deSerializeFromFile(
+                type2,
+                AppExtension.getInstance(),
+                SerializerHelper.catesFileName);
+        if (categories != null) {
+            CategoryList = categories;
         }
     }
 }

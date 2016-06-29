@@ -23,7 +23,7 @@ import util.ConfigHelper;
 import util.AppExtension;
 import util.SerializerHelper;
 import model.ToDo;
-import util.ToDoListGlobalLocator;
+import util.GlobalListLocator;
 
 
 public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.DeleteItemViewHolder> {
@@ -69,8 +69,8 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
             public void onClick(View view) {
                 //非离线模式下，同步
                 if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
-                    CloudServices.addToDo(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
-                            ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
+                    CloudServices.addToDo(ConfigHelper.getSid(),
+                            ConfigHelper.getAccessToken(),
                             mDeleteToDos.get(position).getContent(),
                             "0",
                             0,
@@ -82,7 +82,7 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                             });
                 }
                 else {
-                    ToDoListGlobalLocator.TodosList.add(ToDoListGlobalLocator.TodosList.size(), mDeleteToDos.get(position));
+                    GlobalListLocator.TodosList.add(GlobalListLocator.TodosList.size(), mDeleteToDos.get(position));
                 }
 
                 mDeleteToDos.remove(currentToDo);
@@ -93,7 +93,7 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                 }
 
                 SerializerHelper.serializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializerHelper.todosFileName);
             }
         });
     }

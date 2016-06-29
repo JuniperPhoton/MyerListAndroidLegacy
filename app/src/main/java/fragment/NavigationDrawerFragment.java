@@ -43,7 +43,7 @@ import model.ToDoCategory;
 import util.AppExtension;
 import util.ConfigHelper;
 import util.CustomFontHelper;
-import util.ToDoListGlobalLocator;
+import util.GlobalListLocator;
 import util.ToastService;
 
 public class NavigationDrawerFragment extends Fragment implements INavigationDrawerCallback {
@@ -161,16 +161,17 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     private ArrayList<ToDoCategory> getDefaultCateList() {
         ArrayList<ToDoCategory> items = new ArrayList<>();
-//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_default),Color.BLUE));
-//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_work), Color.RED));
-//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_life),
-//                getResources().getColor(R.drawable.cate_life)));
-//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_family),
-//                getResources().getColor(R.drawable.cate_family)));
-//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.cate_enter),
-//                getResources().getColor(R.drawable.cate_enter)));
-//        items.add(new NavigationItemWithIcon(getResources().getString(R.string.deleteditems),
-//                getResources().getColor(R.drawable.cate_deleted)));
+        items.add(new ToDoCategory(getResources().getString(R.string.cate_default),0,
+                getResources().getColor(R.color.MyerListBlue)));
+        items.add(new ToDoCategory(getResources().getString(R.string.cate_work),1, Color.RED));
+        items.add(new ToDoCategory(getResources().getString(R.string.cate_life),2,
+                getResources().getColor(R.color.LifeColor)));
+        items.add(new ToDoCategory(getResources().getString(R.string.cate_family),3,
+                getResources().getColor(R.color.FamilyColor)));
+        items.add(new ToDoCategory(getResources().getString(R.string.cate_enter),4,
+                getResources().getColor(R.color.EnterColor)));
+        items.add(new ToDoCategory(getResources().getString(R.string.deleteditems),5,
+                getResources().getColor(R.color.DeletedColor)));
         return items;
     }
 
@@ -217,7 +218,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                 mActionBarDrawerToggle.syncState();
             }
         });
-
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
     }
 
@@ -277,7 +277,11 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     private void onGotNewestCates(JSONObject response) {
         try {
-            if (response == null) throw new APIException();
+            ArrayList<ToDoCategory> categoryList;
+
+            if (response == null) {
+                categoryList = getDefaultCateList();
+            }
 
             boolean isOK=response.getBoolean("isSuccessed");
             if(!isOK){
@@ -286,7 +290,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
             String cateInfo=response.getString("Cate_Info");
             JSONObject cateJson=new JSONObject(cateInfo);
 
-            ArrayList<ToDoCategory> categoryList;
             boolean isModified=cateJson.getBoolean("modified");
             if(!isModified){
                 categoryList=getDefaultCateList();
@@ -307,10 +310,10 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                         new ToDoCategory("All",0,getResources().getColor(R.color.MyerListBlue)));
                 categoryList.add(categoryList.size(),
                         new ToDoCategory("Deleted",-1,getResources().getColor(R.color.DeletedColor)));
-                categoryList.add(categoryList.size(),
-                        new ToDoCategory("Personalization",-2,getResources().getColor(R.color.MyerListBlueDark)));
+//                categoryList.add(categoryList.size(),
+//                        new ToDoCategory("Personalization",-2,getResources().getColor(R.color.MyerListBlueDark)));
             }
-            ToDoListGlobalLocator.CategoryList =categoryList;
+            GlobalListLocator.CategoryList =categoryList;
 
             NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(categoryList);
             adapter.setNavigationDrawerCallbacks(this);

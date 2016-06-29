@@ -13,6 +13,14 @@ public class ConfigHelper {
     public static boolean ISOFFLINEMODE = true;
     public static boolean ISLOADLISTONCE = false;
 
+    public static String getSid() {
+        return ConfigHelper.getString(AppExtension.getInstance(), "sid");
+    }
+
+    public static String getAccessToken() {
+        return ConfigHelper.getString(AppExtension.getInstance(), "access_token");
+    }
+
     public static void configAppSetting() {
         if (!checkKey(AppExtension.getInstance(), "ShowKeyboard")) {
             putBoolean(AppExtension.getInstance(), "ShowKeyboard", true);
@@ -31,15 +39,12 @@ public class ConfigHelper {
         if (!checkKey(AppExtension.getInstance(), "Language")) {
             if (config.locale == Locale.SIMPLIFIED_CHINESE) {
                 putString(AppExtension.getInstance(), "Language", "Chinese");
-            }
-            else putString(AppExtension.getInstance(), "Language", "English");
-        }
-        else {
+            } else putString(AppExtension.getInstance(), "Language", "English");
+        } else {
             if (ConfigHelper.getString(AppExtension.getInstance(), "Language").equals("Chinese")) {
                 config.locale = Locale.SIMPLIFIED_CHINESE;
                 resources.updateConfiguration(config, dm);
-            }
-            else {
+            } else {
                 config.locale = Locale.ENGLISH;
                 resources.updateConfiguration(config, dm);
             }

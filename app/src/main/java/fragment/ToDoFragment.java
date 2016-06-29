@@ -27,11 +27,11 @@ import util.ConfigHelper;
 import util.AppExtension;
 import adapter.ToDoListAdapter;
 import util.SerializerHelper;
-import util.ToDoListGlobalLocator;
+import util.GlobalListLocator;
 import model.ToDo;
 
 public class ToDoFragment extends Fragment {
-    private Activity mActivity;
+    private MainActivity mActivity;
     public RecyclerView mToDoRecyclerView;
     private ArrayList<ToDo> mMyToDos;
     private SwipeRefreshLayout mRefreshLayout;
@@ -89,7 +89,7 @@ public class ToDoFragment extends Fragment {
         mAddingFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) mActivity).showAddingPane();
+                mActivity.showAddingPane();
             }
         });
         if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
@@ -100,7 +100,7 @@ public class ToDoFragment extends Fragment {
             mAddingFab.setLayoutParams(layoutParams);
         }
 
-        ((MainActivity) mActivity).onInitial();
+        mActivity.onInit();
 
         return view;
     }
@@ -108,8 +108,7 @@ public class ToDoFragment extends Fragment {
     public void showNoItemHint(boolean show) {
         if (show) {
             mNoItemLayout.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             mNoItemLayout.setVisibility(View.GONE);
         }
     }
@@ -152,27 +151,27 @@ public class ToDoFragment extends Fragment {
     }
 
     public void getAllSchedules() {
-        ((MainActivity) mActivity).syncCateAndList();
+        mActivity.syncCateAndList();
 
         if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
-            if (ToDoListGlobalLocator.StagedList == null) return;
-            ((MainActivity) mActivity).setIsAddStagedItems(true);
-            for (ToDo todo : ToDoListGlobalLocator.StagedList) {
+            if (GlobalListLocator.StagedList == null) return;
+            mActivity.setIsAddStagedItems(true);
+            for (ToDo todo : GlobalListLocator.StagedList) {
                 CloudServices.addToDo(
-                        ConfigHelper.getString(AppExtension.getInstance(), "sid"),
-                        ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
+                        ConfigHelper.getSid(),
+                        ConfigHelper.getAccessToken(),
                         todo.getContent(),
                         "0",
                         todo.getCate(),
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
-                                ((MainActivity) mActivity).onAddedResponse(jsonObject);
+                                mActivity.onAddedResponse(jsonObject);
                             }
                         });
             }
-            ToDoListGlobalLocator.StagedList.clear();
-            SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.StagedList, SerializerHelper.stagedFileName);
+            GlobalListLocator.StagedList.clear();
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializerHelper.stagedFileName);
         }
     }
 
@@ -180,9 +179,10 @@ public class ToDoFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mActivity = activity;
-        }
-        catch (ClassCastException e) {
+            if (activity instanceof MainActivity) {
+                mActivity = (MainActivity) activity;
+            }
+        } catch (ClassCastException e) {
 
         }
     }

@@ -22,7 +22,7 @@ public class AppExtension extends Application {
 
         ConfigHelper.configAppSetting();
 
-        ToDoListGlobalLocator.restoreData();
+        GlobalListLocator.restoreData();
         PgyCrashManager.register(this);
 
         String access_token = ConfigHelper.getString(this, "access_token");

@@ -16,7 +16,6 @@ import java.util.List;
 import interfaces.INavigationDrawerCallback;
 import model.ToDoCategory;
 import util.AppExtension;
-import util.ToDoListGlobalLocator;
 import view.DrawView;
 
 

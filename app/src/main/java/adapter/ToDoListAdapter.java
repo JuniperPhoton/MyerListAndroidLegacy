@@ -1,7 +1,6 @@
 package adapter;
 
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,12 +11,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,7 +31,7 @@ import util.ConfigHelper;
 import util.AppExtension;
 import util.SerializerHelper;
 import model.ToDo;
-import util.ToDoListGlobalLocator;
+import util.GlobalListLocator;
 import view.DrawView;
 
 
@@ -45,7 +40,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
     private boolean mIsEnable = true;
 
     //当前所在的 Activity
-    private Activity mCurrentActivity;
+    private MainActivity mCurrentActivity;
 
     //当前所在的 Fragment
     private ToDoFragment mCurrentFragment;
@@ -74,7 +69,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
 
     //构造函数
     //传入当前的列表
-    public ToDoListAdapter(ArrayList<ToDo> data, Activity activity, ToDoFragment fragment) {
+    public ToDoListAdapter(ArrayList<ToDo> data, MainActivity activity, ToDoFragment fragment) {
         mCurrentActivity = activity;
         mToDosToDisplay = data;
         mCurrentFragment = fragment;
@@ -90,25 +85,23 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
     @Override
     public void onBindViewHolder(final ToDoItemViewHolder holder, final int position) {
         //设置文字
-        ToDo currentToDo = mToDosToDisplay.get(position);
-        if (currentToDo == null) return;
+        final ToDo currentToDoItem = mToDosToDisplay.get(position);
+        if (currentToDoItem == null) return;
 
-        holder.textView.setText(currentToDo.getContent());
-        holder.id = currentToDo.getID();
+        holder.textView.setText(currentToDoItem.getContent());
+        holder.id = currentToDoItem.getID();
 
         //设置类别
-        final int cateID = currentToDo.getCate();
-        ToDoCategory category = ToDoListGlobalLocator.GetCategoryByID(cateID);
+        final int cateID = currentToDoItem.getCate();
+        ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
 
-        if(cateID==0){
+        if (cateID == 0) {
             holder.cateCircle.setEllipseColor(AppExtension.getInstance().
                     getResources().getColor(R.color.MyerListBlue));
-        }
-        else {
-            if(category!=null){
+        } else {
+            if (category != null) {
                 holder.cateCircle.setEllipseColor(category.getColor());
-            }
-            else{
+            } else {
                 holder.cateCircle.setEllipseColor(AppExtension.getInstance().
                         getResources().getColor(R.color.MyerListBlue));
             }
@@ -136,97 +129,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 if (mIsSwiping) {
                     return;
                 }
-                View dialogView = LayoutInflater.from(mCurrentActivity).inflate(R.layout.dialog_adding_pane, (ViewGroup) mCurrentActivity.findViewById(R.id.dialog_title));
-
-                TextView titleText = (TextView) dialogView.findViewById(R.id.dialog_title_text);
-                titleText.setText(mCurrentActivity.getResources().getString(R.string.modify_memo_title));
-
-                mNewMemoText = (EditText) dialogView.findViewById(R.id.newMemoEdit);
-                mNewMemoText.setHint(R.string.new_memo_hint);
-                mNewMemoText.setText(holder.textView.getText().toString());
-                mNewMemoText.setSelection(holder.textView.getText().length());
-
-                RadioGroup radioGroup = (RadioGroup) dialogView.findViewById(R.id.add_pane_radio_legacy);
-                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup radioGroup, int i) {
-//                        int index = FindRadioBtnHelper.getCateByRadioBtnID(i);
-//                        cateAboutToModify = index;
-                    }
-                });
-//                int currentBtnID = FindRadioBtnHelper.getRadioBtnIDByCate(cateID);
-//                if (currentBtnID != 0) {
-//                    RadioButton btn = (RadioButton) radioGroup.findViewById(currentBtnID);
-//                    if (btn != null) radioGroup.check((currentBtnID));
-//                }
-
-                Button okBtn = (Button) dialogView.findViewById(R.id.add_ok_btn);
-                okBtn.setText(R.string.ok_btn);
-                okBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mDialog.dismiss();
-                        String targetID = holder.getID();
-                        int index = 0;
-
-                        //根据ID 找到项目
-                        for (int i = 0; i < mToDosToDisplay.size(); i++) {
-                            ToDo s = mToDosToDisplay.get(i);
-                            if (s.getID().equals(targetID)) {
-                                index = i;
-                                break;
-                            }
-                        }
-
-                        //更新项目
-                        ToDo currentItem = mToDosToDisplay.get(index);
-                        currentItem.setContent(mNewMemoText.getText().toString());
-                        currentItem.setCate(cateAboutToModify);
-
-                        //要notify UI 才会更新
-                        notifyItemChanged(index);
-
-                        if (!ConfigHelper.ISOFFLINEMODE) {
-                            CloudServices.updateContent(
-                                    ConfigHelper.getString(mCurrentActivity, "sid"),
-                                    ConfigHelper.getString(mCurrentActivity, "access_token"),
-                                    targetID, mNewMemoText.getText().toString(),
-                                    currentItem.getCate(),
-                                    new IRequestCallback() {
-                                        @Override
-                                        public void onResponse(JSONObject jsonObject) {
-                                            ((MainActivity) mCurrentActivity).onUpdateContent(jsonObject);
-                                        }
-                                    });
-                        }
-                        else {
-                            SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
-                        }
-                    }
-                });
-
-                Button cancelBtn = (Button) dialogView.findViewById(R.id.add_cancel_btn);
-                cancelBtn.setText(R.string.cancel_btn);
-                cancelBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (mDialog != null) {
-                            mDialog.dismiss();
-                        }
-                    }
-                });
-
-                if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
-                    LinearLayout linearLayout = (LinearLayout) dialogView.findViewById(R.id.dialog_btn_layout);
-
-                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-                    layoutParams.setMargins(20, 0, 0, 0);
-                    layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                    linearLayout.setLayoutParams(layoutParams);
-                }
-
-                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(mCurrentActivity);
-                mDialog = builder.setView((dialogView)).show();
+                mCurrentActivity.setupAddingPaneForModify(currentToDoItem);
             }
         });
 
@@ -246,12 +149,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         if (ConfigHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
             //mToDosToDisplay.add(todoToAdd);
             notifyItemInserted(mToDosToDisplay.size() - 1);
-            ToDoListGlobalLocator.TodosList.add(todoToAdd);
-        }
-        else {
+            GlobalListLocator.TodosList.add(todoToAdd);
+        } else {
             //mToDosToDisplay.add(0, todoToAdd);
             notifyItemInserted(0);
-            ToDoListGlobalLocator.TodosList.add(0, todoToAdd);
+            GlobalListLocator.TodosList.add(0, todoToAdd);
         }
         SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
     }
@@ -275,13 +177,12 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         notifyItemRemoved(index);
         mToDosToDisplay.remove(todoToDelete);
 
-        ToDoListGlobalLocator.DeletedList.add(0, todoToDelete);
-        SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.DeletedList, SerializerHelper.deletedFileName);
+        GlobalListLocator.DeletedList.add(0, todoToDelete);
+        SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.DeletedList, SerializerHelper.deletedFileName);
 
         if (ConfigHelper.ISOFFLINEMODE) {
             SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
-        }
-        else
+        } else
             CloudServices.setDelete(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
                     ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
                     todoToDelete.getID(),
@@ -291,6 +192,45 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                             ((MainActivity) mCurrentActivity).onDelete(jsonObject);
                         }
                     });
+    }
+
+    public void updateContent(ToDo toDo) {
+        String targetID = toDo.getID();
+        int index = 0;
+
+        //根据ID 找到项目
+        for (int i = 0; i < mToDosToDisplay.size(); i++) {
+            ToDo s = mToDosToDisplay.get(i);
+            if (s.getID().equals(targetID)) {
+                index = i;
+                break;
+            }
+        }
+
+        //更新项目
+        ToDo currentItem = mToDosToDisplay.get(index);
+        currentItem.setContent(toDo.getContent());
+        currentItem.setCate(toDo.getCate());
+
+        //要notify UI 才会更新
+        notifyItemChanged(index);
+
+        if (!ConfigHelper.ISOFFLINEMODE) {
+            CloudServices.updateContent(
+                    ConfigHelper.getSid(),
+                    ConfigHelper.getAccessToken(),
+                    targetID,
+                    currentItem.getContent(),
+                    currentItem.getCate(),
+                    new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            mCurrentActivity.onUpdateContent(jsonObject);
+                        }
+                    });
+        } else {
+            SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
+        }
     }
 
     @Override
@@ -335,8 +275,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
 
                 if (scrollLeft < -150 && !mIsInGreen) {
                     playColorChangeAnimation((ImageView) root.findViewById(R.id.greenImageView), true);
-                }
-                else if (scrollLeft > 150 && !mIsInRed) {
+                } else if (scrollLeft > 150 && !mIsInRed) {
                     playColorChangeAnimation((ImageView) root.findViewById(R.id.redImageView), false);
                 }
 
@@ -376,8 +315,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             if (mCurrentToDo.getIsDone()) {
                 lineview.setVisibility(View.GONE);
                 mCurrentToDo.setIsDone(false);
-            }
-            else {
+            } else {
                 lineview.setVisibility(View.VISIBLE);
                 mCurrentToDo.setIsDone(true);
             }
@@ -390,7 +328,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
-                                ((MainActivity) mCurrentActivity).onSetDone(jsonObject);
+                                mCurrentActivity.onSetDone(jsonObject);
                             }
                         });
             }
@@ -402,8 +340,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
 
         if (mIsInGreen) {
             playFadebackAnimation((ImageView) v.findViewById(R.id.greenImageView), true);
-        }
-        else if (mIsInRed) {
+        } else if (mIsInRed) {
             playFadebackAnimation((ImageView) v.findViewById(R.id.redImageView), false);
         }
 

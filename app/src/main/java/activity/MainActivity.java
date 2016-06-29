@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
@@ -56,7 +55,7 @@ import util.AppExtension;
 import adapter.ToDoListAdapter;
 import util.SerializerHelper;
 import model.ToDo;
-import util.ToDoListGlobalLocator;
+import util.GlobalListLocator;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
 import view.CircleRadioButton;
@@ -67,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private ToDoFragment mToDoFragment;
     private DeletedItemFragment mDeletedItemFragment;
     private Toolbar mToolbar;
-
-    private AlertDialog mDialog;
 
     private boolean isAddingPaneShown = false;
     private EditText mEditedText;
@@ -81,11 +78,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     private RadioGroup mAddingCateRadioGroup;
 
-    private int mCurrentCateID = 0;
+    private int mCurrentDisplayedCateID = 0;
     private int mCateIDAboutToAdd = 0;
 
     private ToDo mToDoAboutToAdded;
-    private boolean misAddingStagedItems = false;
+    private boolean misStagedItemsNotEmpty = false;
+
+    private boolean mAboutToModify = false;
+    private ToDo mToDoAboutToModify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +108,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         boolean offline = ConfigHelper.getBoolean(this, "offline_mode");
 
         if (access_token != null) {
-            initialFragment(savedInstanceState, true);
+            initFragment(savedInstanceState, true);
         } else {
             ConfigHelper.ISOFFLINEMODE = true;
             mNavigationDrawerFragment.setupOfflineMode();
-            initialFragment(savedInstanceState, false);
+            initFragment(savedInstanceState, false);
         }
 
     }
@@ -128,15 +128,15 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mAddingCateRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                RadioButton button = (RadioButton)radioGroup.findViewById(checkedId);
-                ToDoCategory category = ToDoListGlobalLocator.CategoryList.get(radioGroup.indexOfChild(button));
+                RadioButton button = (RadioButton) radioGroup.findViewById(checkedId);
+                ToDoCategory category = GlobalListLocator.CategoryList.get(radioGroup.indexOfChild(button));
                 mCateIDAboutToAdd = category.getID();
                 updateAddingPaneColorByCateId(category.getID());
                 mAddingCateHintTextView.setText(category.getName());
             }
         });
 
-        mAddingCateHintTextView=(TextView)findViewById(R.id.fragment_adding_pane_cate_textView);
+        mAddingCateHintTextView = (TextView) findViewById(R.id.fragment_adding_pane_cate_textView);
         mAddingPaneLayout = (LinearLayout) findViewById(R.id.main_a_adding_panel);
         mAddingPaneLayout.setOnTouchListener(new View.OnTouchListener() {
             //防止触控穿透
@@ -178,14 +178,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     //根据选中的颜色改变抽屉的背景色
     private void updateAddingPaneColorByCateId(int cateID) {
         if (mAddingPaneLayout == null) return;
-        ToDoCategory category = ToDoListGlobalLocator.GetCategoryByID(cateID);
+        ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
         if (category.getID() != -2) {
             mAddingPaneLayout.setBackgroundColor(category.getColor());
         }
     }
 
     //初始化 Fragment
-    private void initialFragment(Bundle savedInstanceState, boolean logined) {
+    private void initFragment(Bundle savedInstanceState, boolean logined) {
         if (findViewById(R.id.fragment_container) != null) {
             if (savedInstanceState != null) {
                 return;
@@ -207,11 +207,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
             //暂存区有待办事项的，同步到云端
             if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
-                if (ToDoListGlobalLocator.StagedList == null) return;
-                misAddingStagedItems = true;
-                for (ToDo todo : ToDoListGlobalLocator.StagedList) {
-                    CloudServices.addToDo(ConfigHelper.getString(this, "sid"),
-                            ConfigHelper.getString(this, "access_token"),
+                if (GlobalListLocator.StagedList == null) return;
+                misStagedItemsNotEmpty = true;
+                for (ToDo todo : GlobalListLocator.StagedList) {
+                    CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(),
                             todo.getContent(), "0", todo.getCate(),
                             new IRequestCallback() {
                                 @Override
@@ -220,19 +219,20 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                                 }
                             });
                 }
-                ToDoListGlobalLocator.StagedList.clear();
+                GlobalListLocator.StagedList.clear();
+                misStagedItemsNotEmpty=false;
                 SerializerHelper.serializeToFile(AppExtension.getInstance(),
-                        ToDoListGlobalLocator.StagedList,
+                        GlobalListLocator.StagedList,
                         SerializerHelper.stagedFileName);
             }
         }
     }
 
-    private void updateRatioButtons(){
+    private void updateRatioButtons() {
         mAddingCateRadioGroup.removeAllViews();
-        for(ToDoCategory category:ToDoListGlobalLocator.CategoryList){
-            if(category.getID()==-1 || category.getID()==-2) continue;
-            CircleRadioButton circleRadioButton=new CircleRadioButton(this);
+        for (ToDoCategory category : GlobalListLocator.CategoryList) {
+            if (category.getID() == -1 || category.getID() == -2) continue;
+            CircleRadioButton circleRadioButton = new CircleRadioButton(this);
             circleRadioButton.setCircleColor(category.getColor());
             circleRadioButton.setLeft(5);
             mAddingCateRadioGroup.addView(circleRadioButton);
@@ -243,11 +243,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     //抽屉选中一个项的时候
     @Override
     public void onDrawerMainItemSelected(int position) {
-        ToDoCategory category = ToDoListGlobalLocator.CategoryList.get(position);
-        mCurrentCateID = category.getID();
+        ToDoCategory category = GlobalListLocator.CategoryList.get(position);
+        mCurrentDisplayedCateID = category.getID();
         mCateIDAboutToAdd = category.getID();
 
-        RadioButton radioButton = (RadioButton)mAddingCateRadioGroup.getChildAt(position);
+        RadioButton radioButton = (RadioButton) mAddingCateRadioGroup.getChildAt(position);
         if (radioButton != null) {
             mAddingCateRadioGroup.check(radioButton.getId());
         }
@@ -282,13 +282,13 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     public void updateListByCategory() {
-        if (mCurrentCateID == -1 || mCurrentCateID==-2) return;
+        if (mCurrentDisplayedCateID == -1 || mCurrentDisplayedCateID == -2) return;
 
         ArrayList<ToDo> newList = new ArrayList<>();
-        if (mCurrentCateID == 0) newList = ToDoListGlobalLocator.TodosList;
+        if (mCurrentDisplayedCateID == 0) newList = GlobalListLocator.TodosList;
         else {
-            for (ToDo todo : ToDoListGlobalLocator.TodosList) {
-                if (todo.getCate() == mCurrentCateID) {
+            for (ToDo todo : GlobalListLocator.TodosList) {
+                if (todo.getCate() == mCurrentDisplayedCateID) {
                     newList.add(todo);
                 }
             }
@@ -318,37 +318,51 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 commitAllowingStateLoss();
     }
 
+    public void setupAddingPaneForModify(ToDo todo) {
+        mAboutToModify = true;
+        mEditedText.setText(todo.getContent());
+        mToDoAboutToModify=todo;
+        showAddingPane();
+
+        ToDoCategory category= GlobalListLocator.GetCategoryByCateID(mToDoAboutToModify.getCate());
+        int position= GlobalListLocator.CategoryList.indexOf(category);
+        mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(position).getId());
+    }
+
     public void showAddingPane() {
-        //Android 5.0 以上
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            isAddingPaneShown = true;
+        isAddingPaneShown = true;
 
-            // get the center for the clipping circle
-            int cx = mAddingPaneLayout.getWidth() - 160;
-            int cy = mAddingPaneLayout.getHeight() - 160;
+        // get the center for the clipping circle
+        int cx = mAddingPaneLayout.getWidth() - 160;
+        int cy = mAddingPaneLayout.getHeight() - 160;
 
-            // get the final radius for the clipping circle
-            int finalRadius = Math.max(mAddingPaneLayout.getWidth(), mAddingPaneLayout.getHeight());
+        if (mAboutToModify) {
+            cx = 50;
+            cy = 50;
+        }
 
-            // create the animator for this view (the start radius is zero)
-            Animator anim;
-            anim = ViewAnimationUtils.createCircularReveal(mAddingPaneLayout, cx, cy, 0, finalRadius);
+        // get the final radius for the clipping circle
+        int finalRadius = Math.max(mAddingPaneLayout.getWidth(), mAddingPaneLayout.getHeight());
 
-            // make the view visible and start the animation
-            mAddingPaneLayout.setVisibility(View.VISIBLE);
-            anim.start();
+        // create the animator for this view (the start radius is zero)
+        Animator anim;
+        anim = ViewAnimationUtils.createCircularReveal(mAddingPaneLayout, cx, cy, 0, finalRadius);
 
-            if (ConfigHelper.getBoolean(AppExtension.getInstance(), "ShowKeyboard")) {
-                mEditedText.requestFocus();
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        InputMethodManager inputMethodManager = (InputMethodManager) mEditedText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.showSoftInput(mEditedText, 0);
-                    }
-                }, 333);
-            }
+        // make the view visible and start the animation
+        mAddingPaneLayout.setVisibility(View.VISIBLE);
+        anim.start();
+
+        if (ConfigHelper.getBoolean(AppExtension.getInstance(), "ShowKeyboard")) {
+            mEditedText.requestFocus();
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    InputMethodManager inputMethodManager = (InputMethodManager) mEditedText.getContext().
+                            getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(mEditedText, 0);
+                }
+            }, 333);
         }
     }
 
@@ -359,6 +373,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         // get the center for the clipping circle
         int cx = mAddingPaneLayout.getWidth() - 160;
         int cy = mAddingPaneLayout.getHeight() - 160;
+
+        if (mAboutToModify) {
+            cx = 50;
+            cy = 50;
+        }
 
         // get the initial radius for the clipping circle
         int initialRadius = Math.max(mAddingPaneLayout.getWidth(), mAddingPaneLayout.getHeight());
@@ -388,50 +407,57 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     //在同步完类类别后调用
     public void syncList() {
         updateRatioButtons();
-        CloudServices.getLatestSchedules(ConfigHelper.getString(this, "sid"),
-                ConfigHelper.getString(this, "access_token"), new IRequestCallback() {
-                    @Override
-                    public void onResponse(JSONObject jsonObject) {
-                        onGotLatestScheduleResponse(jsonObject);
-                    }
-                });
+        CloudServices.getLatestSchedules(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), new IRequestCallback() {
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+                onGotLatestScheduleResponse(jsonObject);
+            }
+        });
     }
-
 
     //添加面板点击确认
     public void okClick(View v) {
-        if (mDialog != null) {
-            mDialog.dismiss();
+
+        if (mEditedText.getText().toString().isEmpty()) {
+            ToastService.showShortToast(getResources().getString(R.string.hint_empty_input));
+            return;
         }
+
         if (isAddingPaneShown) {
             hideAddingPane();
         }
 
-        ToDo newToAdd = new ToDo();
-        newToAdd.setContent(mEditedText.getText().toString());
-        newToAdd.setIsDone(false);
-        newToAdd.setID(java.util.UUID.randomUUID().toString());
-        newToAdd.setCate(mCateIDAboutToAdd);
+        final ToDo tempToDo = new ToDo();
+        tempToDo.setContent(mEditedText.getText().toString());
+        tempToDo.setIsDone(false);
+        if(mAboutToModify){
+            tempToDo.setID(mToDoAboutToModify.getID());
+        }
+        else tempToDo.setID(java.util.UUID.randomUUID().toString());
+        tempToDo.setCate(mCateIDAboutToAdd);
 
-        mToDoAboutToAdded = newToAdd;
+        mToDoAboutToAdded = tempToDo;
 
         //离线模式
         if (ConfigHelper.ISOFFLINEMODE) {
-            addNewToDoToList(newToAdd);
+            addNewToDoToList(tempToDo);
         }
         //非离线模式，发送请求
         else {
-            CloudServices.addToDo(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
-                    ConfigHelper.getString(this, "access_token"),
-                    mEditedText.getText().toString(), "0", mCateIDAboutToAdd,
-                    new IRequestCallback() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            onAddedResponse(jsonObject);
-                        }
-                    });
+            if (mAboutToModify) {
+                ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
+                adapter.updateContent(tempToDo);
+            } else {
+                CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), mEditedText.getText().toString(),
+                        "0", mCateIDAboutToAdd,
+                        new IRequestCallback() {
+                            @Override
+                            public void onResponse(JSONObject jsonObject) {
+                                onAddedResponse(jsonObject);
+                            }
+                        });
+            }
         }
-
         dismissDialog();
     }
 
@@ -441,20 +467,21 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     private void dismissDialog() {
-        if (mDialog != null)
-            mDialog.dismiss();
-        if (isAddingPaneShown)
+        if (isAddingPaneShown) {
             hideAddingPane();
+        }
+
+        mAboutToModify = false;
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 
         mEditedText.setText("");
-        mCateIDAboutToAdd = mCurrentCateID;
+        mCateIDAboutToAdd = mCurrentDisplayedCateID;
     }
 
     public void setIsAddStagedItems(boolean value) {
-        misAddingStagedItems = value;
+        misStagedItemsNotEmpty = value;
     }
 
     private void onGotLatestScheduleResponse(JSONObject response) {
@@ -495,12 +522,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             if (isSuccess) {
                 String orderStr = response.getJSONArray(("OrderList")).getJSONObject(0).getString("list_order");
                 ArrayList<ToDo> listInOrder = ToDo.setOrderByString(originalList, orderStr);
-                ToDoListGlobalLocator.TodosList = listInOrder;
+                GlobalListLocator.TodosList = listInOrder;
                 mToDoFragment.updateData(listInOrder);
 
                 ToastService.showShortToast(getResources().getString(R.string.Synced));
 
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializerHelper.todosFileName);
 
                 updateListByCategory();
             }
@@ -532,12 +559,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                         });
             } else {
                 if (mToDoAboutToAdded != null) {
-                    ToDoListGlobalLocator.StagedList.add(mToDoAboutToAdded);
-                    SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.StagedList, SerializerHelper.stagedFileName);
+                    GlobalListLocator.StagedList.add(mToDoAboutToAdded);
+                    SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializerHelper.stagedFileName);
                 }
-                ToDoListGlobalLocator.TodosList.add(mToDoAboutToAdded);
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), ToDoListGlobalLocator.TodosList, SerializerHelper.todosFileName);
-
+                GlobalListLocator.TodosList.add(mToDoAboutToAdded);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializerHelper.todosFileName);
             }
             mToDoAboutToAdded = null;
         } catch (JSONException e) {
@@ -556,7 +582,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         updateListByCategory();
 
-        if (misAddingStagedItems) {
+        if (misStagedItemsNotEmpty) {
             syncCateAndList();
         }
     }
@@ -627,10 +653,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     public void onReCreatedToDo(JSONObject response) {
         onAddedResponse(response);
-        mDeletedItemFragment.setupListData(ToDoListGlobalLocator.DeletedList);
+        mDeletedItemFragment.setupListData(GlobalListLocator.DeletedList);
     }
 
-    public void onInitial() {
+    public void onInit() {
         try {
             Type type = new TypeToken<ArrayList<ToDo>>() {
             }.getType();
@@ -639,16 +665,15 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                     type, this, SerializerHelper.todosFileName);
 
             if (list != null) {
-                ToDoListGlobalLocator.TodosList = list;
+                GlobalListLocator.TodosList = list;
             }
             //已经登陆了
             if (!ConfigHelper.ISOFFLINEMODE) {
-                mToDoFragment.updateData(ToDoListGlobalLocator.TodosList);
-                syncCateAndList();
+                mToDoFragment.updateData(GlobalListLocator.TodosList);
             }
             //离线模式
             else {
-                mToDoFragment.updateData(ToDoListGlobalLocator.TodosList);
+                mToDoFragment.updateData(GlobalListLocator.TodosList);
             }
         } catch (Exception e) {
 

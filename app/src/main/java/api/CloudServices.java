@@ -137,14 +137,14 @@ public class CloudServices {
         });
     }
 
-    public static void addToDo(String sid, String content, final String access_token, String isDone,
+    public static void addToDo(String sid,  final String access_token, String content,String isDone,
                                int cate, final IRequestCallback callback) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
 
         AsyncHttpClient client = new AsyncHttpClient();
-        client.setConnectTimeout(2000);
+        client.setConnectTimeout(10000);
         com.loopj.android.http.RequestParams params = new com.loopj.android.http.RequestParams();
         params.put("sid", sid);
         params.put("time", sdf.format(date));
@@ -241,6 +241,7 @@ public class CloudServices {
     public static void getCates(String sid, String access_token, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
+        client.setTimeout(10000);
         client.get(UrlHelper.UserGetCateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

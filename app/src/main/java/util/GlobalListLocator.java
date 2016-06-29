@@ -9,13 +9,13 @@ import model.ToDo;
 import model.ToDoCategory;
 
 
-public class ToDoListGlobalLocator {
+public class GlobalListLocator {
     public static ArrayList<ToDo> TodosList;
     public static ArrayList<ToDo> DeletedList;
     public static ArrayList<ToDo> StagedList;
     public static ArrayList<ToDoCategory> CategoryList;
 
-    public static ToDoCategory GetCategoryByID(int id){
+    public static ToDoCategory GetCategoryByCateID(int id){
         ToDoCategory foundCate=null;
         if(CategoryList==null){
             return foundCate;
@@ -24,6 +24,9 @@ public class ToDoListGlobalLocator {
             if(cate.getID()==id){
                 foundCate=cate;
             }
+        }
+        if(foundCate==null){
+            return CategoryList.get(0);
         }
         return foundCate;
     }

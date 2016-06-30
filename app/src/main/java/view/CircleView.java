@@ -8,12 +8,12 @@ import android.view.View;
 
 import com.juniperphoton.myerlistandroid.R;
 
-public class DrawView extends View {
+public class CircleView extends View {
 
     private int mcolor;
 
-    public DrawView(Context context,AttributeSet attrs) {
-        super(context,attrs);
+    public CircleView(Context context, AttributeSet attrs) {
+        super(context, attrs);
         mcolor = getResources().getColor(R.color.MyerListBlue);
     }
 
@@ -32,6 +32,6 @@ public class DrawView extends View {
         Paint paint = new Paint();
         paint.setColor(mcolor);
 
-        canvas.drawCircle(getWidth()/2,getHeight()/2,getWidth()/2,paint);
+        canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2, paint);
     }
 }

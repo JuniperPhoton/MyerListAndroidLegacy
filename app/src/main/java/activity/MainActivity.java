@@ -146,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
 
+        if(GlobalListLocator.CategoryList!=null) updateRatioButtons();
+
         mEditedText = (EditText) findViewById(R.id.add_editText);
         mOKBtn = (Button) findViewById(R.id.add_ok_btn);
         mCancelBtn = (Button) findViewById(R.id.add_cancel_btn);
@@ -220,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                             });
                 }
                 GlobalListLocator.StagedList.clear();
-                misStagedItemsNotEmpty=false;
+                misStagedItemsNotEmpty = false;
                 SerializerHelper.serializeToFile(AppExtension.getInstance(),
                         GlobalListLocator.StagedList,
                         SerializerHelper.stagedFileName);
@@ -321,11 +323,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     public void setupAddingPaneForModify(ToDo todo) {
         mAboutToModify = true;
         mEditedText.setText(todo.getContent());
-        mToDoAboutToModify=todo;
+        mToDoAboutToModify = todo;
         showAddingPane();
 
-        ToDoCategory category= GlobalListLocator.GetCategoryByCateID(mToDoAboutToModify.getCate());
-        int position= GlobalListLocator.CategoryList.indexOf(category);
+        ToDoCategory category = GlobalListLocator.GetCategoryByCateID(mToDoAboutToModify.getCate());
+        int position = GlobalListLocator.CategoryList.indexOf(category);
         mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(position).getId());
     }
 
@@ -430,10 +432,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         final ToDo tempToDo = new ToDo();
         tempToDo.setContent(mEditedText.getText().toString());
         tempToDo.setIsDone(false);
-        if(mAboutToModify){
+        if (mAboutToModify) {
             tempToDo.setID(mToDoAboutToModify.getID());
-        }
-        else tempToDo.setID(java.util.UUID.randomUUID().toString());
+        } else tempToDo.setID(java.util.UUID.randomUUID().toString());
         tempToDo.setCate(mCateIDAboutToAdd);
 
         mToDoAboutToAdded = tempToDo;
@@ -474,10 +475,13 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mAboutToModify = false;
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+        imm.hideSoftInputFromWindow(mEditedText.getWindowToken(),0);
 
         mEditedText.setText("");
         mCateIDAboutToAdd = mCurrentDisplayedCateID;
+
+        mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(0).getId());
+        updateAddingPaneColorByCateId(mCurrentDisplayedCateID);
     }
 
     public void setIsAddStagedItems(boolean value) {
@@ -712,7 +716,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (mNavigationDrawerFragment.isDrawerOpen()) {
             mNavigationDrawerFragment.closeDrawer();
         } else if (isAddingPaneShown) {
-            hideAddingPane();
+            dismissDialog();
         } else {
             super.onBackPressed();
         }

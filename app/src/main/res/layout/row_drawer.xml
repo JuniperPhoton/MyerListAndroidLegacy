@@ -20,7 +20,7 @@
         android:orientation="horizontal">
 
 
-        <view.DrawView
+        <view.CircleView
             android:id="@+id/item_icon"
             android:layout_width="20sp"
             android:layout_height="20sp"

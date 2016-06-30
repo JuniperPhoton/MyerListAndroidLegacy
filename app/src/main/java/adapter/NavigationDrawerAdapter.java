@@ -16,7 +16,7 @@ import java.util.List;
 import interfaces.INavigationDrawerCallback;
 import model.ToDoCategory;
 import util.AppExtension;
-import view.DrawView;
+import view.CircleView;
 
 
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.DrawerViewHolder> {
@@ -104,14 +104,14 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     //表示 Recycler 里的每一项的容器
     public static class DrawerViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
-        public DrawView cateView;
+        public CircleView cateView;
         public CardView cardView;
         public LinearLayout rootLayout;
 
         public DrawerViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.item_name);
-            cateView = (DrawView) itemView.findViewById(R.id.item_icon);
+            cateView = (CircleView) itemView.findViewById(R.id.item_icon);
             cardView = (CardView) itemView.findViewById(R.id.navigation_card_view);
             rootLayout = (LinearLayout) cardView.findViewById(R.id.navigationitem_layout);
         }

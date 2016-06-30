@@ -32,7 +32,7 @@ import util.AppExtension;
 import util.SerializerHelper;
 import model.ToDo;
 import util.GlobalListLocator;
-import view.DrawView;
+import view.CircleView;
 
 
 public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoItemViewHolder> implements View.OnTouchListener {
@@ -432,7 +432,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         public RelativeLayout relativeLayout;
         public ImageView greenImageView;
         public ImageView redImageView;
-        public DrawView cateCircle;
+        public CircleView cateCircle;
 
         public ToDoItemViewHolder(View itemView) {
             super(itemView);
@@ -442,7 +442,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             redImageView = (ImageView) itemView.findViewById(R.id.redImageView);
             deleteView = (ImageView) itemView.findViewById(R.id.deleteView);
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.todo_layout);
-            cateCircle = (DrawView) itemView.findViewById(R.id.cateCircle);
+            cateCircle = (CircleView) itemView.findViewById(R.id.cateCircle);
         }
 
         public String getID() {

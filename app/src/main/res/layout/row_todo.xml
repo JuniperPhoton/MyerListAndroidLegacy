@@ -68,7 +68,7 @@
                     android:layout_height="match_parent"
                     android:clickable="false"
                     >
-                    <view.DrawView
+                    <view.CircleView
                         android:id="@+id/cateCircle"
                         android:layout_width="20sp"
                         android:layout_height="20sp"

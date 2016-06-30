@@ -23,7 +23,7 @@ import util.ColorUtil;
  * Created by dengw on 2016-06-29.
  */
 public class CircleRadioButton extends RadioButton {
-    private int mColor;
+    private int mCircleColor;
 
     public CircleRadioButton(Context context) {
         super(context);
@@ -45,7 +45,7 @@ public class CircleRadioButton extends RadioButton {
     }
 
     public void setCircleColor(int color) {
-        mColor = color;
+        mCircleColor = color;
     }
 
     @Override
@@ -53,10 +53,10 @@ public class CircleRadioButton extends RadioButton {
         super.draw(canvas);
 
         Paint paint = new Paint();
-        paint.setColor(mColor);
+        paint.setColor(mCircleColor);
 
         Paint darkPaint = new Paint();
-        darkPaint.setColor(ColorUtil.MakeColorDarker(mColor));
+        darkPaint.setColor(ColorUtil.MakeColorDarker(mCircleColor));
 
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2 - 12, darkPaint);
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2 - 20, paint);

@@ -540,6 +540,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         } catch (APIException e) {
             e.printStackTrace();
             ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 

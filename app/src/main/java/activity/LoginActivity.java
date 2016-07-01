@@ -284,6 +284,9 @@ public class LoginActivity extends AppCompatActivity {
                     ConfigHelper.putString(AppExtension.getInstance(),
                             "email",
                             mEmailBox.getText().toString());
+                    ConfigHelper.putString(AppExtension.getInstance(),
+                            "password",
+                            mPasswordBox.getText().toString());
 
                     CloudServices.login(ConfigHelper.getString(this, "email"),
                             ConfigHelper.getString(this, "password"),

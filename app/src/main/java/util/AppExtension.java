@@ -5,9 +5,10 @@ import android.content.Intent;
 
 import com.pgyersdk.crash.PgyCrashManager;
 
+import activity.MainActivity;
 import activity.StartActivity;
 
-public class AppExtension extends Application {
+public class AppExtension extends Application implements Thread.UncaughtExceptionHandler  {
     private static AppExtension instance;
 
     public static AppExtension getInstance() {
@@ -24,20 +25,9 @@ public class AppExtension extends Application {
 
         GlobalListLocator.restoreData();
         PgyCrashManager.register(this);
+    }
 
-        String access_token = ConfigHelper.getString(this, "access_token");
-        boolean offline = ConfigHelper.getBoolean(this, "offline_mode");
-
-        ConfigHelper.ISOFFLINEMODE = offline;
-
-        //还没有登录/进入离线模式，回到 StartActivity
-        if (!offline && access_token == null) {
-            ConfigHelper.ISOFFLINEMODE = false;
-            Intent intent = new Intent(this, StartActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                    Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
+    @Override
+    public void uncaughtException(Thread thread, Throwable throwable) {
     }
 }

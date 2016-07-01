@@ -71,8 +71,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
-    private LinearLayout mSettingsLayout;
-    private LinearLayout mAboutLayout;
+    private RelativeLayout mSettingsLayout;
+    private RelativeLayout mAboutLayout;
 
     private TextView mUndoneTextView;
 
@@ -128,8 +128,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         mDrawerRecyclerView.setHasFixedSize(true);
 
         //显示设置/关于
-        mSettingsLayout = (LinearLayout) view.findViewById(R.id.drawer_settings_layout);
-        mAboutLayout = (LinearLayout) view.findViewById(R.id.drawer_about_layout);
+        mSettingsLayout = (RelativeLayout) view.findViewById(R.id.drawer_settings_layout);
+        mAboutLayout = (RelativeLayout) view.findViewById(R.id.drawer_about_layout);
         mSettingsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

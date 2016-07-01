@@ -44,12 +44,12 @@
     <string name="loading_hint">加载中...</string>
     <string name="vaild_email">请输入有效的电子邮件</string>
     <string name="valid_password">两次输入的密码无效</string>
-    <string name="about_myerlist">关于 MyerList</string>
+    <string name="about_myerlist">MyerList for Windows</string>
     <string name="credit">开发者</string>
     <string name="feedback">反馈</string>
     <string name="version">版本</string>
     <string name="feedback_content">请通过邮件尽情反馈。</string>
-    <string name="about_content">MyerList 是一个跨平台的待办事项应用。你可以在所有 Windows 10 和 Android 设备上运行并且同步你的内容。希望能给带来简单高效的生活。</string>
+    <string name="about_content">在 Windows 10 的应用商店里搜索 MyerList 下载。</string>
     <string name="chinese">简体中文</string>
     <string name="change_lang">选择语言</string>
     <string name="hand_hobbit_block">右手使用习惯</string>
@@ -104,5 +104,8 @@
     <string name="hint_register_fail">注册失败</string>
     <string name="hint_request_fail">请求失败，请检查你的网络设置</string>
     <string name="hint_empty_input">请输入你的待办事项</string>
+    <string name="about_feedback">反馈</string>
+    <string name="about_feedback__content">给我发邮件</string>
+    <string name="about_download_btn">现在下载</string>
 
 </resources>

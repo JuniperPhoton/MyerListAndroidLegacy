@@ -3,12 +3,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/MyerListGray"
-                tools:context=".LoginActivity">
+                tools:context="activity.SettingActivity">
 
     <ImageView
         android:id="@+id/activity_setting_mask"
         android:layout_width="match_parent"
-        android:layout_height=" sp"
+        android:layout_height="24sp"
         android:layout_alignParentTop="true"
         android:alpha="0.15"
         android:elevation="@dimen/statusbar_elevation"

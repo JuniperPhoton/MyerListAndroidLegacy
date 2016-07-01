@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/fragment_todo_adding_pane"
+<RelativeLayout android:id="@+id/fragment_todo_adding_pane"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MyerListBlue"
     android:orientation="vertical"
     android:visibility="invisible"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.2"
+        android:src="@drawable/backgrd"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,7 +31,7 @@
                 android:layout_marginLeft="20sp"
                 android:gravity="center_vertical"
                 android:textColor="@android:color/white"
-                android:textSize="25sp"
+                android:textSize="27sp"
                 android:textStyle="normal"/>
             <RelativeLayout
                 android:layout_gravity="center_vertical"
@@ -62,7 +66,7 @@
         <EditText
             android:id="@+id/add_editText"
             android:layout_width="match_parent"
-            android:layout_height="35sp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="10sp"
             android:layout_marginLeft="20sp"
             android:layout_marginRight="10sp"
@@ -72,9 +76,12 @@
             android:hint="@string/adding_hint"
             android:paddingLeft="10sp"
             android:paddingStart="10sp"
+            android:paddingTop="10sp"
+            android:paddingBottom="10sp"
+            android:elegantTextHeight="true"
             android:textColor="@android:color/black"
             android:textColorHint="@color/TextHintColor"
-            android:textSize="12sp"/>
+            android:textSize="15sp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -133,5 +140,5 @@
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
 

@@ -1,6 +1,7 @@
 package activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +43,11 @@ public class AboutActivity extends AppCompatActivity {
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerList Android feedback");
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
         startActivity(Intent.createChooser(emailIntent, "Choose app to send an email"));
+    }
+
+    public void downloadClick(View view){
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.microsoft.com/store/apps/9nblggh11k1m"));
+        startActivity(browserIntent);
     }
 
     @Override

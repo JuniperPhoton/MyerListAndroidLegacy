@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
@@ -73,8 +74,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private Button mOKBtn;
     private Button mCancelBtn;
 
-    private LinearLayout mAddingPaneLayout;
+    private RelativeLayout mAddingPaneLayout;
     private TextView mAddingCateHintTextView;
+    private TextView mAddingTitleTextView;
 
     private RadioGroup mAddingCateRadioGroup;
 
@@ -136,8 +138,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
 
+        mAddingTitleTextView=(TextView)findViewById(R.id.dialog_title_text);
         mAddingCateHintTextView = (TextView) findViewById(R.id.fragment_adding_pane_cate_textView);
-        mAddingPaneLayout = (LinearLayout) findViewById(R.id.main_a_adding_panel);
+        mAddingPaneLayout = (RelativeLayout) findViewById(R.id.main_a_adding_panel);
         mAddingPaneLayout.setOnTouchListener(new View.OnTouchListener() {
             //防止触控穿透
             @Override
@@ -332,6 +335,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     public void showAddingPane() {
+        if(!mAboutToModify){
+            mAddingTitleTextView.setText(R.string.adding_title);
+        }
+        else {
+            mAddingTitleTextView.setText(R.string.modify_memo_title);
+        }
         isAddingPaneShown = true;
 
         // get the center for the clipping circle
@@ -368,7 +377,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void hideAddingPane() {
         isAddingPaneShown = false;
 
@@ -394,6 +402,13 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 mAddingPaneLayout.setVisibility(View.INVISIBLE);
+
+                mAboutToModify = false;
+                mEditedText.setText("");
+                mCateIDAboutToAdd = mCurrentDisplayedCateID;
+
+                mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(0).getId());
+                updateAddingPaneColorByCateId(mCurrentDisplayedCateID);
             }
         });
 
@@ -427,6 +442,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         if (isAddingPaneShown) {
             hideAddingPane();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mEditedText.getWindowToken(),0);
         }
 
         final ToDo tempToDo = new ToDo();
@@ -449,6 +466,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
                 adapter.updateContent(tempToDo);
             } else {
+                addNewToDoToList(tempToDo);
                 CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), mEditedText.getText().toString(),
                         "0", mCateIDAboutToAdd,
                         new IRequestCallback() {
@@ -470,18 +488,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private void dismissDialog() {
         if (isAddingPaneShown) {
             hideAddingPane();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mEditedText.getWindowToken(),0);
         }
-
-        mAboutToModify = false;
-
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mEditedText.getWindowToken(),0);
-
-        mEditedText.setText("");
-        mCateIDAboutToAdd = mCurrentDisplayedCateID;
-
-        mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(0).getId());
-        updateAddingPaneColorByCateId(mCurrentDisplayedCateID);
     }
 
     public void setIsAddStagedItems(boolean value) {
@@ -552,7 +561,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             Boolean isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
                 ToDo newToDo = ToDo.parseJsonObjToObj(response.getJSONObject("ScheduleInfo"));
-                addNewToDoToList(newToDo);
+                mToDoAboutToAdded.setID(newToDo.getID());
                 ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
                 CloudServices.setListOrder(ConfigHelper.getString(this, "sid"),
                         ConfigHelper.getString(this, "access_token"),

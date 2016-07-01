@@ -49,7 +49,6 @@ public class SettingActivity extends AppCompatActivity {
             mMaskView.setVisibility(View.GONE);
         }
 
-
         //找到开关控件
         mShowKeyboardSwitch = (com.rey.material.widget.Switch) findViewById(R.id.ShowKeyboardSwitch);
         mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.AddToBottomSwitch);

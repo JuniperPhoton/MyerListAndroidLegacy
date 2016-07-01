@@ -46,7 +46,7 @@
     <string name="version">VERSION</string>
     <string name="credit">DEVELOPER</string>
     <string name="feedback">FEEDBACK</string>
-    <string name="about_myerlist">ABOUT MYERLISTT</string>
+    <string name="about_myerlist">MyerList for Windows</string>
     <string name="feedback_content">Feel free to send me an email.</string>
     <string name="chinese">Chinese</string>
     <string name="change_lang">Choose language</string>
@@ -80,7 +80,7 @@
     <string name="adding_hint">e.g. Grab a coffee with my friends.</string>
     <string name="adding_title">Adding</string>
     <string name="no_deleted">No items</string>
-    <string name="about_content">MyerList supports Windows 10 and Android devices, which you can sync your ToDos over all of your favourite devices.</string>
+    <string name="about_content">Search MyerList on Store on Windows 10.</string>
     <string name="about_link">Website</string>
     <string name="tb_munion_tip_download_prefix">Downloading...</string>
     <string name="Syncing...">Syncing...</string>
@@ -102,5 +102,8 @@
     <string name="hint_register_fail">Failed to register</string>
     <string name="hint_request_fail">Failed to send request,please check your internet</string>
     <string name="hint_empty_input">Please input your memo.</string>
+    <string name="about_feedback">Feedback</string>
+    <string name="about_feedback__content">Send me email</string>
+    <string name="about_download_btn">Download now</string>
 
 </resources>

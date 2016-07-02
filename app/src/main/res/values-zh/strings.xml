@@ -107,5 +107,8 @@
     <string name="about_feedback">反馈</string>
     <string name="about_feedback__content">给我发邮件</string>
     <string name="about_download_btn">现在下载</string>
+    <string name="cate_per">个性化</string>
+    <string name="cate_deleted">已删除</string>
+    <string name="hint_personalize">仍在开发中，请移步Windows 版本进行个性化</string>
 
 </resources>

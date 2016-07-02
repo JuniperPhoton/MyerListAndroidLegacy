@@ -105,4 +105,7 @@
     <string name="about_feedback">FEEDBACK</string>
     <string name="about_feedback__content">Send me email</string>
     <string name="about_download_btn">Download now</string>
+    <string name="cate_deleted">Deleted</string>
+    <string name="cate_per">Personalization</string>
+    <string name="hint_personalize">Still working on it, you can personalize your categories on Windows version</string>
 </resources>

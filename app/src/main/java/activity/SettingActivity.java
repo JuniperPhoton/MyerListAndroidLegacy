@@ -159,7 +159,7 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
                 ConfigHelper.putBoolean(AppExtension.getInstance(), "HandHobbit", b);
-                ToastService.showShortToast(getResources().getString(R.string.rebootHint));
+                ToastService.sendToast(getResources().getString(R.string.rebootHint));
             }
         });
 

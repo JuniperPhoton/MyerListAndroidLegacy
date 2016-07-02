@@ -2,8 +2,8 @@ package activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -208,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
             //没有网络
             if (!AppUtil.isNetworkAvailable(getApplicationContext())) {
-                ToastService.showShortToast(getResources().getString(R.string.NoNetworkHint));
+                ToastService.sendToast(getResources().getString(R.string.NoNetworkHint));
             }
             //暂存区有待办事项的，同步到云端
             if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
@@ -275,7 +274,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 mToolbar.setBackgroundColor(getResources().getColor(R.color.DeletedColor));
                 mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.DeletedColor));
                 mToolbar.setTitle(getResources().getString(R.string.deleteditems));
-            } else {
+            }
+            else if(category.getID()==-2){
+                ToastService.sendToast(getResources().getString(R.string.hint_personalize));
+            }
+            else {
                 mToolbar.setBackgroundColor(category.getColor());
                 mNavigationDrawerFragment.updateRootBackgroundColor(category.getColor());
                 mToolbar.setTitle(category.getName());
@@ -436,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     public void okClick(View v) {
 
         if (mEditedText.getText().toString().isEmpty()) {
-            ToastService.showShortToast(getResources().getString(R.string.hint_empty_input));
+            ToastService.sendToast(getResources().getString(R.string.hint_empty_input));
             return;
         }
 
@@ -521,7 +524,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -538,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 GlobalListLocator.TodosList = listInOrder;
                 mToDoFragment.updateData(listInOrder);
 
-                ToastService.showShortToast(getResources().getString(R.string.Synced));
+                ToastService.sendToast(getResources().getString(R.string.Synced));
 
                 SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializerHelper.todosFileName);
 
@@ -548,7 +551,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -585,7 +588,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         }
     }
 
@@ -593,7 +596,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
         adapter.addToDo(newToDo);
 
-        ToastService.showShortToast(getResources().getString(R.string.add_success));
+        ToastService.sendToast(getResources().getString(R.string.add_success));
 
         updateListByCategory();
 
@@ -614,7 +617,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         }
     }
 
@@ -630,7 +633,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         }
     }
 
@@ -646,7 +649,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         }
     }
 
@@ -662,7 +665,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         }
     }
 
@@ -670,6 +673,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         onAddedResponse(response);
         mDeletedItemFragment.setupListData(GlobalListLocator.DeletedList);
     }
+
 
     public void onInit() {
         try {
@@ -729,7 +733,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         } else if (isAddingPaneShown) {
             dismissDialog();
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            Intent intent= new Intent(Intent.ACTION_MAIN);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
         }
     }
 }

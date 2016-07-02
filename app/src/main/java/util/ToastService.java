@@ -12,7 +12,7 @@ import com.juniperphoton.myerlistandroid.R;
  * Created by dengw on 1/8/2016.
  */
 public class ToastService {
-    public static void showShortToast(String str) {
+    public static void sendToast(String str) {
         LayoutInflater inflater = LayoutInflater.from(AppExtension.getInstance());
         View view = inflater.inflate(R.layout.custom_toast, null);
 

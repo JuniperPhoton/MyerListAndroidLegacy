@@ -135,23 +135,23 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isDataValid() {
         if (DataHelper.isStringNullOrEmpty(mEmailBox.getText().toString())) {
-            ToastService.showShortToast(getString(R.string.hint_input_email));
+            ToastService.sendToast(getString(R.string.hint_input_email));
             return false;
         }
         if (!DataHelper.isEmailFormat(mEmailBox.getText().toString())) {
-            ToastService.showShortToast(getString(R.string.hint_email_not_invalid));
+            ToastService.sendToast(getString(R.string.hint_email_not_invalid));
             return false;
         }
         if (DataHelper.isStringNullOrEmpty(mPasswordBox.getText().toString())) {
-            ToastService.showShortToast(getString(R.string.hint_input_psd));
+            ToastService.sendToast(getString(R.string.hint_input_psd));
             return false;
         }
         if (isToRegister && DataHelper.isStringNullOrEmpty(mConfirmPsBox.getText().toString())) {
-            ToastService.showShortToast(getString(R.string.hint_input_repsd));
+            ToastService.sendToast(getString(R.string.hint_input_repsd));
             return false;
         }
         if (isToRegister && !(mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString()))) {
-            ToastService.showShortToast(getString(R.string.hint_psd_not_match));
+            ToastService.sendToast(getString(R.string.hint_psd_not_match));
             return false;
         }
         return true;
@@ -175,11 +175,11 @@ public class LoginActivity extends AppCompatActivity {
                             });
                 }
                 else {
-                    ToastService.showShortToast(getResources().getString(R.string.hint_email_not_exist));
+                    ToastService.sendToast(getResources().getString(R.string.hint_email_not_exist));
                 }
             }
             else {
-                ToastService.showShortToast(getResources().getString(R.string.hint_email_not_exist));
+                ToastService.sendToast(getResources().getString(R.string.hint_email_not_exist));
             }
         }
         catch (JSONException e) {
@@ -187,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.dismiss();
         }
         catch (APIException e) {
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
             progressDialog.dismiss();
         }
     }
@@ -218,12 +218,12 @@ public class LoginActivity extends AppCompatActivity {
             else throw new IllegalArgumentException();
         }
         catch (APIException e) {
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
             progressDialog.dismiss();
         }
         catch (Exception e) {
             e.printStackTrace();
-            ToastService.showShortToast(getResources().getString(R.string.hint_login_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_login_fail));
             progressDialog.dismiss();
         }
     }
@@ -245,7 +245,7 @@ public class LoginActivity extends AppCompatActivity {
                     ConfigHelper.putString(AppExtension.getInstance(), "access_token", access_token);
                     ConfigHelper.DeleteKey(AppExtension.getInstance(), "password");
 
-                    ToastService.showShortToast(getResources().getString(R.string.login_success));
+                    ToastService.sendToast(getResources().getString(R.string.login_success));
 
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.putExtra("LOGIN_STATE", "Logined");
@@ -255,15 +255,15 @@ public class LoginActivity extends AppCompatActivity {
                 else throw new IllegalArgumentException();
             }
             else {
-                ToastService.showShortToast(getResources().getString(R.string.hint_wrong_psd));
+                ToastService.sendToast(getResources().getString(R.string.hint_wrong_psd));
             }
         }
         catch (APIException e) {
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         }
         catch (Exception e) {
             e.printStackTrace();
-            ToastService.showShortToast(getResources().getString(R.string.hint_login_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_login_fail));
         }
         finally {
             progressDialog.dismiss();
@@ -302,16 +302,16 @@ public class LoginActivity extends AppCompatActivity {
             else {
                 double code=response.getDouble("error_code");
                 if(code==203){
-                    ToastService.showShortToast(getResources().getString(R.string.hint_email_exist));
+                    ToastService.sendToast(getResources().getString(R.string.hint_email_exist));
                 }
             }
         }
         catch (APIException e) {
-            ToastService.showShortToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         }
         catch (Exception e) {
             e.printStackTrace();
-            ToastService.showShortToast(getResources().getString(R.string.hint_register_fail));
+            ToastService.sendToast(getResources().getString(R.string.hint_register_fail));
         }
         finally {
             progressDialog.dismiss();

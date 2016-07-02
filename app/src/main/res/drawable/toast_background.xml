@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#373737"/>
+    <solid android:color="#47a5dd"/>
     <corners
-        android:bottomLeftRadius="3sp"
-        android:bottomRightRadius="3sp"
-        android:topLeftRadius="3sp"
-        android:topRightRadius="3sp"/>
+        android:bottomLeftRadius="2sp"
+        android:bottomRightRadius="2sp"
+        android:topLeftRadius="2sp"
+        android:topRightRadius="2sp"/>
 </shape>

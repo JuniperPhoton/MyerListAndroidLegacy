@@ -25,7 +25,6 @@ import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
 
 public class SettingActivity extends AppCompatActivity {
-    private com.rey.material.widget.Switch mShowKeyboardSwitch;
     private com.rey.material.widget.Switch mAddToBottomSwitch;
     private com.rey.material.widget.Switch mHandHobbitSwitch;
     private TextView mLangText;
@@ -50,15 +49,10 @@ public class SettingActivity extends AppCompatActivity {
         }
 
         //找到开关控件
-        mShowKeyboardSwitch = (com.rey.material.widget.Switch) findViewById(R.id.ShowKeyboardSwitch);
         mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.AddToBottomSwitch);
         mHandHobbitSwitch = (com.rey.material.widget.Switch) findViewById(R.id.hand_hobbit_switch);
 
         mLangText = (TextView) findViewById(R.id.lang_btn);
-
-        //找到设置里的值
-        Boolean showKeyboard = ConfigHelper.getBoolean(AppExtension.getInstance(), "ShowKeyboard");
-        mShowKeyboardSwitch.setChecked(showKeyboard);
 
         Boolean addToBottom = ConfigHelper.getBoolean(AppExtension.getInstance(), "AddToBottom");
         mAddToBottomSwitch.setChecked(addToBottom);
@@ -139,14 +133,6 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-        //开关改变的时候
-        mShowKeyboardSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
-                ConfigHelper.putBoolean(AppExtension.getInstance(), "ShowKeyboard", b);
-            }
-        });
-
         mAddToBottomSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
@@ -162,8 +148,6 @@ public class SettingActivity extends AppCompatActivity {
                 ToastService.sendToast(getResources().getString(R.string.rebootHint));
             }
         });
-
-
     }
 
     @Override

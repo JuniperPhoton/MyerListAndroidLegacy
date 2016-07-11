@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
 import com.juniperphoton.myerlistandroid.R;
+
 import util.ConfigHelper;
 
 /**
@@ -31,13 +33,13 @@ public class SplashActivity extends Activity {
                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
                             Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                }
-                else {
+                } else {
                     Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
                             Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.activity_anim_slide_in, R.anim.activity_anim_slide_out);
                 }
                 finish();
             }

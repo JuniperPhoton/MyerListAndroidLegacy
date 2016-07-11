@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 commitAllowingStateLoss();
     }
 
-    public void setupAddingPaneForModify(ToDo todo) {
+    public void setupAddingPaneForModifyAndShow(ToDo todo) {
         mAboutToModify = true;
         mEditedText.setText(todo.getContent());
         mToDoAboutToModify = todo;
@@ -366,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mAddingPaneLayout.setVisibility(View.VISIBLE);
         anim.start();
 
-        if (ConfigHelper.getBoolean(AppExtension.getInstance(), "ShowKeyboard")) {
+        if (!mAboutToModify) {
             mEditedText.requestFocus();
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
@@ -733,11 +733,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         } else if (isAddingPaneShown) {
             dismissDialog();
         } else {
-            //super.onBackPressed();
-            Intent intent= new Intent(Intent.ACTION_MAIN);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            startActivity(intent);
+            super.onBackPressed();
+//            Intent intent= new Intent(Intent.ACTION_MAIN);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.addCategory(Intent.CATEGORY_HOME);
+//            startActivity(intent);
         }
     }
 }

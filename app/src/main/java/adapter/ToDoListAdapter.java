@@ -129,7 +129,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 if (mIsSwiping) {
                     return;
                 }
-                mCurrentActivity.setupAddingPaneForModify(currentToDoItem);
+                mCurrentActivity.setupAddingPaneForModifyAndShow(currentToDoItem);
             }
         });
 

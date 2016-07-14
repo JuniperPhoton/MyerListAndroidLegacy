@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.juniperphoton.myerlistandroid.R;
 
 import java.util.List;
+import java.util.Queue;
 
 import interfaces.INavigationDrawerCallback;
 import model.ToDoCategory;
@@ -20,6 +21,9 @@ import view.CircleView;
 
 
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.DrawerViewHolder> {
+
+    private static final int IS_FOOTER = 3;
+    private static final int IS_NORMAL = 1;
 
     private List<ToDoCategory> mData;
 
@@ -43,9 +47,10 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     //创建每一项的容器
     @Override
-    public DrawerViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public DrawerViewHolder onCreateViewHolder(ViewGroup viewGroup, final int viewType) {
+
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_drawer, viewGroup, false);
-        final DrawerViewHolder drawerViewHolder = new DrawerViewHolder(v);
+        final DrawerViewHolder drawerViewHolder = new DrawerViewHolder(v, viewType);
 
         //点击选中的时候发生
         drawerViewHolder.rootLayout.setOnClickListener(
@@ -54,17 +59,21 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
                     public void onClick(View view) {
                         mSelectedPosition = drawerViewHolder.getAdapterPosition();
 
+                        if (viewType == IS_FOOTER) {
+                            if (mINavigationDrawerCallback != null) {
+                                mINavigationDrawerCallback.onFooterSelected();
+                                return;
+                            }
+                        }
+
                         //上一个选中的变为透明色
                         if (mSelectedCardView != null) {
                             mSelectedCardView.setCardBackgroundColor(Color.TRANSPARENT);
                         }
 
                         mSelectedCardView = (CardView) view.getParent();
-//                        mSelectedCardView.setCardBackgroundColor(AppExtension.getInstance().getResources().
-//                                getColor(R.color.DrawerSelectedBackground));
 
                         if (mINavigationDrawerCallback != null) {
-
                             mINavigationDrawerCallback.onDrawerMainItemSelected(mSelectedPosition);
                         }
                     }
@@ -74,12 +83,12 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     }
 
     @Override
-    public void onBindViewHolder(DrawerViewHolder drawerViewHolder, int i) {
+    public void onBindViewHolder(DrawerViewHolder drawerViewHolder, int position) {
         //设置抽屉每一项的 UI
-        drawerViewHolder.textView.setText(mData.get(i).getName());
-        drawerViewHolder.cateView.setEllipseColor(mData.get(i).getColor());
+        drawerViewHolder.textView.setText(mData.get(position).getName());
+        drawerViewHolder.cateView.setEllipseColor(mData.get(position).getColor());
 
-        if (mSelectedPosition == i && mINavigationDrawerCallback != null) {
+        if (mSelectedPosition == position && mINavigationDrawerCallback != null) {
             mSelectedCardView = drawerViewHolder.cardView;
             mSelectedCardView.setCardBackgroundColor(
                     AppExtension.getInstance().getResources().
@@ -87,8 +96,14 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         }
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (position == mData.size() - 1) {
+            return IS_FOOTER;
+        } else return IS_NORMAL;
+    }
+
     /**
-     *
      * @param position
      */
     public void selectPosition(int position) {
@@ -108,12 +123,15 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         public CardView cardView;
         public LinearLayout rootLayout;
 
-        public DrawerViewHolder(View itemView) {
+        public int viewType;
+
+        public DrawerViewHolder(View itemView, int type) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.item_name);
             cateView = (CircleView) itemView.findViewById(R.id.item_icon);
             cardView = (CardView) itemView.findViewById(R.id.navigation_card_view);
             rootLayout = (LinearLayout) cardView.findViewById(R.id.navigationitem_layout);
+            viewType = type;
         }
     }
 }

@@ -368,4 +368,9 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     public void onDrawerMainItemSelected(int position) {
         selectItem(position);
     }
+
+    @Override
+    public void onFooterSelected() {
+        mCallbacks.onFooterSelected();
+    }
 }

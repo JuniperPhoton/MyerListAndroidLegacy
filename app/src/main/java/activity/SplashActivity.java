@@ -33,13 +33,14 @@ public class SplashActivity extends Activity {
                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
                             Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                    overridePendingTransition(0,0);
                 } else {
                     Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                             Intent.FLAG_ACTIVITY_CLEAR_TASK |
                             Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                    overridePendingTransition(R.anim.activity_anim_slide_in, R.anim.activity_anim_slide_out);
+                    overridePendingTransition(0,0);
                 }
                 finish();
             }

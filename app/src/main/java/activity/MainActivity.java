@@ -275,9 +275,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.DeletedColor));
                 mToolbar.setTitle(getResources().getString(R.string.deleteditems));
             }
-            else if(category.getID()==-2){
-                ToastService.sendToast(getResources().getString(R.string.hint_personalize));
-            }
             else {
                 mToolbar.setBackgroundColor(category.getColor());
                 mNavigationDrawerFragment.updateRootBackgroundColor(category.getColor());
@@ -287,6 +284,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onFooterSelected() {
+        ToastService.sendToast(getResources().getString(R.string.hint_personalize));
     }
 
     public void updateListByCategory() {
@@ -733,11 +735,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         } else if (isAddingPaneShown) {
             dismissDialog();
         } else {
-            super.onBackPressed();
-//            Intent intent= new Intent(Intent.ACTION_MAIN);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            intent.addCategory(Intent.CATEGORY_HOME);
-//            startActivity(intent);
+            //super.onBackPressed();
+            Intent intent= new Intent(Intent.ACTION_MAIN);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
         }
     }
 }

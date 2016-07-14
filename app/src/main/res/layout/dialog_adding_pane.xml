@@ -34,6 +34,7 @@
         android:background="@drawable/shape_text_view_style2"
         android:hint="e.g. Drop by my friends when I get off work."
         android:padding="10sp"
+        android:singleLine="true"
         android:textColor="@android:color/black"
         android:textColorHint="@color/TextHintColor"
         android:textSize="12sp" />

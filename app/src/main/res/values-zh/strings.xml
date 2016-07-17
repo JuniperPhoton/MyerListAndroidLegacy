@@ -110,5 +110,10 @@
     <string name="cate_per">个性化</string>
     <string name="cate_deleted">已删除</string>
     <string name="hint_personalize">仍在开发中，请移步Windows 版本进行个性化</string>
+    <string name="LoginActivity_Forget_PWD">忘记密码？</string>
+    <string name="forget_pwd_title">请注意</string>
+    <string name="forget_pwd_content">需要修改密码，请直接发邮件联系我。</string>
+    <string name="forget_pwd_send_email">发邮件</string>
+    <string name="forget_pwd_cancel">取消</string>
 
 </resources>

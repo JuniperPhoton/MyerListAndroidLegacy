@@ -126,7 +126,6 @@ public class SettingActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
-
                     }
                 });
                 builder.create().show();

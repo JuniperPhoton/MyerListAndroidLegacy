@@ -108,5 +108,10 @@
     <string name="cate_deleted">Deleted</string>
     <string name="cate_per">Personalization</string>
     <string name="hint_personalize">Still working on it, you can personalize your categories on Windows version</string>
+    <string name="LoginActivity_Forget_PWD">Forget password?</string>
+    <string name="forget_pwd_title">Notice</string>
+    <string name="forget_pwd_content">To change your password, please email me directly.</string>
+    <string name="forget_pwd_send_email">EMAIL ME</string>
+    <string name="forget_pwd_cancel">CANCEL</string>
 
 </resources>

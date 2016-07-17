@@ -1,9 +1,11 @@
 package activity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -38,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mTitleView;
     private ProgressDialog mprogressDialog;
     private ImageView mMaskView;
+    private TextView mForgetPwdTextView;
 
     private boolean isToRegister = true;
 
@@ -73,6 +76,33 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordBox = (EditText) findViewById(R.id.activity_login_psText);
         mConfirmPsBox = (EditText) findViewById(R.id.activity_login_reInputPsText);
         mTitleView = (TextView) findViewById(R.id.logintitle);
+        mForgetPwdTextView=(TextView)findViewById(R.id.login_a_forget_pwd_tv);
+        mForgetPwdTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
+                builder.setTitle(getResources().getString(R.string.forget_pwd_title));
+                builder.setMessage(getResources().getString(R.string.forget_pwd_content));
+                builder.setPositiveButton(getResources().getString(R.string.forget_pwd_send_email), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setType("message/rfc822");
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"dengweichao@hotmail.com"}); // recipients
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Change my password in MyerList");
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                        startActivity(Intent.createChooser(emailIntent, "Choose app to send an email"));
+                    }
+                });
+                builder.setNegativeButton(getResources().getString(R.string.forget_pwd_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+            }
+        });
 
         Intent intent = getIntent();
         String state = intent.getStringExtra("LOGIN_STATE");

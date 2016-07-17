@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/fragment_todo_adding_pane"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_todo_adding_pane"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MyerListBlue"
     android:orientation="vertical"
-    android:visibility="invisible"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:visibility="invisible">
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0.2"
-        android:src="@drawable/backgrd"/>
+        android:src="@drawable/backgrd" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,35 +23,38 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
                 android:id="@+id/dialog_title_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/adding_title"
-                android:height="50sp"
                 android:layout_marginLeft="20sp"
+                android:height="50sp"
                 android:gravity="center_vertical"
+                android:text="@string/adding_title"
                 android:textColor="@android:color/white"
                 android:textSize="27sp"
-                android:textStyle="normal"/>
+                android:textStyle="normal" />
+
             <RelativeLayout
-                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="10sp"
                 android:layout_marginLeft="5sp"
                 android:layout_marginTop="10sp"
-                android:layout_marginBottom="10sp"
-                android:background="#30000000"
-                android:layout_height="match_parent">
+                android:background="#30000000">
+
                 <TextView
                     android:id="@+id/fragment_adding_pane_cate_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10sp"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="10sp"
+                    android:gravity="center_vertical"
                     android:text="ALL"
-                    android:textColor="@android:color/white"/>
+                    android:textColor="@android:color/white" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -61,8 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="0sp"
-            android:layout_marginLeft="20sp"
-            />
+            android:layout_marginLeft="20sp" />
 
         <EditText
             android:id="@+id/add_editText"
@@ -74,16 +77,16 @@
             android:layout_marginStart="20sp"
             android:layout_marginTop="10sp"
             android:background="@android:color/white"
+            android:elegantTextHeight="true"
             android:hint="@string/adding_hint"
+            android:paddingBottom="10sp"
             android:paddingLeft="10sp"
             android:paddingStart="10sp"
-            android:singleLine="true"
             android:paddingTop="10sp"
-            android:paddingBottom="10sp"
-            android:elegantTextHeight="true"
+            android:singleLine="true"
             android:textColor="@android:color/black"
             android:textColorHint="@color/TextHintColor"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -99,8 +102,8 @@
                 android:layout_marginRight="20sp"
                 android:orientation="horizontal">
 
-                <android.support.v7.widget.CardView android:id="@+id/add_ok_btn_cardview"
-                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/add_ok_btn_cardview"
                     android:layout_width="120sp"
                     android:layout_height="40sp"
                     android:layout_marginRight="10sp"
@@ -118,10 +121,11 @@
                         android:text="@string/ok_btn"
                         android:textColor="@color/MyerListGray"
                         android:textSize="15sp"
-                        android:textStyle="normal"/>
+                        android:textStyle="normal" />
                 </android.support.v7.widget.CardView>
-                <android.support.v7.widget.CardView android:id="@+id/add_cancel_btn_cardview"
-                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+
+                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/add_cancel_btn_cardview"
                     android:layout_width="70sp"
                     android:layout_height="40sp"
                     card_view:cardBackgroundColor="#10000000"
@@ -137,7 +141,7 @@
                         android:text="@string/cancel_btn"
                         android:textColor="@android:color/white"
                         android:textSize="15sp"
-                        android:textStyle="normal"/>
+                        android:textStyle="normal" />
                 </android.support.v7.widget.CardView>
             </LinearLayout>
         </RelativeLayout>

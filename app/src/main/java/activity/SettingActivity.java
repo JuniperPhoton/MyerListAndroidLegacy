@@ -1,6 +1,5 @@
 package activity;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -13,11 +12,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.support.v7.app.AlertDialog;
 import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 import util.ConfigHelper;
 import util.AppExtension;

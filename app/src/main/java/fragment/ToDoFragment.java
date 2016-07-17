@@ -38,7 +38,7 @@ public class ToDoFragment extends Fragment {
     private FloatingActionButton mAddingFab;
 
     private LinearLayout mNoItemLayout;
-    private LinearLayout mAddingPaneLayout;
+    private RelativeLayout mAddingPaneLayout;
 
     public ToDoFragment() {
 
@@ -62,7 +62,7 @@ public class ToDoFragment extends Fragment {
         mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.todoList);
 
         mNoItemLayout = (LinearLayout) view.findViewById(R.id.no_item_layout);
-        mAddingPaneLayout = (LinearLayout) view.findViewById(R.id.fragment_todo_adding_pane);
+        mAddingPaneLayout = (RelativeLayout) view.findViewById(R.id.fragment_todo_adding_pane);
 
         //设置布局
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -70,6 +70,7 @@ public class ToDoFragment extends Fragment {
 
         mToDoRecyclerView.setLayoutManager(layoutManager);
         mToDoRecyclerView.setHasFixedSize(true);
+        mToDoRecyclerView.setAdapter(new ToDoListAdapter(new ArrayList<ToDo>(), mActivity, this));
 
         //设置下拉刷新控件
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);

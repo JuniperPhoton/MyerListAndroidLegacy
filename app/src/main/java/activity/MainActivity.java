@@ -95,10 +95,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         UmengUpdateAgent.update(this);
 
-//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        }
-
         setContentView(R.layout.activity_main);
 
         PgyCrashManager.register(this);
@@ -115,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             mNavigationDrawerFragment.setupOfflineMode();
             initFragment(savedInstanceState, false);
         }
-
     }
 
     //找到需要初始化的控件

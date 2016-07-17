@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordBox;
     private EditText mConfirmPsBox;
     private TextView mTitleView;
-    private ProgressDialog progressDialog;
+    private ProgressDialog mprogressDialog;
     private ImageView mMaskView;
 
     private boolean isToRegister = true;
@@ -84,9 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         else
             mTitleView.setText(getResources().getString(R.string.registerBtn));
 
-        progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-
-
+        mprogressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
     }
 
     @Override
@@ -109,8 +107,8 @@ public class LoginActivity extends AppCompatActivity {
         //login directly
         if (!isToRegister) {
 
-            progressDialog.setMessage(getResources().getString(R.string.loading_hint));
-            progressDialog.show();
+            mprogressDialog.setMessage(getResources().getString(R.string.loading_hint));
+            mprogressDialog.show();
 
             CloudServices.checkExist(mEmailBox.getText().toString(), new IRequestCallback() {
                 @Override
@@ -120,8 +118,8 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
         else {
-            progressDialog.setMessage(getResources().getString(R.string.loading_hint));
-            progressDialog.show();
+            mprogressDialog.setMessage(getResources().getString(R.string.loading_hint));
+            mprogressDialog.show();
             CloudServices.register(mEmailBox.getText().toString(),
                     mPasswordBox.getText().toString(),
                     new IRequestCallback() {
@@ -184,11 +182,11 @@ public class LoginActivity extends AppCompatActivity {
         }
         catch (JSONException e) {
             e.printStackTrace();
-            progressDialog.dismiss();
+            mprogressDialog.dismiss();
         }
         catch (APIException e) {
             ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
-            progressDialog.dismiss();
+            mprogressDialog.dismiss();
         }
     }
 
@@ -219,12 +217,12 @@ public class LoginActivity extends AppCompatActivity {
         }
         catch (APIException e) {
             ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
-            progressDialog.dismiss();
+            mprogressDialog.dismiss();
         }
         catch (Exception e) {
             e.printStackTrace();
             ToastService.sendToast(getResources().getString(R.string.hint_login_fail));
-            progressDialog.dismiss();
+            mprogressDialog.dismiss();
         }
     }
 
@@ -266,7 +264,7 @@ public class LoginActivity extends AppCompatActivity {
             ToastService.sendToast(getResources().getString(R.string.hint_login_fail));
         }
         finally {
-            progressDialog.dismiss();
+            mprogressDialog.dismiss();
         }
     }
 
@@ -314,7 +312,7 @@ public class LoginActivity extends AppCompatActivity {
             ToastService.sendToast(getResources().getString(R.string.hint_register_fail));
         }
         finally {
-            progressDialog.dismiss();
+            mprogressDialog.dismiss();
         }
     }
 }

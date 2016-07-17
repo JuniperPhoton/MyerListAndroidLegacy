@@ -83,7 +83,6 @@
             android:paddingLeft="10sp"
             android:paddingStart="10sp"
             android:paddingTop="10sp"
-            android:singleLine="true"
             android:textColor="@android:color/black"
             android:textColorHint="@color/TextHintColor"
             android:textSize="15sp" />

@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -161,17 +162,18 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     private ArrayList<ToDoCategory> getDefaultCateList() {
         ArrayList<ToDoCategory> items = new ArrayList<>();
-        items.add(new ToDoCategory(getResources().getString(R.string.cate_default), 0,
-                getResources().getColor(R.color.MyerListBlue)));
-        items.add(new ToDoCategory(getResources().getString(R.string.cate_work), 1, Color.RED));
+//        items.add(new ToDoCategory(getResources().getString(R.string.cate_default), 0,
+//                ContextCompat.getColor(AppExtension.getInstance(), R.color.MyerListBlue)));
+        items.add(new ToDoCategory(getResources().getString(R.string.cate_work), 1,
+                ContextCompat.getColor(AppExtension.getInstance(), R.color.WorkColor)));
         items.add(new ToDoCategory(getResources().getString(R.string.cate_life), 2,
-                getResources().getColor(R.color.LifeColor)));
+                ContextCompat.getColor(AppExtension.getInstance(), R.color.LifeColor)));
         items.add(new ToDoCategory(getResources().getString(R.string.cate_family), 3,
-                getResources().getColor(R.color.FamilyColor)));
+                ContextCompat.getColor(AppExtension.getInstance(), R.color.FamilyColor)));
         items.add(new ToDoCategory(getResources().getString(R.string.cate_enter), 4,
-                getResources().getColor(R.color.EnterColor)));
-        items.add(new ToDoCategory(getResources().getString(R.string.deleteditems), 5,
-                getResources().getColor(R.color.DeletedColor)));
+                ContextCompat.getColor(AppExtension.getInstance(), R.color.EnterColor)));
+//        items.add(new ToDoCategory(getResources().getString(R.string.deleteditems), 5,
+//                ContextCompat.getColor(AppExtension.getInstance(), R.color.DeletedColor)));
         return items;
     }
 
@@ -284,30 +286,37 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                 throw new APIException();
             }
             String cateInfo = response.getString("Cate_Info");
-            JSONObject cateJson = new JSONObject(cateInfo);
-
-            boolean isModified = cateJson.getBoolean("modified");
-            if (!isModified) {
+            if (cateInfo.equals("null")) {
                 categoryList = getDefaultCateList();
             } else {
-                categoryList = new ArrayList<>();
-                JSONArray array = cateJson.getJSONArray("cates");
-                for (int i = 0; i < array.length(); i++) {
-                    JSONObject cateObj = array.getJSONObject(i);
-                    String name = cateObj.getString("name");
-                    String color = cateObj.getString("color");
-                    int id = cateObj.getInt("id");
+                JSONObject cateJson = new JSONObject(cateInfo);
 
-                    ToDoCategory category = new ToDoCategory(name, id, Color.parseColor(color));
-                    categoryList.add(category);
+                boolean isModified = cateJson.getBoolean("modified");
+                if (!isModified) {
+                    categoryList = getDefaultCateList();
+                } else {
+                    categoryList = new ArrayList<>();
+                    JSONArray array = cateJson.getJSONArray("cates");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject cateObj = array.getJSONObject(i);
+                        String name = cateObj.getString("name");
+                        String color = cateObj.getString("color");
+                        int id = cateObj.getInt("id");
+
+                        ToDoCategory category = new ToDoCategory(name, id, Color.parseColor(color));
+                        categoryList.add(category);
+                    }
+
                 }
-                categoryList.add(0,
-                        new ToDoCategory(getResources().getString(R.string.cate_default), 0, getResources().getColor(R.color.MyerListBlue)));
-                categoryList.add(categoryList.size(),
-                        new ToDoCategory(getResources().getString(R.string.cate_deleted), -1, getResources().getColor(R.color.DeletedColor)));
-                categoryList.add(categoryList.size(),
-                        new ToDoCategory(getResources().getString(R.string.cate_per), -2, Color.WHITE));
             }
+
+            categoryList.add(0,
+                    new ToDoCategory(getResources().getString(R.string.cate_default), 0, getResources().getColor(R.color.MyerListBlue)));
+            categoryList.add(categoryList.size(),
+                    new ToDoCategory(getResources().getString(R.string.cate_deleted), -1, getResources().getColor(R.color.DeletedColor)));
+            categoryList.add(categoryList.size(),
+                    new ToDoCategory(getResources().getString(R.string.cate_per), -2, Color.WHITE));
+
             GlobalListLocator.CategoryList = categoryList;
 
             SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializerHelper.catesFileName);

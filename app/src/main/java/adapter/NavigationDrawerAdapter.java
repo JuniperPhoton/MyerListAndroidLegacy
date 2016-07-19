@@ -1,5 +1,6 @@
 package adapter;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -36,13 +37,9 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     //选中的项
     private int mSelectedPosition;
 
-    public NavigationDrawerAdapter(List<ToDoCategory> data) {
+    public NavigationDrawerAdapter(INavigationDrawerCallback callback, List<ToDoCategory> data) {
         mData = data;
-    }
-
-    //设置回调
-    public void setNavigationDrawerCallbacks(INavigationDrawerCallback INavigationDrawerCallback) {
-        mINavigationDrawerCallback = INavigationDrawerCallback;
+        mINavigationDrawerCallback = callback;
     }
 
     //创建每一项的容器

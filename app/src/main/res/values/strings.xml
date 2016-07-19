@@ -115,4 +115,5 @@
     <string name="forget_pwd_cancel">CANCEL</string>
     <string name="hint_request_fail">Failed to send request,please check your internet</string>
     <string name="cate_per_title">Personalization</string>
+    <string name="cate_per_add">Add a new category</string>
 </resources>

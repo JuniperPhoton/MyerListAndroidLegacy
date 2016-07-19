@@ -41,10 +41,6 @@ public class ToDoFragment extends Fragment {
     private LinearLayout mNoItemLayout;
     private RelativeLayout mAddingPaneLayout;
 
-    public ToDoFragment() {
-
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +53,7 @@ public class ToDoFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater,container,savedInstanceState);
+        super.onCreateView(inflater,container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_to_do, container, false);
 
         //拿到主列表控件

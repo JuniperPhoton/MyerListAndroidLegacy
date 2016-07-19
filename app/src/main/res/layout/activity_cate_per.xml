@@ -19,6 +19,7 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="3dp"
         card_view:cardCornerRadius="0dp">
 
         <RelativeLayout
@@ -34,7 +35,7 @@
                 android:layout_marginLeft="20sp"
                 android:text="@string/cate_per_title"
                 android:textColor="@android:color/black"
-                android:textSize="20sp" />
+                android:textSize="20sp"/>
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>
@@ -44,14 +45,27 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="100sp">
+        android:layout_marginTop="90sp"
+        android:background="@android:color/transparent"
+        android:elevation="4dp">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            card_view:fab_size="mini"
+            android:layout_gravity="center_vertical"
+            android:background="?android:attr/selectableItemBackground"
+            fab:fab_colorNormal="@color/cancelColor"
+            fab:fab_colorPressed="@color/cancelColorPressed"
+            fab:fab_icon="@drawable/cancel" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
             fab:fab_colorNormal="@color/pink"
             fab:fab_colorPressed="@color/pink_pressed"
-            fab:fab_icon="@drawable/add" />
+            fab:fab_icon="@drawable/ic_check_white_48dp" />
     </LinearLayout>
 
 

@@ -287,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         //ToastService.sendToast(getResources().getString(R.string.hint_personalize));
         Intent intent = new Intent(MainActivity.this, CatePersonalizaionActivity.class);
         startActivity(intent);
+        mNavigationDrawerFragment.closeDrawer();
     }
 
     public void updateListByCategory() {

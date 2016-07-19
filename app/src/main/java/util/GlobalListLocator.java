@@ -1,5 +1,7 @@
 package util;
 
+import android.graphics.Color;
+
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -13,6 +15,19 @@ public class GlobalListLocator {
     public static ArrayList<ToDo> DeletedList;
     public static ArrayList<ToDo> StagedList;
     public static ArrayList<ToDoCategory> CategoryList;
+
+    public static ArrayList<ToDoCategory> makeCategoryListForPersonalizaion() {
+        ArrayList<ToDoCategory> list = new ArrayList<>();
+        for (ToDoCategory cate : CategoryList) {
+            if (cate.getID() <= 0) {
+                continue;
+            } else {
+                list.add(cate);
+            }
+        }
+        list.add(0,new ToDoCategory("PlaceHolder",-3, Color.TRANSPARENT));
+        return list;
+    }
 
     public static ToDoCategory GetCategoryByCateID(int id) {
         ToDoCategory foundCate = null;

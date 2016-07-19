@@ -328,8 +328,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
             SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializerHelper.catesFileName);
 
-            NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(categoryList);
-            adapter.setNavigationDrawerCallbacks(this);
+            NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(this,categoryList);
             mDrawerRecyclerView.setAdapter(adapter);
 
             //默认项是所有待办事项

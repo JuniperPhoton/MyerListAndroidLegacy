@@ -23,6 +23,8 @@
     <drawable name="selected_gray">#2c000000</drawable>
     <color name="pink">#ff316b</color>
     <color name="pink_pressed">#dc3967</color>
+    <color name="cancelColor">#b1b1b1</color>
+    <color name="cancelColorPressed">#6a6a6a</color>
     <color name="dialog_backgrd">#eeeeee</color>
     <color name="cate_per_title_backgrd">#ededed</color>
 </resources>

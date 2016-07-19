@@ -2,11 +2,13 @@ package fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -94,7 +96,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        super.onCreateView(inflater,container,savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         initViews(view);
 
@@ -245,7 +247,12 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         ((NavigationDrawerAdapter) mDrawerRecyclerView.getAdapter()).selectPosition(position);
 
         if (mDrawerLayout != null) {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDrawerLayout.closeDrawer(mFragmentContainerView);
+                }
+            },300);
         }
     }
 
@@ -345,7 +352,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
             mCallbacks = (INavigationDrawerCallback) activity;

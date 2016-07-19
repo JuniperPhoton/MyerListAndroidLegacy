@@ -113,5 +113,6 @@
     <string name="forget_pwd_content">To change your password, please email me directly.</string>
     <string name="forget_pwd_send_email">EMAIL ME</string>
     <string name="forget_pwd_cancel">CANCEL</string>
+    <string name="cate_per_title">Personalization</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -47,9 +48,7 @@ public class DeletedItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_deleted_item, container, false);
         mDeletedListRecyclerView = (RecyclerView) view.findViewById(R.id.deletedList);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
         mDeletedListRecyclerView.setLayoutManager(layoutManager);
         mDeletedListRecyclerView.setHasFixedSize(true);
 
@@ -105,7 +104,7 @@ public class DeletedItemFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
             mActivity = (MainActivity) activity;

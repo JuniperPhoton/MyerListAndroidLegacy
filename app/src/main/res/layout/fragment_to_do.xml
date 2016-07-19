@@ -26,21 +26,19 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <com.getbase.floatingactionbutton.FloatingActionButton
-        android:id="@+id/pink_icon"
+        android:id="@+id/pink_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16sp"
+        android:layout_marginRight="16sp"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         fab:fab_colorNormal="@color/pink"
         fab:fab_colorPressed="@color/pink_pressed"
         fab:fab_icon="@drawable/add" />
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -96,7 +94,6 @@
                 android:layout_weight="1" />
         </LinearLayout>
     </LinearLayout>
-
     <LinearLayout
         android:id="@+id/no_item_layout"
         android:layout_width="match_parent"
@@ -123,6 +120,4 @@
             android:textColor="@android:color/black"
             android:textSize="30dp" />
     </LinearLayout>
-
-
 </RelativeLayout>

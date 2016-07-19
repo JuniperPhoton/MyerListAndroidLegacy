@@ -88,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private boolean mAboutToModify = false;
     private ToDo mToDoAboutToModify;
 
+    private int[] mLastCP = new int[2];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
 
-        mAddingTitleTextView=(TextView)findViewById(R.id.dialog_title_text);
+        mAddingTitleTextView = (TextView) findViewById(R.id.dialog_title_text);
         mAddingCateHintTextView = (TextView) findViewById(R.id.fragment_adding_pane_cate_textView);
         mAddingPaneLayout = (RelativeLayout) findViewById(R.id.main_a_adding_panel);
         mAddingPaneLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -143,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
 
-        if(GlobalListLocator.CategoryList!=null) updateRatioButtons();
+        if (GlobalListLocator.CategoryList != null) updateRatioButtons();
 
         mEditedText = (EditText) findViewById(R.id.add_editText);
         mOKBtn = (Button) findViewById(R.id.add_ok_btn);
@@ -269,8 +271,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 mToolbar.setBackgroundColor(getResources().getColor(R.color.DeletedColor));
                 mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.DeletedColor));
                 mToolbar.setTitle(getResources().getString(R.string.deleteditems));
-            }
-            else {
+            } else {
                 mToolbar.setBackgroundColor(category.getColor());
                 mNavigationDrawerFragment.updateRootBackgroundColor(category.getColor());
                 mToolbar.setTitle(category.getName());
@@ -283,7 +284,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Override
     public void onFooterSelected() {
-        ToastService.sendToast(getResources().getString(R.string.hint_personalize));
+        //ToastService.sendToast(getResources().getString(R.string.hint_personalize));
+        Intent intent = new Intent(MainActivity.this, CatePersonalizaionActivity.class);
+        startActivity(intent);
     }
 
     public void updateListByCategory() {
@@ -323,33 +326,33 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 commitAllowingStateLoss();
     }
 
-    public void setupAddingPaneForModifyAndShow(ToDo todo) {
+    public void setupAddingPaneForModifyAndShow(ToDo todo, int[] itemPosition) {
         mAboutToModify = true;
         mEditedText.setText(todo.getContent());
         mToDoAboutToModify = todo;
-        showAddingPane();
+        showAddingPane(itemPosition);
 
         ToDoCategory category = GlobalListLocator.GetCategoryByCateID(mToDoAboutToModify.getCate());
-        int position = GlobalListLocator.CategoryList.indexOf(category);
-        mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(position).getId());
+        int catePosition = GlobalListLocator.CategoryList.indexOf(category);
+        mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(catePosition).getId());
     }
 
-    public void showAddingPane() {
-        if(!mAboutToModify){
+    public void showAddingPane(int[] startPosition) {
+        if (!mAboutToModify) {
             mAddingTitleTextView.setText(R.string.adding_title);
-        }
-        else {
+        } else {
             mAddingTitleTextView.setText(R.string.modify_memo_title);
         }
         isAddingPaneShown = true;
 
         // get the center for the clipping circle
-        int cx = mAddingPaneLayout.getWidth() - 160;
-        int cy = mAddingPaneLayout.getHeight() - 160;
+        int cx = mToDoFragment.getFABPostion()[0] + mToDoFragment.getFABRadius();
+        int cy = mToDoFragment.getFABPostion()[1] + mToDoFragment.getFABRadius();
 
         if (mAboutToModify) {
-            cx = 50;
-            cy = 50;
+            cx = startPosition[0];
+            cy = startPosition[1];
+            mLastCP = startPosition;
         }
 
         // get the final radius for the clipping circle
@@ -381,12 +384,16 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         isAddingPaneShown = false;
 
         // get the center for the clipping circle
-        int cx = mAddingPaneLayout.getWidth() - 160;
-        int cy = mAddingPaneLayout.getHeight() - 160;
+        int cx;
+        int cy;
 
         if (mAboutToModify) {
-            cx = 50;
-            cy = 50;
+            cx = mLastCP[0];
+            cy = mLastCP[1];
+        } else {
+            // get the center for the clipping circle
+            cx = mToDoFragment.getFABPostion()[0] + mToDoFragment.getFABRadius();
+            cy = mToDoFragment.getFABPostion()[1] + mToDoFragment.getFABRadius();
         }
 
         // get the initial radius for the clipping circle
@@ -443,7 +450,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (isAddingPaneShown) {
             hideAddingPane();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mEditedText.getWindowToken(),0);
+            imm.hideSoftInputFromWindow(mEditedText.getWindowToken(), 0);
         }
 
         final ToDo tempToDo = new ToDo();
@@ -489,13 +496,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (isAddingPaneShown) {
             hideAddingPane();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mEditedText.getWindowToken(),0);
+            imm.hideSoftInputFromWindow(mEditedText.getWindowToken(), 0);
         }
     }
 
     public void setIsAddStagedItems(boolean value) {
         misStagedItemsNotEmpty = value;
     }
+
 
     private void onGotLatestScheduleResponse(JSONObject response) {
         mToDoFragment.stopRefreshing();
@@ -549,7 +557,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         } catch (APIException e) {
             e.printStackTrace();
             ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -671,7 +679,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mDeletedItemFragment.setupListData(GlobalListLocator.DeletedList);
     }
 
-
     public void onInit() {
         try {
             Type type = new TypeToken<ArrayList<ToDo>>() {
@@ -731,7 +738,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             dismissDialog();
         } else {
             //super.onBackPressed();
-            Intent intent= new Intent(Intent.ACTION_MAIN);
+            Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addCategory(Intent.CATEGORY_HOME);
             startActivity(intent);

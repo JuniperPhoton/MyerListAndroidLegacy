@@ -1,6 +1,7 @@
 package adapter;
 
 import android.animation.ValueAnimator;
+import android.graphics.Point;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -56,16 +57,6 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
     private boolean mIsInGreen = false;
     private boolean mIsInRed = false;
     private boolean mIsSwiping = false;
-
-    //修改的时候弹出的对话框
-    private AlertDialog mDialog;
-
-    //修改的时候文本框
-    private EditText mNewMemoText;
-
-    private int cateAboutToModify = 0;
-
-    private int deletedItemsCount = 0;
 
     //构造函数
     //传入当前的列表
@@ -129,7 +120,10 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
                 if (mIsSwiping) {
                     return;
                 }
-                mCurrentActivity.setupAddingPaneForModifyAndShow(currentToDoItem);
+                int[] location = new int[2];
+                holder.cateCircle.getLocationOnScreen(location);
+                mCurrentActivity.setupAddingPaneForModifyAndShow(currentToDoItem,
+                        new int[]{location[0] + holder.cateCircle.getWidth() / 2, location[1] + holder.cateCircle.getHeight() / 2});
             }
         });
 
@@ -141,6 +135,12 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         holder.greenImageView.setVisibility(View.INVISIBLE);
         holder.redImageView.setVisibility(View.INVISIBLE);
         holder.relativeLayout.scrollTo(0, 0);
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return mToDosToDisplay != null ? mToDosToDisplay.size() : 0;
     }
 
     public void addToDo(ToDo todoToAdd) {
@@ -231,11 +231,6 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
         } else {
             SerializerHelper.serializeToFile(mCurrentActivity, mToDosToDisplay, SerializerHelper.todosFileName);
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return mToDosToDisplay != null ? mToDosToDisplay.size() : 0;
     }
 
     public ArrayList<ToDo> getListSrc() {
@@ -453,5 +448,4 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoIt
             this.id = id;
         }
     }
-
 }

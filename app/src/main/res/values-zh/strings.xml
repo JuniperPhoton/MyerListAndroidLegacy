@@ -115,5 +115,6 @@
     <string name="forget_pwd_content">需要修改密码，请直接发邮件联系我。</string>
     <string name="forget_pwd_send_email">发邮件</string>
     <string name="forget_pwd_cancel">取消</string>
+    <string name="cate_per_title">个性化</string>
 
 </resources>

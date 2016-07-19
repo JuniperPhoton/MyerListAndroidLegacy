@@ -114,4 +114,5 @@
     <string name="forget_pwd_send_email">EMAIL ME</string>
     <string name="forget_pwd_cancel">CANCEL</string>
     <string name="hint_request_fail">Failed to send request,please check your internet</string>
+    <string name="cate_per_title">Personalization</string>
 </resources>

@@ -1,6 +1,7 @@
 package fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -56,6 +57,7 @@ public class ToDoFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_to_do, container, false);
 
         //拿到主列表控件
@@ -86,11 +88,11 @@ public class ToDoFragment extends Fragment {
         });
 
         //设置 FAB
-        mAddingFab = (FloatingActionButton) view.findViewById(R.id.pink_icon);
+        mAddingFab = (FloatingActionButton) view.findViewById(R.id.pink_fab);
         mAddingFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mActivity.showAddingPane();
+                mActivity.showAddingPane(null);
             }
         });
         if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
@@ -118,6 +120,7 @@ public class ToDoFragment extends Fragment {
         mMyToDos = data;
         if (mToDoRecyclerView != null) {
             mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMyToDos, mActivity, this));
+
             stopRefreshing();
             if (data.size() == 0)
                 showNoItemHint(true);
@@ -151,6 +154,16 @@ public class ToDoFragment extends Fragment {
         }
     }
 
+    public int getFABRadius(){
+        return mAddingFab.getWidth()/2;
+    }
+
+    public int[] getFABPostion(){
+        int[] position=new int[2];
+        mAddingFab.getLocationOnScreen(position);
+        return position;
+    }
+
     public void getAllSchedules() {
         mActivity.syncCateAndList();
 
@@ -177,7 +190,7 @@ public class ToDoFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
             if (activity instanceof MainActivity) {

@@ -1,11 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/MyerListGray"
-                android:clipToPadding="true"
-                tools:context=".MainActivityFragment"
-    >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/MyerListGray"
+    android:clipToPadding="true"
+    tools:context=".MainActivityFragment">
 
     <ImageView
         android:id="@+id/activity_start_mask"
@@ -15,34 +14,33 @@
         android:alpha="0.15"
         android:elevation="@dimen/statusbar_elevation"
         android:scaleType="fitXY"
-        android:src="@drawable/black_mask"/>
+        android:src="@drawable/black_mask" />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0.2"
-        android:src="@drawable/backgrd"/>
+        android:src="@drawable/backgrd" />
 
     <LinearLayout
-        android:id="@+id/rootLinearLayout"
+        android:id="@+id/activity_start_root_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/logo_img"
+            android:id="@+id/activity_start_logo_iv"
             android:layout_width="wrap_content"
             android:layout_height="160sp"
             android:layout_gravity="center_horizontal"
             android:contentDescription="logo"
-            android:src="@drawable/icon"/>
+            android:src="@drawable/icon" />
 
         <LinearLayout
-            android:id="@+id/title_textview"
+            android:id="@+id/activity_start_title_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -53,8 +51,7 @@
                 android:gravity="center"
                 android:text="@string/myer"
                 android:textColor="@color/MyerListBlue"
-                android:textSize="40sp"
-                />
+                android:textSize="40sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -64,22 +61,21 @@
                 android:text="@string/list"
                 android:textColor="@color/MyerListBlue"
                 android:textSize="40sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/subtitle_textview"
+            android:id="@+id/activity_start_subtitle_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/FontLight"
             android:gravity="center"
             android:text="@string/Subtitle"
             android:textColor="@color/MyerListBlueLight"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/toLoginBtn_cardview"
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/activity_start_loginBtn_cv"
             android:layout_width="match_parent"
             android:layout_height="40sp"
             android:layout_marginLeft="20sp"
@@ -88,8 +84,9 @@
             card_view:cardBackgroundColor="@color/MyerListBlueLight"
             card_view:cardCornerRadius="2sp"
             card_view:cardElevation="2sp">
+
             <Button
-                android:id="@+id/tologinBtn"
+                android:id="@+id/activity_start_login_btn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?android:selectableItemBackground"
@@ -97,12 +94,11 @@
                 android:onClick="toLoginClick"
                 android:padding="0dp"
                 android:text="@string/loginBtn"
-                android:textColor="#ffffff"/>
+                android:textColor="#ffffff" />
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/toRegisterBtn_cardview"
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/activity_start_registerBtn_cv"
             android:layout_width="match_parent"
             android:layout_height="40sp"
             android:layout_marginLeft="20sp"
@@ -114,7 +110,7 @@
             card_view:cardElevation="2sp">
 
             <Button
-                android:id="@+id/toRegisterBtn"
+                android:id="@+id/activity_start_register_btn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?android:selectableItemBackground"
@@ -122,12 +118,11 @@
                 android:onClick="toRegisterClick"
                 android:padding="0dp"
                 android:text="@string/registerBtn"
-                android:textColor="@android:color/background_dark"/>
+                android:textColor="@android:color/background_dark" />
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/toMainBtn_cardview"
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/activity_start_offline_cv"
             android:layout_width="match_parent"
             android:layout_height="40sp"
             android:layout_marginBottom="10sp"
@@ -140,14 +135,14 @@
             card_view:cardElevation="2sp">
 
             <Button
-                android:id="@+id/toMainBtn"
+                android:id="@+id/activity_start_offline_btn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?android:selectableItemBackground"
                 android:clickable="true"
                 android:onClick="toMainClick"
                 android:text="@string/offlineBtn"
-                android:textColor="@android:color/background_dark"/>
+                android:textColor="@android:color/background_dark" />
         </android.support.v7.widget.CardView>
 
     </LinearLayout>

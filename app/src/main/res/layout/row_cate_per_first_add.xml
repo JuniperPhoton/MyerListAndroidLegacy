@@ -1,6 +1,6 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/navigation_card_view"
+    android:id="@+id/raw_cate_per_first_cv"
     android:layout_width="match_parent"
     android:layout_height="50sp"
     card_view:cardBackgroundColor="@android:color/transparent"
@@ -8,7 +8,7 @@
     card_view:cardElevation="0dp">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/cateitem_layout"
+        android:id="@+id/raw_cate_per_ll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:attr/selectableItemBackground"

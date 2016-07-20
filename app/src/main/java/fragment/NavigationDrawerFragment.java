@@ -1,6 +1,5 @@
 package fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -104,14 +103,14 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     }
 
     private void initViews(View view) {
-        mUndoneTextView = (TextView) view.findViewById(R.id.undoneCount_textview);
+        mUndoneTextView = (TextView) view.findViewById(R.id.fragment_drawer_undone_tv);
         CustomFontHelper.setCustomFont(mUndoneTextView, "fonts/AGENCYB.TTF", getActivity());
 
         //显示电子邮件
-        mEmailView = (TextView) view.findViewById(R.id.account_block);
+        mEmailView = (TextView) view.findViewById(R.id.fragment_drawer_login_tv);
         mEmailView.setText(ConfigHelper.getString(view.getContext(), "email"));
 
-        mRootLayout = (RelativeLayout) view.findViewById(R.id.drawer_root_layout);
+        mRootLayout = (RelativeLayout) view.findViewById(R.id.fragment_drawer_root_ll);
         mRootLayout.setOnTouchListener(new View.OnTouchListener() {
             //避免透过抽屉点击到下面的列表
             @Override
@@ -121,7 +120,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         });
 
         //显示类别
-        mDrawerRecyclerView = (RecyclerView) view.findViewById(R.id.drawerList);
+        mDrawerRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_drawer_rv);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -130,8 +129,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         mDrawerRecyclerView.setHasFixedSize(true);
 
         //显示设置/关于
-        mSettingsLayout = (RelativeLayout) view.findViewById(R.id.drawer_settings_layout);
-        mAboutLayout = (RelativeLayout) view.findViewById(R.id.drawer_about_layout);
+        mSettingsLayout = (RelativeLayout) view.findViewById(R.id.fragment_drawer_settings_ll);
+        mAboutLayout = (RelativeLayout) view.findViewById(R.id.fragment_drawer_about_ll);
         mSettingsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

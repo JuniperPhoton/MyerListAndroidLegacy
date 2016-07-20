@@ -9,10 +9,8 @@ import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
@@ -37,7 +35,7 @@ public class StartActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_start);
 
-        mRootLinearLayout = (LinearLayout) findViewById(R.id.rootLinearLayout);
+        mRootLinearLayout = (LinearLayout) findViewById(R.id.activity_start_root_ll);
         mRootLinearLayout.setAlpha(0f);
 
         mMaskView = (ImageView) findViewById(R.id.activity_start_mask);
@@ -46,19 +44,19 @@ public class StartActivity extends AppCompatActivity {
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            CardView toLoginCard = (CardView) findViewById(R.id.toLoginBtn_cardview);
+            CardView toLoginCard = (CardView) findViewById(R.id.activity_start_loginBtn_cv);
             LinearLayout.LayoutParams layoutParamsForTop = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             layoutParamsForTop.setMargins(40, 60, 40, 0);
             layoutParamsForTop.height = 140;
             toLoginCard.setLayoutParams(layoutParamsForTop);
 
-            CardView toRegisterCard = (CardView) findViewById(R.id.toRegisterBtn_cardview);
+            CardView toRegisterCard = (CardView) findViewById(R.id.activity_start_registerBtn_cv);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             layoutParams.setMargins(40, 0, 40, 0);
             layoutParams.height = 140;
             toRegisterCard.setLayoutParams(layoutParams);
 
-            CardView toMainCard = (CardView) findViewById(R.id.toMainBtn_cardview);
+            CardView toMainCard = (CardView) findViewById(R.id.activity_start_offline_cv);
             LinearLayout.LayoutParams layoutParamsForBottom = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             layoutParamsForBottom.setMargins(40, 0, 40, 10);
             layoutParamsForBottom.height = 140;

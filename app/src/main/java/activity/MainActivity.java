@@ -117,12 +117,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     //找到需要初始化的控件
     private void initViews() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        mToolbar = (Toolbar) findViewById(R.id.activity_main_tb);
         setSupportActionBar(mToolbar);
 
-        mFragmentLayout = (FrameLayout) findViewById(R.id.fragment_container);
+        mFragmentLayout = (FrameLayout) findViewById(R.id.activity_main_fl);
 
-        mAddingCateRadioGroup = (RadioGroup) findViewById(R.id.add_pane_radio);
+        mAddingCateRadioGroup = (RadioGroup) findViewById(R.id.fragment_adding_pane_radio);
         mAddingCateRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
@@ -134,9 +134,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
 
-        mAddingTitleTextView = (TextView) findViewById(R.id.dialog_title_text);
-        mAddingCateHintTextView = (TextView) findViewById(R.id.fragment_adding_pane_cate_textView);
-        mAddingPaneLayout = (RelativeLayout) findViewById(R.id.main_a_adding_panel);
+        mAddingTitleTextView = (TextView) findViewById(R.id.fragment_adding_pane_title_tv);
+        mAddingCateHintTextView = (TextView) findViewById(R.id.fragment_adding_pane_cate_tv);
+        mAddingPaneLayout = (RelativeLayout) findViewById(R.id.activity_main_adding_pane);
         mAddingPaneLayout.setOnTouchListener(new View.OnTouchListener() {
             //防止触控穿透
             @Override
@@ -147,9 +147,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         if (GlobalListLocator.CategoryList != null) updateRatioButtons();
 
-        mEditedText = (EditText) findViewById(R.id.add_editText);
-        mOKBtn = (Button) findViewById(R.id.add_ok_btn);
-        mCancelBtn = (Button) findViewById(R.id.add_cancel_btn);
+        mEditedText = (EditText) findViewById(R.id.fragment_adding_pane_add_et);
+        mOKBtn = (Button) findViewById(R.id.fragment_adding_pane_pane_ok_btn);
+        mCancelBtn = (Button) findViewById(R.id.fragment_adding_pane_cancel_btn);
 
         mOKBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,9 +171,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
 
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager()
-                .findFragmentById(R.id.fragment_drawer);
-        mNavigationDrawerFragment.setup(R.id.fragment_drawer,
-                (DrawerLayout) findViewById(R.id.drawer), mToolbar);
+                .findFragmentById(R.id.activity_main_fragment_drawer);
+        mNavigationDrawerFragment.setup(R.id.activity_main_fragment_drawer,
+                (DrawerLayout) findViewById(R.id.acitivity_main_drawer), mToolbar);
     }
 
     //根据选中的颜色改变抽屉的背景色
@@ -187,14 +187,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     //初始化 Fragment
     private void initFragment(Bundle savedInstanceState, boolean logined) {
-        if (findViewById(R.id.fragment_container) != null) {
+        if (findViewById(R.id.activity_main_fl) != null) {
             if (savedInstanceState != null) {
                 return;
             }
 
             mToDoFragment = new ToDoFragment();
 
-            getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment)
+            getFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mToDoFragment)
                     .commitAllowingStateLoss();
 
             //登录了的，马上同步
@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
 
         if (mToDoFragment != null) {
-            getFragmentManager().beginTransaction().replace(R.id.fragment_container, mToDoFragment)
+            getFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mToDoFragment)
                     .commitAllowingStateLoss();
 
             mToDoFragment.updateData(newList);
@@ -323,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (mDeletedItemFragment == null) {
             mDeletedItemFragment = new DeletedItemFragment();
         }
-        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDeletedItemFragment).
+        getFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mDeletedItemFragment).
                 commitAllowingStateLoss();
     }
 

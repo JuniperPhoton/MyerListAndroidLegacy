@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            CardView toLoginCard = (CardView) findViewById(R.id.activity_login_btn_cardView);
+            CardView toLoginCard = (CardView) findViewById(R.id.activity_login_login_btn_cv);
             LinearLayout.LayoutParams layoutParamsForTop = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             layoutParamsForTop.setMargins(40, 60, 40, 0);
             layoutParamsForTop.height = 140;
@@ -72,11 +72,11 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
-        mEmailBox = (EditText) findViewById(R.id.activity_login_emailText);
-        mPasswordBox = (EditText) findViewById(R.id.activity_login_psText);
-        mConfirmPsBox = (EditText) findViewById(R.id.activity_login_reInputPsText);
-        mTitleView = (TextView) findViewById(R.id.logintitle);
-        mForgetPwdTextView=(TextView)findViewById(R.id.login_a_forget_pwd_tv);
+        mEmailBox = (EditText) findViewById(R.id.activity_login_email_tv);
+        mPasswordBox = (EditText) findViewById(R.id.activity_login_ps_et);
+        mConfirmPsBox = (EditText) findViewById(R.id.activity_login_rps_et);
+        mTitleView = (TextView) findViewById(R.id.activity_login_loginTitle_tv);
+        mForgetPwdTextView=(TextView)findViewById(R.id.activity_login_forget_tv);
         mForgetPwdTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

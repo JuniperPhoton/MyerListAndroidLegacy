@@ -1,6 +1,5 @@
 package fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -46,13 +45,13 @@ public class DeletedItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_deleted_item, container, false);
-        mDeletedListRecyclerView = (RecyclerView) view.findViewById(R.id.deletedList);
+        mDeletedListRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_delete_rv);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
         mDeletedListRecyclerView.setLayoutManager(layoutManager);
         mDeletedListRecyclerView.setHasFixedSize(true);
 
-        mFab = (com.getbase.floatingactionbutton.FloatingActionButton) view.findViewById(R.id.delete_all_fab);
+        mFab = (com.getbase.floatingactionbutton.FloatingActionButton) view.findViewById(R.id.fragment_delete_delete_all_fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,7 +73,7 @@ public class DeletedItemFragment extends Fragment {
                 builder.create().show();
             }
         });
-        mNoItemHintLayout = (LinearLayout) view.findViewById(R.id.no_deleteditem_layout);
+        mNoItemHintLayout = (LinearLayout) view.findViewById(R.id.fragment_delete_noitem_ll);
         setupListData(GlobalListLocator.DeletedList);
 
         return view;

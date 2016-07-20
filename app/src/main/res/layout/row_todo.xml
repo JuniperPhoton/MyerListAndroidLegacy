@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    android:id="@+id/todo_card_view"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/row_deleted_root_cv"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:clickable="true"
+    android:clickable="false"
     card_view:cardBackgroundColor="@color/MyerListGray"
     card_view:cardCornerRadius="0dp"
-    card_view:cardElevation="0dp"
-    >
+    card_view:cardElevation="0dp">
 
-    <RelativeLayout
-        android:id="@+id/todo_root"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/row_deleted_root-rl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:clickable="true">
+        android:clickable="false">
 
-        <RelativeLayout
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/todo_layout"
-            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="-100sp"
             android:layout_marginRight="-100sp"
             android:background="?android:attr/selectableItemBackground"
-            android:clickable="true">
+            android:clickable="false">
 
             <ImageView
                 android:id="@+id/greenImageView"
@@ -38,8 +34,7 @@
                 android:alpha="1"
                 android:scaleType="fitXY"
                 android:src="@drawable/green"
-                android:visibility="invisible"
-                />
+                android:visibility="invisible" />
 
             <ImageView
                 android:id="@+id/redImageView"
@@ -50,30 +45,27 @@
                 android:alpha="1"
                 android:scaleType="fitXY"
                 android:src="@drawable/red"
-                android:visibility="invisible"
-                />
+                android:visibility="invisible" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50sp"
                 android:layout_marginLeft="100sp"
                 android:layout_marginRight="100sp"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
 
                 <RelativeLayout
                     android:id="@+id/cateCircleLayout"
                     android:layout_width="40sp"
-                    android:layout_marginLeft="5sp"
                     android:layout_height="match_parent"
-                    android:clickable="false"
-                    >
+                    android:layout_marginLeft="5sp"
+                    android:clickable="false">
+
                     <view.CircleView
                         android:id="@+id/cateCircle"
                         android:layout_width="20sp"
                         android:layout_height="20sp"
-                        android:layout_centerInParent="true"
-                        />
+                        android:layout_centerInParent="true" />
                 </RelativeLayout>
 
                 <TextView
@@ -87,16 +79,15 @@
                     android:hint="Enjoy your good day!"
                     android:maxLines="1"
                     android:scrollHorizontally="false"
-                    android:textColor="@android:color/black"
-                    />
+                    android:textColor="@android:color/black" />
 
-                <ImageView
-                    android:id="@+id/deleteView"
-                    android:layout_width="30sp"
-                    android:layout_height="30sp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="-40sp"
-                    android:src="@drawable/delete2"/>
+                <!--<ImageView-->
+                <!--android:id="@+id/deleteView"-->
+                <!--android:layout_width="30sp"-->
+                <!--android:layout_height="30sp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:layout_marginLeft="-40sp"-->
+                <!--android:src="@drawable/delete2"/>-->
             </LinearLayout>
 
             <ImageView
@@ -107,7 +98,7 @@
                 android:layout_marginLeft="145sp"
                 android:layout_marginRight="140sp"
                 android:scaleType="fitXY"
-                android:src="@drawable/line"/>
+                android:src="@drawable/line" />
         </RelativeLayout>
 
     </RelativeLayout>

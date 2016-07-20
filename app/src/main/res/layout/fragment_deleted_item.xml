@@ -6,7 +6,7 @@
                 tools:context="fragment.DeletedItemFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/deletedList"
+        android:id="@+id/fragment_delete_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
@@ -15,7 +15,7 @@
         android:scrollbars="vertical"/>
 
     <com.getbase.floatingactionbutton.FloatingActionButton
-        android:id="@+id/delete_all_fab"
+        android:id="@+id/fragment_delete_delete_all_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -30,7 +30,7 @@
         fab:fab_icon="@drawable/delete_white"/>
 
     <LinearLayout
-        android:id="@+id/no_deleteditem_layout"
+        android:id="@+id/fragment_delete_noitem_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

@@ -1,6 +1,5 @@
 package adapter;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import com.juniperphoton.myerlistandroid.R;
 
 import java.util.List;
-import java.util.Queue;
 
 import interfaces.INavigationDrawerCallback;
 import model.ToDoCategory;
@@ -124,9 +122,9 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
         public DrawerViewHolder(View itemView, int type) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.item_name);
+            textView = (TextView) itemView.findViewById(R.id.fragment_drawer_account_tv);
             cateView = (CircleView) itemView.findViewById(R.id.item_icon);
-            cardView = (CardView) itemView.findViewById(R.id.navigation_card_view);
+            cardView = (CardView) itemView.findViewById(R.id.raw_cate_per_first_cv);
             rootLayout = (LinearLayout) cardView.findViewById(R.id.navigationitem_layout);
             viewType = type;
         }

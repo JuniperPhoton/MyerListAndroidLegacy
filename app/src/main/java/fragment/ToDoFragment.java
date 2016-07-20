@@ -1,18 +1,19 @@
 package fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.juniperphoton.myerlistandroid.R;
 
@@ -41,6 +42,10 @@ public class ToDoFragment extends Fragment {
     private LinearLayout mNoItemLayout;
     private RelativeLayout mAddingPaneLayout;
 
+    private ToDoListAdapter mAdapter;
+    private ItemTouchHelper mItemTouchHelper;
+    private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,25 +58,27 @@ public class ToDoFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater,container, savedInstanceState);
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_to_do, container, false);
 
-        //拿到主列表控件
-        mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.todoList);
+        mNoItemLayout = (LinearLayout) view.findViewById(R.id.fragment_todo_no_item_ll);
+        mAddingPaneLayout = (RelativeLayout) view.findViewById(R.id.fragment_adding_pane_root_rl);
 
-        mNoItemLayout = (LinearLayout) view.findViewById(R.id.no_item_layout);
-        mAddingPaneLayout = (RelativeLayout) view.findViewById(R.id.fragment_todo_adding_pane);
+        mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_todo_rv);
+        mToDoRecyclerView.setLayoutManager(new GridLayoutManager(AppExtension.getInstance(), 1));
 
-        //设置布局
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mAdapter = new ToDoListAdapter(new ArrayList<ToDo>(), mActivity, this);
+        mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
+        mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
+        mItemTouchHelper.attachToRecyclerView(mToDoRecyclerView);
 
-        mToDoRecyclerView.setLayoutManager(layoutManager);
-        mToDoRecyclerView.setHasFixedSize(true);
-        mToDoRecyclerView.setAdapter(new ToDoListAdapter(new ArrayList<ToDo>(), mActivity, this));
+        mItemDragAndSwipeCallback.setSwipeMoveFlags(ItemTouchHelper.START | ItemTouchHelper.END);
+        mAdapter.enableDragItem(mItemTouchHelper);
+
+        mToDoRecyclerView.setAdapter(mAdapter);
 
         //设置下拉刷新控件
-        mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
+        mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_todo_refresh_srl);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -84,13 +91,14 @@ public class ToDoFragment extends Fragment {
         });
 
         //设置 FAB
-        mAddingFab = (FloatingActionButton) view.findViewById(R.id.pink_fab);
+        mAddingFab = (FloatingActionButton) view.findViewById(R.id.fragment_todo_add_fab);
         mAddingFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mActivity.showAddingPane(null);
             }
         });
+
         if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             layoutParams.setMargins(16, 0, 0, 16);
@@ -150,12 +158,12 @@ public class ToDoFragment extends Fragment {
         }
     }
 
-    public int getFABRadius(){
-        return mAddingFab.getWidth()/2;
+    public int getFABRadius() {
+        return mAddingFab.getWidth() / 2;
     }
 
-    public int[] getFABPostion(){
-        int[] position=new int[2];
+    public int[] getFABPostion() {
+        int[] position = new int[2];
         mAddingFab.getLocationOnScreen(position);
         return position;
     }

@@ -23,7 +23,7 @@
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/activity_login_root_cardView"
+        android:id="@+id/activity_login_cv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -60,7 +60,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/logintitle"
+                        android:id="@+id/activity_login_loginTitle_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
@@ -96,7 +96,7 @@
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/activity_login_emailText"
+                    android:id="@+id/activity_login_email_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
@@ -111,7 +111,7 @@
                     android:textSize="12sp" />
 
                 <EditText
-                    android:id="@+id/activity_login_psText"
+                    android:id="@+id/activity_login_ps_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
@@ -120,14 +120,14 @@
                     android:background="@drawable/shape_edit_text"
                     android:hint="@string/passwordHint"
                     android:padding="10sp"
-                    android:password="true"
+                    android:inputType="textPassword"
                     android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textColorHint="@color/TextHintColor"
                     android:textSize="12sp" />
 
                 <EditText
-                    android:id="@+id/activity_login_reInputPsText"
+                    android:id="@+id/activity_login_rps_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10sp"
@@ -136,7 +136,7 @@
                     android:background="@drawable/shape_edit_text"
                     android:hint="@string/repasswordHint"
                     android:padding="10sp"
-                    android:password="true"
+                    android:inputType="textPassword"
                     android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textColorHint="@color/TextHintColor"
@@ -144,7 +144,7 @@
 
                 <android.support.v7.widget.CardView
                     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/activity_login_btn_cardView"
+                    android:id="@+id/activity_login_login_btn_cv"
                     android:layout_width="match_parent"
                     android:layout_height="40sp"
                     android:layout_marginLeft="20sp"
@@ -156,7 +156,7 @@
                     card_view:cardElevation="3dp">
 
                     <Button
-                        android:id="@+id/activity_login_loginBtn"
+                        android:id="@+id/activity_login_login_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?android:selectableItemBackground"
@@ -167,7 +167,7 @@
 
                 </android.support.v7.widget.CardView>
                 <TextView
-                    android:id="@+id/login_a_forget_pwd_tv"
+                    android:id="@+id/activity_login_forget_tv"
                     android:layout_gravity="left"
                     android:layout_marginLeft="20sp"
                     android:layout_marginBottom="10sp"

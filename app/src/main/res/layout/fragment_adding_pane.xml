@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_todo_adding_pane"
+    android:id="@+id/fragment_adding_pane_root_rl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MyerListBlue"
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/dialog_title_text"
+                android:id="@+id/fragment_adding_pane_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -47,7 +47,7 @@
                 android:background="#30000000">
 
                 <TextView
-                    android:id="@+id/fragment_adding_pane_cate_textView"
+                    android:id="@+id/fragment_adding_pane_cate_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10sp"
@@ -59,7 +59,7 @@
         </LinearLayout>
 
         <include
-            android:id="@+id/add_pane_radio"
+            android:id="@+id/fragment_adding_pane_radio"
             layout="@layout/radio_add_select_cate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
             android:layout_marginLeft="20sp" />
 
         <EditText
-            android:id="@+id/add_editText"
+            android:id="@+id/fragment_adding_pane_add_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10sp"
@@ -93,7 +93,7 @@
             android:layout_marginTop="10sp">
 
             <LinearLayout
-                android:id="@+id/dialog_btn_layout"
+                android:id="@+id/fragment_adding_pane_btns_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
@@ -102,7 +102,7 @@
                 android:orientation="horizontal">
 
                 <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/add_ok_btn_cardview"
+                    android:id="@+id/fragment_adding_pane_ok_btn_cardview"
                     android:layout_width="120sp"
                     android:layout_height="40sp"
                     android:layout_marginRight="10sp"
@@ -112,7 +112,7 @@
                     card_view:cardElevation="0dp">
 
                     <Button
-                        android:id="@+id/add_ok_btn"
+                        android:id="@+id/fragment_adding_pane_pane_ok_btn"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="?android:attr/selectableItemBackground"
@@ -124,7 +124,7 @@
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/add_cancel_btn_cardview"
+                    android:id="@+id/fragment_adding_pane_cancel_btn_cv"
                     android:layout_width="70sp"
                     android:layout_height="40sp"
                     card_view:cardBackgroundColor="#10000000"
@@ -132,7 +132,7 @@
                     card_view:cardElevation="0dp">
 
                     <Button
-                        android:id="@+id/add_cancel_btn"
+                        android:id="@+id/fragment_adding_pane_cancel_btn"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="?android:attr/selectableItemBackground"

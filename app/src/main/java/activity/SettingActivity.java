@@ -17,7 +17,6 @@ import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 import util.ConfigHelper;
 import util.AppExtension;
@@ -43,16 +42,16 @@ public class SettingActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_setting);
 
-        mMaskView = (ImageView) findViewById(R.id.activity_setting_mask);
+        mMaskView = (ImageView) findViewById(R.id.activity_setting_mask_iv);
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             mMaskView.setVisibility(View.GONE);
         }
 
         //找到开关控件
-        mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.AddToBottomSwitch);
+        mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.activity_setting_addToEnd_s);
         mHandHobbitSwitch = (com.rey.material.widget.Switch) findViewById(R.id.hand_hobbit_switch);
 
-        mLangText = (TextView) findViewById(R.id.lang_btn);
+        mLangText = (TextView) findViewById(R.id.activity_setting_language_tv);
 
         Boolean addToBottom = ConfigHelper.getBoolean(AppExtension.getInstance(), "AddToBottom");
         mAddToBottomSwitch.setChecked(addToBottom);
@@ -103,7 +102,7 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-        mLogoutBtn = (TextView) findViewById(R.id.logout_text);
+        mLogoutBtn = (TextView) findViewById(R.id.activity_setting_logout_tv);
         mLogoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

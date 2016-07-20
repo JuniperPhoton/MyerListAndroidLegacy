@@ -1,7 +1,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/todo_root_layout"
+    android:id="@+id/fragment_todo_root_ll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
@@ -9,14 +9,14 @@
 
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swiperefresh"
+        android:id="@+id/fragment_todo_refresh_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true">
 
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/todoList"
+            android:id="@+id/fragment_todo_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
@@ -26,7 +26,7 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <com.getbase.floatingactionbutton.FloatingActionButton
-        android:id="@+id/pink_fab"
+        android:id="@+id/fragment_todo_add_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -95,7 +95,7 @@
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/no_item_layout"
+        android:id="@+id/fragment_todo_no_item_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

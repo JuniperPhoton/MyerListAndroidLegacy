@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dialog_title"
+    android:id="@+id/adding_pane_ll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/dialog_title_text"
+        android:id="@+id/fragment_adding_pane_title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -21,11 +21,11 @@
         android:textStyle="normal" />
 
     <include
-        android:id="@+id/add_pane_radio_legacy"
+        android:id="@+id/adding_pane_radio_legacy"
         layout="@layout/radio_add_select_cate" />
 
     <EditText
-        android:id="@+id/newMemoEdit"
+        android:id="@+id/adding_pane_new_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20sp"
@@ -45,7 +45,7 @@
         android:layout_marginTop="10sp">
 
         <LinearLayout
-            android:id="@+id/dialog_btn_layout"
+            android:id="@+id/fragment_adding_pane_btns_ll"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
@@ -62,7 +62,7 @@
                 card_view:cardElevation="0dp">
 
                 <Button
-                    android:id="@+id/add_cancel_btn"
+                    android:id="@+id/fragment_adding_pane_cancel_btn"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?android:attr/selectableItemBackground"
@@ -83,7 +83,7 @@
                 card_view:cardElevation="2dp">
 
                 <Button
-                    android:id="@+id/add_ok_btn"
+                    android:id="@+id/fragment_adding_pane_pane_ok_btn"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?android:attr/selectableItemBackground"

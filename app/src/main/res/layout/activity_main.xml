@@ -16,7 +16,7 @@
         android:src="@drawable/black_mask" />
 
     <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/drawer"
+        android:id="@+id/acitivity_main_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start">
@@ -32,15 +32,15 @@
                 android:layout_height="wrap_content">
 
                 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/fragment_container"
+                    android:id="@+id/activity_main_fl"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/toolbar_actionbar"
+                    android:layout_below="@+id/activity_main_tb"
                     android:layout_marginTop="0sp"
                     android:background="?android:attr/selectableItemBackground" />
 
                 <include
-                    android:id="@+id/toolbar_actionbar"
+                    android:id="@+id/activity_main_tb"
                     layout="@layout/toolbar_default"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -48,11 +48,10 @@
 
             </RelativeLayout>
 
-
         </LinearLayout>
 
         <fragment
-            android:id="@+id/fragment_drawer"
+            android:id="@+id/activity_main_fragment_drawer"
             android:name="fragment.NavigationDrawerFragment"
             android:layout_width="@dimen/navigation_drawer_width"
             android:layout_height="match_parent"
@@ -61,7 +60,7 @@
     </android.support.v4.widget.DrawerLayout>
 
     <include
-        android:id="@+id/main_a_adding_panel"
+        android:id="@+id/activity_main_adding_pane"
         layout="@layout/fragment_adding_pane"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

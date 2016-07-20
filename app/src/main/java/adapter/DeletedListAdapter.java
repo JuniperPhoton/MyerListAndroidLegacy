@@ -123,9 +123,9 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
 
         public DeleteItemViewHolder(View itemView) {
             super(itemView);
-            mTextView = (TextView) itemView.findViewById(R.id.deletedBlock);
-            mReDoView = (ImageView) itemView.findViewById(R.id.redoView);
-            mDeleteView = (ImageView) itemView.findViewById(R.id.deleteView);
+            mTextView = (TextView) itemView.findViewById(R.id.row_deleted_tv);
+            mReDoView = (ImageView) itemView.findViewById(R.id.row_deleted_reAdd_iv);
+            mDeleteView = (ImageView) itemView.findViewById(R.id.row_deleted_btn_iv);
         }
     }
 }

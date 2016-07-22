@@ -80,6 +80,17 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     private ArrayList<ToDoCategory> mCatesList;
 
     @Override
+    public void onAttach(Context activity) {
+        super.onAttach(activity);
+        try {
+            mCallbacks = (INavigationDrawerCallback) activity;
+            mDrawerStatusListener = (IDrawerStatusChanged) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement INavigationDrawerCallback.");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -100,6 +111,12 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         initViews(view);
 
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 
     private void initViews(View view) {
@@ -347,23 +364,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     public void closeDrawer() {
         mDrawerLayout.closeDrawer(mFragmentContainerView);
-    }
-
-    @Override
-    public void onAttach(Context activity) {
-        super.onAttach(activity);
-        try {
-            mCallbacks = (INavigationDrawerCallback) activity;
-            mDrawerStatusListener = (IDrawerStatusChanged) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement INavigationDrawerCallback.");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallbacks = null;
     }
 
     @Override

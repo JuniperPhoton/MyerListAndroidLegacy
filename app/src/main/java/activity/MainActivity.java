@@ -115,6 +115,19 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
     //找到需要初始化的控件
     private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.activity_main_tb);
@@ -708,19 +721,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     public void onDrawerStatusChanged(boolean isOpen) {
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    @Override
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 
 

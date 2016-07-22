@@ -65,6 +65,21 @@ public class StartActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        mRootLinearLayout.setAlpha(0f);
+        startNavigatedToAnim();
+    }
+
+    @Override
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
     private void startNavigatedToAnim() {
         ValueAnimator valueAnimator1 = new ValueAnimator();
         valueAnimator1.setDuration(500);
@@ -90,21 +105,6 @@ public class StartActivity extends AppCompatActivity {
         });
         valueAnimator1.start();
         valueAnimator2.start();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-        mRootLinearLayout.setAlpha(0f);
-        startNavigatedToAnim();
-    }
-
-    @Override
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     public void toLoginClick(View v) {

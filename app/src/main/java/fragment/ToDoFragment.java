@@ -47,13 +47,20 @@ public class ToDoFragment extends Fragment {
     private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(Context activity) {
+        super.onAttach(activity);
+        try {
+            if (activity instanceof MainActivity) {
+                mActivity = (MainActivity) activity;
+            }
+        } catch (ClassCastException e) {
+
+        }
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -110,6 +117,16 @@ public class ToDoFragment extends Fragment {
         mActivity.onInit();
 
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 
     public void showNoItemHint(boolean show) {
@@ -191,23 +208,6 @@ public class ToDoFragment extends Fragment {
             GlobalListLocator.StagedList.clear();
             SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializerHelper.stagedFileName);
         }
-    }
-
-    @Override
-    public void onAttach(Context activity) {
-        super.onAttach(activity);
-        try {
-            if (activity instanceof MainActivity) {
-                mActivity = (MainActivity) activity;
-            }
-        } catch (ClassCastException e) {
-
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
 }

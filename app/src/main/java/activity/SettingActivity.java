@@ -49,7 +49,6 @@ public class SettingActivity extends AppCompatActivity {
 
         //找到开关控件
         mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.activity_setting_addToEnd_s);
-        mHandHobbitSwitch = (com.rey.material.widget.Switch) findViewById(R.id.hand_hobbit_switch);
 
         mLangText = (TextView) findViewById(R.id.activity_setting_language_tv);
 

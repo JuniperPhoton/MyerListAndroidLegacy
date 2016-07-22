@@ -30,10 +30,17 @@ public class DeletedItemFragment extends Fragment {
     private MainActivity mActivity;
     private LinearLayout mNoItemHintLayout;
 
-    public DeletedItemFragment() {
-
+    @Override
+    public void onAttach(Context activity) {
+        super.onAttach(activity);
+        try {
+            mActivity = (MainActivity) activity;
+        }
+        catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +86,15 @@ public class DeletedItemFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    public DeletedItemFragment() {
+
+    }
+
 
     public void setupListData(ArrayList<ToDo> data) {
         GlobalListLocator.DeletedList = data;
@@ -100,23 +116,6 @@ public class DeletedItemFragment extends Fragment {
 
     public void hideNoItemHint() {
         mNoItemHintLayout.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onAttach(Context activity) {
-        super.onAttach(activity);
-        try {
-            mActivity = (MainActivity) activity;
-        }
-        catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
 }

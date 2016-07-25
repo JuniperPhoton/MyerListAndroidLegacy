@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.juniperphoton.myerlistandroid.R;
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import activity.MainActivity;
+import adapter.CateListAdapter;
 import api.CloudServices;
 import interfaces.IRequestCallback;
 import util.AppUtil;
@@ -71,19 +73,6 @@ public class ToDoFragment extends Fragment {
         mNoItemLayout = (LinearLayout) view.findViewById(R.id.fragment_todo_no_item_ll);
         mAddingPaneLayout = (RelativeLayout) view.findViewById(R.id.fragment_adding_pane_root_rl);
 
-        mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_todo_rv);
-        mToDoRecyclerView.setLayoutManager(new GridLayoutManager(AppExtension.getInstance(), 1));
-
-        mAdapter = new ToDoListAdapter(new ArrayList<ToDo>(), mActivity, this);
-        mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
-        mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
-        mItemTouchHelper.attachToRecyclerView(mToDoRecyclerView);
-
-        mItemDragAndSwipeCallback.setSwipeMoveFlags(ItemTouchHelper.START | ItemTouchHelper.END);
-        mAdapter.enableDragItem(mItemTouchHelper);
-
-        mToDoRecyclerView.setAdapter(mAdapter);
-
         //设置下拉刷新控件
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_todo_refresh_srl);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -116,6 +105,8 @@ public class ToDoFragment extends Fragment {
 
         mActivity.onInit();
 
+        initRV(view);
+
         return view;
     }
 
@@ -135,6 +126,21 @@ public class ToDoFragment extends Fragment {
         } else {
             mNoItemLayout.setVisibility(View.GONE);
         }
+    }
+
+    private void initRV(View view) {
+        mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_todo_rv);
+        mToDoRecyclerView.setLayoutManager(new GridLayoutManager(mActivity,1));
+
+        mAdapter = new ToDoListAdapter(GlobalListLocator.TodosList);
+        mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
+        mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
+        mItemTouchHelper.attachToRecyclerView(mToDoRecyclerView);
+
+        mAdapter.enableDragItem(mItemTouchHelper);
+        mAdapter.setToggleViewId(R.id.row_cate_per_hamView);
+
+        mToDoRecyclerView.setAdapter(mAdapter);
     }
 
     public void updateData(ArrayList<ToDo> data) {

@@ -3,7 +3,6 @@
     android:id="@+id/raw_cate_per_first_cv"
     android:layout_width="match_parent"
     android:layout_height="50sp"
-    android:clickable="false"
     card_view:cardBackgroundColor="@color/cate_per_title_backgrd"
     card_view:cardCornerRadius="0dp"
     card_view:cardElevation="0dp">
@@ -43,6 +42,7 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/row_cate_per_hamView"
             android:layout_width="50sp"
             android:layout_height="30sp"
             android:layout_alignParentRight="true"

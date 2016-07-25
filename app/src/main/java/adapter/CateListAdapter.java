@@ -13,6 +13,7 @@ import java.util.List;
 
 import model.ToDoCategory;
 import view.CircleView;
+import viewholder.CateListViewHolder;
 
 /**
  * Created by JuniperPhoton on 2016-07-19.
@@ -28,7 +29,7 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
 
     @Override
     protected void convert(BaseViewHolder helper, ToDoCategory item) {
-        CateListViewHolder cateListViewHolder=(CateListViewHolder)helper;
+        CateListViewHolder cateListViewHolder = (CateListViewHolder) helper;
         if (cateListViewHolder.getItemViewType() == IS_NORMAL) {
             cateListViewHolder.setCateName(item.getName());
             cateListViewHolder.setCircleColor(item.getColor());
@@ -46,11 +47,6 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
         }
     }
 
-//    @Override
-//    public void onBindViewHolder(CateListViewHolder holder, int position) {
-//
-//    }
-
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
@@ -63,25 +59,7 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
         return mData == null ? 0 : mData.size();
     }
 
-    public class CateListViewHolder extends BaseViewHolder {
 
-        private CircleView mCateCircle;
-        private EditText mTextView;
-
-        public CateListViewHolder(View view, int viewType) {
-            super(view);
-            if (viewType == IS_NORMAL) {
-                mCateCircle = (CircleView) view.findViewById(R.id.raw_cate_per_cv);
-                mTextView = (EditText) view.findViewById(R.id.raw_cate_per_tv);
-            }
-        }
-
-        public void setCircleColor(int color) {
-            mCateCircle.setEllipseColor(color);
-        }
-
-        public void setCateName(String name) {
-            mTextView.setText(name);
-        }
-    }
 }
+
+

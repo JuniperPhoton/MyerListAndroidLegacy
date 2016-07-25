@@ -70,18 +70,6 @@
         <meta-data
             android:name="PGYER_APPID"
             android:value="4b6e8877dfcc2462bedb37dcf66b6d87"/>
-
-        <service
-            android:name="com.umeng.update.net.DownloadingService"
-            android:process=":DownloadingService">
-        </service>
-
-        <activity
-            android:name="com.umeng.update.UpdateDialogActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
-        </activity>
-
-
     </application>
 
 </manifest>

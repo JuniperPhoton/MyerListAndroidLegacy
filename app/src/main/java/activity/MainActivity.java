@@ -34,10 +34,6 @@ import interfaces.IDrawerStatusChanged;
 import fragment.DeletedItemFragment;
 import fragment.NavigationDrawerFragment;
 
-import com.pgyersdk.crash.PgyCrashManager;
-import com.umeng.analytics.MobclickAgent;
-import com.umeng.update.UmengUpdateAgent;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,11 +91,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         super.onCreate(savedInstanceState);
         StatusBarCompat.setUpActivity(this);
 
-        UmengUpdateAgent.update(this);
-
         setContentView(R.layout.activity_main);
-
-        PgyCrashManager.register(this);
 
         initViews();
 
@@ -118,14 +110,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     public void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);
     }
 
     @Override
 
     public void onPause() {
         super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     //找到需要初始化的控件

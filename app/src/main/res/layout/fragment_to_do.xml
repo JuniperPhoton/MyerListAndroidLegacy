@@ -14,14 +14,11 @@
         android:layout_height="match_parent"
         android:clickable="true">
 
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/fragment_todo_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:clickable="true"
-            android:scrollbars="vertical" />
+            />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

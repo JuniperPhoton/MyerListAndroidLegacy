@@ -32,6 +32,9 @@ import util.SerializerHelper;
 import model.ToDo;
 import util.GlobalListLocator;
 import view.CircleView;
+import viewholder.CateListViewHolder;
+import viewholder.DeleteItemViewHolder;
+import viewholder.ToDoItemViewHolder;
 
 
 public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements View.OnTouchListener {
@@ -49,11 +52,11 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
     private boolean mIsSwiping = false;
 
     public ToDoListAdapter(ArrayList<ToDo> data) {
-        super(data);
+        super(R.layout.row_todo, data);
     }
 
     public ToDoListAdapter(ArrayList<ToDo> data, MainActivity activity, ToDoFragment fragment) {
-        super(data);
+        super(R.layout.row_todo, data);
         mCurrentActivity = activity;
         mCurrentFragment = fragment;
     }
@@ -67,13 +70,10 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
     @Override
     protected void convert(BaseViewHolder baseViewHolder, final ToDo currentToDoItem) {
         final ToDoItemViewHolder holder = (ToDoItemViewHolder) baseViewHolder;
-        //设置文字
-        if (currentToDoItem == null) return;
 
-        holder.setText(currentToDoItem.getContent());
+        holder.mTextView.setText(currentToDoItem.getContent());
         holder.setID(currentToDoItem.getID());
 
-        //设置类别
         final int cateID = currentToDoItem.getCate();
         ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
 
@@ -89,34 +89,24 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
             }
         }
 
-        //设置是否完成
         if (!currentToDoItem.getIsDone()) {
             holder.mLineView.setVisibility(View.GONE);
         }
 
-        //设置删除
-//        holder.deleteView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                deleteToDo(currentToDoItem.getID());
-//            }
-//        });
+        holder.mRelativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mIsSwiping) {
+                    return;
+                }
+                int[] location = new int[2];
+                holder.mCateCircle.getLocationOnScreen(location);
+                mCurrentActivity.setupAddingPaneForModifyAndShow(currentToDoItem,
+                        new int[]{location[0] + holder.mCateCircle.getWidth() / 2, location[1] + holder.mCateCircle.getHeight() / 2});
+            }
+        });
 
-        //设置点击修改
-//        holder.mRelativeLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (mIsSwiping) {
-//                    return;
-//                }
-//                int[] location = new int[2];
-//                holder.mCateCircle.getLocationOnScreen(location);
-//                mCurrentActivity.setupAddingPaneForModifyAndShow(currentToDoItem,
-//                        new int[]{location[0] + holder.mCateCircle.getWidth() / 2, location[1] + holder.mCateCircle.getHeight() / 2});
-//            }
-//        });
-
-        //holder.mRelativeLayout.setOnTouchListener(this);
+        holder.mRelativeLayout.setOnTouchListener(this);
         holder.mRelativeLayout.setTag(holder.getID());
         holder.mGreenImageView.setAlpha(1f);
         holder.mRedImageView.setAlpha(1f);
@@ -404,43 +394,5 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
         });
         animationSet.addAnimation(alphaAnimation);
         v.startAnimation(animationSet);
-    }
-
-    public static class ToDoItemViewHolder extends BaseViewHolder {
-        private String mId;
-        private TextView mTextView;
-        private ImageView mLineView;
-        //public ImageView deleteView;
-        private RelativeLayout mRelativeLayout;
-        private ImageView mGreenImageView;
-        private ImageView mRedImageView;
-        private CircleView mCateCircle;
-
-        public ToDoItemViewHolder(View itemView) {
-            super(itemView);
-            mTextView = (TextView) itemView.findViewById(R.id.todoBlock);
-            mLineView = (ImageView) itemView.findViewById(R.id.lineView);
-            mGreenImageView = (ImageView) itemView.findViewById(R.id.greenImageView);
-            mRedImageView = (ImageView) itemView.findViewById(R.id.redImageView);
-            //deleteView = (ImageView) itemView.findViewById(R.mId.deleteView);
-            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.todo_layout);
-            mCateCircle = (CircleView) itemView.findViewById(R.id.cateCircle);
-        }
-
-        public String getID() {
-            return mId;
-        }
-
-        public void setID(String id) {
-            this.mId = id;
-        }
-
-        public void setText(String text) {
-            mTextView.setText(text);
-        }
-
-        public String getText() {
-            return mTextView.getText().toString();
-        }
     }
 }

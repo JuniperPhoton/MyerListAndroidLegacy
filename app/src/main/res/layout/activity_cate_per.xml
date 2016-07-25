@@ -69,7 +69,6 @@
             fab:fab_icon="@drawable/ic_check_white_48dp" />
     </LinearLayout>
 
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/activity_cate_per_rv"
         android:layout_width="match_parent"

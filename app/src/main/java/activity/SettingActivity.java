@@ -25,7 +25,6 @@ import util.ToastService;
 
 public class SettingActivity extends AppCompatActivity {
     private com.rey.material.widget.Switch mAddToBottomSwitch;
-    private com.rey.material.widget.Switch mHandHobbitSwitch;
     private TextView mLangText;
     private TextView mLogoutBtn;
     private ImageView mMaskView;
@@ -54,9 +53,6 @@ public class SettingActivity extends AppCompatActivity {
 
         Boolean addToBottom = ConfigHelper.getBoolean(AppExtension.getInstance(), "AddToBottom");
         mAddToBottomSwitch.setChecked(addToBottom);
-
-        Boolean handUse = ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit");
-        mHandHobbitSwitch.setChecked(handUse);
 
         //找到语言
         final String langStr = ConfigHelper.getString(AppExtension.getInstance(), "Language");
@@ -136,14 +132,6 @@ public class SettingActivity extends AppCompatActivity {
                 ConfigHelper.putBoolean(AppExtension.getInstance(), "AddToBottom", b);
             }
 
-        });
-
-        mHandHobbitSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
-                ConfigHelper.putBoolean(AppExtension.getInstance(), "HandHobbit", b);
-                ToastService.sendToast(getResources().getString(R.string.rebootHint));
-            }
         });
     }
 

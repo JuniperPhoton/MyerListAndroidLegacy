@@ -5,18 +5,22 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.juniperphoton.myerlistandroid.R;
 
 import java.util.ArrayList;
 
 import activity.MainActivity;
+import adapter.CateListAdapter;
 import adapter.DeletedListAdapter;
 import model.ToDo;
 import util.GlobalListLocator;
@@ -25,10 +29,14 @@ import util.GlobalListLocator;
 public class DeletedItemFragment extends Fragment {
 
     private ArrayList<ToDo> mDeletedToDos;
-    private RecyclerView mDeletedListRecyclerView;
     private com.getbase.floatingactionbutton.FloatingActionButton mFab;
     private MainActivity mActivity;
     private LinearLayout mNoItemHintLayout;
+
+    private RecyclerView mRecyclerView;
+    private DeletedListAdapter mAdapter;
+    private ItemTouchHelper mItemTouchHelper;
+    private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
 
     @Override
     public void onAttach(Context activity) {
@@ -52,11 +60,11 @@ public class DeletedItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_deleted_item, container, false);
-        mDeletedListRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_delete_rv);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_delete_rv);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
-        mDeletedListRecyclerView.setLayoutManager(layoutManager);
-        mDeletedListRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
 
         mFab = (com.getbase.floatingactionbutton.FloatingActionButton) view.findViewById(R.id.fragment_delete_delete_all_fab);
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +76,7 @@ public class DeletedItemFragment extends Fragment {
                 builder.setPositiveButton(R.string.ok_btn, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ((DeletedListAdapter) mDeletedListRecyclerView.getAdapter()).deleteAll();
+                        ((DeletedListAdapter) mRecyclerView.getAdapter()).deleteAll();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
@@ -100,7 +108,15 @@ public class DeletedItemFragment extends Fragment {
         GlobalListLocator.DeletedList = data;
         mDeletedToDos = data;
 
-        mDeletedListRecyclerView.setAdapter(new DeletedListAdapter(mActivity, this, data));
+        mAdapter = new DeletedListAdapter(mActivity,this,data);
+        mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
+        mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+
+        mAdapter.enableDragItem(mItemTouchHelper);
+        //mAdapter.setToggleViewId(R.id.row_cate_per_hamView);
+
+        mRecyclerView.setAdapter(mAdapter);
 
         if (GlobalListLocator.DeletedList.size() == 0) {
             this.showNoItemHint();

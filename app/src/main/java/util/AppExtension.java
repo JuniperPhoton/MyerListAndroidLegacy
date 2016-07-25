@@ -24,7 +24,6 @@ public class AppExtension extends Application implements Thread.UncaughtExceptio
         ConfigHelper.configAppSetting();
 
         GlobalListLocator.restoreData();
-        PgyCrashManager.register(this);
     }
 
     @Override

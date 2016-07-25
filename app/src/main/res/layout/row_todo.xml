@@ -4,7 +4,7 @@
     android:id="@+id/row_deleted_root_cv"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:clickable="false"
+    android:clickable="true"
     card_view:cardBackgroundColor="@color/MyerListGray"
     card_view:cardCornerRadius="0dp"
     card_view:cardElevation="0dp">
@@ -59,8 +59,7 @@
                     android:layout_width="40sp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5sp"
-                    android:clickable="false">
-
+                    >
                     <view.CircleView
                         android:id="@+id/cateCircle"
                         android:layout_width="20sp"
@@ -78,16 +77,15 @@
                     android:gravity="center_vertical"
                     android:hint="Enjoy your good day!"
                     android:maxLines="1"
-                    android:scrollHorizontally="false"
                     android:textColor="@android:color/black" />
 
-                <!--<ImageView-->
-                <!--android:id="@+id/deleteView"-->
-                <!--android:layout_width="30sp"-->
-                <!--android:layout_height="30sp"-->
-                <!--android:layout_gravity="center_vertical"-->
-                <!--android:layout_marginLeft="-40sp"-->
-                <!--android:src="@drawable/delete2"/>-->
+                <ImageView
+                    android:id="@+id/hamView"
+                    android:layout_width="30sp"
+                    android:layout_height="30sp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="-40sp"
+                    android:src="@drawable/ham" />
             </LinearLayout>
 
             <ImageView

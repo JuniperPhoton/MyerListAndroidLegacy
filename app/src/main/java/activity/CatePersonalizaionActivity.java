@@ -27,7 +27,7 @@ import util.GlobalListLocator;
  */
 public class CatePersonalizaionActivity extends AppCompatActivity {
 
-    private RecyclerView mCateListRecyclerView;
+    private RecyclerView mRecyclerView;
     private CateListAdapter mAdapter;
     private ItemTouchHelper mItemTouchHelper;
     private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
@@ -38,18 +38,18 @@ public class CatePersonalizaionActivity extends AppCompatActivity {
         StatusBarCompat.setUpActivity(this);
         setContentView(R.layout.activity_cate_per);
 
-        mCateListRecyclerView = (RecyclerView) findViewById(R.id.activity_cate_per_rv);
-        mCateListRecyclerView.setLayoutManager(new GridLayoutManager(this,1));
+        mRecyclerView = (RecyclerView) findViewById(R.id.activity_cate_per_rv);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this,1));
 
         mAdapter = new CateListAdapter(GlobalListLocator.makeCategoryListForPersonalizaion());
         mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
         mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
-        mItemTouchHelper.attachToRecyclerView(mCateListRecyclerView);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-        mItemDragAndSwipeCallback.setSwipeMoveFlags(ItemTouchHelper.START | ItemTouchHelper.END);
         mAdapter.enableDragItem(mItemTouchHelper);
+        mAdapter.setToggleViewId(R.id.row_cate_per_hamView);
 
-        mCateListRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     public RecyclerView.Adapter getAdatper() {

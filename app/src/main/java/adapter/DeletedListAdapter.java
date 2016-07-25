@@ -8,11 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseItemDraggableAdapter;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.juniperphoton.myerlistandroid.R;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import activity.MainActivity;
 import api.CloudServices;
@@ -24,44 +28,50 @@ import util.AppExtension;
 import util.SerializerHelper;
 import model.ToDo;
 import util.GlobalListLocator;
+import viewholder.CateListViewHolder;
+import viewholder.DeleteItemViewHolder;
 
 
-public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.DeleteItemViewHolder> {
+public class DeletedListAdapter extends BaseItemDraggableAdapter<ToDo> {
     private Activity mCurrentActivity;
     private DeletedItemFragment mDeletedItemFragment;
-    private ArrayList<ToDo> mDeleteToDos;
 
-    public DeletedListAdapter(Activity activity, DeletedItemFragment deletedItemFragment, ArrayList<ToDo> deletedList) {
+    public DeletedListAdapter(ArrayList<ToDo> data) {
+        super(R.layout.row_deleted, data);
+    }
+
+    public DeletedListAdapter(Activity activity, DeletedItemFragment deletedItemFragment, ArrayList<ToDo> data) {
+        super(R.layout.row_todo, data);
         mDeletedItemFragment = deletedItemFragment;
         mCurrentActivity = activity;
-        mDeleteToDos = deletedList;
     }
 
     @Override
     public DeleteItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_deleted, parent, false);
-        DeleteItemViewHolder deleteItemViewHolder = new DeleteItemViewHolder(v);
-        return deleteItemViewHolder;
+        return new DeleteItemViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final DeleteItemViewHolder holder, final int position) {
-        final ToDo currentToDo = mDeleteToDos.get(position);
-        if (currentToDo == null) return;
+    protected void convert(BaseViewHolder baseViewHolder, final ToDo toDo) {
+        if (toDo == null) return;
 
-        holder.mTextView.setText(currentToDo.getContent());
+        DeleteItemViewHolder holder = (DeleteItemViewHolder) baseViewHolder;
+        final int position = holder.getAdapterPosition();
+
+        holder.mTextView.setText(toDo.getContent());
         holder.mDeleteView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                mDeleteToDos.remove(currentToDo);
+                mData.remove(toDo);
                 notifyItemRemoved(position);
 
-                if (mDeleteToDos.size() == 0) {
+                if (mData.size() == 0) {
                     mDeletedItemFragment.showNoItemHint();
                 }
 
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializerHelper.deletedFileName);
             }
         });
         holder.mReDoView.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +81,7 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                 if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
                     CloudServices.addToDo(ConfigHelper.getSid(),
                             ConfigHelper.getAccessToken(),
-                            mDeleteToDos.get(position).getContent(),
+                            mData.get(position).getContent(),
                             "0",
                             0,
                             new IRequestCallback() {
@@ -80,19 +90,18 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
                                     ((MainActivity) mCurrentActivity).onReCreatedToDo(jsonObject);
                                 }
                             });
-                }
-                else {
-                    GlobalListLocator.TodosList.add(GlobalListLocator.TodosList.size(), mDeleteToDos.get(position));
+                } else {
+                    GlobalListLocator.TodosList.add(GlobalListLocator.TodosList.size(), mData.get(position));
                 }
 
-                mDeleteToDos.remove(currentToDo);
+                mData.remove(toDo);
                 notifyItemRemoved(position);
 
-                if (mDeleteToDos.size() == 0) {
+                if (mData.size() == 0) {
                     mDeletedItemFragment.showNoItemHint();
                 }
 
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializerHelper.deletedFileName);
                 SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializerHelper.todosFileName);
             }
         });
@@ -101,31 +110,17 @@ public class DeletedListAdapter extends RecyclerView.Adapter<DeletedListAdapter.
 
     public void deleteAll() {
         try {
-            notifyItemRangeRemoved(0, mDeleteToDos.size());
-            mDeleteToDos.clear();
+            notifyItemRangeRemoved(0, mData.size());
+            mData.clear();
             mDeletedItemFragment.showNoItemHint();
-            SerializerHelper.serializeToFile(AppExtension.getInstance(), mDeleteToDos, SerializerHelper.deletedFileName);
-        }
-        catch (Exception e) {
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializerHelper.deletedFileName);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public int getItemCount() {
-        return mDeleteToDos != null ? mDeleteToDos.size() : 0;
-    }
-
-    public static class DeleteItemViewHolder extends RecyclerView.ViewHolder {
-        private TextView mTextView;
-        private ImageView mReDoView;
-        private ImageView mDeleteView;
-
-        public DeleteItemViewHolder(View itemView) {
-            super(itemView);
-            mTextView = (TextView) itemView.findViewById(R.id.row_deleted_tv);
-            mReDoView = (ImageView) itemView.findViewById(R.id.row_deleted_reAdd_iv);
-            mDeleteView = (ImageView) itemView.findViewById(R.id.row_deleted_btn_iv);
-        }
+        return mData != null ? mData.size() : 0;
     }
 }

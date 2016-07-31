@@ -117,5 +117,7 @@
     <string name="forget_pwd_cancel">取消</string>
     <string name="cate_per_title">个性化</string>
     <string name="cate_per_add">添加一个新类别</string>
+    <string name="new_cate_name">新类别</string>
+    <string name="a_cate_per_discard_content">Confirm to exit the page without saving.</string>
 
 </resources>

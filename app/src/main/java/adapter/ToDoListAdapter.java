@@ -1,6 +1,7 @@
 package adapter;
 
 import android.animation.ValueAnimator;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import activity.MainActivity;
 import api.CloudServices;
 import fragment.ToDoFragment;
+import interfaces.IRefresh;
 import interfaces.IRequestCallback;
 import model.ToDoCategory;
 import util.ConfigHelper;
@@ -41,7 +43,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
     private boolean mIsEnable = true;
 
     private MainActivity mCurrentActivity;
-    private ToDoFragment mCurrentFragment;
+    private IRefresh mIRefreshCallback;
 
     private ToDo mCurrentToDo = null;
 
@@ -58,13 +60,14 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
     public ToDoListAdapter(ArrayList<ToDo> data, MainActivity activity, ToDoFragment fragment) {
         super(R.layout.row_todo, data);
         mCurrentActivity = activity;
-        mCurrentFragment = fragment;
+        mIRefreshCallback = (IRefresh) fragment;
+        mContext = activity;
     }
 
     @Override
     public ToDoItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_todo, parent, false);
-        return new ToDoItemViewHolder(v);
+        return new ToDoItemViewHolder(v, viewType);
     }
 
     @Override
@@ -78,14 +81,12 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
         ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
 
         if (cateID == 0) {
-            holder.mCateCircle.setEllipseColor(AppExtension.getInstance().
-                    getResources().getColor(R.color.MyerListBlue));
+            holder.mCateCircle.setEllipseColor(ContextCompat.getColor(mContext, R.color.MyerListBlue));
         } else {
             if (category != null) {
                 holder.mCateCircle.setEllipseColor(category.getColor());
             } else {
-                holder.mCateCircle.setEllipseColor(AppExtension.getInstance().
-                        getResources().getColor(R.color.MyerListBlue));
+                holder.mCateCircle.setEllipseColor(ContextCompat.getColor(mContext, R.color.MyerListBlue));
             }
         }
 
@@ -132,7 +133,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
             notifyItemInserted(0);
             GlobalListLocator.TodosList.add(0, todoToAdd);
         }
-        SerializerHelper.serializeToFile(mCurrentActivity, mData, SerializerHelper.todosFileName);
+        SerializerHelper.serializeToFile(mContext, mData, SerializerHelper.todosFileName);
     }
 
     public void deleteToDo(String id) {
@@ -158,7 +159,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
         SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.DeletedList, SerializerHelper.deletedFileName);
 
         if (ConfigHelper.ISOFFLINEMODE) {
-            SerializerHelper.serializeToFile(mCurrentActivity, mData, SerializerHelper.todosFileName);
+            SerializerHelper.serializeToFile(mContext, mData, SerializerHelper.todosFileName);
         } else
             CloudServices.setDelete(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
                     ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
@@ -166,7 +167,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
                     new IRequestCallback() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
-                            ((MainActivity) mCurrentActivity).onDelete(jsonObject);
+                            //((MainActivity) mCurrentActivity).onDelete(jsonObject);
                         }
                     });
     }
@@ -202,16 +203,12 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
                     new IRequestCallback() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
-                            mCurrentActivity.onUpdateContent(jsonObject);
+                            //mCurrentActivity.onUpdateContent(jsonObject);
                         }
                     });
         } else {
-            SerializerHelper.serializeToFile(mCurrentActivity, mData, SerializerHelper.todosFileName);
+            SerializerHelper.serializeToFile(mContext, mData, SerializerHelper.todosFileName);
         }
-    }
-
-    public ArrayList<ToDo> getListSrc() {
-        return (ArrayList<ToDo>) mData;
     }
 
     public boolean onTouch(final View view, MotionEvent event) {
@@ -240,7 +237,9 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
                 view.scrollBy(-dx, 0);
 
                 if (scrollLeft < -20) {
-                    mCurrentFragment.disableRefresh();
+                    if (mIRefreshCallback != null) {
+                        mIRefreshCallback.disableRefresh();
+                    }
                 }
 
                 lastX = (int) event.getRawX();
@@ -300,7 +299,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
-                                mCurrentActivity.onSetDone(jsonObject);
+                                //mCurrentActivity.onSetDone(jsonObject);
                             }
                         });
             }
@@ -329,7 +328,9 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
                 if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10) {
-                    mCurrentFragment.enableRefresh();
+                    if (mIRefreshCallback != null) {
+                        mIRefreshCallback.enableRefresh();
+                    }
                     mIsSwiping = false;
                 }
             }

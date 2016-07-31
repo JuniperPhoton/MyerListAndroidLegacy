@@ -124,7 +124,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.fragment_drawer_account_tv);
             cateView = (CircleView) itemView.findViewById(R.id.item_icon);
-            cardView = (CardView) itemView.findViewById(R.id.raw_cate_per_first_cv);
+            cardView = (CardView) itemView.findViewById(R.id.row_cate_per_first_cv);
             rootLayout = (LinearLayout) cardView.findViewById(R.id.navigationitem_layout);
             viewType = type;
         }

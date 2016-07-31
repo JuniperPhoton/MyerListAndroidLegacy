@@ -7,13 +7,13 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.juniperphoton.myerlistandroid.R;
@@ -23,8 +23,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import activity.MainActivity;
-import adapter.CateListAdapter;
 import api.CloudServices;
+import interfaces.IRefresh;
 import interfaces.IRequestCallback;
 import util.AppUtil;
 import util.ConfigHelper;
@@ -34,9 +34,11 @@ import util.SerializerHelper;
 import util.GlobalListLocator;
 import model.ToDo;
 
-public class ToDoFragment extends Fragment {
+public class ToDoFragment extends Fragment implements IRefresh {
+    public static final String TAG = "ToDoFragment";
+
     private MainActivity mActivity;
-    public RecyclerView mToDoRecyclerView;
+    private RecyclerView mToDoRecyclerView;
     private ArrayList<ToDo> mMyToDos;
     private SwipeRefreshLayout mRefreshLayout;
     private FloatingActionButton mAddingFab;
@@ -51,24 +53,28 @@ public class ToDoFragment extends Fragment {
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
+        Log.d(TAG, "onAttach");
         try {
             if (activity instanceof MainActivity) {
                 mActivity = (MainActivity) activity;
             }
         } catch (ClassCastException e) {
-
+            e.printStackTrace();
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_to_do, container, false);
+
+        Log.d(TAG, "onCreateView");
 
         mNoItemLayout = (LinearLayout) view.findViewById(R.id.fragment_todo_no_item_ll);
         mAddingPaneLayout = (RelativeLayout) view.findViewById(R.id.fragment_adding_pane_root_rl);
@@ -113,15 +119,17 @@ public class ToDoFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.d(TAG, "onDetach");
     }
 
-    public void showNoItemHint(boolean show) {
-        if (show) {
+    public void updateNoItemUI() {
+        if (mAdapter.getData().size() == 0) {
             mNoItemLayout.setVisibility(View.VISIBLE);
         } else {
             mNoItemLayout.setVisibility(View.GONE);
@@ -130,7 +138,7 @@ public class ToDoFragment extends Fragment {
 
     private void initRV(View view) {
         mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_todo_rv);
-        mToDoRecyclerView.setLayoutManager(new GridLayoutManager(mActivity,1));
+        mToDoRecyclerView.setLayoutManager(new GridLayoutManager(mActivity, 1));
 
         mAdapter = new ToDoListAdapter(GlobalListLocator.TodosList);
         mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
@@ -141,6 +149,7 @@ public class ToDoFragment extends Fragment {
         mAdapter.setToggleViewId(R.id.row_cate_per_hamView);
 
         mToDoRecyclerView.setAdapter(mAdapter);
+        updateNoItemUI();
     }
 
     public void updateData(ArrayList<ToDo> data) {
@@ -149,13 +158,9 @@ public class ToDoFragment extends Fragment {
             mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMyToDos, mActivity, this));
 
             stopRefreshing();
-            if (data.size() == 0)
-                showNoItemHint(true);
-            else
-                showNoItemHint(false);
+            updateNoItemUI();
         }
     }
-
 
     public void showRefreshing() {
         if (mRefreshLayout != null) {
@@ -213,6 +218,26 @@ public class ToDoFragment extends Fragment {
             }
             GlobalListLocator.StagedList.clear();
             SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializerHelper.stagedFileName);
+        }
+    }
+
+    public ArrayList<ToDo> getData() {
+        if (mAdapter != null) {
+            return (ArrayList<ToDo>) mAdapter.getData();
+        } else {
+            return null;
+        }
+    }
+
+    public void updateContent(ToDo todo) {
+        if (mAdapter != null) {
+            mAdapter.updateContent(todo);
+        }
+    }
+
+    public void addToDo(ToDo todo) {
+        if (mAdapter != null) {
+            mAdapter.addToDo(todo);
         }
     }
 

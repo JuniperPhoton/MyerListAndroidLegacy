@@ -22,13 +22,12 @@ public class ToDoItemViewHolder extends BaseViewHolder {
     public ImageView mRedImageView;
     public CircleView mCateCircle;
 
-    public ToDoItemViewHolder(View itemView) {
+    public ToDoItemViewHolder(View itemView, int viewType) {
         super(itemView);
         mTextView = (TextView) itemView.findViewById(R.id.todoBlock);
         mLineView = (ImageView) itemView.findViewById(R.id.lineView);
         mGreenImageView = (ImageView) itemView.findViewById(R.id.greenImageView);
         mRedImageView = (ImageView) itemView.findViewById(R.id.redImageView);
-        //deleteView = (ImageView) itemView.findViewById(R.mId.deleteView);
         mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.todo_layout);
         mCateCircle = (CircleView) itemView.findViewById(R.id.cateCircle);
     }

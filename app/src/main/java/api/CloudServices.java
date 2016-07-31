@@ -259,7 +259,7 @@ public class CloudServices {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.add("cate_info",content);
-        client.post(UrlHelper.UserGetCateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
+        client.post(UrlHelper.UserUpdateCateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);

@@ -13,13 +13,13 @@ public class ToDoCategory {
     public static String DefaultCateJsonString = "{ \"modified\":true, \"cates\":[{\"name\":\"Work\",\"color\":\"#FF436998\",\"id\":1},{\"name\":\"Life\",\"color\":\"#FFFFB542\",\"id\":2},{\"name\":\"Family\",\"color\":\"#FFFF395F\",\"id\":3},{\"name\":\"Entertainment\",\"color\":\"#FF55C1C1\",\"id\":4}]}";
     public static String ModifiedCateJsonStringFore = "{ \"modified\":true, \"cates\":";
 
-    private String name;
+    private String mName;
     private int mid;
     private int mcolor;
 
 
     public ToDoCategory(String name, int id, int color) {
-        this.name = name;
+        this.mName = name;
         this.mid = id;
         this.mcolor = color;
     }
@@ -35,7 +35,7 @@ public class ToDoCategory {
 //    }
 
     public String getName() {
-        return this.name;
+        return this.mName;
     }
 
     public int getID() {
@@ -46,4 +46,15 @@ public class ToDoCategory {
         return this.mcolor;
     }
 
+    public void setName(String name) {
+        this.mName = name;
+    }
+
+    public void setId(int id) {
+        this.mid = id;
+    }
+
+    public void setColor(int color) {
+        this.mcolor = color;
+    }
 }

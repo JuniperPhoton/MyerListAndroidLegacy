@@ -4,8 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,8 +15,6 @@ import android.view.ViewAnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -48,7 +46,6 @@ import java.util.TimerTask;
 import util.AppUtil;
 import util.ConfigHelper;
 import util.AppExtension;
-import adapter.ToDoListAdapter;
 import util.SerializerHelper;
 import model.ToDo;
 import util.GlobalListLocator;
@@ -65,9 +62,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     private boolean isAddingPaneShown = false;
     private EditText mEditedText;
-    private FrameLayout mFragmentLayout;
-    private Button mOKBtn;
-    private Button mCancelBtn;
 
     private RelativeLayout mAddingPaneLayout;
     private TextView mAddingCateHintTextView;
@@ -96,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         initViews();
 
         String access_token = ConfigHelper.getString(this, "access_token");
-        boolean offline = ConfigHelper.getBoolean(this, "offline_mode");
 
         if (access_token != null) {
             initFragment(savedInstanceState, true);
@@ -110,6 +103,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     public void onResume() {
         super.onResume();
+        if (mToDoFragment == null) {
+            initFragment(null, true);
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
     }
 
     @Override
@@ -122,8 +123,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.activity_main_tb);
         setSupportActionBar(mToolbar);
-
-        mFragmentLayout = (FrameLayout) findViewById(R.id.activity_main_fl);
 
         mAddingCateRadioGroup = (RadioGroup) findViewById(R.id.fragment_adding_pane_radio);
         mAddingCateRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -151,27 +150,21 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (GlobalListLocator.CategoryList != null) updateRatioButtons();
 
         mEditedText = (EditText) findViewById(R.id.fragment_adding_pane_add_et);
-        mOKBtn = (Button) findViewById(R.id.fragment_adding_pane_pane_ok_btn);
-        mCancelBtn = (Button) findViewById(R.id.fragment_adding_pane_cancel_btn);
+        Button okBtn = (Button) findViewById(R.id.fragment_adding_pane_pane_ok_btn);
+        Button cancelBtn = (Button) findViewById(R.id.fragment_adding_pane_cancel_btn);
 
-        mOKBtn.setOnClickListener(new View.OnClickListener() {
+        okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 okClick(v);
             }
         });
-        mCancelBtn.setOnClickListener(new View.OnClickListener() {
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cancelClick(v);
             }
         });
-
-        ImageView mMaskView = (ImageView) findViewById(R.id.activity_main_mask);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            mMaskView.setVisibility(View.GONE);
-            mToolbar.setPadding(0, 0, 0, 0);
-        }
 
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager()
                 .findFragmentById(R.id.activity_main_fragment_drawer);
@@ -191,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     //初始化 Fragment
     private void initFragment(Bundle savedInstanceState, boolean logined) {
         if (findViewById(R.id.activity_main_fl) != null) {
-            if (savedInstanceState != null) {
+            if (savedInstanceState != null && mToDoFragment != null) {
                 return;
             }
 
@@ -264,15 +257,15 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                     mToDoFragment = new ToDoFragment();
                 }
 
-                mToolbar.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
+                mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
                 mToolbar.setTitle(getResources().getString(R.string.cate_default));
 
-                mAddingPaneLayout.setBackgroundColor(getResources().getColor(R.color.MyerListBlue));
-                mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.MyerListBlue));
+                mAddingPaneLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
+                mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
             } else if (category.getID() == -1) {
                 switchToDeleteFragment();
-                mToolbar.setBackgroundColor(getResources().getColor(R.color.DeletedColor));
-                mNavigationDrawerFragment.updateRootBackgroundColor(getResources().getColor(R.color.DeletedColor));
+                mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.DeletedColor));
+                mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.DeletedColor));
                 mToolbar.setTitle(getResources().getString(R.string.deleteditems));
             } else {
                 mToolbar.setBackgroundColor(category.getColor());
@@ -474,8 +467,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         //非离线模式，发送请求
         else {
             if (mAboutToModify) {
-                ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
-                adapter.updateContent(tempToDo);
+                mToDoFragment.updateContent(tempToDo);
             } else {
                 addNewToDoToList(tempToDo);
                 CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), mEditedText.getText().toString(),
@@ -573,17 +565,20 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             Boolean isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
                 ToDo newToDo = ToDo.parseJsonObjToObj(response.getJSONObject("ScheduleInfo"));
-                mToDoAboutToAdded.setID(newToDo.getID());
-                ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
-                CloudServices.setListOrder(ConfigHelper.getString(this, "sid"),
-                        ConfigHelper.getString(this, "access_token"),
-                        ToDo.getOrderString(adapter.getListSrc()),
-                        new IRequestCallback() {
-                            @Override
-                            public void onResponse(JSONObject jsonObject) {
-                                onUpdateOrder(jsonObject);
-                            }
-                        });
+                if (newToDo != null) {
+                    if (mToDoAboutToAdded != null) {
+                        mToDoAboutToAdded.setID(newToDo.getID());
+                    }
+                    CloudServices.setListOrder(ConfigHelper.getString(this, "sid"),
+                            ConfigHelper.getString(this, "access_token"),
+                            ToDo.getOrderString(mToDoFragment.getData()),
+                            new IRequestCallback() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    onUpdateOrder(jsonObject);
+                                }
+                            });
+                }
             } else {
                 if (mToDoAboutToAdded != null) {
                     GlobalListLocator.StagedList.add(mToDoAboutToAdded);
@@ -602,8 +597,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     private void addNewToDoToList(ToDo newToDo) {
-        ToDoListAdapter adapter = (ToDoListAdapter) mToDoFragment.mToDoRecyclerView.getAdapter();
-        adapter.addToDo(newToDo);
+        mToDoFragment.addToDo(newToDo);
 
         ToastService.sendToast(getResources().getString(R.string.add_success));
 
@@ -619,8 +613,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             if (response == null) throw new APIException();
 
             boolean isSuccess = response.getBoolean("isSuccessed");
-            if (isSuccess) {
-
+            if (!isSuccess) {
+                throw new APIException();
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -635,8 +629,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             if (response == null) throw new APIException();
 
             boolean isSuccess = response.getBoolean("isSuccessed");
-            if (isSuccess) {
-            } else {
+            if (!isSuccess) {
+                throw new APIException();
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -651,8 +645,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             if (response == null) throw new APIException();
 
             boolean isSuccess = response.getBoolean("isSuccessed");
-            if (isSuccess) {
-            } else {
+            if (!isSuccess) {
+                throw new APIException();
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -665,10 +659,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     public void onUpdateContent(JSONObject response) {
         try {
             if (response == null) throw new APIException();
-
-            boolean isSuccess = response.getBoolean("isSuccessed");
-            if (isSuccess) {
-            } else {
+            if (!response.getBoolean("isSuccessed")) {
+                throw new APIException();
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -687,7 +679,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         try {
             Type type = new TypeToken<ArrayList<ToDo>>() {
             }.getType();
-            //先序列化回来
             ArrayList<ToDo> list = SerializerHelper.deSerializeFromFile(
                     type, this, SerializerHelper.todosFileName);
 
@@ -703,7 +694,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 mToDoFragment.updateData(GlobalListLocator.TodosList);
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
     }

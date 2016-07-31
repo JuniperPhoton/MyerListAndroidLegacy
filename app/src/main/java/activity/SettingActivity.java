@@ -59,8 +59,9 @@ public class SettingActivity extends AppCompatActivity {
         if (langStr.equals("Chinese")) {
             mLangText.setText(getString(R.string.chinese));
         }
-        else
+        else{
             mLangText.setText("English");
+        }
 
         mLangText.setOnClickListener(new View.OnClickListener() {
             @Override

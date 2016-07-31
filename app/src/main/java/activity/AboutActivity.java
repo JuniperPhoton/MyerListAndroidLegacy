@@ -16,8 +16,6 @@ import moe.feng.material.statusbar.StatusBarCompat;
 
 
 public class AboutActivity extends AppCompatActivity {
-    private ImageView mMaskView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,11 +27,6 @@ public class AboutActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_about);
-
-        mMaskView = (ImageView) findViewById(R.id.activity_about_mask);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            mMaskView.setVisibility(View.GONE);
-        }
     }
 
     @Override

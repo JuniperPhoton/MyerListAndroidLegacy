@@ -1,5 +1,7 @@
 package adapter;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,9 @@ import com.juniperphoton.myerlistandroid.R;
 
 import java.util.List;
 
+import model.ToDo;
 import model.ToDoCategory;
+import util.AppExtension;
 import view.CircleView;
 import viewholder.CateListViewHolder;
 
@@ -28,11 +32,24 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, ToDoCategory item) {
+    protected void convert(BaseViewHolder helper, final ToDoCategory item) {
         CateListViewHolder cateListViewHolder = (CateListViewHolder) helper;
         if (cateListViewHolder.getItemViewType() == IS_NORMAL) {
             cateListViewHolder.setCateName(item.getName());
             cateListViewHolder.setCircleColor(item.getColor());
+            cateListViewHolder.getDeleteView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteById(item.getID());
+                }
+            });
+        } else if (cateListViewHolder.getItemViewType() == IS_HEADER) {
+            cateListViewHolder.getRootView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addNewCate();
+                }
+            });
         }
     }
 
@@ -59,7 +76,37 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
         return mData == null ? 0 : mData.size();
     }
 
+    private int getNewId() {
+        int maxId = 0;
+        if (mData != null && mData.size() > 0) {
+            for (int i = 0; i < mData.size(); i++) {
+                maxId = mData.get(i).getID() > maxId ? mData.get(i).getID() : maxId;
+            }
+        }
+        return ++maxId;
+    }
 
+    private void addNewCate() {
+        ToDoCategory newCategory = new ToDoCategory(AppExtension.getInstance().getResources().getString(R.string.new_cate_name),
+                getNewId(),
+                ContextCompat.getColor(AppExtension.getInstance(), R.color.MyerListBlue));
+        mData.add(newCategory);
+        notifyItemInserted(mData.size());
+    }
+
+    private void deleteById(int id) {
+        int location = -1;
+        for (int i = 0; i < mData.size(); i++) {
+            ToDoCategory cate = mData.get(i);
+            if (cate.getID() == id) {
+                location = i;
+            }
+        }
+        if (location != -1) {
+            mData.remove(location);
+            notifyItemRemoved(location);
+        }
+    }
 }
 
 

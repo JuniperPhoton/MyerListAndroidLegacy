@@ -21,6 +21,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
+import com.juniperphoton.jputils.LocalSettingHelper;
+import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
 
 import api.CloudServices;
@@ -46,10 +48,10 @@ import java.util.TimerTask;
 import util.AppUtil;
 import util.ConfigHelper;
 import util.AppExtension;
-import util.SerializerHelper;
 import model.ToDo;
 import util.GlobalListLocator;
 import moe.feng.material.statusbar.StatusBarCompat;
+import util.SerializationName;
 import util.ToastService;
 import view.CircleRadioButton;
 
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         initViews();
 
-        String access_token = ConfigHelper.getString(this, "access_token");
+        String access_token = LocalSettingHelper.getString(this, "access_token");
 
         if (access_token != null) {
             initFragment(savedInstanceState, true);
@@ -220,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 misStagedItemsNotEmpty = false;
                 SerializerHelper.serializeToFile(AppExtension.getInstance(),
                         GlobalListLocator.StagedList,
-                        SerializerHelper.stagedFileName);
+                        SerializationName.STAGED_FILE_NAME);
             }
         }
     }
@@ -513,8 +515,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 if (array != null) {
                     final ArrayList<ToDo> list = ToDo.parseJsonObjFromArray(array);
                     CloudServices.getListOrder(
-                            ConfigHelper.getString(this, "sid"),
-                            ConfigHelper.getString(this, "access_token"),
+                            LocalSettingHelper.getString(this, "sid"),
+                            LocalSettingHelper.getString(this, "access_token"),
                             new IRequestCallback() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {
@@ -544,7 +546,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
                 ToastService.sendToast(getResources().getString(R.string.Synced));
 
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
 
                 updateListByCategory();
             }
@@ -569,8 +571,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                     if (mToDoAboutToAdded != null) {
                         mToDoAboutToAdded.setID(newToDo.getID());
                     }
-                    CloudServices.setListOrder(ConfigHelper.getString(this, "sid"),
-                            ConfigHelper.getString(this, "access_token"),
+                    CloudServices.setListOrder(LocalSettingHelper.getString(this, "sid"),
+                            LocalSettingHelper.getString(this, "access_token"),
                             ToDo.getOrderString(mToDoFragment.getData()),
                             new IRequestCallback() {
                                 @Override
@@ -582,10 +584,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             } else {
                 if (mToDoAboutToAdded != null) {
                     GlobalListLocator.StagedList.add(mToDoAboutToAdded);
-                    SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializerHelper.stagedFileName);
+                    SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializationName.STAGED_FILE_NAME);
                 }
                 GlobalListLocator.TodosList.add(mToDoAboutToAdded);
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
             }
             mToDoAboutToAdded = null;
         } catch (JSONException e) {
@@ -680,7 +682,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             Type type = new TypeToken<ArrayList<ToDo>>() {
             }.getType();
             ArrayList<ToDo> list = SerializerHelper.deSerializeFromFile(
-                    type, this, SerializerHelper.todosFileName);
+                    type, this, SerializationName.TODOS_FILE_NAME);
 
             if (list != null) {
                 GlobalListLocator.TodosList = list;

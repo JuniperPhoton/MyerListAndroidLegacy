@@ -3,6 +3,7 @@ package view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -11,9 +12,12 @@ import com.juniperphoton.myerlistandroid.R;
 
 import util.AppExtension;
 
-public class CircleView extends ColorView {
+/**
+ * Created by JuniperPhoton on 2016-07-31.
+ */
+public class RectangleView extends ColorView {
 
-    public CircleView(Context context, AttributeSet attrs) {
+    public RectangleView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -24,6 +28,6 @@ public class CircleView extends ColorView {
         Paint paint = new Paint();
         paint.setColor(getColor());
 
-        canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2, paint);
+        canvas.drawRect(0,0,getWidth(),getWidth(),paint);
     }
 }

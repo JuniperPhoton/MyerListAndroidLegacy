@@ -11,7 +11,6 @@ public class OnGestureListener implements GestureDetector.OnGestureListener {
         mRootLayout = r;
     }
 
-
     @Override
     public boolean onDown(MotionEvent motionEvent) {
         return false;

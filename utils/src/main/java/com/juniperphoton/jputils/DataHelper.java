@@ -1,4 +1,4 @@
-package util;
+package com.juniperphoton.jputils;
 
 /**
  * Created by juniperphoton on 6/5/2015.

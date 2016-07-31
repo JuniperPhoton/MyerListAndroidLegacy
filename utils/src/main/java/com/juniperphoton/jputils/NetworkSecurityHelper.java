@@ -1,4 +1,4 @@
-package util;
+package com.juniperphoton.jputils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;

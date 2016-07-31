@@ -2,26 +2,21 @@ package activity;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
-import util.ConfigHelper;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 
 public class StartActivity extends AppCompatActivity {
     private LinearLayout mRootLinearLayout;
-    private ImageView mMaskView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,40 +24,10 @@ public class StartActivity extends AppCompatActivity {
 
         StatusBarCompat.setUpActivity(this);
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-
         setContentView(R.layout.activity_start);
 
         mRootLinearLayout = (LinearLayout) findViewById(R.id.activity_start_root_ll);
         mRootLinearLayout.setAlpha(0f);
-
-        mMaskView = (ImageView) findViewById(R.id.activity_start_mask);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            mMaskView.setVisibility(View.GONE);
-        }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            CardView toLoginCard = (CardView) findViewById(R.id.activity_start_loginBtn_cv);
-            LinearLayout.LayoutParams layoutParamsForTop = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParamsForTop.setMargins(40, 60, 40, 0);
-            layoutParamsForTop.height = 140;
-            toLoginCard.setLayoutParams(layoutParamsForTop);
-
-            CardView toRegisterCard = (CardView) findViewById(R.id.activity_start_registerBtn_cv);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParams.setMargins(40, 0, 40, 0);
-            layoutParams.height = 140;
-            toRegisterCard.setLayoutParams(layoutParams);
-
-            CardView toMainCard = (CardView) findViewById(R.id.activity_start_offline_cv);
-            LinearLayout.LayoutParams layoutParamsForBottom = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParamsForBottom.setMargins(40, 0, 40, 10);
-            layoutParamsForBottom.height = 140;
-
-            toMainCard.setLayoutParams(layoutParamsForBottom);
-        }
     }
 
     @Override
@@ -127,6 +92,6 @@ public class StartActivity extends AppCompatActivity {
                 Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
-        ConfigHelper.putBoolean(this, "offline_mode", true);
+        LocalSettingHelper.putBoolean(this, "offline_mode", true);
     }
 }

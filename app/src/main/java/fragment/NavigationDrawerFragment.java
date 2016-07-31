@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,8 +34,10 @@ import interfaces.IDrawerStatusChanged;
 import interfaces.INavigationDrawerCallback;
 import interfaces.IRequestCallback;
 
+import com.juniperphoton.jputils.CustomFontHelper;
+import com.juniperphoton.jputils.LocalSettingHelper;
+import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -43,12 +46,14 @@ import java.util.ArrayList;
 import model.ToDoCategory;
 import util.AppExtension;
 import util.ConfigHelper;
-import util.CustomFontHelper;
 import util.GlobalListLocator;
-import util.SerializerHelper;
+
+import util.SerializationName;
 import util.ToastService;
 
 public class NavigationDrawerFragment extends Fragment implements INavigationDrawerCallback {
+
+    private static final String TAG="DrawerFragment";
 
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 
@@ -125,7 +130,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
         //显示电子邮件
         mEmailView = (TextView) view.findViewById(R.id.fragment_drawer_login_tv);
-        mEmailView.setText(ConfigHelper.getString(view.getContext(), "email"));
+        mEmailView.setText(LocalSettingHelper.getString(view.getContext(), "email"));
 
         mRootLayout = (RelativeLayout) view.findViewById(R.id.fragment_drawer_root_ll);
         mRootLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -200,7 +205,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
-        mDrawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.myPrimaryDarkColor));
+        mDrawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(getActivity(),R.color.myPrimaryDarkColor));
 
         mActionBarDrawerToggle = new ActionBarDrawerToggle(getActivity(), mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
@@ -238,7 +243,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                 mActionBarDrawerToggle.syncState();
             }
         });
-        mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
+        mDrawerLayout.addDrawerListener(mActionBarDrawerToggle);
     }
 
     public void setupOfflineMode() {
@@ -286,8 +291,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     public void syncCatesOrDefault() {
         if (!ConfigHelper.ISOFFLINEMODE) {
-            CloudServices.getCates(ConfigHelper.getString(getActivity(), "sid"),
-                    ConfigHelper.getString(getActivity(), "access_token"), new IRequestCallback() {
+            CloudServices.getCates(LocalSettingHelper.getString(getActivity(), "sid"),
+                    LocalSettingHelper.getString(getActivity(), "access_token"), new IRequestCallback() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             onGotNewestCates(jsonObject);
@@ -298,6 +303,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     private void onGotNewestCates(JSONObject response) {
         try {
+            Log.d(TAG,"onGotNewestCates");
+
             ArrayList<ToDoCategory> categoryList;
 
             if (response == null) {
@@ -334,15 +341,15 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
             }
 
             categoryList.add(0,
-                    new ToDoCategory(getResources().getString(R.string.cate_default), 0, getResources().getColor(R.color.MyerListBlue)));
+                    new ToDoCategory(getResources().getString(R.string.cate_default), 0,ContextCompat.getColor(getActivity(),R.color.MyerListBlue)));
             categoryList.add(categoryList.size(),
-                    new ToDoCategory(getResources().getString(R.string.cate_deleted), -1, getResources().getColor(R.color.DeletedColor)));
+                    new ToDoCategory(getResources().getString(R.string.cate_deleted), -1, ContextCompat.getColor(getActivity(),R.color.DeletedColor)));
             categoryList.add(categoryList.size(),
                     new ToDoCategory(getResources().getString(R.string.cate_per), -2, Color.WHITE));
 
             GlobalListLocator.CategoryList = categoryList;
 
-            SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializerHelper.catesFileName);
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializationName.CATES_FILE_NAME);
 
             NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(this,categoryList);
             mDrawerRecyclerView.setAdapter(adapter);
@@ -354,7 +361,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         } catch (APIException e) {
             ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

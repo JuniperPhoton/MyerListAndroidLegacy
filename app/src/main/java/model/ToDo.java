@@ -103,7 +103,7 @@ public class ToDo implements Serializable {
     public static ArrayList<ToDo> setOrderByString(ArrayList<ToDo> oriList, String orderList) {
         ArrayList<ToDo> listToReturn = new ArrayList<>();
         String[] orders = orderList.split(",");
-        for (int i = 0; i < orders.length; i++) {
+        for(int i = 0; i < orders.length; i++) {
             if (orders[i].equals("") || orders[i].equals(" ")) {
                 continue;
             }

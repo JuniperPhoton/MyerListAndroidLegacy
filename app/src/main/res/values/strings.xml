@@ -118,4 +118,6 @@
     <string name="cate_per_add">Add a new category</string>
     <string name="new_cate_name">New Cate</string>
     <string name="a_cate_per_discard_content">Confirm to exit the page without saving.</string>
+    <string name="english">English</string>
+    <string name="pick_a_color_title">Pick a color</string>
 </resources>

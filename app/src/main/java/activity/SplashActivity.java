@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.myerlistandroid.R;
 
 import util.ConfigHelper;
@@ -20,8 +21,8 @@ public class SplashActivity extends Activity {
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                String access_token = ConfigHelper.getString(SplashActivity.this, "access_token");
-                boolean offline = ConfigHelper.getBoolean(SplashActivity.this, "offline_mode");
+                String access_token = LocalSettingHelper.getString(SplashActivity.this, "access_token");
+                boolean offline = LocalSettingHelper.getBoolean(SplashActivity.this, "offline_mode");
 
                 ConfigHelper.ISOFFLINEMODE = offline;
 

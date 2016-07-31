@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.juniperphoton.jputils.DataHelper;
+import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
@@ -26,8 +28,6 @@ import java.security.NoSuchAlgorithmException;
 import api.CloudServices;
 import exception.APIException;
 import util.AppExtension;
-import util.ConfigHelper;
-import util.DataHelper;
 import interfaces.IRequestCallback;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
@@ -268,10 +268,10 @@ public class LoginActivity extends AppCompatActivity {
                 if (userObj != null) {
                     String sid = userObj.getString("sid");
                     String access_token = userObj.getString("access_token");
-                    ConfigHelper.putString(AppExtension.getInstance(), "email", mEmailBox.getText().toString());
-                    ConfigHelper.putString(AppExtension.getInstance(), "sid", sid);
-                    ConfigHelper.putString(AppExtension.getInstance(), "access_token", access_token);
-                    ConfigHelper.DeleteKey(AppExtension.getInstance(), "password");
+                    LocalSettingHelper.putString(AppExtension.getInstance(), "email", mEmailBox.getText().toString());
+                    LocalSettingHelper.putString(AppExtension.getInstance(), "sid", sid);
+                    LocalSettingHelper.putString(AppExtension.getInstance(), "access_token", access_token);
+                    LocalSettingHelper.deleteKey(AppExtension.getInstance(), "password");
 
                     ToastService.sendToast(getResources().getString(R.string.login_success));
 
@@ -309,15 +309,15 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject userObj = response.getJSONObject("UserInfo");
                 if (userObj != null) {
                     String salt = userObj.getString("Salt");
-                    ConfigHelper.putString(AppExtension.getInstance(),
+                    LocalSettingHelper.putString(AppExtension.getInstance(),
                             "email",
                             mEmailBox.getText().toString());
-                    ConfigHelper.putString(AppExtension.getInstance(),
+                    LocalSettingHelper.putString(AppExtension.getInstance(),
                             "password",
                             mPasswordBox.getText().toString());
 
-                    CloudServices.login(ConfigHelper.getString(this, "email"),
-                            ConfigHelper.getString(this, "password"),
+                    CloudServices.login(LocalSettingHelper.getString(this, "email"),
+                            LocalSettingHelper.getString(this, "password"),
                             salt,
                             new IRequestCallback() {
                                 @Override

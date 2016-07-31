@@ -1,6 +1,7 @@
 package adapter;
 
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -81,13 +82,11 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     public void onBindViewHolder(DrawerViewHolder drawerViewHolder, int position) {
         //设置抽屉每一项的 UI
         drawerViewHolder.textView.setText(mData.get(position).getName());
-        drawerViewHolder.cateView.setEllipseColor(mData.get(position).getColor());
+        drawerViewHolder.cateView.setColor(mData.get(position).getColor());
 
         if (mSelectedPosition == position && mINavigationDrawerCallback != null) {
             mSelectedCardView = drawerViewHolder.cardView;
-            mSelectedCardView.setCardBackgroundColor(
-                    AppExtension.getInstance().getResources().
-                            getColor(R.color.DrawerSelectedBackground));
+            mSelectedCardView.setCardBackgroundColor(ContextCompat.getColor(AppExtension.getInstance(),R.color.DrawerSelectedBackground));
         }
     }
 
@@ -98,9 +97,6 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         } else return IS_NORMAL;
     }
 
-    /**
-     * @param position
-     */
     public void selectPosition(int position) {
         mSelectedPosition = position;
         notifyItemChanged(position);

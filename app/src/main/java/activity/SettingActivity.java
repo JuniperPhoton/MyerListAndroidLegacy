@@ -13,15 +13,13 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.app.AlertDialog;
+
+import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
-
 import java.util.Locale;
-
-import util.ConfigHelper;
 import util.AppExtension;
 import moe.feng.material.statusbar.StatusBarCompat;
-import util.ToastService;
 
 public class SettingActivity extends AppCompatActivity {
     private com.rey.material.widget.Switch mAddToBottomSwitch;
@@ -51,16 +49,16 @@ public class SettingActivity extends AppCompatActivity {
 
         mLangText = (TextView) findViewById(R.id.activity_setting_language_tv);
 
-        Boolean addToBottom = ConfigHelper.getBoolean(AppExtension.getInstance(), "AddToBottom");
+        Boolean addToBottom = LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom");
         mAddToBottomSwitch.setChecked(addToBottom);
 
         //找到语言
-        final String langStr = ConfigHelper.getString(AppExtension.getInstance(), "Language");
+        final String langStr = LocalSettingHelper.getString(AppExtension.getInstance(), "Language");
         if (langStr.equals("Chinese")) {
             mLangText.setText(getString(R.string.chinese));
         }
         else{
-            mLangText.setText("English");
+            mLangText.setText(getString(R.string.english));
         }
 
         mLangText.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +75,7 @@ public class SettingActivity extends AppCompatActivity {
                             DisplayMetrics dm = resources.getDisplayMetrics();
                             config.locale = Locale.CHINESE;
                             resources.updateConfiguration(config, dm);
-                            ConfigHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
+                            LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
                         }
                         else {
                             Resources resources = getResources();
@@ -85,7 +83,7 @@ public class SettingActivity extends AppCompatActivity {
                             DisplayMetrics dm = resources.getDisplayMetrics();
                             config.locale = Locale.ENGLISH;
                             resources.updateConfiguration(config, dm);
-                            ConfigHelper.putString(AppExtension.getInstance(), "Language", "English");
+                            LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "English");
                         }
                         Intent intent = new Intent(SettingActivity.this, MainActivity.class);
                         intent.putExtra("LOGIN_STATE", "AboutToLogin");
@@ -108,10 +106,10 @@ public class SettingActivity extends AppCompatActivity {
                 builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ConfigHelper.putBoolean(getApplicationContext(), "offline_mode", false);
-                        ConfigHelper.DeleteKey(getApplicationContext(), "email");
-                        ConfigHelper.DeleteKey(getApplicationContext(), "salt");
-                        ConfigHelper.DeleteKey(getApplicationContext(), "access_token");
+                        LocalSettingHelper.putBoolean(getApplicationContext(), "offline_mode", false);
+                        LocalSettingHelper.deleteKey(getApplicationContext(), "email");
+                        LocalSettingHelper.deleteKey(getApplicationContext(), "salt");
+                        LocalSettingHelper.deleteKey(getApplicationContext(), "access_token");
                         Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
@@ -130,7 +128,7 @@ public class SettingActivity extends AppCompatActivity {
         mAddToBottomSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
-                ConfigHelper.putBoolean(AppExtension.getInstance(), "AddToBottom", b);
+                LocalSettingHelper.putBoolean(AppExtension.getInstance(), "AddToBottom", b);
             }
 
         });

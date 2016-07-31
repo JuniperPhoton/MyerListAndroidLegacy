@@ -35,7 +35,7 @@ public class CateListViewHolder extends BaseViewHolder {
     }
 
     public void setCircleColor(int color) {
-        mCateCircle.setEllipseColor(color);
+        mCateCircle.setColor(color);
     }
 
     public void setCateName(String name) {
@@ -48,5 +48,13 @@ public class CateListViewHolder extends BaseViewHolder {
 
     public ImageView getDeleteView() {
         return this.mDeleteView;
+    }
+
+    public EditText getTextView(){
+        return mTextView;
+    }
+
+    public CircleView getCircleView(){
+        return mCateCircle;
     }
 }

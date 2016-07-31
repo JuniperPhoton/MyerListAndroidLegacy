@@ -1,12 +1,7 @@
-package util;
-
+package com.juniperphoton.jputils;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Typeface;
-import android.util.AttributeSet;
 import android.widget.TextView;
-
-import com.juniperphoton.myerlistandroid.R;
 
 /**
  * Created by dengw on 3/9/2016.

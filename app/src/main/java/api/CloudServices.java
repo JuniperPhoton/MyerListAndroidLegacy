@@ -1,11 +1,11 @@
 package api;
 
+import com.juniperphoton.jputils.NetworkSecurityHelper;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.NoSuchAlgorithmException;
@@ -13,9 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import interfaces.IRequestCallback;
-import model.ToDo;
-import util.ConfigHelper;
-import util.NetworkSecurityHelper;
 
 /**
  * Created by dengw on 3/4/2016.

@@ -4,20 +4,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
+import com.juniperphoton.jputils.ColorUtil;
 import com.juniperphoton.myerlistandroid.R;
-
-import java.util.jar.Attributes;
-
-import util.ColorUtil;
 
 /**
  * Created by dengw on 2016-06-29.
@@ -56,7 +50,7 @@ public class CircleRadioButton extends RadioButton {
         paint.setColor(mCircleColor);
 
         Paint darkPaint = new Paint();
-        darkPaint.setColor(ColorUtil.MakeColorDarker(mCircleColor));
+        darkPaint.setColor(ColorUtil.makeColorDarker(mCircleColor));
 
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2 - 12, darkPaint);
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2 - 20, paint);

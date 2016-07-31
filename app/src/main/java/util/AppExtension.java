@@ -17,7 +17,6 @@ public class AppExtension extends Application implements Thread.UncaughtExceptio
 
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
         super.onCreate();
         instance = this;
 

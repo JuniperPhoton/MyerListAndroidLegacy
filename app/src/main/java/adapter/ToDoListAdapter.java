@@ -12,10 +12,11 @@ import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.juniperphoton.jputils.LocalSettingHelper;
+import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
 
 import org.json.JSONObject;
@@ -30,12 +31,9 @@ import interfaces.IRequestCallback;
 import model.ToDoCategory;
 import util.ConfigHelper;
 import util.AppExtension;
-import util.SerializerHelper;
 import model.ToDo;
 import util.GlobalListLocator;
-import view.CircleView;
-import viewholder.CateListViewHolder;
-import viewholder.DeleteItemViewHolder;
+import util.SerializationName;
 import viewholder.ToDoItemViewHolder;
 
 
@@ -81,12 +79,12 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
         ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
 
         if (cateID == 0) {
-            holder.mCateCircle.setEllipseColor(ContextCompat.getColor(mContext, R.color.MyerListBlue));
+            holder.mCateCircle.setColor(ContextCompat.getColor(mContext, R.color.MyerListBlue));
         } else {
             if (category != null) {
-                holder.mCateCircle.setEllipseColor(category.getColor());
+                holder.mCateCircle.setColor(category.getColor());
             } else {
-                holder.mCateCircle.setEllipseColor(ContextCompat.getColor(mContext, R.color.MyerListBlue));
+                holder.mCateCircle.setColor(ContextCompat.getColor(mContext, R.color.MyerListBlue));
             }
         }
 
@@ -124,7 +122,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
     public void addToDo(ToDo todoToAdd) {
         if (todoToAdd == null) return;
 
-        if (ConfigHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
+        if (LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
             //mToDosToDisplay.add(todoToAdd);
             notifyItemInserted(mData.size() - 1);
             GlobalListLocator.TodosList.add(todoToAdd);
@@ -133,7 +131,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
             notifyItemInserted(0);
             GlobalListLocator.TodosList.add(0, todoToAdd);
         }
-        SerializerHelper.serializeToFile(mContext, mData, SerializerHelper.todosFileName);
+        SerializerHelper.serializeToFile(mContext, mData, SerializationName.TODOS_FILE_NAME);
     }
 
     public void deleteToDo(String id) {
@@ -156,13 +154,13 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
         mData.remove(todoToDelete);
 
         GlobalListLocator.DeletedList.add(0, todoToDelete);
-        SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.DeletedList, SerializerHelper.deletedFileName);
+        SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.DeletedList, SerializationName.DELETED_FILE_NAME);
 
         if (ConfigHelper.ISOFFLINEMODE) {
-            SerializerHelper.serializeToFile(mContext, mData, SerializerHelper.todosFileName);
+            SerializerHelper.serializeToFile(mContext, mData, SerializationName.TODOS_FILE_NAME);
         } else
-            CloudServices.setDelete(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
-                    ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
+            CloudServices.setDelete(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
+                    LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
                     todoToDelete.getID(),
                     new IRequestCallback() {
                         @Override
@@ -207,7 +205,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
                         }
                     });
         } else {
-            SerializerHelper.serializeToFile(mContext, mData, SerializerHelper.todosFileName);
+            SerializerHelper.serializeToFile(mContext, mData, SerializationName.TODOS_FILE_NAME);
         }
     }
 
@@ -267,15 +265,6 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
     }
 
     private void onMoveComplete(View v, float scrollLeft, String id) {
-        int index = 0;
-        for (int i = 0; i < mData.size(); i++) {
-            ToDo s = mData.get(i);
-            if (s.getID().equals(id)) {
-                mCurrentToDo = s;
-                index = i;
-                break;
-            }
-        }
         if (mCurrentToDo == null)
             return;
 
@@ -292,8 +281,8 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
             }
 
             if (!ConfigHelper.ISOFFLINEMODE) {
-                CloudServices.setDone(ConfigHelper.getString(AppExtension.getInstance(), "sid"),
-                        ConfigHelper.getString(AppExtension.getInstance(), "access_token"),
+                CloudServices.setDone(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
+                        LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
                         id,
                         mCurrentToDo.getIsDone() ? "1" : "0",
                         new IRequestCallback() {
@@ -316,7 +305,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
         }
 
         playGoBackAnimation(v, scrollLeft);
-        SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializerHelper.todosFileName);
+        SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializationName.TODOS_FILE_NAME);
     }
 
     private void playGoBackAnimation(final View v, final float left) {

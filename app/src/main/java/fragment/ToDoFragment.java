@@ -16,6 +16,8 @@ import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.juniperphoton.jputils.LocalSettingHelper;
+import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
 
 import org.json.JSONObject;
@@ -30,9 +32,9 @@ import util.AppUtil;
 import util.ConfigHelper;
 import util.AppExtension;
 import adapter.ToDoListAdapter;
-import util.SerializerHelper;
 import util.GlobalListLocator;
 import model.ToDo;
+import util.SerializationName;
 
 public class ToDoFragment extends Fragment implements IRefresh {
     public static final String TAG = "ToDoFragment";
@@ -101,7 +103,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
             }
         });
 
-        if (!ConfigHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
+        if (!LocalSettingHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             layoutParams.setMargins(16, 0, 0, 16);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -217,7 +219,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
                         });
             }
             GlobalListLocator.StagedList.clear();
-            SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializerHelper.stagedFileName);
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializationName.STAGED_FILE_NAME);
         }
     }
 

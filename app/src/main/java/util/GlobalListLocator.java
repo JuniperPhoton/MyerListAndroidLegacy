@@ -3,6 +3,7 @@ package util;
 import android.graphics.Color;
 
 import com.google.gson.reflect.TypeToken;
+import com.juniperphoton.jputils.SerializerHelper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -19,9 +20,7 @@ public class GlobalListLocator {
     public static ArrayList<ToDoCategory> makeCategoryListForPersonalizaion() {
         ArrayList<ToDoCategory> list = new ArrayList<>();
         for (ToDoCategory cate : CategoryList) {
-            if (cate.getID() <= 0) {
-                continue;
-            } else {
+            if (cate.getID() > 0) {
                 list.add(cate);
             }
         }
@@ -30,10 +29,10 @@ public class GlobalListLocator {
     }
 
     public static ToDoCategory GetCategoryByCateID(int id) {
-        ToDoCategory foundCate = null;
         if (CategoryList == null) {
-            return foundCate;
+            return null;
         }
+        ToDoCategory foundCate = null;
         for (ToDoCategory cate : CategoryList) {
             if (cate.getID() == id) {
                 foundCate = cate;
@@ -56,14 +55,14 @@ public class GlobalListLocator {
         ArrayList<ToDo> deletedContent = SerializerHelper.deSerializeFromFile(
                 type,
                 AppExtension.getInstance(),
-                SerializerHelper.deletedFileName);
+                SerializationName.DELETED_FILE_NAME);
         if (deletedContent != null) {
             DeletedList = deletedContent;
         }
         ArrayList<ToDo> stagedContent = SerializerHelper.deSerializeFromFile(
                 type,
                 AppExtension.getInstance(),
-                SerializerHelper.stagedFileName);
+                SerializationName.STAGED_FILE_NAME);
         if (stagedContent != null) {
             StagedList = stagedContent;
         }
@@ -74,7 +73,7 @@ public class GlobalListLocator {
         ArrayList<ToDoCategory> categories = SerializerHelper.deSerializeFromFile(
                 type2,
                 AppExtension.getInstance(),
-                SerializerHelper.catesFileName);
+                SerializationName.CATES_FILE_NAME);
         if (categories != null) {
             CategoryList = categories;
         }

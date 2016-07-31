@@ -1,4 +1,4 @@
-package util;
+package com.juniperphoton.jputils;
 
 import android.content.Context;
 
@@ -12,13 +12,7 @@ import java.io.FileOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import model.ToDo;
-
 public class SerializerHelper {
-    public static final String todosFileName = "MyTodos.txt";
-    public static final String deletedFileName = "Deleted.txt";
-    public static final String stagedFileName = "Staged.txt";
-    public static final String catesFileName="Cates.txt";
 
     public static void serializeToFile(Context context, Object o, String fileName) {
         try {

@@ -1,22 +1,18 @@
 package adapter;
 
 import android.app.Activity;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import activity.MainActivity;
 import api.CloudServices;
@@ -25,10 +21,9 @@ import interfaces.IRequestCallback;
 import util.AppUtil;
 import util.ConfigHelper;
 import util.AppExtension;
-import util.SerializerHelper;
 import model.ToDo;
 import util.GlobalListLocator;
-import viewholder.CateListViewHolder;
+import util.SerializationName;
 import viewholder.DeleteItemViewHolder;
 
 
@@ -48,8 +43,8 @@ public class DeletedListAdapter extends BaseItemDraggableAdapter<ToDo> {
 
     @Override
     public DeleteItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_deleted, parent, false);
-        return new DeleteItemViewHolder(v);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_deleted, parent, false);
+        return new DeleteItemViewHolder(view);
     }
 
     @Override
@@ -71,7 +66,7 @@ public class DeletedListAdapter extends BaseItemDraggableAdapter<ToDo> {
                     mDeletedItemFragment.showNoItemHint();
                 }
 
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializerHelper.deletedFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializationName.DELETED_FILE_NAME);
             }
         });
         holder.mReDoView.setOnClickListener(new View.OnClickListener() {
@@ -101,8 +96,8 @@ public class DeletedListAdapter extends BaseItemDraggableAdapter<ToDo> {
                     mDeletedItemFragment.showNoItemHint();
                 }
 
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializerHelper.deletedFileName);
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializerHelper.todosFileName);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializationName.DELETED_FILE_NAME);
+                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
             }
         });
     }
@@ -113,7 +108,7 @@ public class DeletedListAdapter extends BaseItemDraggableAdapter<ToDo> {
             notifyItemRangeRemoved(0, mData.size());
             mData.clear();
             mDeletedItemFragment.showNoItemHint();
-            SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializerHelper.deletedFileName);
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializationName.DELETED_FILE_NAME);
         } catch (Exception e) {
             e.printStackTrace();
         }

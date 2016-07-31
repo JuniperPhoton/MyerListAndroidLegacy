@@ -1,4 +1,4 @@
-package util;
+package com.juniperphoton.jputils;
 
 import android.content.Context;
 import android.graphics.Typeface;

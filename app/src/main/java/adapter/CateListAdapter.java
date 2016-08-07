@@ -17,6 +17,7 @@ import interfaces.IPickColorCallback;
 import model.ToDoCategory;
 import util.AppExtension;
 import viewholder.CateListViewHolder;
+import viewholder.CateTextWatcher;
 
 /**
  * Created by JuniperPhoton on 2016-07-19.
@@ -34,7 +35,7 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
 
     public CateListAdapter(List data, IPickColorCallback callback) {
         super(R.layout.row_cate_per_item, data);
-        mIPickedColorCallback=callback;
+        mIPickedColorCallback = callback;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
                     deleteById(item.getID());
                 }
             });
-            cateListViewHolder.getTextView().addTextChangedListener(new TextWatcher() {
+            cateListViewHolder.setWatcher(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -62,10 +63,10 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    changeCateNameById(item.getID(),s.toString());
+                    item.setName(s.toString());
                 }
             });
-            cateListViewHolder.getCircleView().setOnClickListener(new View.OnClickListener() {
+            cateListViewHolder.getCircleParent().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mIPickedColorCallback.onPickColor(item);
@@ -136,7 +137,7 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
         }
     }
 
-    private void changeCateNameById(int id,String name){
+    private void changeCateNameById(int id, String name) {
         int location = -1;
         for (int i = 0; i < mData.size(); i++) {
             ToDoCategory cate = mData.get(i);
@@ -145,12 +146,14 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
             }
         }
         if (location != -1) {
+            if (mData.get(location).getName().equals(name)) {
+                return;
+            }
             mData.get(location).setName(name);
-            notifyItemChanged(location);
         }
     }
 
-    public void updateItemColor(int id,int color){
+    public void updateItemColor(int id, int color) {
         int location = -1;
         for (int i = 0; i < mData.size(); i++) {
             ToDoCategory cate = mData.get(i);
@@ -160,7 +163,7 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
         }
         if (location != -1) {
             mData.get(location).setColor(color);
-            notifyItemChanged(location);
+            notifyItemChanged(location,null);
         }
     }
 }

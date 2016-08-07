@@ -52,7 +52,7 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
 
     private RecyclerView mCateRecyclerView;
     private RecyclerView mColorRecyclerView;
-    private RelativeLayout mColorRootLayout;
+    private RelativeLayout mColorRootLayout = null;
     private CateListAdapter mAdapter;
     private ItemTouchHelper mItemTouchHelper;
     private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
@@ -61,6 +61,7 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
 
     private CateColorAdapter mColorAdatper;
     private ArrayList<ColorWrapper> mColors;
+    private View mColorsView;
 
     private AlertDialog mColorDialog;
 
@@ -97,14 +98,16 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
     }
 
     private void setupColorViews(View view) {
-        mColorRootLayout = (RelativeLayout) view.findViewById(R.id.dialog_cate_per_color_root_rl);
-        mColorRecyclerView = (RecyclerView) view.findViewById(R.id.dialog_cate_per_color_rv);
-        mColorRecyclerView.setLayoutManager(new GridLayoutManager(this, 7));
+        if (mColorRootLayout == null) {
+            mColorRootLayout = (RelativeLayout) view.findViewById(R.id.dialog_cate_per_color_root_rl);
+            mColorRecyclerView = (RecyclerView) view.findViewById(R.id.dialog_cate_per_color_rv);
+            mColorRecyclerView.setLayoutManager(new GridLayoutManager(this, 7));
 
-        mColors = generateColors();
+            mColors = generateColors();
 
-        mColorAdatper = new CateColorAdapter(mColors, this);
-        mColorRecyclerView.setAdapter(mColorAdatper);
+            mColorAdatper = new CateColorAdapter(mColors, this);
+            mColorRecyclerView.setAdapter(mColorAdatper);
+        }
     }
 
     private ArrayList<ColorWrapper> generateColors() {
@@ -239,17 +242,21 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
     public void onPickColor(ToDoCategory category) {
         mToDoCategoryToModify = category;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_color_picker, null);
-        setupColorViews(view);
-        builder.setView(view);
-        mColorDialog = builder.create();
+        if (mColorsView == null) {
+            mColorsView = LayoutInflater.from(this).inflate(R.layout.dialog_color_picker, null);
+            setupColorViews(mColorsView);
+        }
+        builder.setView(mColorsView);
+        if (mColorDialog == null) {
+            mColorDialog = builder.create();
+        }
         mColorDialog.show();
     }
 
     @Override
     public void pickedColor(int color) {
         if (mToDoCategoryToModify != null) {
-            mAdapter.updateItemColor(mToDoCategoryToModify.getID(), mToDoCategoryToModify.getColor());
+            mAdapter.updateItemColor(mToDoCategoryToModify.getID(), color);
             if (mColorDialog != null) {
                 mColorDialog.dismiss();
             }

@@ -51,29 +51,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         StatusBarCompat.setUpActivity(this);
 
-
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-
         setContentView(R.layout.activity_login);
 
-        mMaskView = (ImageView) findViewById(R.id.activity_login_mask);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            mMaskView.setVisibility(View.GONE);
-        }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            CardView toLoginCard = (CardView) findViewById(R.id.activity_login_login_btn_cv);
-            LinearLayout.LayoutParams layoutParamsForTop = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParamsForTop.setMargins(40, 60, 40, 0);
-            layoutParamsForTop.height = 140;
-            toLoginCard.setLayoutParams(layoutParamsForTop);
-        }
-
-
         mEmailBox = (EditText) findViewById(R.id.activity_login_email_tv);
+        mEmailBox.setText("dengweichao@hotmail.com");
         mPasswordBox = (EditText) findViewById(R.id.activity_login_ps_et);
+        mPasswordBox.setText("windfantasy");
         mConfirmPsBox = (EditText) findViewById(R.id.activity_login_rps_et);
         mTitleView = (TextView) findViewById(R.id.activity_login_loginTitle_tv);
         mForgetPwdTextView=(TextView)findViewById(R.id.activity_login_forget_tv);

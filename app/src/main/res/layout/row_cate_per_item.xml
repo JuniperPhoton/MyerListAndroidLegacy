@@ -21,11 +21,18 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <view.CircleView
-                android:id="@+id/raw_cate_per_cv"
-                android:layout_width="20sp"
-                android:layout_height="20sp"
-                android:layout_marginLeft="20sp" />
+            <RelativeLayout
+                android:id="@+id/raw_cate_per_rl"
+                android:layout_width="50sp"
+                android:layout_height="50sp">
+
+                <view.CircleView
+                    android:id="@+id/raw_cate_per_cv"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="20sp" />
+            </RelativeLayout>
 
             <EditText
                 android:id="@+id/raw_cate_per_tv"

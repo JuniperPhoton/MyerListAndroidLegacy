@@ -1,10 +1,12 @@
 package viewholder;
 
-import android.support.v7.widget.CardView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.juniperphoton.myerlistandroid.R;
@@ -20,16 +22,20 @@ public class CateListViewHolder extends BaseViewHolder {
     private final int IS_HEADER = 1;
 
     private CircleView mCateCircle;
-    private EditText mTextView;
+    private EditText mEditText;
     private LinearLayout mRootLayout;
     private ImageView mDeleteView;
+    private RelativeLayout mCircleParent;
+
+    private TextWatcher mWatcher;
 
     public CateListViewHolder(View view, int viewType) {
         super(view);
         if (viewType == IS_NORMAL) {
             mCateCircle = (CircleView) view.findViewById(R.id.raw_cate_per_cv);
-            mTextView = (EditText) view.findViewById(R.id.raw_cate_per_tv);
+            mEditText = (EditText) view.findViewById(R.id.raw_cate_per_tv);
             mDeleteView = (ImageView) view.findViewById(R.id.row_cate_per_deleteView);
+            mCircleParent=(RelativeLayout)view.findViewById(R.id.raw_cate_per_rl);
         }
         mRootLayout = (LinearLayout) view.findViewById(R.id.row_cate_per_ll);
     }
@@ -39,7 +45,9 @@ public class CateListViewHolder extends BaseViewHolder {
     }
 
     public void setCateName(String name) {
-        mTextView.setText(name);
+        String oldText=mEditText.getText().toString();
+        if(oldText.equals(name)) return;
+        mEditText.setText(name);
     }
 
     public LinearLayout getRootView() {
@@ -50,11 +58,18 @@ public class CateListViewHolder extends BaseViewHolder {
         return this.mDeleteView;
     }
 
-    public EditText getTextView(){
-        return mTextView;
-    }
-
     public CircleView getCircleView(){
         return mCateCircle;
+    }
+
+    public RelativeLayout getCircleParent(){
+        return mCircleParent;
+    }
+
+    public void setWatcher(TextWatcher watcher){
+        if(mWatcher==null){
+            mWatcher=watcher;
+            mEditText.addTextChangedListener(mWatcher);
+        }
     }
 }

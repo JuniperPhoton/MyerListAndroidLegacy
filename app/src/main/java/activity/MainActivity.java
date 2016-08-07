@@ -721,11 +721,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         } else if (isAddingPaneShown) {
             dismissDialog();
         } else {
-            //super.onBackPressed();
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            startActivity(intent);
+            super.onBackPressed();
+//            Intent intent = new Intent(Intent.ACTION_MAIN);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.addCategory(Intent.CATEGORY_HOME);
+//            startActivity(intent);
         }
     }
 }

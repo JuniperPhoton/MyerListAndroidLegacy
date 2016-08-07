@@ -46,7 +46,7 @@ import util.GlobalListLocator;
 /**
  * Created by JuniperPhoton on 2016-07-17.
  */
-public class CatePersonalizaionActivity extends AppCompatActivity implements IPickColorCallback , IPickedColor {
+public class CatePersonalizaionActivity extends AppCompatActivity implements IPickColorCallback, IPickedColor {
 
     private static final String MODIFIED_CATE_JSON_STRING_FORE = "{ \"modified\":true, \"cates\":";
 
@@ -58,6 +58,11 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
     private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
 
     private ToDoCategory mToDoCategoryToModify;
+
+    private CateColorAdapter mColorAdatper;
+    private ArrayList<ColorWrapper> mColors;
+
+    private AlertDialog mColorDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,15 +96,15 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
         mCateRecyclerView.setAdapter(mAdapter);
     }
 
-    private void setupColorViews(View view, final ToDoCategory category) {
+    private void setupColorViews(View view) {
         mColorRootLayout = (RelativeLayout) view.findViewById(R.id.dialog_cate_per_color_root_rl);
         mColorRecyclerView = (RecyclerView) view.findViewById(R.id.dialog_cate_per_color_rv);
         mColorRecyclerView.setLayoutManager(new GridLayoutManager(this, 7));
 
-        ArrayList<ColorWrapper> list = generateColors();
+        mColors = generateColors();
 
-        final CateColorAdapter colorAdapter = new CateColorAdapter(list,this);
-        mColorRecyclerView.setAdapter(colorAdapter);
+        mColorAdatper = new CateColorAdapter(mColors, this);
+        mColorRecyclerView.setAdapter(mColorAdatper);
     }
 
     private ArrayList<ColorWrapper> generateColors() {
@@ -232,18 +237,22 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
 
     @Override
     public void onPickColor(ToDoCategory category) {
-        mToDoCategoryToModify=category;
+        mToDoCategoryToModify = category;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_color_picker, null);
-        setupColorViews(view, category);
+        setupColorViews(view);
         builder.setView(view);
-        builder.create().show();
+        mColorDialog = builder.create();
+        mColorDialog.show();
     }
 
     @Override
     public void pickedColor(int color) {
-        if(mToDoCategoryToModify!=null){
-            mAdapter.updateItemColor(mToDoCategoryToModify.getID(),mToDoCategoryToModify.getColor());
+        if (mToDoCategoryToModify != null) {
+            mAdapter.updateItemColor(mToDoCategoryToModify.getID(), mToDoCategoryToModify.getColor());
+            if (mColorDialog != null) {
+                mColorDialog.dismiss();
+            }
         }
     }
 }

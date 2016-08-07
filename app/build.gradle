@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
     buildToolsVersion '22.0.1'
-    useLibrary  'org.apache.http.legacy'
+    useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.juniperphoton.myerlistandroid"
         minSdkVersion 21
@@ -17,13 +17,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+//    dexOptions {
+//        incremental true
+//        javaMaxHeapSize "2g"
+//    }
 }
-repositories
-        {
+repositories {
+            mavenCentral()
             jcenter()
             maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
             maven { url "https://jitpack.io" }
-        }
+}
 
 dependencies
         {

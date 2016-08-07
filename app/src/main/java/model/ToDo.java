@@ -50,7 +50,6 @@ public class ToDo implements Serializable {
         this.content = value;
     }
 
-
     public boolean getIsDone() {
         return this.isDone;
     }

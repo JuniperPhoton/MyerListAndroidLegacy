@@ -11,6 +11,8 @@ import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.juniperphoton.myerlistandroid.R;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import interfaces.IPickColorCallback;
@@ -40,40 +42,26 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
 
     @Override
     protected void convert(BaseViewHolder helper, final ToDoCategory item) {
-        CateListViewHolder cateListViewHolder = (CateListViewHolder) helper;
-        if (cateListViewHolder.getItemViewType() == IS_NORMAL) {
-            cateListViewHolder.setCateName(item.getName());
-            cateListViewHolder.setCircleColor(item.getColor());
-            cateListViewHolder.getDeleteView().setOnClickListener(new View.OnClickListener() {
+        CateListViewHolder holder = (CateListViewHolder) helper;
+        if (holder.getItemViewType() == IS_NORMAL) {
+            holder.removeWatcher();
+            holder.setCateName(item.getName());
+            holder.setWatcher(new CateTextWatcher(item));
+            holder.setCircleColor(item.getColor());
+            holder.getDeleteView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     deleteById(item.getID());
                 }
             });
-            cateListViewHolder.setWatcher(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    item.setName(s.toString());
-                }
-            });
-            cateListViewHolder.getCircleParent().setOnClickListener(new View.OnClickListener() {
+            holder.getCircleParent().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mIPickedColorCallback.onPickColor(item);
                 }
             });
-        } else if (cateListViewHolder.getItemViewType() == IS_HEADER) {
-            cateListViewHolder.getRootView().setOnClickListener(new View.OnClickListener() {
+        } else if (holder.getItemViewType() == IS_HEADER) {
+            holder.getRootView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     addNewCate();
@@ -163,8 +151,18 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
         }
         if (location != -1) {
             mData.get(location).setColor(color);
-            notifyItemChanged(location,null);
+            notifyItemChanged(location, null);
         }
+    }
+
+    public List<ToDoCategory> getNormalData() {
+        ArrayList<ToDoCategory> list = new ArrayList<>();
+        if (mData.size() == 1) return list;
+        for (int i = 1; i < mData.size(); i++) {
+            ToDoCategory cate = mData.get(i);
+            list.add(cate);
+        }
+        return list;
     }
 }
 

@@ -1,6 +1,5 @@
 package activity;
 
-import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -10,15 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.DisplayMetrics;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonArray;
@@ -204,6 +199,9 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
         }
         String arrayString = MODIFIED_CATE_JSON_STRING_FORE + jsonArray.toString() + "}";
         if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(this)) {
+            GlobalListLocator.makeAndUpdateCategoryList((ArrayList<ToDoCategory>) mAdapter.getNormalData());
+            GlobalListLocator.onUpdateCateList = true;
+
             ProgressDialog dialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
             dialog.setMessage(getResources().getString(R.string.loading_hint));
             dialog.show();

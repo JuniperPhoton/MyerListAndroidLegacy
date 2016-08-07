@@ -35,7 +35,7 @@ public class CateListViewHolder extends BaseViewHolder {
             mCateCircle = (CircleView) view.findViewById(R.id.raw_cate_per_cv);
             mEditText = (EditText) view.findViewById(R.id.raw_cate_per_tv);
             mDeleteView = (ImageView) view.findViewById(R.id.row_cate_per_deleteView);
-            mCircleParent=(RelativeLayout)view.findViewById(R.id.raw_cate_per_rl);
+            mCircleParent = (RelativeLayout) view.findViewById(R.id.raw_cate_per_rl);
         }
         mRootLayout = (LinearLayout) view.findViewById(R.id.row_cate_per_ll);
     }
@@ -45,8 +45,8 @@ public class CateListViewHolder extends BaseViewHolder {
     }
 
     public void setCateName(String name) {
-        String oldText=mEditText.getText().toString();
-        if(oldText.equals(name)) return;
+        String oldText = mEditText.getText().toString();
+        if (oldText.equals(name)) return;
         mEditText.setText(name);
     }
 
@@ -58,18 +58,24 @@ public class CateListViewHolder extends BaseViewHolder {
         return this.mDeleteView;
     }
 
-    public CircleView getCircleView(){
+    public CircleView getCircleView() {
         return mCateCircle;
     }
 
-    public RelativeLayout getCircleParent(){
+    public RelativeLayout getCircleParent() {
         return mCircleParent;
     }
 
-    public void setWatcher(TextWatcher watcher){
-        if(mWatcher==null){
-            mWatcher=watcher;
+    public void setWatcher(TextWatcher watcher) {
+        if (mWatcher == null) {
+            mWatcher = watcher;
             mEditText.addTextChangedListener(mWatcher);
+        }
+    }
+
+    public void removeWatcher() {
+        if (mWatcher != null) {
+            mEditText.removeTextChangedListener(mWatcher);
         }
     }
 }

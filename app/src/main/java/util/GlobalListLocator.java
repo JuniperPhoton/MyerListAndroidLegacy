@@ -1,9 +1,11 @@
 package util;
 
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 
 import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.jputils.SerializerHelper;
+import com.juniperphoton.myerlistandroid.R;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -16,6 +18,21 @@ public class GlobalListLocator {
     public static ArrayList<ToDo> DeletedList;
     public static ArrayList<ToDo> StagedList;
     public static ArrayList<ToDoCategory> CategoryList;
+
+    public static boolean onUpdateCateList;
+
+    public static void makeAndUpdateCategoryList(ArrayList<ToDoCategory> categoryList){
+        categoryList.add(0,
+                new ToDoCategory(AppExtension.getInstance().getString(R.string.cate_default), 0,
+                        ContextCompat.getColor(AppExtension.getInstance(),R.color.MyerListBlue)));
+        categoryList.add(categoryList.size(),
+                new ToDoCategory(AppExtension.getInstance().getString(R.string.cate_deleted), -1,
+                        ContextCompat.getColor(AppExtension.getInstance(),R.color.DeletedColor)));
+        categoryList.add(categoryList.size(),
+                new ToDoCategory(AppExtension.getInstance().getString(R.string.cate_per), -2,
+                        Color.WHITE));
+        CategoryList = categoryList;
+    }
 
     public static ArrayList<ToDoCategory> makeCategoryListForPersonalizaion() {
         ArrayList<ToDoCategory> list = new ArrayList<>();

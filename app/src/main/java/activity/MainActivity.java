@@ -108,6 +108,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (mToDoFragment == null) {
             initFragment(null, true);
         }
+        if (mNavigationDrawerFragment != null && GlobalListLocator.onUpdateCateList) {
+            mNavigationDrawerFragment.updateList(GlobalListLocator.CategoryList);
+            GlobalListLocator.onUpdateCateList = false;
+        }
     }
 
     @Override

@@ -38,6 +38,7 @@ import com.juniperphoton.jputils.CustomFontHelper;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -53,7 +54,7 @@ import util.ToastService;
 
 public class NavigationDrawerFragment extends Fragment implements INavigationDrawerCallback {
 
-    private static final String TAG="DrawerFragment";
+    private static final String TAG = "DrawerFragment";
 
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 
@@ -111,7 +112,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        super.onCreateView(inflater,container,savedInstanceState);
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         initViews(view);
 
@@ -205,7 +206,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
-        mDrawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(getActivity(),R.color.myPrimaryDarkColor));
+        mDrawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(getActivity(), R.color.myPrimaryDarkColor));
 
         mActionBarDrawerToggle = new ActionBarDrawerToggle(getActivity(), mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
@@ -273,7 +274,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                 public void run() {
                     mDrawerLayout.closeDrawer(mFragmentContainerView);
                 }
-            },300);
+            }, 300);
         }
     }
 
@@ -303,7 +304,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     private void onGotNewestCates(JSONObject response) {
         try {
-            Log.d(TAG,"onGotNewestCates");
+            Log.d(TAG, "onGotNewestCates");
 
             ArrayList<ToDoCategory> categoryList;
 
@@ -341,9 +342,9 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
             }
 
             categoryList.add(0,
-                    new ToDoCategory(getResources().getString(R.string.cate_default), 0,ContextCompat.getColor(getActivity(),R.color.MyerListBlue)));
+                    new ToDoCategory(getResources().getString(R.string.cate_default), 0, ContextCompat.getColor(getActivity(), R.color.MyerListBlue)));
             categoryList.add(categoryList.size(),
-                    new ToDoCategory(getResources().getString(R.string.cate_deleted), -1, ContextCompat.getColor(getActivity(),R.color.DeletedColor)));
+                    new ToDoCategory(getResources().getString(R.string.cate_deleted), -1, ContextCompat.getColor(getActivity(), R.color.DeletedColor)));
             categoryList.add(categoryList.size(),
                     new ToDoCategory(getResources().getString(R.string.cate_per), -2, Color.WHITE));
 
@@ -351,11 +352,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
             SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializationName.CATES_FILE_NAME);
 
-            NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(this,categoryList);
-            mDrawerRecyclerView.setAdapter(adapter);
-
-            //默认项是所有待办事项
-            selectItem(0);
+            updateList(categoryList);
 
             ((MainActivity) mCallbacks).syncList();
         } catch (APIException e) {
@@ -363,6 +360,14 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateList(ArrayList<ToDoCategory> categoryList) {
+        NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(this, categoryList);
+        mDrawerRecyclerView.setAdapter(adapter);
+
+        //默认项是所有待办事项
+        selectItem(0);
     }
 
     public void openDrawer() {

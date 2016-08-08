@@ -5,22 +5,18 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.juniperphoton.myerlistandroid.R;
 
 import java.util.ArrayList;
 
 import activity.MainActivity;
-import adapter.CateListAdapter;
 import adapter.DeletedListAdapter;
 import model.ToDo;
 import util.GlobalListLocator;
@@ -56,7 +52,7 @@ public class DeletedItemFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_deleted_item, container, false);
+        View view = inflater.inflate(R.layout.fragment_deleted_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_delete_rv);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);

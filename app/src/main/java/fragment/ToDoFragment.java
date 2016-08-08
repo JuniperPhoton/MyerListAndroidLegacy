@@ -1,6 +1,5 @@
 package fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -43,7 +42,6 @@ public class ToDoFragment extends Fragment implements IRefresh {
 
     private MainActivity mActivity;
     private RecyclerView mToDoRecyclerView;
-    private ArrayList<ToDo> mMyToDos;
     private SwipeRefreshLayout mRefreshLayout;
     private FloatingActionButton mAddingFab;
 
@@ -76,7 +74,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_to_do, container, false);
+        View view = inflater.inflate(R.layout.fragment_to_do_list, container, false);
 
         Log.d(ToDoFragment.class.getName(), "onCreateView");
 
@@ -180,9 +178,8 @@ public class ToDoFragment extends Fragment implements IRefresh {
     }
 
     public void updateData(ArrayList<ToDo> data) {
-        mMyToDos = data;
         if (mToDoRecyclerView != null) {
-            mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMyToDos, mActivity, this));
+            mToDoRecyclerView.setAdapter(new ToDoListAdapter(data,mActivity,this));
 
             stopRefreshing();
             updateNoItemUI();

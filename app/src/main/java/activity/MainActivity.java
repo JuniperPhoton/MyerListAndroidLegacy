@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     /**
      * Init views
+     *
      * @param savedInstanceState
      */
     private void initViews(Bundle savedInstanceState) {
@@ -311,11 +312,15 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             mNavigationDrawerFragment.updateUndoneTextView(String.valueOf(count));
         }
 
-        if (mToDoFragment != null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mToDoFragment)
-                    .commitAllowingStateLoss();
+        mToDoFragment.updateData(newList);
 
-            mToDoFragment.updateData(newList);
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        if (fragments.size() >= 1) {
+            if (fragments.get(fragments.size() - 1) instanceof DeletedItemFragment) {
+                getSupportFragmentManager().beginTransaction().remove(mDeletedItemFragment).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mToDoFragment)
+//                        .commit();
+            }
         }
     }
 
@@ -323,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (mDeletedItemFragment == null) {
             mDeletedItemFragment = new DeletedItemFragment();
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mDeletedItemFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.activity_main_fl, mDeletedItemFragment).commit();
     }
 
     public void setupAddingPaneForModifyAndShow(ToDo todo, int[] itemPosition) {

@@ -37,7 +37,7 @@ import util.SerializationName;
 import viewholder.ToDoItemViewHolder;
 
 
-public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements View.OnTouchListener{
+public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements View.OnTouchListener {
 
     private MainActivity mCurrentActivity;
     private IRefresh mIRefreshCallback;
@@ -197,6 +197,11 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
         } else {
             SerializerHelper.serializeToFile(mContext, mData, SerializationName.TODOS_FILE_NAME);
         }
+    }
+
+    public void updateAll(ArrayList<ToDo> todos) {
+        mData = todos;
+        notifyAll();
     }
 
     public boolean onTouch(final View view, MotionEvent event) {

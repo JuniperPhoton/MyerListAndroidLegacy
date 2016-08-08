@@ -1,9 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:fab="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="fragment.DeletedItemFragment">
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context="fragment.DeletedItemFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fragment_delete_rv"
@@ -11,8 +12,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:clickable="true"
-
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
     <com.getbase.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_delete_delete_all_fab"
@@ -27,7 +27,7 @@
         android:clickable="true"
         fab:fab_colorNormal="@color/pink"
         fab:fab_colorPressed="@color/pink_pressed"
-        fab:fab_icon="@drawable/delete_white"/>
+        fab:fab_icon="@drawable/delete_white" />
 
     <LinearLayout
         android:id="@+id/fragment_delete_noitem_ll"
@@ -36,21 +36,20 @@
         android:layout_centerVertical="true"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/no_deleted"
-            android:textSize="40sp"/>
+            android:textSize="40sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/no_deleted_content_hint"
-            android:textSize="20dp"/>
+            android:textSize="20dp" />
     </LinearLayout>
 </RelativeLayout>

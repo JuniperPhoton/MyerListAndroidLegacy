@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ import com.juniperphoton.myerlistandroid.R;
 
 import api.CloudServices;
 import exception.APIException;
+import fragment.ToDoFragment;
 import interfaces.INavigationDrawerCallback;
 import interfaces.IRequestCallback;
 import model.ToDoCategory;
@@ -38,10 +40,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fragment.ToDoFragment;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,8 +56,7 @@ import util.SerializationName;
 import util.ToastService;
 import view.CircleRadioButton;
 
-public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback,
-        IDrawerStatusChanged {
+public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback, IDrawerStatusChanged {
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private ToDoFragment mToDoFragment;
     private DeletedItemFragment mDeletedItemFragment;
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         setContentView(R.layout.activity_main);
 
-        initViews();
+        initViews(savedInstanceState);
 
         String access_token = LocalSettingHelper.getString(this, "access_token");
 
@@ -105,13 +105,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     public void onResume() {
         super.onResume();
-        if (mToDoFragment == null) {
-            initFragment(null, true);
-        }
-        if (mNavigationDrawerFragment != null && GlobalListLocator.onUpdateCateList) {
-            mNavigationDrawerFragment.updateList(GlobalListLocator.CategoryList);
-            GlobalListLocator.onUpdateCateList = false;
-        }
     }
 
     @Override
@@ -125,9 +118,13 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         super.onPause();
     }
 
-    //找到需要初始化的控件
-    private void initViews() {
+    /**
+     * Init views
+     * @param savedInstanceState
+     */
+    private void initViews(Bundle savedInstanceState) {
         mToolbar = (Toolbar) findViewById(R.id.activity_main_tb);
+        mToolbar.setTitle(R.string.cate_default);
         setSupportActionBar(mToolbar);
 
         mAddingCateRadioGroup = (RadioGroup) findViewById(R.id.fragment_adding_pane_radio);
@@ -172,13 +169,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager()
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.activity_main_fragment_drawer);
         mNavigationDrawerFragment.setup(R.id.activity_main_fragment_drawer,
                 (DrawerLayout) findViewById(R.id.acitivity_main_drawer), mToolbar);
     }
 
-    //根据选中的颜色改变抽屉的背景色
     private void updateAddingPaneColorByCateId(int cateID) {
         if (mAddingPaneLayout == null) return;
         ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
@@ -187,47 +183,53 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
     }
 
-    //初始化 Fragment
     private void initFragment(Bundle savedInstanceState, boolean logined) {
         if (findViewById(R.id.activity_main_fl) != null) {
-            if (savedInstanceState != null && mToDoFragment != null) {
-                return;
-            }
+            if (savedInstanceState != null) {
 
-            mToDoFragment = new ToDoFragment();
-
-            getFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mToDoFragment)
-                    .commitAllowingStateLoss();
-
-            //登录了的，马上同步
-            if (logined) {
-                mToDoFragment.showRefreshing();
-                syncCateAndList();
-            }
-            //没有网络
-            if (!AppUtil.isNetworkAvailable(getApplicationContext())) {
-                ToastService.sendToast(getResources().getString(R.string.NoNetworkHint));
-            }
-            //暂存区有待办事项的，同步到云端
-            if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
-                if (GlobalListLocator.StagedList == null) return;
-                misStagedItemsNotEmpty = true;
-                for (ToDo todo : GlobalListLocator.StagedList) {
-                    CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(),
-                            todo.getContent(), "0", todo.getCate(),
-                            new IRequestCallback() {
-                                @Override
-                                public void onResponse(JSONObject jsonObject) {
-                                    onAddedResponse(jsonObject);
-                                }
-                            });
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag(ToDoFragment.class.getName());
+                if (fragment instanceof ToDoFragment) {
+                    mToDoFragment = (ToDoFragment) fragment;
                 }
-                GlobalListLocator.StagedList.clear();
-                misStagedItemsNotEmpty = false;
-                SerializerHelper.serializeToFile(AppExtension.getInstance(),
-                        GlobalListLocator.StagedList,
-                        SerializationName.STAGED_FILE_NAME);
+
+                getSupportFragmentManager().beginTransaction().show(mToDoFragment).commit();
+            } else {
+                mToDoFragment = new ToDoFragment();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.activity_main_fl, mToDoFragment, ToDoFragment.class.getName())
+                        .commit();
             }
+        }
+
+        //登录了的，马上同步
+        if (logined) {
+            mToDoFragment.showRefreshing();
+            syncCateAndList();
+        }
+        //没有网络
+        if (!AppUtil.isNetworkAvailable(getApplicationContext())) {
+            ToastService.sendToast(getResources().getString(R.string.NoNetworkHint));
+        }
+        //暂存区有待办事项的，同步到云端
+        if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
+            if (GlobalListLocator.StagedList == null) return;
+            misStagedItemsNotEmpty = true;
+            for (ToDo todo : GlobalListLocator.StagedList) {
+                CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(),
+                        todo.getContent(), "0", todo.getCate(),
+                        new IRequestCallback() {
+                            @Override
+                            public void onResponse(JSONObject jsonObject) {
+                                onAddedResponse(jsonObject);
+                            }
+                        });
+            }
+            GlobalListLocator.StagedList.clear();
+            misStagedItemsNotEmpty = false;
+            SerializerHelper.serializeToFile(AppExtension.getInstance(),
+                    GlobalListLocator.StagedList,
+                    SerializationName.STAGED_FILE_NAME);
         }
     }
 
@@ -259,10 +261,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         try {
             if (category.getID() == 0) {
-                if (mToDoFragment == null) {
-                    mToDoFragment = new ToDoFragment();
-                }
-
                 mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
                 mToolbar.setTitle(getResources().getString(R.string.cate_default));
 
@@ -314,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
 
         if (mToDoFragment != null) {
-            getFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mToDoFragment)
+            getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mToDoFragment)
                     .commitAllowingStateLoss();
 
             mToDoFragment.updateData(newList);
@@ -325,8 +323,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (mDeletedItemFragment == null) {
             mDeletedItemFragment = new DeletedItemFragment();
         }
-        getFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mDeletedItemFragment).
-                commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mDeletedItemFragment).commit();
     }
 
     public void setupAddingPaneForModifyAndShow(ToDo todo, int[] itemPosition) {
@@ -383,6 +380,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
     }
 
+    /**
+     *
+     */
     public void hideAddingPane() {
         isAddingPaneShown = false;
 
@@ -678,30 +678,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     public void onReCreatedToDo(JSONObject response) {
         onAddedResponse(response);
         mDeletedItemFragment.setupListData(GlobalListLocator.DeletedList);
-    }
-
-    public void onInit() {
-        try {
-            Type type = new TypeToken<ArrayList<ToDo>>() {
-            }.getType();
-            ArrayList<ToDo> list = SerializerHelper.deSerializeFromFile(
-                    type, this, SerializationName.TODOS_FILE_NAME);
-
-            if (list != null) {
-                GlobalListLocator.TodosList = list;
-            }
-            //已经登陆了
-            if (!ConfigHelper.ISOFFLINEMODE) {
-                mToDoFragment.updateData(GlobalListLocator.TodosList);
-            }
-            //离线模式
-            else {
-                mToDoFragment.updateData(GlobalListLocator.TodosList);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     @Override

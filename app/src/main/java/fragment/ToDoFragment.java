@@ -1,8 +1,9 @@
 package fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,12 +17,14 @@ import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import activity.MainActivity;
@@ -37,7 +40,6 @@ import model.ToDo;
 import util.SerializationName;
 
 public class ToDoFragment extends Fragment implements IRefresh {
-    public static final String TAG = "ToDoFragment";
 
     private MainActivity mActivity;
     private RecyclerView mToDoRecyclerView;
@@ -55,7 +57,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-        Log.d(TAG, "onAttach");
+        Log.d(ToDoFragment.class.getName(), "onAttach");
         try {
             if (activity instanceof MainActivity) {
                 mActivity = (MainActivity) activity;
@@ -68,7 +70,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
+        Log.d(ToDoFragment.class.getName(), "onCreate");
     }
 
     @Override
@@ -76,7 +78,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_to_do, container, false);
 
-        Log.d(TAG, "onCreateView");
+        Log.d(ToDoFragment.class.getName(), "onCreateView");
 
         mNoItemLayout = (LinearLayout) view.findViewById(R.id.fragment_todo_no_item_ll);
         mAddingPaneLayout = (RelativeLayout) view.findViewById(R.id.fragment_adding_pane_root_rl);
@@ -111,7 +113,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
             mAddingFab.setLayoutParams(layoutParams);
         }
 
-        mActivity.onInit();
+        onInit();
 
         initRV(view);
 
@@ -121,13 +123,36 @@ public class ToDoFragment extends Fragment implements IRefresh {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause");
+        Log.d(ToDoFragment.class.getName(), "onPause");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.d(TAG, "onDetach");
+        Log.d(ToDoFragment.class.getName(), "onDetach");
+    }
+
+    public void onInit() {
+        try {
+            Type type = new TypeToken<ArrayList<ToDo>>() {
+            }.getType();
+            ArrayList<ToDo> list = SerializerHelper.deSerializeFromFile(
+                    type, AppExtension.getInstance(), SerializationName.TODOS_FILE_NAME);
+
+            if (list != null) {
+                GlobalListLocator.TodosList = list;
+            }
+            //已经登陆了
+            if (!ConfigHelper.ISOFFLINEMODE) {
+                updateData(GlobalListLocator.TodosList);
+            }
+            //离线模式
+            else {
+                updateData(GlobalListLocator.TodosList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateNoItemUI() {
@@ -142,7 +167,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
         mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_todo_rv);
         mToDoRecyclerView.setLayoutManager(new GridLayoutManager(mActivity, 1));
 
-        mAdapter = new ToDoListAdapter(GlobalListLocator.TodosList,mActivity,this);
+        mAdapter = new ToDoListAdapter(GlobalListLocator.TodosList, mActivity, this);
         mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
         mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
         mItemTouchHelper.attachToRecyclerView(mToDoRecyclerView);

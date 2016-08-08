@@ -3,7 +3,7 @@ package fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,7 +25,6 @@ import adapter.DeletedListAdapter;
 import model.ToDo;
 import util.GlobalListLocator;
 
-
 public class DeletedItemFragment extends Fragment {
 
     private ArrayList<ToDo> mDeletedToDos;
@@ -35,8 +34,6 @@ public class DeletedItemFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private DeletedListAdapter mAdapter;
-    private ItemTouchHelper mItemTouchHelper;
-    private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
 
     @Override
     public void onAttach(Context activity) {
@@ -109,12 +106,6 @@ public class DeletedItemFragment extends Fragment {
         mDeletedToDos = data;
 
         mAdapter = new DeletedListAdapter(mActivity,this,data);
-        mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
-        mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
-        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-
-        mAdapter.enableDragItem(mItemTouchHelper);
-        //mAdapter.setToggleViewId(R.id.row_cate_per_hamView);
 
         mRecyclerView.setAdapter(mAdapter);
 

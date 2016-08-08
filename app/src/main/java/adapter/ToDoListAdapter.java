@@ -37,8 +37,7 @@ import util.SerializationName;
 import viewholder.ToDoItemViewHolder;
 
 
-public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements View.OnTouchListener {
-    private boolean mIsEnable = true;
+public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements View.OnTouchListener{
 
     private MainActivity mCurrentActivity;
     private IRefresh mIRefreshCallback;
@@ -47,14 +46,14 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
 
     private int lastX;
 
-    private boolean mIsInGreen = false;
-    private boolean mIsInRed = false;
+    private boolean mTurnGreen = false;
+    private boolean mTurnRed = false;
     private boolean mIsSwiping = false;
 
     public ToDoListAdapter(ArrayList<ToDo> data, MainActivity activity, ToDoFragment fragment) {
         super(R.layout.row_todo, data);
         mCurrentActivity = activity;
-        mIRefreshCallback = (IRefresh) fragment;
+        mIRefreshCallback = fragment;
         mContext = activity;
     }
 
@@ -103,11 +102,6 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
 
         holder.mRelativeLayout.setOnTouchListener(this);
         holder.mRelativeLayout.setTag(holder.getID());
-        holder.mGreenImageView.setAlpha(1f);
-        holder.mRedImageView.setAlpha(1f);
-        holder.mGreenImageView.setVisibility(View.INVISIBLE);
-        holder.mRedImageView.setVisibility(View.INVISIBLE);
-        holder.mRelativeLayout.scrollTo(0, 0);
     }
 
     @Override
@@ -208,8 +202,10 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
     public boolean onTouch(final View view, MotionEvent event) {
         RelativeLayout rootLayout = (RelativeLayout) view;
 
-        int scrollLeft;
         String id = (String) view.getTag();
+        findDataById(id);
+
+        int scrollingX;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -218,19 +214,15 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
                 break;
 
             case MotionEvent.ACTION_MOVE:
-
-                if (!mIsEnable)
-                    break;
-
                 mIsSwiping = true;
 
                 int dx = (int) event.getRawX() - lastX;
 
-                scrollLeft = view.getScrollX();
+                scrollingX = view.getScrollX();
 
                 view.scrollBy(-dx, 0);
 
-                if (scrollLeft < -20) {
+                if (scrollingX < -20) {
                     if (mIRefreshCallback != null) {
                         mIRefreshCallback.disableRefresh();
                     }
@@ -238,29 +230,29 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
 
                 lastX = (int) event.getRawX();
 
-                if (scrollLeft < -150 && !mIsInGreen) {
+                if (scrollingX < -150 && !mTurnGreen) {
                     playColorChangeAnimation((ImageView) rootLayout.findViewById(R.id.greenImageView), true);
-                } else if (scrollLeft > 150 && !mIsInRed) {
+                } else if (scrollingX > 150 && !mTurnRed) {
                     playColorChangeAnimation((ImageView) rootLayout.findViewById(R.id.redImageView), false);
                 }
 
                 break;
             case MotionEvent.ACTION_UP:
 
-                onMoveComplete(view, view.getScrollX(), id);
+                onMoveComplete(view, view.getScrollX());
 
                 break;
 
             case MotionEvent.ACTION_CANCEL:
 
-                onMoveComplete(view, view.getScrollX(), id);
+                onMoveComplete(view, view.getScrollX());
                 break;
         }
 
         return false;
     }
 
-    private void onMoveComplete(View v, float scrollLeft, String id) {
+    private void onMoveComplete(View v, float scrollLeft) {
         if (mCurrentToDo == null)
             return;
 
@@ -278,8 +270,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
 
             if (!ConfigHelper.ISOFFLINEMODE) {
                 CloudServices.setDone(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
-                        LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
-                        id,
+                        LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"), mCurrentToDo.getID(),
                         mCurrentToDo.getIsDone() ? "1" : "0",
                         new IRequestCallback() {
                             @Override
@@ -294,9 +285,9 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
             deleteToDo(mCurrentToDo.getID());
         }
 
-        if (mIsInGreen) {
+        if (mTurnGreen) {
             playFadebackAnimation((ImageView) v.findViewById(R.id.greenImageView), true);
-        } else if (mIsInRed) {
+        } else if (mTurnRed) {
             playFadebackAnimation((ImageView) v.findViewById(R.id.redImageView), false);
         }
 
@@ -349,9 +340,9 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
         v.startAnimation(animationSet);
 
         if (isGreen)
-            mIsInGreen = true;
+            mTurnGreen = true;
         else
-            mIsInRed = true;
+            mTurnRed = true;
     }
 
     private void playFadebackAnimation(final ImageView v, final boolean isGreen) {
@@ -368,9 +359,9 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
             public void onAnimationEnd(Animation animation) {
                 v.setVisibility(View.INVISIBLE);
                 if (isGreen)
-                    mIsInGreen = false;
+                    mTurnGreen = false;
                 else
-                    mIsInRed = false;
+                    mTurnRed = false;
             }
 
             @Override
@@ -380,5 +371,17 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
         });
         animationSet.addAnimation(alphaAnimation);
         v.startAnimation(animationSet);
+    }
+
+    private void findDataById(String id) {
+        int location = -1;
+        for (int i = 0; i < mData.size(); i++) {
+            if (mData.get(i).getID().equals(id)) {
+                location = i;
+            }
+        }
+        if (location != -1) {
+            mCurrentToDo = mData.get(location);
+        }
     }
 }

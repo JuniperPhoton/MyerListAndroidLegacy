@@ -1,6 +1,5 @@
 package fragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -60,9 +60,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
-    private INavigationDrawerCallback mCallbacks;
-
-    private IDrawerStatusChanged mDrawerStatusListener;
+    private MainActivity mMainActivity;
 
     private ActionBarDrawerToggle mActionBarDrawerToggle;
 
@@ -89,8 +87,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     public void onAttach(Context activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (INavigationDrawerCallback) activity;
-            mDrawerStatusListener = (IDrawerStatusChanged) activity;
+            mMainActivity = (MainActivity) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement INavigationDrawerCallback.");
         }
@@ -122,7 +119,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = null;
     }
 
     private void initViews(View view) {
@@ -216,7 +212,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
 
-                mDrawerStatusListener.onDrawerStatusChanged(false);
+                mMainActivity.onDrawerStatusChanged(false);
             }
 
             @Override
@@ -230,7 +226,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-                mDrawerStatusListener.onDrawerStatusChanged(true);
+                mMainActivity.onDrawerStatusChanged(true);
             }
         };
 
@@ -262,8 +258,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     private void selectItem(int position) {
         mCurrentSelectedPosition = position;
 
-        if (mCallbacks != null) {
-            mCallbacks.onDrawerMainItemSelected(position);
+        if (mMainActivity != null) {
+            mMainActivity.onDrawerMainItemSelected(position);
         }
 
         ((NavigationDrawerAdapter) mDrawerRecyclerView.getAdapter()).selectPosition(position);
@@ -354,7 +350,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
             updateList(categoryList);
 
-            ((MainActivity) mCallbacks).syncList();
+            mMainActivity.syncList();
         } catch (APIException e) {
             ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         } catch (Exception e) {
@@ -397,6 +393,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     @Override
     public void onFooterSelected() {
-        mCallbacks.onFooterSelected();
+        mMainActivity.onFooterSelected();
     }
 }

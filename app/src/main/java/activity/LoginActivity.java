@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isToRegister = true;
 
-    private final boolean DEBUG_ENABLE = false;
+    private final boolean DEBUG_ENABLE = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

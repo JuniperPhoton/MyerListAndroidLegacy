@@ -14,6 +14,7 @@ import view.CircleView;
  * Created by JuniperPhoton on 2016-07-25.
  */
 public class ToDoItemViewHolder extends BaseViewHolder {
+
     private String mId;
     public TextView mTextView;
     public ImageView mLineView;
@@ -22,8 +23,8 @@ public class ToDoItemViewHolder extends BaseViewHolder {
     public ImageView mRedImageView;
     public CircleView mCateCircle;
 
-    public ToDoItemViewHolder(View itemView, int viewType) {
-        super(itemView);
+    public ToDoItemViewHolder(View view, int viewType) {
+        super(view);
         mTextView = (TextView) itemView.findViewById(R.id.todoBlock);
         mLineView = (ImageView) itemView.findViewById(R.id.lineView);
         mGreenImageView = (ImageView) itemView.findViewById(R.id.greenImageView);

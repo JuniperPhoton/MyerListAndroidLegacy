@@ -51,10 +51,6 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
     private boolean mIsInRed = false;
     private boolean mIsSwiping = false;
 
-    public ToDoListAdapter(ArrayList<ToDo> data) {
-        super(R.layout.row_todo, data);
-    }
-
     public ToDoListAdapter(ArrayList<ToDo> data, MainActivity activity, ToDoFragment fragment) {
         super(R.layout.row_todo, data);
         mCurrentActivity = activity;

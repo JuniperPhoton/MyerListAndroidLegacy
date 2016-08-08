@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<view.CircleView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/row_cate_color_per_rect_view"
-    android:layout_width="50sp"
-    android:layout_height="50sp"
-    android:layout_margin="5sp"
-    android:clickable="true" />
+    <view.CircleView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/row_cate_color_per_rect_view"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_margin="5sp"
+        android:clickable="true" />
+
+
 

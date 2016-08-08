@@ -142,7 +142,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
         mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_todo_rv);
         mToDoRecyclerView.setLayoutManager(new GridLayoutManager(mActivity, 1));
 
-        mAdapter = new ToDoListAdapter(GlobalListLocator.TodosList);
+        mAdapter = new ToDoListAdapter(GlobalListLocator.TodosList,mActivity,this);
         mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
         mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
         mItemTouchHelper.attachToRecyclerView(mToDoRecyclerView);
@@ -242,5 +242,4 @@ public class ToDoFragment extends Fragment implements IRefresh {
             mAdapter.addToDo(todo);
         }
     }
-
 }

@@ -1,6 +1,5 @@
 package adapter;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,24 +12,23 @@ import java.util.List;
 
 import interfaces.IPickedColor;
 import model.ColorWrapper;
-import viewholder.CateColorListViewHolder;
-import viewholder.CateListViewHolder;
+import viewholder.PickColorViewHolder;
 
 /**
  * Created by JuniperPhoton on 2016-07-31.
  */
-public class CateColorAdapter extends BaseQuickAdapter<ColorWrapper> {
+public class PickColorAdapter extends BaseQuickAdapter<ColorWrapper> {
 
     private IPickedColor mCallback;
 
-    public CateColorAdapter(List<ColorWrapper> data, IPickedColor callback) {
+    public PickColorAdapter(List<ColorWrapper> data, IPickedColor callback) {
         super(R.id.row_cate_color_per_rect_view, data);
         mCallback = callback;
     }
 
     @Override
     protected void convert(BaseViewHolder baseViewHolder, final ColorWrapper color) {
-        CateColorListViewHolder holder = (CateColorListViewHolder) baseViewHolder;
+        final PickColorViewHolder holder = (PickColorViewHolder) baseViewHolder;
         holder.setColor(color.getColor());
         holder.getRectView().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,8 +41,8 @@ public class CateColorAdapter extends BaseQuickAdapter<ColorWrapper> {
     }
 
     @Override
-    public CateColorListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PickColorViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_cate_color_per, parent, false);
-        return new CateColorListViewHolder(view);
+        return new PickColorViewHolder(view);
     }
 }

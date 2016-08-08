@@ -25,7 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import adapter.CateColorAdapter;
+import adapter.PickColorAdapter;
 import adapter.CateListAdapter;
 import api.CloudServices;
 import interfaces.IPickColorCallback;
@@ -54,7 +54,7 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
 
     private ToDoCategory mToDoCategoryToModify;
 
-    private CateColorAdapter mColorAdatper;
+    private PickColorAdapter mColorAdatper;
     private ArrayList<ColorWrapper> mColors;
     private View mColorsView;
 
@@ -100,7 +100,7 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
 
             mColors = generateColors();
 
-            mColorAdatper = new CateColorAdapter(mColors, this);
+            mColorAdatper = new PickColorAdapter(mColors, this);
             mColorRecyclerView.setAdapter(mColorAdatper);
         }
     }

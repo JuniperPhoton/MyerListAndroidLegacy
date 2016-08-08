@@ -54,9 +54,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mEmailBox = (EditText) findViewById(R.id.activity_login_email_tv);
-        mEmailBox.setText("dengweichao@hotmail.com");
         mPasswordBox = (EditText) findViewById(R.id.activity_login_ps_et);
-        mPasswordBox.setText("windfantasy");
+
+        if(DEBUG_ENABLE){
+            mEmailBox.setText("dengweichao@hotmail.com");
+            mPasswordBox.setText("windfantasy");
+        }
+
         mConfirmPsBox = (EditText) findViewById(R.id.activity_login_rps_et);
         mTitleView = (TextView) findViewById(R.id.activity_login_loginTitle_tv);
         mForgetPwdTextView=(TextView)findViewById(R.id.activity_login_forget_tv);

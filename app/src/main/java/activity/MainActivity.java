@@ -459,10 +459,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         final ToDo tempToDo = new ToDo();
         tempToDo.setContent(mEditedText.getText().toString());
         tempToDo.setIsDone(false);
+        tempToDo.setCate(mCateIDAboutToAdd);
         if (mAboutToModify) {
             tempToDo.setID(mToDoAboutToModify.getID());
         } else tempToDo.setID(java.util.UUID.randomUUID().toString());
-        tempToDo.setCate(mCateIDAboutToAdd);
 
         mToDoAboutToAdded = tempToDo;
 
@@ -505,7 +505,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     public void setIsAddStagedItems(boolean value) {
         misStagedItemsNotEmpty = value;
     }
-
 
     private void onGotLatestScheduleResponse(JSONObject response) {
         mToDoFragment.stopRefreshing();

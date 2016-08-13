@@ -5,4 +5,17 @@ package exception;
  */
 public class APIException extends Exception {
 
+    private String error;
+
+    public APIException(String string){
+        this.error=string;
+    }
+
+    public APIException(){
+
+    }
+
+    public String getError(){
+        return error;
+    }
 }

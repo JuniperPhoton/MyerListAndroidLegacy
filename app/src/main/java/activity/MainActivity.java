@@ -324,8 +324,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (fragments.size() >= 1) {
             if (fragments.get(fragments.size() - 1) instanceof DeletedItemFragment) {
                 getSupportFragmentManager().beginTransaction().remove(mDeletedItemFragment).commit();
-//                getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_fl, mToDoFragment)
-//                        .commit();
             }
         }
     }
@@ -678,15 +676,15 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     public void onUpdateContent(JSONObject response) {
         try {
-            if (response == null) throw new APIException();
+            if (response == null) throw new APIException("");
             if (!response.getBoolean("isSuccessed")) {
-                throw new APIException();
+                throw new APIException(response.getString("error_message"));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendToast(e.getError());
         }
     }
 

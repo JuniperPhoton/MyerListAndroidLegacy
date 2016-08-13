@@ -1,16 +1,15 @@
 package fragment;
 
 import android.content.Context;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -33,7 +32,6 @@ import activity.MainActivity;
 import api.CloudServices;
 import interfaces.IRefresh;
 import interfaces.IRequestCallback;
-import listener.ToDoItemTouchListener;
 import util.AppUtil;
 import util.ConfigHelper;
 import util.AppExtension;
@@ -51,13 +49,8 @@ public class ToDoFragment extends Fragment implements IRefresh {
     private FloatingActionButton mAddingFab;
 
     private LinearLayout mNoItemLayout;
-    private RelativeLayout mAddingPaneLayout;
 
     private ToDoListAdapter mAdapter;
-    private ItemTouchHelper mItemTouchHelper;
-    private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
-
-    //private ToDoItemTouchListener mToDoItemTouchListener;
 
     @Override
     public void onAttach(Context activity) {
@@ -87,7 +80,6 @@ public class ToDoFragment extends Fragment implements IRefresh {
         Log.d(ToDoFragment.class.getName(), "onCreateView");
 
         mNoItemLayout = (LinearLayout) view.findViewById(R.id.fragment_todo_no_item_ll);
-        mAddingPaneLayout = (RelativeLayout) view.findViewById(R.id.fragment_adding_pane_root_rl);
 
         //设置下拉刷新控件
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_todo_refresh_srl);
@@ -171,18 +163,11 @@ public class ToDoFragment extends Fragment implements IRefresh {
 
     private void initRV(View view) {
         mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_todo_rv);
-        mToDoRecyclerView.setLayoutManager(new GridLayoutManager(mActivity, 1));
+        mToDoRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.VERTICAL,false));
 
         mAdapter = new ToDoListAdapter(GlobalListLocator.TodosList, mActivity, this);
-        //mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
-        //mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
-        //mItemTouchHelper.attachToRecyclerView(mToDoRecyclerView);
-
-        //mAdapter.enableDragItem(mItemTouchHelper);
-        //mAdapter.setToggleViewId(R.id.row_cate_per_hamView);
 
         mToDoRecyclerView.setAdapter(mAdapter);
-        //mToDoRecyclerView.addOnItemTouchListener(mToDoItemTouchListener = new ToDoItemTouchListener());
         updateNoItemUI();
     }
 
@@ -258,7 +243,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
 
     public ArrayList<ToDo> getData() {
         if (mAdapter != null) {
-            return (ArrayList<ToDo>) mAdapter.getData();
+            return mAdapter.getData();
         } else {
             return null;
         }
@@ -266,7 +251,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
 
     public void updateContent(ToDo todo) {
         if (mAdapter != null) {
-            mAdapter.updateContent(todo);
+            mAdapter.updateToDo(todo);
         }
     }
 

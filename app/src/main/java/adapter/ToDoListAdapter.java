@@ -1,7 +1,6 @@
 package adapter;
 
 import android.animation.ValueAnimator;
-import android.graphics.Canvas;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,9 +14,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.chad.library.adapter.base.BaseItemDraggableAdapter;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
@@ -40,12 +36,13 @@ import util.SerializationName;
 import viewholder.ToDoItemViewHolder;
 
 
-public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTouchListener {
+public class ToDoListAdapter extends RecyclerView.Adapter<ToDoItemViewHolder> implements View.OnTouchListener {
 
-    private MainActivity mCurrentActivity;
-    private IRefresh mIRefreshCallback;
+    private MainActivity mActivity;
+    private ToDoFragment mFragment;
 
     private ToDo mCurrentToDo = null;
+    private ArrayList<ToDo> mData;
 
     private int lastX;
 
@@ -54,10 +51,9 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
     private boolean mIsSwiping = false;
 
     public ToDoListAdapter(ArrayList<ToDo> data, MainActivity activity, ToDoFragment fragment) {
-        super(R.layout.row_todo, data);
-        mCurrentActivity = activity;
-        mIRefreshCallback = fragment;
-        mContext = activity;
+        mActivity = activity;
+        mFragment = fragment;
+        mData = data;
     }
 
     @Override
@@ -67,8 +63,9 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
     }
 
     @Override
-    protected void convert(BaseViewHolder baseViewHolder, final ToDo currentToDoItem) {
-        final ToDoItemViewHolder holder = (ToDoItemViewHolder) baseViewHolder;
+    public void onBindViewHolder(final ToDoItemViewHolder holder, int position) {
+
+        final ToDo currentToDoItem = mData.get(position);
 
         holder.mTextView.setText(currentToDoItem.getContent());
         holder.setID(currentToDoItem.getID());
@@ -77,12 +74,12 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
         ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
 
         if (cateID == 0) {
-            holder.mCateCircle.setColor(ContextCompat.getColor(mContext, R.color.MyerListBlue));
+            holder.mCateCircle.setColor(ContextCompat.getColor(mActivity, R.color.MyerListBlue));
         } else {
             if (category != null) {
                 holder.mCateCircle.setColor(category.getColor());
             } else {
-                holder.mCateCircle.setColor(ContextCompat.getColor(mContext, R.color.MyerListBlue));
+                holder.mCateCircle.setColor(ContextCompat.getColor(mActivity, R.color.MyerListBlue));
             }
         }
 
@@ -98,7 +95,7 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
                 }
                 int[] location = new int[2];
                 holder.mCateCircle.getLocationOnScreen(location);
-                mCurrentActivity.setupAddingPaneForModifyAndShow(currentToDoItem,
+                mActivity.setupAddingPaneForModifyAndShow(currentToDoItem,
                         new int[]{location[0] + holder.mCateCircle.getWidth() / 2, location[1] + holder.mCateCircle.getHeight() / 2});
             }
         });
@@ -116,15 +113,13 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
         if (todoToAdd == null) return;
 
         if (LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
-            //mToDosToDisplay.add(todoToAdd);
             notifyItemInserted(mData.size() - 1);
             GlobalListLocator.TodosList.add(todoToAdd);
         } else {
-            //mToDosToDisplay.add(0, todoToAdd);
             notifyItemInserted(0);
             GlobalListLocator.TodosList.add(0, todoToAdd);
         }
-        SerializerHelper.serializeToFile(mContext, mData, SerializationName.TODOS_FILE_NAME);
+        SerializerHelper.serializeToFile(mActivity, mData, SerializationName.TODOS_FILE_NAME);
     }
 
     public void deleteToDo(String id) {
@@ -145,11 +140,12 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
 
     private void deleteToDoInternal(int index) {
         ToDo todoToDelete = mData.get(index);
+
         GlobalListLocator.DeletedList.add(0, todoToDelete);
         SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.DeletedList, SerializationName.DELETED_FILE_NAME);
 
         if (ConfigHelper.ISOFFLINEMODE) {
-            SerializerHelper.serializeToFile(mContext, mData, SerializationName.TODOS_FILE_NAME);
+            SerializerHelper.serializeToFile(mActivity, mData, SerializationName.TODOS_FILE_NAME);
         } else
             CloudServices.setDelete(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
                     LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
@@ -157,55 +153,46 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
                     new IRequestCallback() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
-                            //((MainActivity) mCurrentActivity).onDelete(jsonObject);
+                            //((MainActivity) mActivity).onDelete(jsonObject);
                         }
                     });
         mData.remove(index);
         notifyItemRemoved(index);
     }
 
-    public void updateContent(ToDo toDo) {
-        String targetID = toDo.getID();
+    public void updateToDo(ToDo toDo) {
         int index = 0;
 
-        //根据ID 找到项目
         for (int i = 0; i < mData.size(); i++) {
-            ToDo s = mData.get(i);
-            if (s.getID().equals(targetID)) {
+            if (mData.get(i).getID().equals(toDo.getID())) {
                 index = i;
                 break;
             }
         }
 
-        //更新项目
-        ToDo currentItem = mData.get(index);
-        currentItem.setContent(toDo.getContent());
-        currentItem.setCate(toDo.getCate());
+        GlobalListLocator.TodosList.get(index).setContent(toDo.getContent());
+        GlobalListLocator.TodosList.get(index).setCate(toDo.getCate());
 
-        //要notify UI 才会更新
+        mData.get(index).setContent(toDo.getContent());
+        mData.get(index).setCate(toDo.getCate());
         notifyItemChanged(index);
 
         if (!ConfigHelper.ISOFFLINEMODE) {
             CloudServices.updateContent(
                     ConfigHelper.getSid(),
                     ConfigHelper.getAccessToken(),
-                    targetID,
-                    currentItem.getContent(),
-                    currentItem.getCate(),
+                    toDo.getID(),
+                    toDo.getContent(),
+                    toDo.getCate(),
                     new IRequestCallback() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
-                            //mCurrentActivity.onUpdateContent(jsonObject);
+                            mActivity.onUpdateContent(jsonObject);
                         }
                     });
         } else {
-            SerializerHelper.serializeToFile(mContext, mData, SerializationName.TODOS_FILE_NAME);
+            SerializerHelper.serializeToFile(mActivity, mData, SerializationName.TODOS_FILE_NAME);
         }
-    }
-
-    public void updateAll(ArrayList<ToDo> todos) {
-        mData = todos;
-        notifyAll();
     }
 
     public boolean onTouch(final View view, MotionEvent event) {
@@ -231,8 +218,8 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
                 view.scrollBy(-dx, 0);
 
                 if (scrollingX < -20) {
-                    if (mIRefreshCallback != null) {
-                        mIRefreshCallback.disableRefresh();
+                    if (mFragment != null) {
+                        mFragment.disableRefresh();
                     }
                 }
 
@@ -288,7 +275,7 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
-                                //mCurrentActivity.onSetDone(jsonObject);
+                                //mActivity.onSetDone(jsonObject);
                             }
                         });
             }
@@ -310,8 +297,8 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
                 if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10) {
-                    if (mIRefreshCallback != null) {
-                        mIRefreshCallback.enableRefresh();
+                    if (mFragment != null) {
+                        mFragment.enableRefresh();
                     }
                     mIsSwiping = false;
                 }
@@ -389,5 +376,9 @@ public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTo
         if (location != -1) {
             mCurrentToDo = mData.get(location);
         }
+    }
+
+    public ArrayList<ToDo> getData(){
+        return mData;
     }
 }

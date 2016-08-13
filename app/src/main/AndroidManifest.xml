@@ -60,6 +60,13 @@
             android:name="activity.SettingActivity"
             android:label="@string/title_activity_setting"
             android:theme="@style/AppTheme"/>
+        <receiver android:name="widget.WidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

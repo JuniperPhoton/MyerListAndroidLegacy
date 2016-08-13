@@ -1,5 +1,7 @@
 package api;
 
+import android.util.Log;
+
 import com.juniperphoton.jputils.NetworkSecurityHelper;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -18,6 +20,8 @@ import interfaces.IRequestCallback;
  * Created by dengw on 3/4/2016.
  */
 public class CloudServices {
+    private static String TAG=CloudServices.class.getName();
+
     public static void checkExist(final String email, final IRequestCallback callback) {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams requestParams = new RequestParams();
@@ -243,11 +247,13 @@ public class CloudServices {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
+                Log.d(TAG,response.toString());
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 callback.onResponse(null);
+                Log.d(TAG,errorResponse.toString());
             }
         });
     }

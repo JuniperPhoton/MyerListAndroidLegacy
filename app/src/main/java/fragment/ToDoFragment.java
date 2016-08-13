@@ -1,6 +1,7 @@
 package fragment;
 
 import android.content.Context;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -20,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONObject;
 
@@ -30,6 +33,7 @@ import activity.MainActivity;
 import api.CloudServices;
 import interfaces.IRefresh;
 import interfaces.IRequestCallback;
+import listener.ToDoItemTouchListener;
 import util.AppUtil;
 import util.ConfigHelper;
 import util.AppExtension;
@@ -39,6 +43,7 @@ import model.ToDo;
 import util.SerializationName;
 
 public class ToDoFragment extends Fragment implements IRefresh {
+    private static String TAG = ToDoFragment.class.getName();
 
     private MainActivity mActivity;
     private RecyclerView mToDoRecyclerView;
@@ -51,6 +56,8 @@ public class ToDoFragment extends Fragment implements IRefresh {
     private ToDoListAdapter mAdapter;
     private ItemTouchHelper mItemTouchHelper;
     private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
+
+    //private ToDoItemTouchListener mToDoItemTouchListener;
 
     @Override
     public void onAttach(Context activity) {
@@ -69,6 +76,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(ToDoFragment.class.getName(), "onCreate");
+        Logger.init(TAG);
     }
 
     @Override
@@ -166,20 +174,21 @@ public class ToDoFragment extends Fragment implements IRefresh {
         mToDoRecyclerView.setLayoutManager(new GridLayoutManager(mActivity, 1));
 
         mAdapter = new ToDoListAdapter(GlobalListLocator.TodosList, mActivity, this);
-        mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
-        mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
-        mItemTouchHelper.attachToRecyclerView(mToDoRecyclerView);
+        //mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
+        //mItemTouchHelper = new ItemTouchHelper(mItemDragAndSwipeCallback);
+        //mItemTouchHelper.attachToRecyclerView(mToDoRecyclerView);
 
-        mAdapter.enableDragItem(mItemTouchHelper);
-        mAdapter.setToggleViewId(R.id.row_cate_per_hamView);
+        //mAdapter.enableDragItem(mItemTouchHelper);
+        //mAdapter.setToggleViewId(R.id.row_cate_per_hamView);
 
         mToDoRecyclerView.setAdapter(mAdapter);
+        //mToDoRecyclerView.addOnItemTouchListener(mToDoItemTouchListener = new ToDoItemTouchListener());
         updateNoItemUI();
     }
 
     public void updateData(ArrayList<ToDo> data) {
         if (mToDoRecyclerView != null) {
-            mToDoRecyclerView.setAdapter(new ToDoListAdapter(data,mActivity,this));
+            mToDoRecyclerView.setAdapter(new ToDoListAdapter(data, mActivity, this));
 
             stopRefreshing();
             updateNoItemUI();
@@ -221,6 +230,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
     }
 
     public void getAllSchedules() {
+        Logger.d(mActivity);
         mActivity.syncCateAndList();
 
         if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
@@ -236,6 +246,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
+                                Logger.d(jsonObject);
                                 mActivity.onAddedResponse(jsonObject);
                             }
                         });

@@ -1,7 +1,9 @@
 package adapter;
 
 import android.animation.ValueAnimator;
+import android.graphics.Canvas;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
@@ -37,7 +40,7 @@ import util.SerializationName;
 import viewholder.ToDoItemViewHolder;
 
 
-public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements View.OnTouchListener {
+public class ToDoListAdapter extends BaseQuickAdapter<ToDo> implements View.OnTouchListener {
 
     private MainActivity mCurrentActivity;
     private IRefresh mIRefreshCallback;
@@ -135,14 +138,13 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
                 break;
             }
         }
-        if (todoToDelete != null)
-            deleteToDo(index, todoToDelete);
+        if (todoToDelete != null) {
+            deleteToDoInternal(index);
+        }
     }
 
-    private void deleteToDo(int index, ToDo todoToDelete) {
-        notifyItemRemoved(index);
-        mData.remove(todoToDelete);
-
+    private void deleteToDoInternal(int index) {
+        ToDo todoToDelete = mData.get(index);
         GlobalListLocator.DeletedList.add(0, todoToDelete);
         SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.DeletedList, SerializationName.DELETED_FILE_NAME);
 
@@ -158,6 +160,8 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
                             //((MainActivity) mCurrentActivity).onDelete(jsonObject);
                         }
                     });
+        mData.remove(index);
+        notifyItemRemoved(index);
     }
 
     public void updateContent(ToDo toDo) {
@@ -217,7 +221,6 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
 
                 lastX = (int) event.getRawX();
                 break;
-
             case MotionEvent.ACTION_MOVE:
                 mIsSwiping = true;
 
@@ -242,15 +245,12 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
                 }
 
                 break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_OUTSIDE:
             case MotionEvent.ACTION_UP:
 
                 onMoveComplete(view, view.getScrollX());
 
-                break;
-
-            case MotionEvent.ACTION_CANCEL:
-
-                onMoveComplete(view, view.getScrollX());
                 break;
         }
 
@@ -260,6 +260,14 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
     private void onMoveComplete(View v, float scrollLeft) {
         if (mCurrentToDo == null)
             return;
+
+        if (mTurnGreen) {
+            playFadebackAnimation((ImageView) v.findViewById(R.id.greenImageView), true);
+        } else if (mTurnRed) {
+            playFadebackAnimation((ImageView) v.findViewById(R.id.redImageView), false);
+        }
+
+        playGoBackAnimation(v, scrollLeft);
 
         //Finish
         if (scrollLeft < -150) {
@@ -290,13 +298,6 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
             deleteToDo(mCurrentToDo.getID());
         }
 
-        if (mTurnGreen) {
-            playFadebackAnimation((ImageView) v.findViewById(R.id.greenImageView), true);
-        } else if (mTurnRed) {
-            playFadebackAnimation((ImageView) v.findViewById(R.id.redImageView), false);
-        }
-
-        playGoBackAnimation(v, scrollLeft);
         SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializationName.TODOS_FILE_NAME);
     }
 

@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -21,10 +22,10 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
+import com.orhanobut.logger.Logger;
 
 import api.CloudServices;
 import exception.APIException;
@@ -40,7 +41,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -57,6 +57,9 @@ import util.ToastService;
 import view.CircleRadioButton;
 
 public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback, IDrawerStatusChanged {
+
+    private static String TAG = MainActivity.class.getName();
+
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private ToDoFragment mToDoFragment;
     private DeletedItemFragment mDeletedItemFragment;
@@ -93,12 +96,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         String access_token = LocalSettingHelper.getString(this, "access_token");
 
+        Logger.init(TAG);
+
         if (access_token != null) {
-            initFragment(savedInstanceState, true);
+            initToDoFragment(savedInstanceState, true);
         } else {
             ConfigHelper.ISOFFLINEMODE = true;
             mNavigationDrawerFragment.setupOfflineMode();
-            initFragment(savedInstanceState, false);
+            initToDoFragment(savedInstanceState, false);
         }
     }
 
@@ -184,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
     }
 
-    private void initFragment(Bundle savedInstanceState, boolean logined) {
+    private void initToDoFragment(Bundle savedInstanceState, boolean logined) {
         if (findViewById(R.id.activity_main_fl) != null) {
             if (savedInstanceState != null) {
 
@@ -222,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
+                                Logger.d(jsonObject);
                                 onAddedResponse(jsonObject);
                             }
                         });
@@ -433,6 +439,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     //从服务器同步列表，并排序
     public void syncCateAndList() {
+        Logger.d(mNavigationDrawerFragment);
         mNavigationDrawerFragment.syncCatesOrDefault();
     }
 
@@ -442,6 +449,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         CloudServices.getLatestSchedules(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), new IRequestCallback() {
             @Override
             public void onResponse(JSONObject jsonObject) {
+                Logger.d(jsonObject);
                 onGotLatestScheduleResponse(jsonObject);
             }
         });
@@ -486,6 +494,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
+                                Logger.d(jsonObject);
                                 onAddedResponse(jsonObject);
                             }
                         });
@@ -528,6 +537,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                             new IRequestCallback() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {
+                                    Logger.d(jsonObject);
                                     onGotListOrder(jsonObject, list);
                                 }
                             });

@@ -85,6 +85,7 @@
                     android:layout_height="30sp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="-40sp"
+                    android:visibility="gone"
                     android:src="@drawable/ham" />
             </LinearLayout>
 
@@ -94,7 +95,7 @@
                 android:layout_height="10sp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="145sp"
-                android:layout_marginRight="140sp"
+                android:layout_marginRight="120sp"
                 android:scaleType="fitXY"
                 android:src="@drawable/line" />
         </RelativeLayout>

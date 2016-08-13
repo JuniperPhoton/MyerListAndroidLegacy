@@ -48,4 +48,5 @@ dependencies
             compile 'it.sephiroth.android.library.viewrevealanimator:view-reveal-animator:+'
             compile 'com.pgyersdk:sdk:2.2'
             compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:v1.9.3'
+            compile 'com.orhanobut:logger:1.15'
         }

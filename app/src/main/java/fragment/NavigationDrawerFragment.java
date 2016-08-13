@@ -15,7 +15,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,6 +37,7 @@ import com.juniperphoton.jputils.CustomFontHelper;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,7 +54,7 @@ import util.ToastService;
 
 public class NavigationDrawerFragment extends Fragment implements INavigationDrawerCallback {
 
-    private static final String TAG = "DrawerFragment";
+    private static final String TAG = NavigationDrawerFragment.class.getName();
 
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 
@@ -96,6 +96,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Logger.init(TAG);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
@@ -140,12 +142,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
         //显示类别
         mDrawerRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_drawer_rv);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-        mDrawerRecyclerView.setLayoutManager(layoutManager);
-        mDrawerRecyclerView.setHasFixedSize(true);
+        mDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(mMainActivity,LinearLayoutManager.VERTICAL,false));
+        mDrawerRecyclerView.setAdapter(new NavigationDrawerAdapter(this,GlobalListLocator.CategoryList));
 
         //显示设置/关于
         mSettingsLayout = (RelativeLayout) view.findViewById(R.id.fragment_drawer_settings_ll);
@@ -292,6 +290,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                     LocalSettingHelper.getString(getActivity(), "access_token"), new IRequestCallback() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
+                            Logger.d(TAG, jsonObject);
                             onGotNewestCates(jsonObject);
                         }
                     });
@@ -300,7 +299,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     private void onGotNewestCates(JSONObject response) {
         try {
-            Log.d(TAG, "onGotNewestCates");
+            Logger.d(TAG, "onGotNewestCates");
 
             ArrayList<ToDoCategory> categoryList;
 

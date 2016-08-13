@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -437,7 +436,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     //从服务器同步列表，并排序
     public void syncCateAndList() {
-        Logger.d(mNavigationDrawerFragment);
         mNavigationDrawerFragment.syncCatesOrDefault();
     }
 
@@ -447,7 +445,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         CloudServices.getLatestSchedules(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), new IRequestCallback() {
             @Override
             public void onResponse(JSONObject jsonObject) {
-                Logger.d(jsonObject);
+                if (jsonObject != null) Logger.json(jsonObject.toString());
                 onGotLatestScheduleResponse(jsonObject);
             }
         });
@@ -492,7 +490,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
-                                Logger.d(jsonObject);
+                                if (jsonObject != null) Logger.d(jsonObject);
                                 onAddedResponse(jsonObject);
                             }
                         });
@@ -535,7 +533,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                             new IRequestCallback() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {
-                                    Logger.d(jsonObject);
+                                    if (jsonObject != null) Logger.json(jsonObject.toString());
                                     onGotListOrder(jsonObject, list);
                                 }
                             });
@@ -570,7 +568,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -600,17 +597,16 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             } else {
                 if (mToDoAboutToAdded != null) {
                     GlobalListLocator.StagedList.add(mToDoAboutToAdded);
-                    SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializationName.STAGED_FILE_NAME);
+                    GlobalListLocator.saveData();
                 }
                 GlobalListLocator.TodosList.add(mToDoAboutToAdded);
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
+                GlobalListLocator.saveData();
             }
             mToDoAboutToAdded = null;
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
         }
     }
 
@@ -642,38 +638,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
     }
 
-    public void onSetDone(JSONObject response) {
-        try {
-            if (response == null) throw new APIException();
-
-            boolean isSuccess = response.getBoolean("isSuccessed");
-            if (!isSuccess) {
-                throw new APIException();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (APIException e) {
-            e.printStackTrace();
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
-        }
-    }
-
-    public void onDelete(JSONObject response) {
-        try {
-            if (response == null) throw new APIException();
-
-            boolean isSuccess = response.getBoolean("isSuccessed");
-            if (!isSuccess) {
-                throw new APIException();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (APIException e) {
-            e.printStackTrace();
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
-        }
-    }
-
     public void onUpdateContent(JSONObject response) {
         try {
             if (response == null) throw new APIException("");
@@ -690,7 +654,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     public void onReCreatedToDo(JSONObject response) {
         onAddedResponse(response);
-        mDeletedItemFragment.setupListData(GlobalListLocator.DeletedList);
+        mDeletedItemFragment.setAdapter(GlobalListLocator.DeletedList);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package api;
 
-import android.util.Log;
-
 import com.juniperphoton.jputils.NetworkSecurityHelper;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -245,15 +243,13 @@ public class CloudServices {
         client.setTimeout(10000);
         client.get(UrlHelper.UserGetCateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
-                Log.d(TAG,response.toString());
+            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                callback.onResponse(jsonObject);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 callback.onResponse(null);
-                Log.d(TAG,errorResponse.toString());
             }
         });
     }

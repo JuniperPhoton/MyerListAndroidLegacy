@@ -17,9 +17,12 @@ import android.support.v7.app.AlertDialog;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
+
 import java.util.Locale;
+
 import util.AppExtension;
 import moe.feng.material.statusbar.StatusBarCompat;
+import util.GlobalListLocator;
 
 public class SettingActivity extends AppCompatActivity {
     private com.rey.material.widget.Switch mAddToBottomSwitch;
@@ -33,16 +36,7 @@ public class SettingActivity extends AppCompatActivity {
 
         StatusBarCompat.setUpActivity(this);
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-
         setContentView(R.layout.activity_setting);
-
-        mMaskView = (ImageView) findViewById(R.id.activity_setting_mask_iv);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            mMaskView.setVisibility(View.GONE);
-        }
 
         //找到开关控件
         mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.activity_setting_addToEnd_s);
@@ -54,11 +48,20 @@ public class SettingActivity extends AppCompatActivity {
 
         //找到语言
         final String langStr = LocalSettingHelper.getString(AppExtension.getInstance(), "Language");
-        if (langStr.equals("Chinese")) {
-            mLangText.setText(getString(R.string.chinese));
-        }
-        else{
-            mLangText.setText(getString(R.string.english));
+        if (langStr != null) {
+            if (langStr.equals("Chinese")) {
+                mLangText.setText(getString(R.string.chinese));
+            } else {
+                mLangText.setText(getString(R.string.english));
+            }
+        } else {
+            Resources resources = getResources();
+            Configuration config = resources.getConfiguration();
+            if (config.locale == Locale.CHINESE) {
+                mLangText.setText(getString(R.string.chinese));
+            } else {
+                mLangText.setText(getString(R.string.english));
+            }
         }
 
         mLangText.setOnClickListener(new View.OnClickListener() {
@@ -76,8 +79,7 @@ public class SettingActivity extends AppCompatActivity {
                             config.locale = Locale.CHINESE;
                             resources.updateConfiguration(config, dm);
                             LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
-                        }
-                        else {
+                        } else {
                             Resources resources = getResources();
                             Configuration config = resources.getConfiguration();
                             DisplayMetrics dm = resources.getDisplayMetrics();
@@ -112,6 +114,7 @@ public class SettingActivity extends AppCompatActivity {
                         LocalSettingHelper.deleteKey(getApplicationContext(), "access_token");
                         Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        GlobalListLocator.clearData();
                         startActivity(intent);
                     }
                 });

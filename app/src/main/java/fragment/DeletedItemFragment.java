@@ -36,8 +36,7 @@ public class DeletedItemFragment extends Fragment {
         super.onAttach(activity);
         try {
             mActivity = (MainActivity) activity;
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -55,7 +54,7 @@ public class DeletedItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_deleted_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_delete_rv);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
@@ -82,7 +81,7 @@ public class DeletedItemFragment extends Fragment {
             }
         });
         mNoItemHintLayout = (LinearLayout) view.findViewById(R.id.fragment_delete_noitem_ll);
-        setupListData(GlobalListLocator.DeletedList);
+        setAdapter(GlobalListLocator.DeletedList);
 
         return view;
     }
@@ -96,19 +95,17 @@ public class DeletedItemFragment extends Fragment {
 
     }
 
-
-    public void setupListData(ArrayList<ToDo> data) {
+    public void setAdapter(ArrayList<ToDo> data) {
         GlobalListLocator.DeletedList = data;
         mDeletedToDos = data;
 
-        mAdapter = new DeletedListAdapter(mActivity,this,data);
+        mAdapter = new DeletedListAdapter(mActivity, this, data);
 
         mRecyclerView.setAdapter(mAdapter);
 
         if (GlobalListLocator.DeletedList.size() == 0) {
             this.showNoItemHint();
-        }
-        else {
+        } else {
             this.hideNoItemHint();
         }
     }

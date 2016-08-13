@@ -13,10 +13,14 @@ import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseItemDraggableAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONObject;
 
@@ -33,10 +37,11 @@ import util.AppExtension;
 import model.ToDo;
 import util.GlobalListLocator;
 import util.SerializationName;
-import viewholder.ToDoItemViewHolder;
+import view.CircleView;
 
 
-public class ToDoListAdapter extends RecyclerView.Adapter<ToDoItemViewHolder> implements View.OnTouchListener {
+public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements View.OnTouchListener {
+    private static String TAG = ToDoListAdapter.class.getName();
 
     private MainActivity mActivity;
     private ToDoFragment mFragment;
@@ -51,6 +56,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoItemViewHolder> im
     private boolean mIsSwiping = false;
 
     public ToDoListAdapter(ArrayList<ToDo> data, MainActivity activity, ToDoFragment fragment) {
+        super(data);
         mActivity = activity;
         mFragment = fragment;
         mData = data;
@@ -59,18 +65,19 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoItemViewHolder> im
     @Override
     public ToDoItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_todo, parent, false);
-        return new ToDoItemViewHolder(v, viewType);
+        return new ToDoItemViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ToDoItemViewHolder holder, int position) {
+    public void convert(BaseViewHolder helper, final ToDo currentToDoItem) {
 
-        final ToDo currentToDoItem = mData.get(position);
+        final ToDoItemViewHolder holder = (ToDoItemViewHolder) helper;
+        final ToDo toDoItem = mData.get(holder.getAdapterPosition());
 
-        holder.mTextView.setText(currentToDoItem.getContent());
-        holder.setID(currentToDoItem.getID());
+        holder.mTextView.setText(toDoItem.getContent());
+        holder.setID(toDoItem.getID());
 
-        final int cateID = currentToDoItem.getCate();
+        final int cateID = toDoItem.getCate();
         ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
 
         if (cateID == 0) {
@@ -83,7 +90,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoItemViewHolder> im
             }
         }
 
-        if (!currentToDoItem.getIsDone()) {
+        if (!toDoItem.getIsDone()) {
             holder.mLineView.setVisibility(View.GONE);
         }
 
@@ -93,9 +100,16 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoItemViewHolder> im
                 if (mIsSwiping) {
                     return;
                 }
+
+                StringBuffer sb = new StringBuffer();
+                for (ToDo todo : mData) {
+                    sb.append(todo.getContent()).append(",");
+                }
+                Logger.d(sb.toString());
+
                 int[] location = new int[2];
                 holder.mCateCircle.getLocationOnScreen(location);
-                mActivity.setupAddingPaneForModifyAndShow(currentToDoItem,
+                mActivity.setupAddingPaneForModifyAndShow(toDoItem,
                         new int[]{location[0] + holder.mCateCircle.getWidth() / 2, location[1] + holder.mCateCircle.getHeight() / 2});
             }
         });
@@ -107,92 +121,6 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoItemViewHolder> im
     @Override
     public int getItemCount() {
         return mData != null ? mData.size() : 0;
-    }
-
-    public void addToDo(ToDo todoToAdd) {
-        if (todoToAdd == null) return;
-
-        if (LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
-            notifyItemInserted(mData.size() - 1);
-            GlobalListLocator.TodosList.add(todoToAdd);
-        } else {
-            notifyItemInserted(0);
-            GlobalListLocator.TodosList.add(0, todoToAdd);
-        }
-        SerializerHelper.serializeToFile(mActivity, mData, SerializationName.TODOS_FILE_NAME);
-    }
-
-    public void deleteToDo(String id) {
-        int index = 0;
-        ToDo todoToDelete = null;
-        for (int i = 0; i < mData.size(); i++) {
-            ToDo s = mData.get(i);
-            if (s.getID().equals(id)) {
-                todoToDelete = s;
-                index = i;
-                break;
-            }
-        }
-        if (todoToDelete != null) {
-            deleteToDoInternal(index);
-        }
-    }
-
-    private void deleteToDoInternal(int index) {
-        ToDo todoToDelete = mData.get(index);
-
-        GlobalListLocator.DeletedList.add(0, todoToDelete);
-        SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.DeletedList, SerializationName.DELETED_FILE_NAME);
-
-        if (ConfigHelper.ISOFFLINEMODE) {
-            SerializerHelper.serializeToFile(mActivity, mData, SerializationName.TODOS_FILE_NAME);
-        } else
-            CloudServices.setDelete(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
-                    LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
-                    todoToDelete.getID(),
-                    new IRequestCallback() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            //((MainActivity) mActivity).onDelete(jsonObject);
-                        }
-                    });
-        mData.remove(index);
-        notifyItemRemoved(index);
-    }
-
-    public void updateToDo(ToDo toDo) {
-        int index = 0;
-
-        for (int i = 0; i < mData.size(); i++) {
-            if (mData.get(i).getID().equals(toDo.getID())) {
-                index = i;
-                break;
-            }
-        }
-
-        GlobalListLocator.TodosList.get(index).setContent(toDo.getContent());
-        GlobalListLocator.TodosList.get(index).setCate(toDo.getCate());
-
-        mData.get(index).setContent(toDo.getContent());
-        mData.get(index).setCate(toDo.getCate());
-        notifyItemChanged(index);
-
-        if (!ConfigHelper.ISOFFLINEMODE) {
-            CloudServices.updateContent(
-                    ConfigHelper.getSid(),
-                    ConfigHelper.getAccessToken(),
-                    toDo.getID(),
-                    toDo.getContent(),
-                    toDo.getCate(),
-                    new IRequestCallback() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            mActivity.onUpdateContent(jsonObject);
-                        }
-                    });
-        } else {
-            SerializerHelper.serializeToFile(mActivity, mData, SerializationName.TODOS_FILE_NAME);
-        }
     }
 
     public boolean onTouch(final View view, MotionEvent event) {
@@ -378,7 +306,136 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoItemViewHolder> im
         }
     }
 
-    public ArrayList<ToDo> getData(){
+    private void deleteToDoInternal(int index) {
+
+        ToDo todoToDelete = mData.get(index);
+
+        mData.remove(index);
+        notifyItemRemoved(index);
+
+        GlobalListLocator.deleteToDo(todoToDelete.getID());
+        GlobalListLocator.DeletedList.add(0, todoToDelete);
+        GlobalListLocator.saveData();
+
+        if (!ConfigHelper.ISOFFLINEMODE) {
+            CloudServices.setDelete(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
+                    LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
+                    todoToDelete.getID(),
+                    new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            //((MainActivity) mActivity).onDelete(jsonObject);
+                        }
+                    });
+        }
+    }
+
+    public void addToDo(ToDo todoToAdd) {
+        if (todoToAdd == null) return;
+
+        if (LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
+            notifyItemInserted(mData.size() - 1);
+            GlobalListLocator.TodosList.add(todoToAdd);
+        } else {
+            notifyItemInserted(0);
+            GlobalListLocator.TodosList.add(0, todoToAdd);
+        }
+        SerializerHelper.serializeToFile(mActivity, mData, SerializationName.TODOS_FILE_NAME);
+    }
+
+    public void deleteToDo(String id) {
+        int index = 0;
+        ToDo todoToDelete = null;
+        for (int i = 0; i < mData.size(); i++) {
+            ToDo s = mData.get(i);
+            if (s.getID().equals(id)) {
+                todoToDelete = s;
+                index = i;
+                break;
+            }
+        }
+        if (todoToDelete != null) {
+            deleteToDoInternal(index);
+        }
+    }
+
+    public void updateToDo(ToDo toDo) {
+        GlobalListLocator.updateContent(toDo);
+
+        int position = findToDoInData(toDo.getID());
+
+        mData.get(position).setContent(toDo.getContent());
+        mData.get(position).setCate(toDo.getCate());
+
+        notifyItemChanged(position);
+
+        StringBuffer sb = new StringBuffer();
+        for (ToDo todo : mData) {
+            sb.append(todo.getContent()).append(",");
+        }
+        Logger.d(sb.toString());
+
+        if (!ConfigHelper.ISOFFLINEMODE) {
+            CloudServices.updateContent(
+                    ConfigHelper.getSid(),
+                    ConfigHelper.getAccessToken(),
+                    toDo.getID(),
+                    toDo.getContent(),
+                    toDo.getCate(),
+                    new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            mActivity.onUpdateContent(jsonObject);
+                        }
+                    });
+        } else {
+            SerializerHelper.serializeToFile(mActivity, mData, SerializationName.TODOS_FILE_NAME);
+        }
+
+        //mActivity.updateListByCategory();
+    }
+
+    private int findToDoInData(String id) {
+        int index = 0;
+        for (int i = 0; i < mData.size(); i++) {
+            if (mData.get(i).getID().equals(id)) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+    public ArrayList<ToDo> getData() {
         return mData;
+    }
+
+    public class ToDoItemViewHolder extends BaseViewHolder {
+
+        private String mId;
+        public TextView mTextView;
+        public ImageView mLineView;
+        public RelativeLayout mRelativeLayout;
+        public ImageView mGreenImageView;
+        public ImageView mRedImageView;
+        public CircleView mCateCircle;
+
+        public ToDoItemViewHolder(View itemView) {
+            super(itemView);
+            mTextView = (TextView) itemView.findViewById(R.id.todoBlock);
+            mLineView = (ImageView) itemView.findViewById(R.id.lineView);
+            mGreenImageView = (ImageView) itemView.findViewById(R.id.greenImageView);
+            mRedImageView = (ImageView) itemView.findViewById(R.id.redImageView);
+            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.todo_layout);
+            mCateCircle = (CircleView) itemView.findViewById(R.id.cateCircle);
+        }
+
+        public String getID() {
+            return mId;
+        }
+
+        public void setID(String id) {
+            this.mId = id;
+        }
     }
 }

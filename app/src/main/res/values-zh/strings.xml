@@ -82,9 +82,6 @@
     <string name="adding_title">添加待办事项</string>
     <string name="no_deleted">没有内容</string>
     <string name="about_link">网站</string>
-    <string name="umeng_common_icon">图标</string>
-    <string name="tb_munion_tip_download_prefix">正在下载:</string>
-    <string name="UMUpdateCheck">2.6.0.1.20150312</string>
     <string name="Syncing...">同步中</string>
     <string name="Synced">同步完成</string>
     <string name="NoNetworkHint">没有网络，暂时使用离线模式</string>
@@ -121,5 +118,6 @@
     <string name="a_cate_per_discard_content">是否离开个性化类别？</string>
     <string name="english">English</string>
     <string name="pick_a_color_title">选一个颜色</string>
+    <string name="tb_munion_tip_download_prefix">正在下载:</string>
 
 </resources>

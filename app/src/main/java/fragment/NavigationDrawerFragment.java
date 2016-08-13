@@ -29,7 +29,6 @@ import activity.StartActivity;
 import adapter.NavigationDrawerAdapter;
 import api.CloudServices;
 import exception.APIException;
-import interfaces.IDrawerStatusChanged;
 import interfaces.INavigationDrawerCallback;
 import interfaces.IRequestCallback;
 
@@ -142,8 +141,8 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
         //显示类别
         mDrawerRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_drawer_rv);
-        mDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(mMainActivity,LinearLayoutManager.VERTICAL,false));
-        mDrawerRecyclerView.setAdapter(new NavigationDrawerAdapter(this,GlobalListLocator.CategoryList));
+        mDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(mMainActivity, LinearLayoutManager.VERTICAL, false));
+        mDrawerRecyclerView.setAdapter(new NavigationDrawerAdapter(this, GlobalListLocator.CategoryList));
 
         //显示设置/关于
         mSettingsLayout = (RelativeLayout) view.findViewById(R.id.fragment_drawer_settings_ll);
@@ -290,7 +289,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                     LocalSettingHelper.getString(getActivity(), "access_token"), new IRequestCallback() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
-                            Logger.d(TAG, jsonObject);
+                            if(jsonObject!=null) Logger.json(jsonObject.toString());
                             onGotNewestCates(jsonObject);
                         }
                     });
@@ -299,40 +298,37 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     private void onGotNewestCates(JSONObject response) {
         try {
-            Logger.d(TAG, "onGotNewestCates");
-
             ArrayList<ToDoCategory> categoryList;
 
             if (response == null) {
                 categoryList = getDefaultCateList();
-            }
-
-            boolean isOK = response.getBoolean("isSuccessed");
-            if (!isOK) {
-                throw new APIException();
-            }
-            String cateInfo = response.getString("Cate_Info");
-            if (cateInfo.equals("null")) {
-                categoryList = getDefaultCateList();
             } else {
-                JSONObject cateJson = new JSONObject(cateInfo);
-
-                boolean isModified = cateJson.getBoolean("modified");
-                if (!isModified) {
+                boolean isOK = response.getBoolean("isSuccessed");
+                if (!isOK) {
+                    throw new APIException();
+                }
+                String cateInfo = response.getString("Cate_Info");
+                if (cateInfo.equals("null")) {
                     categoryList = getDefaultCateList();
                 } else {
-                    categoryList = new ArrayList<>();
-                    JSONArray array = cateJson.getJSONArray("cates");
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject cateObj = array.getJSONObject(i);
-                        String name = cateObj.getString("name");
-                        String color = cateObj.getString("color");
-                        int id = cateObj.getInt("id");
+                    JSONObject cateJson = new JSONObject(cateInfo);
 
-                        ToDoCategory category = new ToDoCategory(name, id, Color.parseColor(color));
-                        categoryList.add(category);
+                    boolean isModified = cateJson.getBoolean("modified");
+                    if (!isModified) {
+                        categoryList = getDefaultCateList();
+                    } else {
+                        categoryList = new ArrayList<>();
+                        JSONArray array = cateJson.getJSONArray("cates");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject cateObj = array.getJSONObject(i);
+                            String name = cateObj.getString("name");
+                            String color = cateObj.getString("color");
+                            int id = cateObj.getInt("id");
+
+                            ToDoCategory category = new ToDoCategory(name, id, Color.parseColor(color));
+                            categoryList.add(category);
+                        }
                     }
-
                 }
             }
 
@@ -347,17 +343,17 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
             SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializationName.CATES_FILE_NAME);
 
-            updateList(categoryList);
+            setAdapter(categoryList);
 
             mMainActivity.syncList();
         } catch (APIException e) {
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void updateList(ArrayList<ToDoCategory> categoryList) {
+    public void setAdapter(ArrayList<ToDoCategory> categoryList) {
         NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(this, categoryList);
         mDrawerRecyclerView.setAdapter(adapter);
 

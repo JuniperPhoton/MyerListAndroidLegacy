@@ -34,17 +34,17 @@ import util.ToastService;
 
 
 public class LoginActivity extends AppCompatActivity {
+    private final boolean DEBUG_ENABLE = false;
+
     private EditText mEmailBox;
     private EditText mPasswordBox;
     private EditText mConfirmPsBox;
     private TextView mTitleView;
     private ProgressDialog mprogressDialog;
-    private ImageView mMaskView;
     private TextView mForgetPwdTextView;
 
     private boolean isToRegister = true;
 
-    private final boolean DEBUG_ENABLE = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

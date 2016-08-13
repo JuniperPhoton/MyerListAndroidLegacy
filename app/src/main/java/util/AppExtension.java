@@ -3,6 +3,7 @@ package util;
 import android.app.Application;
 import android.content.Intent;
 
+import com.orhanobut.logger.Logger;
 import com.pgyersdk.crash.PgyCrashManager;
 
 import activity.MainActivity;
@@ -21,7 +22,6 @@ public class AppExtension extends Application implements Thread.UncaughtExceptio
         instance = this;
 
         ConfigHelper.configAppSetting();
-
         GlobalListLocator.restoreData();
     }
 

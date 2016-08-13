@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,8 +51,6 @@ public class ToDoFragment extends Fragment implements IRefresh {
 
     private LinearLayout mNoItemLayout;
 
-    private ToDoListAdapter mAdapter;
-
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
@@ -80,6 +79,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
         Log.d(ToDoFragment.class.getName(), "onCreateView");
 
         mNoItemLayout = (LinearLayout) view.findViewById(R.id.fragment_todo_no_item_ll);
+        mNoItemLayout.setVisibility(View.GONE);
 
         //设置下拉刷新控件
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_todo_refresh_srl);
@@ -99,6 +99,13 @@ public class ToDoFragment extends Fragment implements IRefresh {
         mAddingFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                StringBuffer sb = new StringBuffer();
+                for (ToDo todo : ((ToDoListAdapter)mToDoRecyclerView.getAdapter()).getData()) {
+                    sb.append(todo.getContent()).append(",");
+                }
+                Logger.d(sb.toString());
+
                 mActivity.showAddingPane(null);
             }
         });
@@ -154,20 +161,24 @@ public class ToDoFragment extends Fragment implements IRefresh {
     }
 
     public void updateNoItemUI() {
-        if (mAdapter.getData().size() == 0) {
-            mNoItemLayout.setVisibility(View.VISIBLE);
-        } else {
+        if((mToDoRecyclerView.getAdapter())!=null){
+            if (((ToDoListAdapter)mToDoRecyclerView.getAdapter()).getData().size() == 0) {
+                mNoItemLayout.setVisibility(View.VISIBLE);
+            } else {
+                mNoItemLayout.setVisibility(View.GONE);
+            }
+        }
+        else{
             mNoItemLayout.setVisibility(View.GONE);
         }
     }
 
     private void initRV(View view) {
         mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_todo_rv);
-        mToDoRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.VERTICAL,false));
+        mToDoRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false));
 
-        mAdapter = new ToDoListAdapter(GlobalListLocator.TodosList, mActivity, this);
-
-        mToDoRecyclerView.setAdapter(mAdapter);
+        ToDoListAdapter adapter = new ToDoListAdapter(GlobalListLocator.TodosList, mActivity, this);
+        mToDoRecyclerView.swapAdapter(adapter, true);
         updateNoItemUI();
     }
 
@@ -216,22 +227,20 @@ public class ToDoFragment extends Fragment implements IRefresh {
 
     public void getAllSchedules() {
         Logger.d(mActivity);
+        mRefreshLayout.setRefreshing(true);
         mActivity.syncCateAndList();
 
         if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
             if (GlobalListLocator.StagedList == null) return;
             mActivity.setIsAddStagedItems(true);
             for (ToDo todo : GlobalListLocator.StagedList) {
-                CloudServices.addToDo(
-                        ConfigHelper.getSid(),
-                        ConfigHelper.getAccessToken(),
-                        todo.getContent(),
-                        "0",
-                        todo.getCate(),
+                CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(),
+                        todo.getContent(), "0", todo.getCate(),
                         new IRequestCallback() {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
-                                Logger.d(jsonObject);
+                                if (jsonObject != null) Logger.d(jsonObject);
+                                mRefreshLayout.setRefreshing(false);
                                 mActivity.onAddedResponse(jsonObject);
                             }
                         });
@@ -242,22 +251,22 @@ public class ToDoFragment extends Fragment implements IRefresh {
     }
 
     public ArrayList<ToDo> getData() {
-        if (mAdapter != null) {
-            return mAdapter.getData();
+        if ((mToDoRecyclerView.getAdapter()) != null) {
+            return ((ToDoListAdapter)mToDoRecyclerView.getAdapter()).getData();
         } else {
             return null;
         }
     }
 
-    public void updateContent(ToDo todo) {
-        if (mAdapter != null) {
-            mAdapter.updateToDo(todo);
+    public void updateContent(ToDo toDo) {
+        if ((mToDoRecyclerView.getAdapter()) != null) {
+            ((ToDoListAdapter)mToDoRecyclerView.getAdapter()).updateToDo(toDo);
         }
     }
 
     public void addToDo(ToDo todo) {
-        if (mAdapter != null) {
-            mAdapter.addToDo(todo);
+        if ((mToDoRecyclerView.getAdapter()) != null) {
+            ((ToDoListAdapter)mToDoRecyclerView.getAdapter()).addToDo(todo);
         }
     }
 }

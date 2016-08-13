@@ -1,13 +1,8 @@
 package adapter;
 
-import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,429 +10,283 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.juniper.myerlistandroid.R;
+import com.chad.library.adapter.base.BaseItemDraggableAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.juniperphoton.jputils.LocalSettingHelper;
+import com.juniperphoton.jputils.SerializerHelper;
+import com.juniperphoton.myerlistandroid.R;
+import com.orhanobut.logger.Logger;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import activity.MainActivity;
-import activity.StartActivity;
+import api.CloudServices;
 import fragment.ToDoFragment;
-import helper.ConfigHelper;
-import helper.ContextUtil;
-import helper.PostHelper;
-import helper.SerializerHelper;
-import model.Schedule;
-import model.ScheduleList;
+import interfaces.IRefresh;
+import interfaces.IRequestCallback;
+import model.ToDoCategory;
+import util.ConfigHelper;
+import util.AppExtension;
+import model.ToDo;
+import util.GlobalListLocator;
+import util.SerializationName;
+import view.CircleView;
 
 
-public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHolder> implements View.OnTouchListener
-{
-    private boolean mCanOperate=true;
-    private Activity mCurrentActivity;
-    private ToDoFragment mCurrentFragment;
-    private ArrayList<Schedule> mMySchedules;
-    private Schedule mCurrentSchedule=null;
-    int lastX;
+public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements View.OnTouchListener {
+    private static String TAG = ToDoListAdapter.class.getName();
 
-    private boolean mIsGreenOn=false;
-    private boolean mIsRedOn=false;
+    private MainActivity mActivity;
+    private ToDoFragment mFragment;
 
-    private boolean mIsInSwipe=false;
+    private ToDo mCurrentToDo = null;
+    private ArrayList<ToDo> mData;
 
-    private android.support.v7.app.AlertDialog mDialog;
-    private EditText mNewMemoText;
+    private int lastX;
 
-    public ToDoListAdapter(ArrayList<Schedule> data,Activity activity,ToDoFragment fragment)
-    {
-        mCurrentActivity=activity;
-        mMySchedules=data;
-        mCurrentFragment=fragment;
+    private boolean mTurnGreen = false;
+    private boolean mTurnRed = false;
+    private boolean mIsSwiping = false;
+
+    public ToDoListAdapter(ArrayList<ToDo> data, MainActivity activity, ToDoFragment fragment) {
+        super(data);
+        mActivity = activity;
+        mFragment = fragment;
+        mData = data;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
-    {
-        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.row_todo,parent,false);
-        ViewHolder viewHolder=new ViewHolder(v);
-
-        return viewHolder;
+    public ToDoItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_todo, parent, false);
+        return new ToDoItemViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position)
-    {
-        //bind data to UI component
-        holder.textView.setText(mMySchedules.get(position).getContent());
-        holder.setID(mMySchedules.get(position).getID());
-        if(!mMySchedules.get(position).getIsDone())
-        {
-            holder.lineView.setVisibility(View.GONE);
-        }
-        holder.deleteView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                deleteToDos(mMySchedules.get(position));
+    public void convert(BaseViewHolder helper, final ToDo currentToDoItem) {
+
+        final ToDoItemViewHolder holder = (ToDoItemViewHolder) helper;
+        final ToDo toDoItem = mData.get(holder.getAdapterPosition());
+
+        holder.mTextView.setText(toDoItem.getContent());
+        holder.setID(toDoItem.getID());
+
+        final int cateID = toDoItem.getCate();
+        ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
+
+        if (cateID == 0) {
+            holder.mCateCircle.setColor(ContextCompat.getColor(mActivity, R.color.MyerListBlue));
+        } else {
+            if (category != null) {
+                holder.mCateCircle.setColor(category.getColor());
+            } else {
+                holder.mCateCircle.setColor(ContextCompat.getColor(mActivity, R.color.MyerListBlue));
             }
-        });
+        }
 
-        holder.relativeLayout.setOnClickListener(new View.OnClickListener()
-        {
+        if (!toDoItem.getIsDone()) {
+            holder.mLineView.setVisibility(View.GONE);
+        }
+
+        holder.mRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                if(mIsInSwipe)
-                {
+            public void onClick(View view) {
+                if (mIsSwiping) {
                     return;
                 }
-                View dialogView=(View)LayoutInflater.from(mCurrentActivity).inflate(R.layout.add_todo_dialog, (ViewGroup) mCurrentActivity.findViewById(R.id.dialog_title));
 
-                TextView titleText=(TextView)dialogView.findViewById(R.id.dialog_title_text);
-                titleText.setText(mCurrentActivity.getResources().getString(R.string.modify_memo_title));
-
-                mNewMemoText=(EditText)dialogView.findViewById(R.id.newMemoEdit);
-                mNewMemoText.setHint(R.string.new_memo_hint);
-                mNewMemoText.setText(holder.textView.getText().toString());
-
-                Button okBtn=(Button)dialogView.findViewById(R.id.add_ok_btn);
-                okBtn.setText(R.string.ok_btn);
-                okBtn.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View view)
-                    {
-                        mDialog.dismiss();
-                        String targetID=holder.getID();
-                        int index=0;
-                        for(int i=0;i<mMySchedules.size();i++)
-                        {
-                            Schedule s=mMySchedules.get(i);
-                            if(s.getID().equals(targetID))
-                            {
-                                index=i;
-                                break;
-                            }
-                        }
-                        mMySchedules.get(index).setContent(mNewMemoText.getText().toString());
-                        notifyItemChanged(index);
-
-                        if(!ConfigHelper.ISOFFLINEMODE)
-                        {
-                            PostHelper.UpdateContent(mCurrentActivity,ConfigHelper.getString(mCurrentActivity,"sid"),targetID,mNewMemoText.getText().toString());
-                        }
-                        else
-                        {
-                            SerializerHelper.SerializeToFile(mCurrentActivity,mMySchedules,SerializerHelper.todosFileName);
-                        }
-
-                    }
-                });
-
-                Button cancelBtn=(Button)dialogView.findViewById(R.id.add_cancel_btn);
-                cancelBtn.setText(R.string.cancel_btn);
-                cancelBtn.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View view)
-                    {
-                        if (mDialog != null)
-                        {
-                            mDialog.dismiss();
-                        }
-                    }
-                });
-
-                if(!ConfigHelper.getBoolean(ContextUtil.getInstance(),"HandHobbit"))
-                {
-                    LinearLayout linearLayout=(LinearLayout)dialogView.findViewById(R.id.dialog_btn_layout);
-
-                    RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
-                    layoutParams.setMargins(20,0,0,0);
-                    layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                    linearLayout.setLayoutParams(layoutParams);
+                StringBuffer sb = new StringBuffer();
+                for (ToDo todo : mData) {
+                    sb.append(todo.getContent()).append(",");
                 }
+                Logger.d(sb.toString());
 
-                android.support.v7.app.AlertDialog.Builder builder=new android.support.v7.app.AlertDialog.Builder(mCurrentActivity);
-                mDialog=builder.setView((dialogView)).show();
-
+                int[] location = new int[2];
+                holder.mCateCircle.getLocationOnScreen(location);
+                mActivity.setupAddingPaneForModifyAndShow(toDoItem,
+                        new int[]{location[0] + holder.mCateCircle.getWidth() / 2, location[1] + holder.mCateCircle.getHeight() / 2});
             }
         });
 
-        holder.relativeLayout.setOnTouchListener(this);
-        holder.relativeLayout.setTag(holder.getID());
-
-        holder.greenImageView.setAlpha(1f);
-        holder.redImageView.setAlpha(1f);
-        holder.greenImageView.setVisibility(View.INVISIBLE);
-        holder.redImageView.setVisibility(View.INVISIBLE);
-        holder.relativeLayout.scrollTo(0,0);
-    }
-
-    public void SetCanOperate(boolean isDraweOpen)
-    {
-        mCanOperate=!isDraweOpen;
-    }
-
-    public void addToDos(Schedule todoToAdd)
-    {
-        if(ConfigHelper.getBoolean(ContextUtil.getInstance(),"AddToBottom"))
-        {
-            mMySchedules.add(todoToAdd);
-            notifyItemInserted(mMySchedules.size()-1);
-        }
-        else
-        {
-            mMySchedules.add(0, todoToAdd);
-            notifyItemInserted(0);
-        }
-        SerializerHelper.SerializeToFile(mCurrentActivity, mMySchedules, SerializerHelper.todosFileName);
-    }
-
-    public void deleteToDos(Schedule todoToDelete)
-    {
-        int index=0;
-        for(int i=0;i<mMySchedules.size();i++)
-        {
-           Schedule s=mMySchedules.get(i);
-            if(s.getID().equals(todoToDelete.getID()))
-            {
-                index=i;
-                break;
-            }
-        }
-        notifyItemRemoved(index);
-        mMySchedules.remove(todoToDelete);
-
-        ScheduleList.DeletedList.add(0, todoToDelete);
-        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), ScheduleList.DeletedList, SerializerHelper.deletedFileName);
-
-        if(ConfigHelper.ISOFFLINEMODE)
-        {
-            SerializerHelper.SerializeToFile(mCurrentActivity, mMySchedules, SerializerHelper.todosFileName);
-        }
-        else PostHelper.SetDelete(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), todoToDelete.getID());
-
+        holder.mRelativeLayout.setOnTouchListener(this);
+        holder.mRelativeLayout.setTag(holder.getID());
     }
 
     @Override
-    public int getItemCount()
-    {
-        return mMySchedules!=null?mMySchedules.size():0;
+    public int getItemCount() {
+        return mData != null ? mData.size() : 0;
     }
 
-    public ArrayList<Schedule> getListSrc()
-    {
-        return mMySchedules;
-    }
+    public boolean onTouch(final View view, MotionEvent event) {
+        RelativeLayout rootLayout = (RelativeLayout) view;
 
+        String id = (String) view.getTag();
+        findDataById(id);
 
-    //@Override
-    public boolean onTouch(final View v, MotionEvent event)
-    {
-        RelativeLayout root=(RelativeLayout)v;
+        int scrollingX;
 
-        int scrollleft=0;
-        String id=(String)v.getTag();
-
-        switch(event.getAction())
-        {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
 
-                lastX= (int)event.getRawX();
+                lastX = (int) event.getRawX();
                 break;
-
             case MotionEvent.ACTION_MOVE:
+                mIsSwiping = true;
 
-                if(!mCanOperate) break;
+                int dx = (int) event.getRawX() - lastX;
 
-                mIsInSwipe=true;
+                scrollingX = view.getScrollX();
 
-                int dx=(int)event.getRawX()-lastX;
+                view.scrollBy(-dx, 0);
 
-                scrollleft=v.getScrollX();
-
-                v.scrollBy(-dx, 0);
-
-                if(scrollleft<-20)
-                {
-                    mCurrentFragment.DisableRefresh();
+                if (scrollingX < -20) {
+                    if (mFragment != null) {
+                        mFragment.disableRefresh();
+                    }
                 }
 
-                lastX=(int)event.getRawX();
+                lastX = (int) event.getRawX();
 
-                if(scrollleft<-150 && !mIsGreenOn)
-                {
-                    SetColorAnim((ImageView) root.findViewById(R.id.greenImageView),true);
+                if (scrollingX < -150 && !mTurnGreen) {
+                    playColorChangeAnimation((ImageView) rootLayout.findViewById(R.id.greenImageView), true);
+                } else if (scrollingX > 150 && !mTurnRed) {
+                    playColorChangeAnimation((ImageView) rootLayout.findViewById(R.id.redImageView), false);
                 }
-                else if(scrollleft>150 && !mIsRedOn)
-                {
-                    SetColorAnim((ImageView) root.findViewById(R.id.redImageView),false);
-                }
-
 
                 break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_OUTSIDE:
             case MotionEvent.ACTION_UP:
 
-                SetMoveComplete(v,v.getScrollX(),id);
+                onMoveComplete(view, view.getScrollX());
 
                 break;
-
-            case MotionEvent.ACTION_CANCEL:
-            {
-                SetMoveComplete(v, v.getScrollX(), id);
-
-            };break;
-
         }
 
         return false;
     }
 
-    private void SetMoveComplete(View v,float scrollLeft,String id)
-    {
-        //Find the current schedule
+    private void onMoveComplete(View v, float scrollLeft) {
+        if (mCurrentToDo == null)
+            return;
 
-        for (Schedule s:mMySchedules)
-        {
-            if(s.getID().equals(id))
-            {
-                mCurrentSchedule=s;
-                break;
-            }
+        if (mTurnGreen) {
+            playFadebackAnimation((ImageView) v.findViewById(R.id.greenImageView), true);
+        } else if (mTurnRed) {
+            playFadebackAnimation((ImageView) v.findViewById(R.id.redImageView), false);
         }
-        if(mCurrentSchedule==null) return;
+
+        playGoBackAnimation(v, scrollLeft);
 
         //Finish
-        if(scrollLeft<-150)
-        {
+        if (scrollLeft < -150) {
 
-            ImageView lineview=(ImageView)v.findViewById(R.id.lineView);
-            if(mCurrentSchedule.getIsDone())
-            {
+            ImageView lineview = (ImageView) v.findViewById(R.id.lineView);
+            if (mCurrentToDo.getIsDone()) {
                 lineview.setVisibility(View.GONE);
-                mCurrentSchedule.setIsDone(false);
-            }
-            else
-            {
+                mCurrentToDo.setIsDone(false);
+            } else {
                 lineview.setVisibility(View.VISIBLE);
-                mCurrentSchedule.setIsDone(true);
+                mCurrentToDo.setIsDone(true);
             }
 
-            if(!ConfigHelper.ISOFFLINEMODE)
-            {
-                PostHelper.SetDone(mCurrentActivity, ConfigHelper.getString(ContextUtil.getInstance(), "sid"), id, mCurrentSchedule.getIsDone() ? "1" : "0");
+            if (!ConfigHelper.ISOFFLINEMODE) {
+                CloudServices.setDone(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
+                        LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"), mCurrentToDo.getID(),
+                        mCurrentToDo.getIsDone() ? "1" : "0",
+                        new IRequestCallback() {
+                            @Override
+                            public void onResponse(JSONObject jsonObject) {
+                                //mActivity.onSetDone(jsonObject);
+                            }
+                        });
             }
-
-
         }
         //Delete
-        else if(scrollLeft>150)
-        {
-            deleteToDos(mCurrentSchedule);
+        else if (scrollLeft > 150) {
+            deleteToDo(mCurrentToDo.getID());
         }
 
-        if(mIsGreenOn)
-        {
-            UnSetColorAnim((ImageView) v.findViewById(R.id.greenImageView),true);
-        }
-        else if(mIsRedOn)
-        {
-            UnSetColorAnim((ImageView)v.findViewById(R.id.redImageView),false);
-        }
-
-        SetBackAnim(v, scrollLeft);
-        SerializerHelper.SerializeToFile(ContextUtil.getInstance(), mMySchedules, SerializerHelper.todosFileName);
+        SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializationName.TODOS_FILE_NAME);
     }
 
-    private void SetBackAnim(final View v, final float left)
-    {
-        ValueAnimator valueAnimator=ValueAnimator.ofInt((int)left,0);
+    private void playGoBackAnimation(final View v, final float left) {
+        ValueAnimator valueAnimator = ValueAnimator.ofInt((int) left, 0);
         valueAnimator.setDuration(700);
         valueAnimator.setInterpolator(new DecelerateInterpolator());
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
-                {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator)
-                    {
-                        v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
-                        if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10)
-                        {
-                            mCurrentFragment.EnableRefresh();
-                            mIsInSwipe = false;
-                        }
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
+                if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10) {
+                    if (mFragment != null) {
+                        mFragment.enableRefresh();
                     }
-                });
+                    mIsSwiping = false;
+                }
+            }
+        });
         valueAnimator.start();
     }
 
-    private void SetColorAnim(final ImageView v,boolean isGreen)
-    {
+    private void playColorChangeAnimation(final ImageView v, boolean isGreen) {
         v.setAlpha(1f);
-        AnimationSet animationSet=new AnimationSet(false);
+        AnimationSet animationSet = new AnimationSet(false);
 
-        AlphaAnimation alphaAnimation=new AlphaAnimation(0.1f, 1.0f);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.1f, 1.0f);
         alphaAnimation.setDuration(700);
-        alphaAnimation.setAnimationListener(new Animation.AnimationListener()
-        {
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation)
-            {
+            public void onAnimationStart(Animation animation) {
                 v.setVisibility(View.VISIBLE);
             }
 
             @Override
-            public void onAnimationEnd(Animation animation)
-            {
+            public void onAnimationEnd(Animation animation) {
 
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation)
-            {
+            public void onAnimationRepeat(Animation animation) {
 
             }
         });
         animationSet.addAnimation(alphaAnimation);
         v.startAnimation(animationSet);
 
-        if(isGreen) mIsGreenOn=true;
-        else mIsRedOn=true;
+        if (isGreen)
+            mTurnGreen = true;
+        else
+            mTurnRed = true;
     }
 
-    private void UnSetColorAnim(final ImageView v, final boolean isGreen)
-    {
-        AnimationSet animationSet=new AnimationSet(false);
-        AlphaAnimation alphaAnimation=new AlphaAnimation(1.0f, 0.0f);
+    private void playFadebackAnimation(final ImageView v, final boolean isGreen) {
+        AnimationSet animationSet = new AnimationSet(false);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
         alphaAnimation.setDuration(700);
-        alphaAnimation.setAnimationListener(new Animation.AnimationListener()
-        {
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation)
-            {
+            public void onAnimationStart(Animation animation) {
                 v.setVisibility(View.VISIBLE);
             }
 
             @Override
-            public void onAnimationEnd(Animation animation)
-            {
+            public void onAnimationEnd(Animation animation) {
                 v.setVisibility(View.INVISIBLE);
-                if(isGreen) mIsGreenOn=false;
-                else mIsRedOn=false;
+                if (isGreen)
+                    mTurnGreen = false;
+                else
+                    mTurnRed = false;
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation)
-            {
+            public void onAnimationRepeat(Animation animation) {
 
             }
         });
@@ -445,39 +294,148 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ViewHo
         v.startAnimation(animationSet);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder
-    {
-        private String id;
-        public TextView textView;
-        public ImageView lineView;
-        public ImageView deleteView;
-        public RelativeLayout relativeLayout;
-        public ImageView greenImageView;
-        public ImageView redImageView;
-
-        public ViewHolder(View itemView)
-        {
-            super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.todoBlock);
-            lineView=(ImageView)itemView.findViewById(R.id.lineView);
-            greenImageView=(ImageView) itemView.findViewById(R.id.greenImageView);
-            redImageView=(ImageView)itemView.findViewById(R.id.redImageView);
-            deleteView=(ImageView)itemView.findViewById(R.id.deleteView);
-            relativeLayout=(RelativeLayout)itemView.findViewById(R.id.todo_layout);
+    private void findDataById(String id) {
+        int location = -1;
+        for (int i = 0; i < mData.size(); i++) {
+            if (mData.get(i).getID().equals(id)) {
+                location = i;
+            }
         }
-
-        public String getID()
-        {
-            return id;
-        }
-        public void setID(String id)
-        {
-            this.id=id;
+        if (location != -1) {
+            mCurrentToDo = mData.get(location);
         }
     }
 
-    public interface OnDeletedItem
-    {
-        void OnDeletedItem();
+    private void deleteToDoInternal(int index) {
+
+        ToDo todoToDelete = mData.get(index);
+
+        mData.remove(index);
+        notifyItemRemoved(index);
+
+        GlobalListLocator.deleteToDo(todoToDelete.getID());
+        GlobalListLocator.DeletedList.add(0, todoToDelete);
+        GlobalListLocator.saveData();
+
+        if (!ConfigHelper.ISOFFLINEMODE) {
+            CloudServices.setDelete(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
+                    LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
+                    todoToDelete.getID(),
+                    new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            //((MainActivity) mActivity).onDelete(jsonObject);
+                        }
+                    });
+        }
+    }
+
+    public void addToDo(ToDo todoToAdd) {
+        if (todoToAdd == null) return;
+
+        if (LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
+            notifyItemInserted(mData.size() - 1);
+            GlobalListLocator.TodosList.add(todoToAdd);
+        } else {
+            notifyItemInserted(0);
+            GlobalListLocator.TodosList.add(0, todoToAdd);
+        }
+        SerializerHelper.serializeToFile(mActivity, mData, SerializationName.TODOS_FILE_NAME);
+    }
+
+    public void deleteToDo(String id) {
+        int index = 0;
+        ToDo todoToDelete = null;
+        for (int i = 0; i < mData.size(); i++) {
+            ToDo s = mData.get(i);
+            if (s.getID().equals(id)) {
+                todoToDelete = s;
+                index = i;
+                break;
+            }
+        }
+        if (todoToDelete != null) {
+            deleteToDoInternal(index);
+        }
+    }
+
+    public void updateToDo(ToDo toDo) {
+        GlobalListLocator.updateContent(toDo);
+
+        int position = findToDoInData(toDo.getID());
+
+        mData.get(position).setContent(toDo.getContent());
+        mData.get(position).setCate(toDo.getCate());
+
+        notifyItemChanged(position);
+
+        StringBuffer sb = new StringBuffer();
+        for (ToDo todo : mData) {
+            sb.append(todo.getContent()).append(",");
+        }
+        Logger.d(sb.toString());
+
+        if (!ConfigHelper.ISOFFLINEMODE) {
+            CloudServices.updateContent(
+                    ConfigHelper.getSid(),
+                    ConfigHelper.getAccessToken(),
+                    toDo.getID(),
+                    toDo.getContent(),
+                    toDo.getCate(),
+                    new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            mActivity.onUpdateContent(jsonObject);
+                        }
+                    });
+        } else {
+            SerializerHelper.serializeToFile(mActivity, mData, SerializationName.TODOS_FILE_NAME);
+        }
+
+        //mActivity.updateListByCategory();
+    }
+
+    private int findToDoInData(String id) {
+        int index = 0;
+        for (int i = 0; i < mData.size(); i++) {
+            if (mData.get(i).getID().equals(id)) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+    public ArrayList<ToDo> getData() {
+        return mData;
+    }
+
+    public class ToDoItemViewHolder extends BaseViewHolder {
+
+        private String mId;
+        public TextView mTextView;
+        public ImageView mLineView;
+        public RelativeLayout mRelativeLayout;
+        public ImageView mGreenImageView;
+        public ImageView mRedImageView;
+        public CircleView mCateCircle;
+
+        public ToDoItemViewHolder(View itemView) {
+            super(itemView);
+            mTextView = (TextView) itemView.findViewById(R.id.todoBlock);
+            mLineView = (ImageView) itemView.findViewById(R.id.lineView);
+            mGreenImageView = (ImageView) itemView.findViewById(R.id.greenImageView);
+            mRedImageView = (ImageView) itemView.findViewById(R.id.redImageView);
+            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.todo_layout);
+            mCateCircle = (CircleView) itemView.findViewById(R.id.cateCircle);
+        }
+
+        public String getID() {
+            return mId;
+        }
+
+        public void setID(String id) {
+            this.mId = id;
+        }
     }
 }

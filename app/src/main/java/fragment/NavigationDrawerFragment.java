@@ -1,69 +1,73 @@
 package fragment;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import activity.AboutActivity;
+import activity.MainActivity;
+import activity.SettingActivity;
 import activity.StartActivity;
 import adapter.NavigationDrawerAdapter;
-import adapter.NavigationDrawerCallbacks;
-import adapter.NavigationDrawerOtherCallbacks;
-import model.NavigationItem;
-import com.example.juniper.myerlistandroid.R;
+import api.CloudServices;
+import exception.APIException;
+import interfaces.INavigationDrawerCallback;
+import interfaces.IRequestCallback;
+
+import com.juniperphoton.jputils.CustomFontHelper;
+import com.juniperphoton.jputils.LocalSettingHelper;
+import com.juniperphoton.jputils.SerializerHelper;
+import com.juniperphoton.myerlistandroid.R;
+import com.orhanobut.logger.Logger;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import helper.ConfigHelper;
+import model.ToDoCategory;
+import util.AppExtension;
+import util.ConfigHelper;
+import util.GlobalListLocator;
 
-/**
- * Fragment used for managing interactions for and presentation of a navigation drawer.
- * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
- * design guidelines</a> for a complete explanation of the behaviors implemented here.
- */
-public class NavigationDrawerFragment extends Fragment implements NavigationDrawerCallbacks, NavigationDrawerOtherCallbacks
-{
+import util.SerializationName;
+import util.ToastService;
 
-    /**
-     * Remember the position of the selected item.
-     */
+public class NavigationDrawerFragment extends Fragment implements INavigationDrawerCallback {
+
+    private static final String TAG = NavigationDrawerFragment.class.getName();
+
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 
-    /**
-     * Per the design guidelines, you should show the drawer on launch until the user manually
-     * expands it. This shared preference tracks this.
-     */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
-    /**
-     * A pointer to the current callbacks instance (the Activity).
-     */
-    private NavigationDrawerCallbacks mCallbacks;
-    private NavigationDrawerOtherCallbacks mOtherCallbacks;
+    private MainActivity mMainActivity;
 
-    private DrawerStatusListener mDrawerStatusListener;
-
-    /**
-     * Helper component that ties the action bar to the navigation drawer.
-     */
     private ActionBarDrawerToggle mActionBarDrawerToggle;
 
+    //表示抽屉里各种控件
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerRecyclerView;
-    private RecyclerView mDrawerOtherRecyclerView;
+    private RelativeLayout mRootLayout;
+
     private View mFragmentContainerView;
     private TextView mEmailView;
 
@@ -71,19 +75,33 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
+    private RelativeLayout mSettingsLayout;
+    private RelativeLayout mAboutLayout;
+
+    private TextView mUndoneTextView;
+
+    private ArrayList<ToDoCategory> mCatesList;
+
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onAttach(Context activity) {
+        super.onAttach(activity);
+        try {
+            mMainActivity = (MainActivity) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement INavigationDrawerCallback.");
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Read in the flag indicating whether or not the user has demonstrated awareness of the
-        // drawer. See PREF_USER_LEARNED_DRAWER for details.
+        Logger.init(TAG);
+
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
-
-        if (savedInstanceState != null)
-        {
+        if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
             mFromSavedInstanceState = true;
         }
@@ -91,265 +109,285 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
-    {
+                             Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-
-        //Show account displaying email address
-        mEmailView=(TextView)view.findViewById(R.id.account_block);
-        mEmailView.setText(ConfigHelper.getString(view.getContext(), "email"));
-
-        //RecyclerView to display navigation item
-        mDrawerRecyclerView = (RecyclerView) view.findViewById(R.id.drawerList);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-        mDrawerRecyclerView.setLayoutManager(layoutManager);
-        mDrawerRecyclerView.setHasFixedSize(true);
-
-        final List<NavigationItem> navigationItems = getMenu();
-
-        NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(navigationItems);
-        adapter.setNavigationDrawerCallbacks(this);
-        mDrawerRecyclerView.setAdapter(adapter);
-
-        selectItem(mCurrentSelectedPosition);
-
-        LinearLayoutManager layoutManagerOther = new LinearLayoutManager(getActivity());
-        layoutManagerOther.setOrientation(LinearLayoutManager.VERTICAL);
-
-        mDrawerOtherRecyclerView=(RecyclerView)view.findViewById(R.id.drawerList_other);
-        mDrawerOtherRecyclerView.setLayoutManager(layoutManagerOther);
-        mDrawerOtherRecyclerView.setHasFixedSize(true);
-
-        final List<NavigationItem> otherItems=getOtherMenu();
-        NavigationDrawerAdapter adapterOther=new NavigationDrawerAdapter(otherItems);
-        adapterOther.setOtherNavigationDrawerCallbacks(this);
-        mDrawerOtherRecyclerView.setAdapter(adapterOther);
+        initViews(view);
 
         return view;
     }
 
-    public boolean isDrawerOpen()
-    {
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    private void initViews(View view) {
+        mUndoneTextView = (TextView) view.findViewById(R.id.fragment_drawer_undone_tv);
+        CustomFontHelper.setCustomFont(mUndoneTextView, "fonts/AGENCYB.TTF", getActivity());
+
+        //显示电子邮件
+        mEmailView = (TextView) view.findViewById(R.id.fragment_drawer_login_tv);
+        mEmailView.setText(LocalSettingHelper.getString(view.getContext(), "email"));
+
+        mRootLayout = (RelativeLayout) view.findViewById(R.id.fragment_drawer_root_ll);
+        mRootLayout.setOnTouchListener(new View.OnTouchListener() {
+            //避免透过抽屉点击到下面的列表
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+
+        //显示类别
+        mDrawerRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_drawer_rv);
+        mDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(mMainActivity, LinearLayoutManager.VERTICAL, false));
+        mDrawerRecyclerView.setAdapter(new NavigationDrawerAdapter(this, GlobalListLocator.CategoryList));
+
+        //显示设置/关于
+        mSettingsLayout = (RelativeLayout) view.findViewById(R.id.fragment_drawer_settings_ll);
+        mAboutLayout = (RelativeLayout) view.findViewById(R.id.fragment_drawer_about_ll);
+        mSettingsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AppExtension.getInstance(), SettingActivity.class);
+                startActivity(intent);
+            }
+        });
+        mAboutLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AppExtension.getInstance(), AboutActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        syncCatesOrDefault();
+    }
+
+    public boolean isDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
 
-    public ActionBarDrawerToggle getActionBarDrawerToggle()
-    {
+    public ActionBarDrawerToggle getActionBarDrawerToggle() {
         return mActionBarDrawerToggle;
     }
 
-    public DrawerLayout getDrawerLayout()
-    {
+    public DrawerLayout getDrawerLayout() {
         return mDrawerLayout;
     }
 
-    @Override
-    public void onNavigationDrawerItemSelected(int position)
-    {
-        selectItem(position);
-    }
-
-    @Override
-    public void OnSelectedOther(int position)
-    {
-        selectOtherItem(position);
-    }
-
-    public List<NavigationItem> getMenu()
-    {
-        List<NavigationItem> items = new ArrayList<NavigationItem>();
-        items.add(new NavigationItem(getResources().getString(R.string.title_section1),getResources().getDrawable(R.drawable.accept)));
-        items.add(new NavigationItem(getResources().getString(R.string.title_section2), getResources().getDrawable(R.drawable.delete)));
-
+    private ArrayList<ToDoCategory> getDefaultCateList() {
+        ArrayList<ToDoCategory> items = new ArrayList<>();
+//        items.add(new ToDoCategory(getResources().getString(R.string.cate_default), 0,
+//                ContextCompat.getColor(AppExtension.getInstance(), R.color.MyerListBlue)));
+        items.add(new ToDoCategory(getResources().getString(R.string.cate_work), 1,
+                ContextCompat.getColor(AppExtension.getInstance(), R.color.WorkColor)));
+        items.add(new ToDoCategory(getResources().getString(R.string.cate_life), 2,
+                ContextCompat.getColor(AppExtension.getInstance(), R.color.LifeColor)));
+        items.add(new ToDoCategory(getResources().getString(R.string.cate_family), 3,
+                ContextCompat.getColor(AppExtension.getInstance(), R.color.FamilyColor)));
+        items.add(new ToDoCategory(getResources().getString(R.string.cate_enter), 4,
+                ContextCompat.getColor(AppExtension.getInstance(), R.color.EnterColor)));
+//        items.add(new ToDoCategory(getResources().getString(R.string.deleteditems), 5,
+//                ContextCompat.getColor(AppExtension.getInstance(), R.color.DeletedColor)));
         return items;
     }
 
-    public List<NavigationItem> getOtherMenu()
-    {
-        List<NavigationItem> items = new ArrayList<NavigationItem>();
 
-        items.add(new NavigationItem(getResources().getString(R.string.title_section3), getResources().getDrawable(R.drawable.settings)));
-        items.add(new NavigationItem(getResources().getString(R.string.title_section4), getResources().getDrawable(R.drawable.like)));
-        items.add(new NavigationItem(getResources().getString(R.string.title_section5), getResources().getDrawable(R.drawable.alert)));
-
-        return items;
-    }
-
-    /**
-     * Users of this fragment must call this method to set up the navigation drawer interactions.
-     *
-     * @param fragmentId   The android:id of this fragment in its activity's layout.
-     * @param drawerLayout The DrawerLayout containing this fragment's UI.
-     * @param toolbar      The Toolbar of the activity.
-     */
-    public void setup(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar)
-    {
+    public void setup(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
-        mDrawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.myPrimaryDarkColor));
+        mDrawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(getActivity(), R.color.myPrimaryDarkColor));
 
-        mActionBarDrawerToggle = new ActionBarDrawerToggle(getActivity(), mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close)
-        {
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(getActivity(), mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
-            public void onDrawerClosed(View drawerView)
-            {
+            public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 if (!isAdded()) return;
 
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
 
-                mDrawerStatusListener.OnDrawerStatusChanged(false);
+                mMainActivity.onDrawerStatusChanged(false);
             }
 
             @Override
-            public void onDrawerOpened(View drawerView)
-            {
+            public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 if (!isAdded()) return;
-                if (!mUserLearnedDrawer)
-                {
+                if (!mUserLearnedDrawer) {
                     mUserLearnedDrawer = true;
                     SharedPreferences sp = PreferenceManager
                             .getDefaultSharedPreferences(getActivity());
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-                mDrawerStatusListener.OnDrawerStatusChanged(true);
+                mMainActivity.onDrawerStatusChanged(true);
             }
         };
 
-        // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
-        // per the navigation drawer design guidelines.
-        if (!mUserLearnedDrawer && !mFromSavedInstanceState)
-        {
+        if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
 
-        // Defer code dependent on restoration of previous instance state.
-        mDrawerLayout.post(new Runnable()
-        {
+        mDrawerLayout.post(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 mActionBarDrawerToggle.syncState();
             }
         });
-
-        mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
+        mDrawerLayout.addDrawerListener(mActionBarDrawerToggle);
     }
 
-    public void SetupOfflineMode()
-    {
+    public void setupOfflineMode() {
         mEmailView.setClickable(true);
         mEmailView.setText(R.string.now_to_login);
-        mEmailView.setOnClickListener(new View.OnClickListener()
-        {
+        mEmailView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), StartActivity.class);
                 getActivity().startActivity(intent);
             }
         });
     }
 
-    public int getCurrentSelectedPosition()
-    {
-        return mCurrentSelectedPosition;
-    }
-
-    public void selectItem(int position)
-    {
+    private void selectItem(int position) {
         mCurrentSelectedPosition = position;
 
-        if (mCallbacks != null)
-        {
-            mCallbacks.onNavigationDrawerItemSelected(position);
+        if (mMainActivity != null) {
+            mMainActivity.onDrawerMainItemSelected(position);
         }
 
         ((NavigationDrawerAdapter) mDrawerRecyclerView.getAdapter()).selectPosition(position);
 
-        if (mDrawerLayout != null)
-        {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        if (mDrawerLayout != null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDrawerLayout.closeDrawer(mFragmentContainerView);
+                }
+            }, 300);
         }
     }
 
-    public void selectOtherItem(int position)
-    {
-        if(mOtherCallbacks!=null)
-        {
-            mOtherCallbacks.OnSelectedOther(position);
-        }
-        if (mDrawerLayout != null)
-        {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
+    public void updateUndoneTextView(String count) {
+        if (mUndoneTextView != null) {
+            mUndoneTextView.setText(count);
         }
     }
 
+    public void updateRootBackgroundColor(int color) {
+        if (mRootLayout != null) {
+            mRootLayout.setBackgroundColor(color);
+        }
+    }
 
-    public void openDrawer()
-    {
+    public void syncCatesOrDefault() {
+        if (!ConfigHelper.ISOFFLINEMODE) {
+            CloudServices.getCates(LocalSettingHelper.getString(getActivity(), "sid"),
+                    LocalSettingHelper.getString(getActivity(), "access_token"), new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            if(jsonObject!=null) Logger.json(jsonObject.toString());
+                            onGotNewestCates(jsonObject);
+                        }
+                    });
+        }
+    }
+
+    private void onGotNewestCates(JSONObject response) {
+        try {
+            ArrayList<ToDoCategory> categoryList;
+
+            if (response == null) {
+                categoryList = getDefaultCateList();
+            } else {
+                boolean isOK = response.getBoolean("isSuccessed");
+                if (!isOK) {
+                    throw new APIException();
+                }
+                String cateInfo = response.getString("Cate_Info");
+                if (cateInfo.equals("null")) {
+                    categoryList = getDefaultCateList();
+                } else {
+                    JSONObject cateJson = new JSONObject(cateInfo);
+
+                    boolean isModified = cateJson.getBoolean("modified");
+                    if (!isModified) {
+                        categoryList = getDefaultCateList();
+                    } else {
+                        categoryList = new ArrayList<>();
+                        JSONArray array = cateJson.getJSONArray("cates");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject cateObj = array.getJSONObject(i);
+                            String name = cateObj.getString("name");
+                            String color = cateObj.getString("color");
+                            int id = cateObj.getInt("id");
+
+                            ToDoCategory category = new ToDoCategory(name, id, Color.parseColor(color));
+                            categoryList.add(category);
+                        }
+                    }
+                }
+            }
+
+            categoryList.add(0,
+                    new ToDoCategory(getResources().getString(R.string.cate_default), 0, ContextCompat.getColor(getActivity(), R.color.MyerListBlue)));
+            categoryList.add(categoryList.size(),
+                    new ToDoCategory(getResources().getString(R.string.cate_deleted), -1, ContextCompat.getColor(getActivity(), R.color.DeletedColor)));
+            categoryList.add(categoryList.size(),
+                    new ToDoCategory(getResources().getString(R.string.cate_per), -2, Color.WHITE));
+
+            GlobalListLocator.CategoryList = categoryList;
+
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializationName.CATES_FILE_NAME);
+
+            setAdapter(categoryList);
+
+            mMainActivity.syncList();
+        } catch (APIException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAdapter(ArrayList<ToDoCategory> categoryList) {
+        NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(this, categoryList);
+        mDrawerRecyclerView.setAdapter(adapter);
+
+        //默认项是所有待办事项
+        selectItem(0);
+    }
+
+    public void openDrawer() {
         mDrawerLayout.openDrawer(mFragmentContainerView);
-
     }
 
-    public void closeDrawer()
-    {
+    public void closeDrawer() {
         mDrawerLayout.closeDrawer(mFragmentContainerView);
     }
 
     @Override
-    public void onAttach(Activity activity)
-    {
-        super.onAttach(activity);
-        try
-        {
-            mCallbacks = (NavigationDrawerCallbacks) activity;
-            mOtherCallbacks=(NavigationDrawerOtherCallbacks)activity;
-            mDrawerStatusListener=(DrawerStatusListener)activity;
-        }
-        catch (ClassCastException e)
-        {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
-        }
-    }
-
-    @Override
-    public void onDetach()
-    {
-        super.onDetach();
-        mCallbacks = null;
-        mOtherCallbacks=null;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState)
-    {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig)
-    {
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // Forward the new configuration the drawer toggle component.
         mActionBarDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-
-
-    public interface DrawerStatusListener
-    {
-        void OnDrawerStatusChanged(boolean isOpen);
+    @Override
+    public void onDrawerMainItemSelected(int position) {
+        selectItem(position);
     }
 
-
-
-
+    @Override
+    public void onFooterSelected() {
+        mMainActivity.onFooterSelected();
+    }
 }

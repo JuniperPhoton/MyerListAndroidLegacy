@@ -1,27 +1,30 @@
 <resources>
-
-    <!--
-        Check Android Theme colors for color reference:
-        https://developer.android.com/training/material/images/ThemeColors.png
-
-        Refer also to Color palette for the UI colors you should use:
-        http://www.google.com/design/spec/style/color.html#color-ui-color-palette
-    -->
-    <color name="MyerListBlue">#FF4477b6</color>
-    <color name="MyerListBlueLight">#FF4C83C9</color>
+    <color name="MyerListBlue">#FF4096C9</color>
+    <color name="MyerListBlueLight">#FF47A5DD</color>
+    <color name="MyerListBlueDark">#338dc3</color>
     <color name="MyerListGray">#FFF2F2F2</color>
     <color name="MyerListGrayDark">#ffdddddd</color>
-    <color name="myPrimaryColor">#2196F3</color>
-    <color name="myPrimaryDarkColor">#1976D2</color>
+    <color name="myPrimaryColor">#FF4096C9</color>
+    <color name="myPrimaryDarkColor">#5da7c9</color>
     <color name="myAccentColor">#FF4081</color>
     <color name="myDrawerBackground">#FFF</color>
+    <color name="DrawerSelectedBackground">#78000000</color>
     <color name="myWindowBackground">#FFF</color>
     <color name="myTextPrimaryColor">#212121</color>
     <color name="myNavigationColor">#000</color>
+    <color name="WorkColor">#FF436998</color>
+    <color name="LifeColor">#FFFFB542</color>
+    <color name="EnterColor">#FF55C1C1</color>
+    <color name="FamilyColor">#FFFF395F</color>
+    <color name="DeletedColor">#a9a9a9</color>
+    <color name="TextHintColor">#808080</color>
     <drawable name="unpressed">#FFF</drawable>
     <drawable name="pressed_gray">#0c000000</drawable>
     <drawable name="selected_gray">#2c000000</drawable>
     <color name="pink">#ff316b</color>
     <color name="pink_pressed">#dc3967</color>
+    <color name="cancelColor">#b1b1b1</color>
+    <color name="cancelColorPressed">#6a6a6a</color>
     <color name="dialog_backgrd">#eeeeee</color>
+    <color name="cate_per_title_backgrd">#ededed</color>
 </resources>

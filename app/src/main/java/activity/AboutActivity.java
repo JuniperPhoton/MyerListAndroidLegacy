@@ -1,34 +1,43 @@
 package activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
+import moe.feng.material.statusbar.StatusBarCompat;
 
-public class AboutActivity extends AppCompatActivity
-{
 
+public class AboutActivity extends AppCompatActivity {
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+
+        StatusBarCompat.setUpActivity(this);
+
         setContentView(R.layout.activity_about);
     }
 
-    public void EmailClick(View view)
-    {
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
+    public void emailClick(View view) {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("message/rfc822");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"dengweichao@hotmail.com"}); // recipients
@@ -36,18 +45,10 @@ public class AboutActivity extends AppCompatActivity
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
         startActivity(Intent.createChooser(emailIntent, "Choose app to send an email"));
     }
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-    @Override
 
-    public void onPause()
-    {
-        super.onPause();
-        MobclickAgent.onPause(this);
+    public void downloadClick(View view){
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.microsoft.com/store/apps/9nblggh11k1m"));
+        startActivity(browserIntent);
     }
 
 }

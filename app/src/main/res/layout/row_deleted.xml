@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
+    android:id="@+id/row_deleted_root_cv"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/todo_card_view"
     android:layout_width="match_parent"
     android:layout_height="48dp"
+    android:clickable="true"
+    card_view:cardBackgroundColor="@android:color/white"
     card_view:cardCornerRadius="0dp"
     card_view:cardElevation="0dp"
-    android:clickable="true"
-    card_view:cardBackgroundColor="@color/MyerListGray"
     >
+
     <RelativeLayout
+        android:id="@+id/row_deleted_root_rl"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/todo_root"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true">
 
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true">
 
@@ -30,50 +31,43 @@
                 android:layout_height="50sp"
                 android:orientation="horizontal"
                 >
+
                 <ImageView
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:id="@+id/redoView"
+                    android:id="@+id/row_deleted_reAdd_iv"
                     android:layout_width="30sp"
                     android:layout_height="30sp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/redo"
-                    android:layout_marginLeft="10sp"/>
+                    android:layout_marginLeft="10sp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:src="@drawable/redo"/>
+
                 <TextView
-                    android:id="@+id/deletedBlock"
+                    android:id="@+id/row_deleted_tv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="40sp"
                     android:layout_marginLeft="15sp"
+                    android:layout_marginRight="40sp"
+                    android:ellipsize="end"
                     android:gravity="center_vertical"
                     android:hint="Enjoy your good day!"
-                    android:textColor="@android:color/black"
-                    android:ellipsize="end"
                     android:maxLines="1"
                     android:scrollHorizontally="false"
+                    android:textColor="@android:color/black"
                     />
 
 
-
                 <ImageView
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:id="@+id/deleteView"
+                    android:id="@+id/row_deleted_btn_iv"
                     android:layout_width="30sp"
                     android:layout_height="30sp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/delete2"
-                    android:layout_marginLeft="-40sp"/>
+                    android:layout_marginLeft="-40sp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:src="@drawable/delete2"/>
             </LinearLayout>
-            <!--<ImageView-->
-                <!--android:alpha="0.5"-->
-                <!--android:scaleType="fitXY"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="1dp"-->
-                <!--android:layout_marginLeft="10dp"-->
-                <!--android:layout_marginRight="10dp"-->
-                <!--android:src="@drawable/line_gray"-->
-                <!--android:layout_alignParentBottom="true"/>-->
+
         </RelativeLayout>
 
     </RelativeLayout>

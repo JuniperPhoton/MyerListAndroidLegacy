@@ -1,162 +1,151 @@
 package activity;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.CompoundButton;
-import android.widget.Switch;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.support.v7.app.AlertDialog;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.jputils.LocalSettingHelper;
+import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.Locale;
 
-import helper.AppHelper;
-import helper.ConfigHelper;
-import helper.ContextUtil;
+import util.AppExtension;
+import moe.feng.material.statusbar.StatusBarCompat;
+import util.GlobalListLocator;
 
-public class SettingActivity extends ActionBarActivity
-{
-    private com.rey.material.widget.Switch mShowKeyboardSwitch;
+public class SettingActivity extends AppCompatActivity {
     private com.rey.material.widget.Switch mAddToBottomSwitch;
-    private com.rey.material.widget.Switch mHandHobbitSwitch;
     private TextView mLangText;
+    private TextView mLogoutBtn;
+    private ImageView mMaskView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
-        {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+
+        StatusBarCompat.setUpActivity(this);
+
         setContentView(R.layout.activity_setting);
 
-        mShowKeyboardSwitch =(com.rey.material.widget.Switch)findViewById(R.id.ShowKeyboardSwitch);
-        mAddToBottomSwitch=(com.rey.material.widget.Switch)findViewById(R.id.AddToBottomSwitch);
-        mHandHobbitSwitch=(com.rey.material.widget.Switch)findViewById(R.id.hand_hobbit_switch);
+        //找到开关控件
+        mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.activity_setting_addToEnd_s);
 
-        mLangText=(TextView)findViewById(R.id.lang_btn);
+        mLangText = (TextView) findViewById(R.id.activity_setting_language_tv);
 
-        Boolean showKeyboard=ConfigHelper.getBoolean(ContextUtil.getInstance(), "ShowKeyboard");
-        mShowKeyboardSwitch.setChecked(showKeyboard);
-
-        Boolean addToBottom=ConfigHelper.getBoolean(ContextUtil.getInstance(),"AddToBottom");
+        Boolean addToBottom = LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom");
         mAddToBottomSwitch.setChecked(addToBottom);
 
-        Boolean handUse= ConfigHelper.getBoolean(ContextUtil.getInstance(),"HandHobbit");
-        mHandHobbitSwitch.setChecked(handUse);
-
-        final String langStr=ConfigHelper.getString(ContextUtil.getInstance(),"Language");
-        if(langStr.equals("Chinese"))
-        {
-            mLangText.setText(getString(R.string.chinese));
+        //找到语言
+        final String langStr = LocalSettingHelper.getString(AppExtension.getInstance(), "Language");
+        if (langStr != null) {
+            if (langStr.equals("Chinese")) {
+                mLangText.setText(getString(R.string.chinese));
+            } else {
+                mLangText.setText(getString(R.string.english));
+            }
+        } else {
+            Resources resources = getResources();
+            Configuration config = resources.getConfiguration();
+            if (config.locale == Locale.CHINESE) {
+                mLangText.setText(getString(R.string.chinese));
+            } else {
+                mLangText.setText(getString(R.string.english));
+            }
         }
-        else mLangText.setText("English");
 
-        mLangText.setOnClickListener(new View.OnClickListener()
-        {
+        mLangText.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                AlertDialog.Builder builder=new AlertDialog.Builder(SettingActivity.this);
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                 builder.setTitle(getString(R.string.change_lang));
-//                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
-//                {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i)
-//                    {
-//                        dialogInterface.dismiss();
-//                    }
-//                });
-                builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)}, langStr.equals("Chinese")?1:0, new DialogInterface.OnClickListener()
-                {
+                builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)}, langStr.equals("Chinese") ? 1 : 0, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i)
-                    {
-                        if(i==1)
-                        {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (i == 1) {
                             Resources resources = getResources();
                             Configuration config = resources.getConfiguration();
                             DisplayMetrics dm = resources.getDisplayMetrics();
                             config.locale = Locale.CHINESE;
                             resources.updateConfiguration(config, dm);
-                            ConfigHelper.putString(ContextUtil.getInstance(), "Language", "Chinese");
-                        }
-                        else
-                        {
+                            LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
+                        } else {
                             Resources resources = getResources();
                             Configuration config = resources.getConfiguration();
                             DisplayMetrics dm = resources.getDisplayMetrics();
                             config.locale = Locale.ENGLISH;
                             resources.updateConfiguration(config, dm);
-                            ConfigHelper.putString(ContextUtil.getInstance(), "Language", "English");
+                            LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "English");
                         }
-                        Intent intent=new Intent(SettingActivity.this,MainActivity.class);
-                        intent.putExtra("LOGIN_STATE","AboutToLogin");
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Intent intent = new Intent(SettingActivity.this, MainActivity.class);
+                        intent.putExtra("LOGIN_STATE", "AboutToLogin");
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
                 });
 
                 builder.create().show();
-
             }
         });
 
-        mShowKeyboardSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener()
-        {
+        mLogoutBtn = (TextView) findViewById(R.id.activity_setting_logout_tv);
+        mLogoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
-            {
-                ConfigHelper.putBoolean(ContextUtil.getInstance(), "ShowKeyboard", b);
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                builder.setTitle(R.string.logout_title);
+                builder.setMessage(R.string.logout_content);
+                builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        LocalSettingHelper.putBoolean(getApplicationContext(), "offline_mode", false);
+                        LocalSettingHelper.deleteKey(getApplicationContext(), "email");
+                        LocalSettingHelper.deleteKey(getApplicationContext(), "salt");
+                        LocalSettingHelper.deleteKey(getApplicationContext(), "access_token");
+                        Intent intent = new Intent(getApplicationContext(), StartActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        GlobalListLocator.clearData();
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.create().show();
             }
         });
 
-        mAddToBottomSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener()
-        {
+        mAddToBottomSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
-            {
-                ConfigHelper.putBoolean(ContextUtil.getInstance(), "AddToBottom", b);
+            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
+                LocalSettingHelper.putBoolean(AppExtension.getInstance(), "AddToBottom", b);
             }
 
         });
-
-        mHandHobbitSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b)
-            {
-                ConfigHelper.putBoolean(ContextUtil.getInstance(), "HandHobbit", b);
-                AppHelper.ShowShortToast(getResources().getString(R.string.rebootHint));
-            }
-        });
-
-
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
     }
+
     @Override
 
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
     }

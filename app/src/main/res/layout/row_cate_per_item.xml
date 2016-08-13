@@ -1,0 +1,82 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/row_cate_per_cv"
+    android:layout_width="match_parent"
+    android:layout_height="50sp"
+    card_view:cardBackgroundColor="@color/cate_per_title_backgrd"
+    card_view:cardCornerRadius="0dp"
+    card_view:cardElevation="0dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/row_cate_per_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/raw_cate_per_rl"
+                android:layout_width="50sp"
+                android:layout_height="50sp">
+
+                <view.CircleView
+                    android:id="@+id/raw_cate_per_cv"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="20sp" />
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/raw_cate_per_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20sp"
+                android:layout_marginRight="80sp"
+                android:background="@drawable/shape_edited_text_tran_backgrd"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/row_cate_per_deleteView"
+                android:layout_width="50sp"
+                android:layout_height="30sp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_column="1"
+                android:layout_gravity="center"
+                android:src="@drawable/delete2" />
+
+            <ImageView
+                android:id="@+id/row_cate_per_hamView"
+                android:layout_width="50sp"
+                android:layout_height="30sp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_column="1"
+                android:layout_gravity="center"
+                android:src="@drawable/ham" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

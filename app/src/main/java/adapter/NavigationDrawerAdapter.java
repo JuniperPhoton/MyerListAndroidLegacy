@@ -1,161 +1,128 @@
 package adapter;
 
-
-import android.content.res.Configuration;
-import android.content.res.Resources;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.myerlistandroid.R;
 
 import java.util.List;
-import java.util.Locale;
 
-import helper.ContextUtil;
-import model.NavigationItem;
+import interfaces.INavigationDrawerCallback;
+import model.ToDoCategory;
+import util.AppExtension;
+import view.CircleView;
 
 
-public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.ViewHolder>
-{
+public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.DrawerViewHolder> {
 
-    private List<NavigationItem> mData;
-    private NavigationDrawerCallbacks mNavigationDrawerCallbacks;
-    private NavigationDrawerOtherCallbacks mNavigationDrawerOtherCallbacks;
-    private View mSelectedView;
+    private static final int IS_FOOTER = 3;
+    private static final int IS_NORMAL = 1;
+
+    private List<ToDoCategory> mData;
+
+    //这些是 MainActivity
+    private INavigationDrawerCallback mINavigationDrawerCallback;
+
+    //选中的 View
+    private CardView mSelectedCardView;
+
+    //选中的项
     private int mSelectedPosition;
 
-    public NavigationDrawerAdapter(List<NavigationItem> data)
-    {
+    public NavigationDrawerAdapter(INavigationDrawerCallback callback, List<ToDoCategory> data) {
         mData = data;
+        mINavigationDrawerCallback = callback;
     }
 
-    public NavigationDrawerCallbacks getNavigationDrawerCallbacks()
-    {
-        return mNavigationDrawerCallbacks;
-    }
-
-    public void setNavigationDrawerCallbacks(NavigationDrawerCallbacks navigationDrawerCallbacks)
-    {
-        mNavigationDrawerCallbacks = navigationDrawerCallbacks;
-    }
-
-    public NavigationDrawerOtherCallbacks getOtherNavigationDrawerCallbacks()
-    {
-        return mNavigationDrawerOtherCallbacks;
-    }
-
-    public void setOtherNavigationDrawerCallbacks(NavigationDrawerOtherCallbacks navigationDrawerCallbacks)
-    {
-        mNavigationDrawerOtherCallbacks = navigationDrawerCallbacks;
-    }
-
+    //创建每一项的容器
     @Override
-    public NavigationDrawerAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
-    {
+    public DrawerViewHolder onCreateViewHolder(ViewGroup viewGroup, final int viewType) {
+
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_drawer, viewGroup, false);
-        final ViewHolder viewHolder = new ViewHolder(v);
-        viewHolder.linearLayout.setOnClickListener(new View.OnClickListener()
-                                                   {
-                                                       @Override
-                                                       public void onClick(View v)
-                                                       {
-                                                           mSelectedPosition = viewHolder.getPosition();
+        final DrawerViewHolder drawerViewHolder = new DrawerViewHolder(v, viewType);
 
-                                                           if (mSelectedView != null)
-                                                           {
-                                                               ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
-                                                               ((ImageView)mSelectedView.findViewById(R.id.item_select)).setVisibility(View.INVISIBLE);
-                                                           }
+        //点击选中的时候发生
+        drawerViewHolder.rootLayout.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mSelectedPosition = drawerViewHolder.getAdapterPosition();
 
+                        if (viewType == IS_FOOTER) {
+                            if (mINavigationDrawerCallback != null) {
+                                mINavigationDrawerCallback.onFooterSelected();
+                                return;
+                            }
+                        }
 
-                                                           //v.setSelected(true);
+                        //上一个选中的变为透明色
+                        if (mSelectedCardView != null) {
+                            mSelectedCardView.setCardBackgroundColor(Color.TRANSPARENT);
+                        }
 
-                                                           mSelectedView = (CardView)v.getParent();
+                        mSelectedCardView = (CardView) view.getParent();
 
-                                                           if (mNavigationDrawerCallbacks != null)
-                                                           {
-                                                               mNavigationDrawerCallbacks.onNavigationDrawerItemSelected(viewHolder.getPosition());
-                                                           }
-                                                           if(mNavigationDrawerOtherCallbacks!=null)
-                                                           {
-                                                               mNavigationDrawerOtherCallbacks.OnSelectedOther(viewHolder.getPosition());
-                                                           }
-                                                       }
-                                                   }
+                        if (mINavigationDrawerCallback != null) {
+                            mINavigationDrawerCallback.onDrawerMainItemSelected(mSelectedPosition);
+                        }
+                    }
+                }
         );
-        //viewHolder.cardView.setCardBackgroundColor(R.drawable.row_selector);
-
-        return viewHolder;
+        return drawerViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(NavigationDrawerAdapter.ViewHolder viewHolder, int i)
-    {
-        viewHolder.textView.setText(mData.get(i).getText());
-        Resources resources = ContextUtil.getInstance().getResources();
-        Configuration config = resources.getConfiguration();
-        if(config.locale==Locale.SIMPLIFIED_CHINESE)
-        {
-            TextPaint textPaint=viewHolder.textView.getPaint();
-            textPaint.setFakeBoldText(false);
-        }
+    public void onBindViewHolder(DrawerViewHolder drawerViewHolder, int position) {
+        //设置抽屉每一项的 UI
+        drawerViewHolder.textView.setText(mData.get(position).getName());
+        drawerViewHolder.cateView.setColor(mData.get(position).getColor());
 
-        viewHolder.imageView.setImageDrawable(mData.get(i).getDrawable());
-        if (mSelectedPosition == i && mNavigationDrawerCallbacks!=null)
-        {
-            if (mSelectedView != null)
-            {
-                ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.myDrawerBackground));
-            }
-            mSelectedPosition = i;
-            mSelectedView = viewHolder.cardView;
-            ((CardView)mSelectedView).setCardBackgroundColor(ContextUtil.getInstance().getResources().getColor(R.color.MyerListGray));
-            ((ImageView)mSelectedView.findViewById(R.id.item_select)).setVisibility(View.VISIBLE);
+        if (mSelectedPosition == position && mINavigationDrawerCallback != null) {
+            mSelectedCardView = drawerViewHolder.cardView;
+            mSelectedCardView.setCardBackgroundColor(ContextCompat.getColor(AppExtension.getInstance(),R.color.DrawerSelectedBackground));
         }
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (position == mData.size() - 1) {
+            return IS_FOOTER;
+        } else return IS_NORMAL;
+    }
 
-    public void selectPosition(int position)
-    {
+    public void selectPosition(int position) {
         mSelectedPosition = position;
         notifyItemChanged(position);
     }
 
-    public void deleteToDo(String id)
-    {
-
-    }
-
-
-
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return mData != null ? mData.size() : 0;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder
-    {
+    //表示 Recycler 里的每一项的容器
+    public static class DrawerViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
-        public ImageView imageView;
+        public CircleView cateView;
         public CardView cardView;
-        public LinearLayout linearLayout;
+        public LinearLayout rootLayout;
 
-        public ViewHolder(View itemView)
-        {
+        public int viewType;
+
+        public DrawerViewHolder(View itemView, int type) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.item_name);
-            imageView=(ImageView) itemView.findViewById(R.id.item_icon);
-            cardView=(CardView)itemView.findViewById(R.id.navigation_card_view);
-            linearLayout=(LinearLayout) cardView.findViewById(R.id.navigationitem_layout);
+            textView = (TextView) itemView.findViewById(R.id.fragment_drawer_account_tv);
+            cateView = (CircleView) itemView.findViewById(R.id.item_icon);
+            cardView = (CardView) itemView.findViewById(R.id.row_cate_per_first_cv);
+            rootLayout = (LinearLayout) cardView.findViewById(R.id.navigationitem_layout);
+            viewType = type;
         }
     }
-
 }

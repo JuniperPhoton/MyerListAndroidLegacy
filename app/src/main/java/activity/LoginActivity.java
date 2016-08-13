@@ -1,203 +1,335 @@
 package activity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.juniper.myerlistandroid.R;
+import com.juniperphoton.jputils.DataHelper;
+import com.juniperphoton.jputils.LocalSettingHelper;
+import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.security.NoSuchAlgorithmException;
 
-import helper.AppHelper;
-import helper.ConfigHelper;
-import helper.DataHelper;
-import helper.PostHelper;
+import api.CloudServices;
+import exception.APIException;
+import util.AppExtension;
+import interfaces.IRequestCallback;
+import moe.feng.material.statusbar.StatusBarCompat;
+import util.ToastService;
 
 
-public class LoginActivity extends AppCompatActivity implements PostHelper.OnCheckResponseCallback, PostHelper.OnGetSaltResponseCallback, PostHelper.OnLoginResponseCallback, PostHelper.OnRegisterCallback
-{
+public class LoginActivity extends AppCompatActivity {
+    private final boolean DEBUG_ENABLE = false;
+
     private EditText mEmailBox;
     private EditText mPasswordBox;
     private EditText mConfirmPsBox;
     private TextView mTitleView;
-    private ProgressDialog progressDialog;
+    private ProgressDialog mprogressDialog;
+    private TextView mForgetPwdTextView;
 
-    private boolean isToRegister=true;
+    private boolean isToRegister = true;
 
-    private final boolean DEBUG_ENABLE=false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+        StatusBarCompat.setUpActivity(this);
 
         setContentView(R.layout.activity_login);
 
-        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.LOLLIPOP)
-        {
-            CardView toLoginCard=(CardView)findViewById(R.id.loginBtn_cardview);
-            LinearLayout.LayoutParams layoutParamsForTop=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParamsForTop.setMargins(40,60,40,0);
-            layoutParamsForTop.height=140;
-            toLoginCard.setLayoutParams(layoutParamsForTop);
+        mEmailBox = (EditText) findViewById(R.id.activity_login_email_tv);
+        mPasswordBox = (EditText) findViewById(R.id.activity_login_ps_et);
+
+        if(DEBUG_ENABLE){
+            mEmailBox.setText("dengweichao@hotmail.com");
+            mPasswordBox.setText("windfantasy");
         }
 
+        mConfirmPsBox = (EditText) findViewById(R.id.activity_login_rps_et);
+        mTitleView = (TextView) findViewById(R.id.activity_login_loginTitle_tv);
+        mForgetPwdTextView=(TextView)findViewById(R.id.activity_login_forget_tv);
+        mForgetPwdTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
+                builder.setTitle(getResources().getString(R.string.forget_pwd_title));
+                builder.setMessage(getResources().getString(R.string.forget_pwd_content));
+                builder.setPositiveButton(getResources().getString(R.string.forget_pwd_send_email), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setType("message/rfc822");
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"dengweichao@hotmail.com"}); // recipients
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Change my password in MyerList");
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                        startActivity(Intent.createChooser(emailIntent, "Choose app to send an email"));
+                    }
+                });
+                builder.setNegativeButton(getResources().getString(R.string.forget_pwd_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+            }
+        });
 
-        mEmailBox=(EditText)findViewById(R.id.emailbox);
-        mPasswordBox=(EditText)findViewById(R.id.psbox);
-        mConfirmPsBox=(EditText)findViewById(R.id.confirmpsbox);
-        mTitleView=(TextView)findViewById(R.id.logintitle);
-
-        Intent intent=getIntent();
-        String state=intent.getStringExtra("LOGIN_STATE");
-        if(state.equals("ToLogin"))
-        {
+        Intent intent = getIntent();
+        String state = intent.getStringExtra("LOGIN_STATE");
+        if (state.equals("ToLogin")) {
             mTitleView.setText(getResources().getString(R.string.loginBtn));
             mConfirmPsBox.setVisibility(View.GONE);
-            isToRegister=false;
+            isToRegister = false;
         }
-        else mTitleView.setText(getResources().getString(R.string.registerBtn));
+        else
+            mTitleView.setText(getResources().getString(R.string.registerBtn));
 
-        progressDialog=new ProgressDialog(this,ProgressDialog.STYLE_SPINNER);
-
-
+        mprogressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
     }
+
     @Override
 
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
     }
 
-    public void loginClick(View view) throws NoSuchAlgorithmException
-    {
-
-        if(!isToRegister)
-        {
-            if(!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString()))
-            {
-                if(DataHelper.IsEmailFormat(mEmailBox.getText().toString()))
-                {
-                    if(!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString()))
-                    {
-                        progressDialog.setMessage(getResources().getString(R.string.loading_hint));
-                        progressDialog.show();
-                        PostHelper.CheckExist(this,mEmailBox.getText().toString());
-                    }
-                    else AppHelper.ShowShortToast("Please input password");
-                }
-                else AppHelper.ShowShortToast("Please input valid email");
-            }
+    public void login_Click(View view) throws NoSuchAlgorithmException {
+        if (!isDataValid()) {
+            return;
         }
-        else if(isToRegister)
-        {
-            if(!DataHelper.IsStringNullOrEmpty(mEmailBox.getText().toString()))
-            {
-                if(DataHelper.IsEmailFormat(mEmailBox.getText().toString()))
-                {
-                    if(!DataHelper.IsStringNullOrEmpty(mPasswordBox.getText().toString()))
-                    {
-                        if(!DataHelper.IsStringNullOrEmpty(mConfirmPsBox.getText().toString()))
-                        {
-                            if(mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString()))
-                            {
-                                progressDialog.setMessage(getResources().getString(R.string.loading_hint));
-                                progressDialog.show();
-                                PostHelper.Register(this, mEmailBox.getText().toString(),mPasswordBox.getText().toString());
-                            }
-                            else AppHelper.ShowShortToast(getString(R.string.two_ps_match));
+        //login directly
+        if (!isToRegister) {
+
+            mprogressDialog.setMessage(getResources().getString(R.string.loading_hint));
+            mprogressDialog.show();
+
+            CloudServices.checkExist(mEmailBox.getText().toString(), new IRequestCallback() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    onCheckEmailResponse(response);
+                }
+            });
+        }
+        else {
+            mprogressDialog.setMessage(getResources().getString(R.string.loading_hint));
+            mprogressDialog.show();
+            CloudServices.register(mEmailBox.getText().toString(),
+                    mPasswordBox.getText().toString(),
+                    new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            onRegisteredResponse(jsonObject);
                         }
-                        else AppHelper.ShowShortToast(getString(R.string.confirm_ps_lost));
-                    }
-                    else AppHelper.ShowShortToast(getString(R.string.ps_lost));
+                    });
+        }
+    }
+
+    private boolean isDataValid() {
+        if (DataHelper.isStringNullOrEmpty(mEmailBox.getText().toString())) {
+            ToastService.sendToast(getString(R.string.hint_input_email));
+            return false;
+        }
+        if (!DataHelper.isEmailFormat(mEmailBox.getText().toString())) {
+            ToastService.sendToast(getString(R.string.hint_email_not_invalid));
+            return false;
+        }
+        if (DataHelper.isStringNullOrEmpty(mPasswordBox.getText().toString())) {
+            ToastService.sendToast(getString(R.string.hint_input_psd));
+            return false;
+        }
+        if (isToRegister && DataHelper.isStringNullOrEmpty(mConfirmPsBox.getText().toString())) {
+            ToastService.sendToast(getString(R.string.hint_input_repsd));
+            return false;
+        }
+        if (isToRegister && !(mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString()))) {
+            ToastService.sendToast(getString(R.string.hint_psd_not_match));
+            return false;
+        }
+        return true;
+    }
+
+
+    private void onCheckEmailResponse(JSONObject response) {
+        try {
+            if (response == null) throw new APIException();
+
+            boolean isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                boolean isExist = response.getBoolean("isExist");
+                if (isExist) {
+                    CloudServices.getSalt(mEmailBox.getText().toString(),
+                            new IRequestCallback() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    onGotSaltResponse(jsonObject);
+                                }
+                            });
                 }
-                else AppHelper.ShowShortToast(getString(R.string.email_invalid));
+                else {
+                    ToastService.sendToast(getResources().getString(R.string.hint_email_not_exist));
+                }
+            }
+            else {
+                ToastService.sendToast(getResources().getString(R.string.hint_email_not_exist));
             }
         }
-    }
-
-
-    @Override
-    public void OnCheckResponse(boolean check)
-    {
-        if(check)
-        {
-            PostHelper.GetSalt(this,mEmailBox.getText().toString());
+        catch (JSONException e) {
+            e.printStackTrace();
+            mprogressDialog.dismiss();
         }
-        else AppHelper.ShowShortToast(getResources().getString(R.string.user_dont_exist));
-
-        progressDialog.dismiss();
-    }
-
-    @Override
-    public void OnGetSaltResponse(String str) throws NoSuchAlgorithmException
-    {
-        String salt=str;
-        if(!DataHelper.IsStringNullOrEmpty(salt))
-        {
-            PostHelper.Login(this,mEmailBox.getText().toString(),mPasswordBox.getText().toString(),salt);
+        catch (APIException e) {
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+            mprogressDialog.dismiss();
         }
-        else AppHelper.ShowShortToast(getResources().getString(R.string.fail_to_login));
-
-        progressDialog.dismiss();
     }
 
-    @Override
-    public void OnLoginResponse(boolean value)
-    {
-        if(value)
-        {
-            AppHelper.ShowShortToast(getResources().getString(R.string.login_success));
+    //获得 Salt 后并登录
+    private void onGotSaltResponse(final JSONObject response) {
+        try {
+            if (response == null) throw new APIException();
 
-            Intent intent=new Intent(this,MainActivity.class);
-            intent.putExtra("LOGIN_STATE","Logined");
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-        else AppHelper.ShowShortToast(getResources().getString(R.string.fail_to_login));
+            boolean isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                String salt = response.getString("Salt");
 
-        progressDialog.dismiss();
-    }
+                if (!DataHelper.isStringNullOrEmpty(salt)) {
 
-    @Override
-    public void OnRegisteredResponse(boolean isSuccess, String salt)
-    {
-        if(isSuccess)
-        {
-            try
-            {
-                PostHelper.Login(this, ConfigHelper.getString(this, "email"), ConfigHelper.getString(this, "password"), ConfigHelper.getString(this, "salt"));
+                    CloudServices.login(mEmailBox.getText().toString(),
+                            mPasswordBox.getText().toString(),
+                            salt,
+                            new IRequestCallback() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    onLoginResponse(jsonObject);
+                                }
+                            });
+                }
+                else throw new IllegalArgumentException();
             }
-            catch (NoSuchAlgorithmException e)
-            {
-                e.printStackTrace();
+            else throw new IllegalArgumentException();
+        }
+        catch (APIException e) {
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+            mprogressDialog.dismiss();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            ToastService.sendToast(getResources().getString(R.string.hint_login_fail));
+            mprogressDialog.dismiss();
+        }
+    }
+
+    //发出登录请求之后
+    private void onLoginResponse(JSONObject response) {
+        try {
+            if (response == null) throw new APIException();
+
+            boolean isSuccess;
+            isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                JSONObject userObj = response.getJSONObject("UserInfo");
+                if (userObj != null) {
+                    String sid = userObj.getString("sid");
+                    String access_token = userObj.getString("access_token");
+                    LocalSettingHelper.putString(AppExtension.getInstance(), "email", mEmailBox.getText().toString());
+                    LocalSettingHelper.putString(AppExtension.getInstance(), "sid", sid);
+                    LocalSettingHelper.putString(AppExtension.getInstance(), "access_token", access_token);
+                    LocalSettingHelper.deleteKey(AppExtension.getInstance(), "password");
+
+                    ToastService.sendToast(getResources().getString(R.string.login_success));
+
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.putExtra("LOGIN_STATE", "Logined");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+                else throw new IllegalArgumentException();
+            }
+            else {
+                ToastService.sendToast(getResources().getString(R.string.hint_wrong_psd));
             }
         }
-        else AppHelper.ShowShortToast(getResources().getString(R.string.fail_to_register));
+        catch (APIException e) {
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            ToastService.sendToast(getResources().getString(R.string.hint_login_fail));
+        }
+        finally {
+            mprogressDialog.dismiss();
+        }
+    }
 
-        progressDialog.dismiss();
+    //发出注册请求之后
+    private void onRegisteredResponse(JSONObject response) {
+        try {
+            if (response == null) throw new APIException();
+
+            boolean isSuccess;
+            isSuccess = response.getBoolean("isSuccessed");
+            if (isSuccess) {
+                JSONObject userObj = response.getJSONObject("UserInfo");
+                if (userObj != null) {
+                    String salt = userObj.getString("Salt");
+                    LocalSettingHelper.putString(AppExtension.getInstance(),
+                            "email",
+                            mEmailBox.getText().toString());
+                    LocalSettingHelper.putString(AppExtension.getInstance(),
+                            "password",
+                            mPasswordBox.getText().toString());
+
+                    CloudServices.login(LocalSettingHelper.getString(this, "email"),
+                            LocalSettingHelper.getString(this, "password"),
+                            salt,
+                            new IRequestCallback() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    onLoginResponse(jsonObject);
+                                }
+                            });
+                }
+            }
+            else {
+                double code=response.getDouble("error_code");
+                if(code==203){
+                    ToastService.sendToast(getResources().getString(R.string.hint_email_exist));
+                }
+            }
+        }
+        catch (APIException e) {
+            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            ToastService.sendToast(getResources().getString(R.string.hint_register_fail));
+        }
+        finally {
+            mprogressDialog.dismiss();
+        }
     }
 }

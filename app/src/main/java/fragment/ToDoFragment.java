@@ -83,7 +83,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
             @Override
             public void onRefresh() {
                 if (ConfigHelper.ISOFFLINEMODE) {
-                    mRefreshLayout.setRefreshing(false);
+                    stopRefreshing();
                     return;
                 }
                 getAllSchedules();
@@ -223,7 +223,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
 
     public void getAllSchedules() {
         Logger.d(mActivity);
-        mRefreshLayout.setRefreshing(true);
+        showRefreshing();
         mActivity.syncCateAndList();
 
         if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
@@ -236,7 +236,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
                             @Override
                             public void onResponse(JSONObject jsonObject) {
                                 if (jsonObject != null) Logger.d(jsonObject);
-                                mRefreshLayout.setRefreshing(false);
+                                stopRefreshing();
                                 mActivity.onAddedResponse(jsonObject);
                             }
                         });

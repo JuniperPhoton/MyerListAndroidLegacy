@@ -97,9 +97,22 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         initViews(savedInstanceState);
 
-        String access_token = LocalSettingHelper.getString(this, "access_token");
+        String access_token = LocalSettingHelper.getString(MainActivity.this, "access_token");
+        boolean offline = LocalSettingHelper.getBoolean(MainActivity.this, "offline_mode");
 
-        Logger.init(TAG);
+        ConfigHelper.ISOFFLINEMODE = offline;
+
+        //还没有登录/进入离线模式，回到 StartActivity
+        if (!offline && access_token == null) {
+            ConfigHelper.ISOFFLINEMODE = false;
+            Intent intent = new Intent(MainActivity.this, StartActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            //overridePendingTransition(0,0);
+            return;
+        }
 
         if (access_token != null) {
             initToDoFragment(savedInstanceState, true);

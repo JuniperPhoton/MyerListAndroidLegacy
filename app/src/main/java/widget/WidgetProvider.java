@@ -50,7 +50,6 @@ public class WidgetProvider extends AppWidgetProvider {
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
             remoteViews.setOnClickPendingIntent(R.id.widget_ll, pendingIntent);
-            //remoteViews.setOnClickPendingIntent(R.id.widget_list_lv, pendingIntent);
 
             Intent svcIntent = new Intent(context, WidgetService.class);
             svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);

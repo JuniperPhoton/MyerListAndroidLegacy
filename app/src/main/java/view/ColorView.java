@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.juniperphoton.myerlistandroid.R;
 
-import util.AppExtension;
+import common.AppExtension;
 
 /**
  * Created by JuniperPhoton on 2016-07-31.

@@ -37,7 +37,7 @@ dependencies
             compile 'com.android.support:recyclerview-v7:22.2.0'
             compile 'com.getbase:floatingactionbutton:1.9.0'
             compile 'com.github.rey5137:material:1.1.1'
-            compile 'com.loopj.android:android-async-http:1.4.7'
+            compile 'com.loopj.android:android-async-http:1.4.9'
             compile 'com.google.code.gson:gson:2.3.1'
             compile 'com.umeng.analytics:analytics:latest.integration'
             compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'

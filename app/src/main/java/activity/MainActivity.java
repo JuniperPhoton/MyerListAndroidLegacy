@@ -47,7 +47,7 @@ import java.util.TimerTask;
 
 import util.AppUtil;
 import util.ConfigHelper;
-import util.AppExtension;
+import common.AppExtension;
 import model.ToDo;
 import util.GlobalListLocator;
 import moe.feng.material.statusbar.StatusBarCompat;
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
         //没有网络
         if (!AppUtil.isNetworkAvailable(getApplicationContext())) {
-            ToastService.sendToast(getResources().getString(R.string.NoNetworkHint));
+            ToastService.sendShortToast(getResources().getString(R.string.NoNetworkHint));
         }
         //暂存区有待办事项的，同步到云端
         if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Override
     public void onFooterSelected() {
-        //ToastService.sendToast(getResources().getString(R.string.hint_personalize));
+        //ToastService.sendShortToast(getResources().getString(R.string.hint_personalize));
         Intent intent = new Intent(MainActivity.this, CatePersonalizaionActivity.class);
         startActivity(intent);
         mNavigationDrawerFragment.closeDrawer();
@@ -455,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     public void okClick(View v) {
 
         if (mEditedText.getText().toString().isEmpty()) {
-            ToastService.sendToast(getResources().getString(R.string.hint_empty_input));
+            ToastService.sendShortToast(getResources().getString(R.string.hint_empty_input));
             return;
         }
 
@@ -541,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendShortToast(getResources().getString(R.string.hint_request_fail));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -558,7 +558,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 GlobalListLocator.TodosList = listInOrder;
                 mToDoFragment.updateData(listInOrder);
 
-                ToastService.sendToast(getResources().getString(R.string.Synced));
+                ToastService.sendShortToast(getResources().getString(R.string.Synced));
 
                 SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
 
@@ -613,7 +613,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private void addNewToDoToList(ToDo newToDo) {
         mToDoFragment.addToDo(newToDo);
 
-        ToastService.sendToast(getResources().getString(R.string.add_success));
+        ToastService.sendShortToast(getResources().getString(R.string.add_success));
 
         updateListByCategory();
 
@@ -634,7 +634,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendShortToast(getResources().getString(R.string.hint_request_fail));
         }
     }
 
@@ -648,7 +648,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             e.printStackTrace();
         } catch (APIException e) {
             e.printStackTrace();
-            ToastService.sendToast(e.getError());
+            ToastService.sendShortToast(e.getError());
         }
     }
 

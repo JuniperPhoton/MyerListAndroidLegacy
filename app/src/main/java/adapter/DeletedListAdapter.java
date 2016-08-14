@@ -20,7 +20,7 @@ import fragment.DeletedItemFragment;
 import interfaces.IRequestCallback;
 import util.AppUtil;
 import util.ConfigHelper;
-import util.AppExtension;
+import common.AppExtension;
 import model.ToDo;
 import util.GlobalListLocator;
 import util.SerializationName;

@@ -16,7 +16,7 @@ import java.util.List;
 
 import interfaces.INavigationDrawerCallback;
 import model.ToDoCategory;
-import util.AppExtension;
+import common.AppExtension;
 import view.CircleView;
 
 

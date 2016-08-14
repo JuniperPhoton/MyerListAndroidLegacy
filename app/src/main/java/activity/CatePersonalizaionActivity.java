@@ -205,7 +205,7 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
             ProgressDialog dialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
             dialog.setMessage(getResources().getString(R.string.loading_hint));
             dialog.show();
-            CloudServices.updateCates(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), arrayString, new IRequestCallback() {
+            CloudServices.updateCategories(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), arrayString, new IRequestCallback() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
                     if (jsonObject != null) {

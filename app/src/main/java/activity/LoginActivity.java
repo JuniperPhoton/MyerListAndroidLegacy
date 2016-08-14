@@ -3,20 +3,16 @@ package activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.jputils.DataHelper;
 import com.juniperphoton.jputils.LocalSettingHelper;
+import com.juniperphoton.jputils.NetworkSecurityHelper;
 import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
@@ -27,7 +23,7 @@ import java.security.NoSuchAlgorithmException;
 
 import api.CloudServices;
 import exception.APIException;
-import util.AppExtension;
+import common.AppExtension;
 import interfaces.IRequestCallback;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
@@ -150,23 +146,23 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isDataValid() {
         if (DataHelper.isStringNullOrEmpty(mEmailBox.getText().toString())) {
-            ToastService.sendToast(getString(R.string.hint_input_email));
+            ToastService.sendShortToast(getString(R.string.hint_input_email));
             return false;
         }
         if (!DataHelper.isEmailFormat(mEmailBox.getText().toString())) {
-            ToastService.sendToast(getString(R.string.hint_email_not_invalid));
+            ToastService.sendShortToast(getString(R.string.hint_email_not_invalid));
             return false;
         }
         if (DataHelper.isStringNullOrEmpty(mPasswordBox.getText().toString())) {
-            ToastService.sendToast(getString(R.string.hint_input_psd));
+            ToastService.sendShortToast(getString(R.string.hint_input_psd));
             return false;
         }
         if (isToRegister && DataHelper.isStringNullOrEmpty(mConfirmPsBox.getText().toString())) {
-            ToastService.sendToast(getString(R.string.hint_input_repsd));
+            ToastService.sendShortToast(getString(R.string.hint_input_repsd));
             return false;
         }
         if (isToRegister && !(mConfirmPsBox.getText().toString().equals(mPasswordBox.getText().toString()))) {
-            ToastService.sendToast(getString(R.string.hint_psd_not_match));
+            ToastService.sendShortToast(getString(R.string.hint_psd_not_match));
             return false;
         }
         return true;
@@ -190,11 +186,11 @@ public class LoginActivity extends AppCompatActivity {
                             });
                 }
                 else {
-                    ToastService.sendToast(getResources().getString(R.string.hint_email_not_exist));
+                    ToastService.sendShortToast(getResources().getString(R.string.hint_email_not_exist));
                 }
             }
             else {
-                ToastService.sendToast(getResources().getString(R.string.hint_email_not_exist));
+                ToastService.sendShortToast(getResources().getString(R.string.hint_email_not_exist));
             }
         }
         catch (JSONException e) {
@@ -202,7 +198,7 @@ public class LoginActivity extends AppCompatActivity {
             mprogressDialog.dismiss();
         }
         catch (APIException e) {
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendShortToast(getResources().getString(R.string.hint_request_fail));
             mprogressDialog.dismiss();
         }
     }
@@ -218,9 +214,11 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (!DataHelper.isStringNullOrEmpty(salt)) {
 
+                    String psAfterMD5 = NetworkSecurityHelper.get32MD5Str(mPasswordBox.getText().toString());
+                    String psToPost = NetworkSecurityHelper.get32MD5Str(psAfterMD5 + salt);
+
                     CloudServices.login(mEmailBox.getText().toString(),
-                            mPasswordBox.getText().toString(),
-                            salt,
+                            psToPost,
                             new IRequestCallback() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {
@@ -233,12 +231,12 @@ public class LoginActivity extends AppCompatActivity {
             else throw new IllegalArgumentException();
         }
         catch (APIException e) {
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendShortToast(getResources().getString(R.string.hint_request_fail));
             mprogressDialog.dismiss();
         }
         catch (Exception e) {
             e.printStackTrace();
-            ToastService.sendToast(getResources().getString(R.string.hint_login_fail));
+            ToastService.sendShortToast(getResources().getString(R.string.hint_login_fail));
             mprogressDialog.dismiss();
         }
     }
@@ -260,7 +258,7 @@ public class LoginActivity extends AppCompatActivity {
                     LocalSettingHelper.putString(AppExtension.getInstance(), "access_token", access_token);
                     LocalSettingHelper.deleteKey(AppExtension.getInstance(), "password");
 
-                    ToastService.sendToast(getResources().getString(R.string.login_success));
+                    ToastService.sendShortToast(getResources().getString(R.string.login_success));
 
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.putExtra("LOGIN_STATE", "Logined");
@@ -270,15 +268,15 @@ public class LoginActivity extends AppCompatActivity {
                 else throw new IllegalArgumentException();
             }
             else {
-                ToastService.sendToast(getResources().getString(R.string.hint_wrong_psd));
+                ToastService.sendShortToast(getResources().getString(R.string.hint_wrong_psd));
             }
         }
         catch (APIException e) {
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendShortToast(getResources().getString(R.string.hint_request_fail));
         }
         catch (Exception e) {
             e.printStackTrace();
-            ToastService.sendToast(getResources().getString(R.string.hint_login_fail));
+            ToastService.sendShortToast(getResources().getString(R.string.hint_login_fail));
         }
         finally {
             mprogressDialog.dismiss();
@@ -296,16 +294,19 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject userObj = response.getJSONObject("UserInfo");
                 if (userObj != null) {
                     String salt = userObj.getString("Salt");
+
+                    String psAfterMD5 = NetworkSecurityHelper.get32MD5Str(mPasswordBox.getText().toString());
+                    String psToPost = NetworkSecurityHelper.get32MD5Str(psAfterMD5 + salt);
+
                     LocalSettingHelper.putString(AppExtension.getInstance(),
                             "email",
                             mEmailBox.getText().toString());
                     LocalSettingHelper.putString(AppExtension.getInstance(),
                             "password",
-                            mPasswordBox.getText().toString());
+                            psToPost);
 
                     CloudServices.login(LocalSettingHelper.getString(this, "email"),
-                            LocalSettingHelper.getString(this, "password"),
-                            salt,
+                            psToPost,
                             new IRequestCallback() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {
@@ -317,16 +318,16 @@ public class LoginActivity extends AppCompatActivity {
             else {
                 double code=response.getDouble("error_code");
                 if(code==203){
-                    ToastService.sendToast(getResources().getString(R.string.hint_email_exist));
+                    ToastService.sendShortToast(getResources().getString(R.string.hint_email_exist));
                 }
             }
         }
         catch (APIException e) {
-            ToastService.sendToast(getResources().getString(R.string.hint_request_fail));
+            ToastService.sendShortToast(getResources().getString(R.string.hint_request_fail));
         }
         catch (Exception e) {
             e.printStackTrace();
-            ToastService.sendToast(getResources().getString(R.string.hint_register_fail));
+            ToastService.sendShortToast(getResources().getString(R.string.hint_register_fail));
         }
         finally {
             mprogressDialog.dismiss();

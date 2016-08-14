@@ -266,7 +266,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                 public void run() {
                     mDrawerLayout.closeDrawer(mFragmentContainerView);
                 }
-            }, 300);
+            }, 10);
         }
     }
 

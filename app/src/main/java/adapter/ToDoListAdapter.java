@@ -76,7 +76,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
         holder.setID(toDoItem.getID());
 
         final int cateID = toDoItem.getCate();
-        ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
+        ToDoCategory category = GlobalListLocator.getCategoryByCateID(cateID);
 
         if (cateID == 0) {
             holder.mCateCircle.setColor(ContextCompat.getColor(mActivity, R.color.MyerListBlue));

@@ -110,12 +110,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                     Intent.FLAG_ACTIVITY_CLEAR_TASK |
                     Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            //overridePendingTransition(0,0);
             return;
         }
 
         if (access_token != null) {
             initToDoFragment(savedInstanceState, true);
+            GlobalListLocator.updateWidget();
         } else {
             ConfigHelper.ISOFFLINEMODE = true;
             mNavigationDrawerFragment.setupOfflineMode();
@@ -141,8 +141,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     /**
      * Init views
-     *
-     * @param savedInstanceState
      */
     private void initViews(Bundle savedInstanceState) {
         mToolbar = (Toolbar) findViewById(R.id.activity_main_tb);
@@ -248,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     private void updateAddingPaneColorByCateId(int cateID) {
         if (mAddingPaneLayout == null) return;
-        ToDoCategory category = GlobalListLocator.GetCategoryByCateID(cateID);
+        ToDoCategory category = GlobalListLocator.getCategoryByCateID(cateID);
         if (category.getID() != -2) {
             mAddingPaneLayout.setBackgroundColor(category.getColor());
         }
@@ -418,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mToDoAboutToModify = todo;
         showAddingPane(itemPosition);
 
-        ToDoCategory category = GlobalListLocator.GetCategoryByCateID(mToDoAboutToModify.getCate());
+        ToDoCategory category = GlobalListLocator.getCategoryByCateID(mToDoAboutToModify.getCate());
         int catePosition = GlobalListLocator.CategoryList.indexOf(category);
         mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(catePosition).getId());
     }
@@ -520,7 +518,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     //在同步完类类别后调用
     public void syncList() {
         updateRatioButtons();
-        CloudServices.getLatestSchedules(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), new IRequestCallback() {
+        CloudServices.getLatestSchedules(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), false, new IRequestCallback() {
             @Override
             public void onResponse(JSONObject jsonObject) {
                 if (jsonObject != null) Logger.json(jsonObject.toString());
@@ -607,7 +605,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                     final ArrayList<ToDo> list = ToDo.parseJsonObjFromArray(array);
                     CloudServices.getListOrder(
                             LocalSettingHelper.getString(this, "sid"),
-                            LocalSettingHelper.getString(this, "access_token"),
+                            LocalSettingHelper.getString(this, "access_token"), false,
                             new IRequestCallback() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {

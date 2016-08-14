@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_ll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ededed"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/widget_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ededed"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="45sp"
+            android:background="@color/MyerListBlueLight">
+
+            <TextView
+                android:id="@+id/appwidget_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="8dp"
+                android:text="TO-DO"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <!--<android.support.v7.widget.CardView-->
+            <!--xmlns:card_view="http://schemas.android.com/apk/res-auto"-->
+            <!--android:layout_width="45sp"-->
+            <!--android:layout_height="45sp"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--card_view:cardBackgroundColor="@color/MyerListBlueLight"-->
+            <!--card_view:cardCornerRadius="0dp"-->
+            <!--&gt;-->
+
+            <!--<ImageView-->
+            <!--android:id="@+id/widget_refresh_btn"-->
+            <!--android:layout_width="30sp"-->
+            <!--android:layout_height="30sp"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:background="?android:attr/selectableItemBackground"-->
+            <!--android:scaleType="fitXY"-->
+            <!--android:src="@drawable/refresh_white"/>-->
+            <!--</android.support.v7.widget.CardView>-->
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/widget_list_lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
+
+
+    </LinearLayout>
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#909090"
+        android:text="Enjoy your day :D"
+        android:layout_centerInParent="true"
+        android:textSize="20sp" />
+</RelativeLayout>

@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private TextView mAddingTitleTextView;
 
     private RadioGroup mAddingCateRadioGroup;
+    private int mCheckedPosition;
 
     private int mCurrentDisplayedCateID = 0;
     private int mCateIDAboutToAdd = 0;
@@ -83,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private ToDo mToDoAboutToModify;
 
     private int[] mLastCP = new int[2];
+
+    private GestureDetector mDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +136,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mToolbar.setTitle(R.string.cate_default);
         setSupportActionBar(mToolbar);
 
+        initGestureDetector();
+
         mAddingCateRadioGroup = (RadioGroup) findViewById(R.id.fragment_adding_pane_radio);
         mAddingCateRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -148,10 +154,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mAddingCateHintTextView = (TextView) findViewById(R.id.fragment_adding_pane_cate_tv);
         mAddingPaneLayout = (RelativeLayout) findViewById(R.id.activity_main_adding_pane);
         mAddingPaneLayout.setOnTouchListener(new View.OnTouchListener() {
-            //防止触控穿透
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                return true;
+                return mDetector.onTouchEvent(motionEvent);
             }
         });
 
@@ -178,6 +183,54 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 .findFragmentById(R.id.activity_main_fragment_drawer);
         mNavigationDrawerFragment.setup(R.id.activity_main_fragment_drawer,
                 (DrawerLayout) findViewById(R.id.acitivity_main_drawer), mToolbar);
+    }
+
+    private void initGestureDetector() {
+        mDetector = new GestureDetector(this, new GestureDetector.OnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public void onShowPress(MotionEvent e) {
+
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (velocityX <= -100) {
+                    ++mCheckedPosition;
+                    if (mCheckedPosition >= mAddingCateRadioGroup.getChildCount()) {
+                        mCheckedPosition = 0;
+                    }
+                    updateAddingPaneStatus(mCheckedPosition);
+                } else if (velocityX >= 100) {
+                    --mCheckedPosition;
+                    if (mCheckedPosition < 0) {
+                        mCheckedPosition = mAddingCateRadioGroup.getChildCount() - 1;
+                    }
+                    updateAddingPaneStatus(mCheckedPosition);
+                }
+                return true;
+            }
+        });
     }
 
     private void updateAddingPaneColorByCateId(int cateID) {
@@ -249,42 +302,54 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             mAddingCateRadioGroup.addView(circleRadioButton);
         }
         mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(0).getId());
+        mCheckedPosition = 0;
     }
 
-    //抽屉选中一个项的时候
+    /**
+     * 在抽屉选中一个项的时候
+     *
+     * @param position 表示加上所有、个性化、已删除后的列表位置
+     */
     @Override
     public void onDrawerMainItemSelected(int position) {
         ToDoCategory category = GlobalListLocator.CategoryList.get(position);
         mCurrentDisplayedCateID = category.getID();
         mCateIDAboutToAdd = category.getID();
 
+        updateAddingPaneStatus(position);
+
+        //更新添加面板的颜色
+        updateAddingPaneColorByCateId(category.getID());
+
+        updateToolBarAndDrawerColor(category);
+        updateListByCategory();
+    }
+
+    private void updateAddingPaneStatus(int position) {
+        //更新添加面板的单选状态
         RadioButton radioButton = (RadioButton) mAddingCateRadioGroup.getChildAt(position);
         if (radioButton != null) {
             mAddingCateRadioGroup.check(radioButton.getId());
+            mCheckedPosition = position;
         }
+    }
 
-        updateAddingPaneColorByCateId(category.getID());
+    private void updateToolBarAndDrawerColor(ToDoCategory category) {
+        if (category.getID() == 0) {
+            mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
+            mToolbar.setTitle(getResources().getString(R.string.cate_default));
 
-        try {
-            if (category.getID() == 0) {
-                mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
-                mToolbar.setTitle(getResources().getString(R.string.cate_default));
-
-                mAddingPaneLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
-                mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
-            } else if (category.getID() == -1) {
-                switchToDeleteFragment();
-                mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.DeletedColor));
-                mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.DeletedColor));
-                mToolbar.setTitle(getResources().getString(R.string.deleteditems));
-            } else {
-                mToolbar.setBackgroundColor(category.getColor());
-                mNavigationDrawerFragment.updateRootBackgroundColor(category.getColor());
-                mToolbar.setTitle(category.getName());
-            }
-            updateListByCategory();
-        } catch (Exception e) {
-            e.printStackTrace();
+            mAddingPaneLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
+            mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
+        } else if (category.getID() == -1) {
+            switchToDeleteFragment();
+            mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.DeletedColor));
+            mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.DeletedColor));
+            mToolbar.setTitle(getResources().getString(R.string.deleteditems));
+        } else {
+            mToolbar.setBackgroundColor(category.getColor());
+            mNavigationDrawerFragment.updateRootBackgroundColor(category.getColor());
+            mToolbar.setTitle(category.getName());
         }
     }
 

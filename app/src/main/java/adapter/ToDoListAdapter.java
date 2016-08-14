@@ -129,6 +129,8 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
 
         int scrollingX;
 
+        Logger.log(1, "TOUCH", String.valueOf(event.getAction()), null);
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
 
@@ -161,9 +163,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> implements V
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_OUTSIDE:
             case MotionEvent.ACTION_UP:
-
                 onMoveComplete(view, view.getScrollX());
-
                 break;
         }
 

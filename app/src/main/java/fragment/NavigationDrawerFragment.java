@@ -44,12 +44,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import model.ToDoCategory;
-import util.AppExtension;
+import common.AppExtension;
 import util.ConfigHelper;
 import util.GlobalListLocator;
 
 import util.SerializationName;
-import util.ToastService;
 
 public class NavigationDrawerFragment extends Fragment implements INavigationDrawerCallback {
 
@@ -285,7 +284,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     public void syncCatesOrDefault() {
         if (!ConfigHelper.ISOFFLINEMODE) {
-            CloudServices.getCates(LocalSettingHelper.getString(getActivity(), "sid"),
+            CloudServices.getCategories(LocalSettingHelper.getString(getActivity(), "sid"),
                     LocalSettingHelper.getString(getActivity(), "access_token"), new IRequestCallback() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {

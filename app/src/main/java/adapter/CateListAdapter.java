@@ -1,8 +1,6 @@
 package adapter;
 
 import android.support.v4.content.ContextCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +9,12 @@ import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.juniperphoton.myerlistandroid.R;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 import interfaces.IPickColorCallback;
 import model.ToDoCategory;
-import util.AppExtension;
+import common.AppExtension;
 import viewholder.CateListViewHolder;
 import viewholder.CateTextWatcher;
 

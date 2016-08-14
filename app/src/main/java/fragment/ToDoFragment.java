@@ -1,265 +1,268 @@
 package fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.example.juniper.myerlistandroid.R;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.google.gson.reflect.TypeToken;
+import com.juniperphoton.jputils.LocalSettingHelper;
+import com.juniperphoton.jputils.SerializerHelper;
+import com.juniperphoton.myerlistandroid.R;
+import com.orhanobut.logger.Logger;
 
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import activity.MainActivity;
-import helper.ConfigHelper;
-import helper.ContextUtil;
-import helper.GetScheduleAsyncTask;
-import helper.PostHelper;
+import api.CloudServices;
+import interfaces.IRefresh;
+import interfaces.IRequestCallback;
+import util.AppUtil;
+import util.ConfigHelper;
+import common.AppExtension;
 import adapter.ToDoListAdapter;
-import model.Schedule;
+import util.GlobalListLocator;
+import model.ToDo;
+import util.SerializationName;
 
-public class ToDoFragment extends Fragment
-{
-    private Activity mActivity;
-    public RecyclerView mToDoRecyclerView;
-    private View mFragmentContainerView;
-    private ArrayList<Schedule> mMySchedules;
+public class ToDoFragment extends Fragment implements IRefresh {
+    private static String TAG = ToDoFragment.class.getName();
+
+    private MainActivity mActivity;
+    private RecyclerView mToDoRecyclerView;
     private SwipeRefreshLayout mRefreshLayout;
-    private com.getbase.floatingactionbutton.FloatingActionButton add_fab;
+    private FloatingActionButton mAddingFab;
 
-    private AlertDialog mDialog;
-    private EditText mNewMemoText;
+    private LinearLayout mNoItemLayout;
 
-    public ToDoFragment()
-    {
-        // Required empty public constructor
+    @Override
+    public void onAttach(Context activity) {
+        super.onAttach(activity);
+        Log.d(ToDoFragment.class.getName(), "onAttach");
+        try {
+            if (activity instanceof MainActivity) {
+                mActivity = (MainActivity) activity;
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(ToDoFragment.class.getName(), "onCreate");
+        Logger.init(TAG);
     }
 
     @Override
-    public void onPause()
-    {
-        super.onPause();
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_to_do_list, container, false);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
-    {
-        // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_to_do, container, false);
-        mToDoRecyclerView =(RecyclerView)view.findViewById(R.id.todoList);
+        Log.d(ToDoFragment.class.getName(), "onCreateView");
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mNoItemLayout = (LinearLayout) view.findViewById(R.id.fragment_todo_no_item_ll);
+        mNoItemLayout.setVisibility(View.GONE);
 
-        mToDoRecyclerView.setLayoutManager(layoutManager);
-        mToDoRecyclerView.setHasFixedSize(true);
-
-        mRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-        {
+        //设置下拉刷新控件
+        mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_todo_refresh_srl);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh()
-            {
-                if(ConfigHelper.ISOFFLINEMODE)
-                {
-                    mRefreshLayout.setRefreshing(false);
+            public void onRefresh() {
+                if (ConfigHelper.ISOFFLINEMODE) {
+                    stopRefreshing();
                     return;
                 }
-                GetAllSchedules();
+                getAllSchedules();
             }
         });
 
-
-        add_fab=(com.getbase.floatingactionbutton.FloatingActionButton)view.findViewById(R.id.pink_icon);
-        add_fab.setOnClickListener(new View.OnClickListener()
-        {
+        //设置 FAB
+        mAddingFab = (FloatingActionButton) view.findViewById(R.id.fragment_todo_add_fab);
+        mAddingFab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                    View dialogView=(View)LayoutInflater.from(getActivity()).inflate(R.layout.add_todo_dialog, (ViewGroup)getActivity().findViewById(R.id.dialog_title));
+            public void onClick(View view) {
 
-                    TextView titleText=(TextView)dialogView.findViewById(R.id.dialog_title_text);
-                    titleText.setText(getResources().getString(R.string.new_memo_title));
+                StringBuffer sb = new StringBuffer();
+                for (ToDo todo : ((ToDoListAdapter)mToDoRecyclerView.getAdapter()).getData()) {
+                    sb.append(todo.getContent()).append(",");
+                }
+                Logger.d(sb.toString());
 
-                    mNewMemoText=(EditText)dialogView.findViewById(R.id.newMemoEdit);
-                    mNewMemoText.setHint(R.string.new_memo_hint);
-
-                    Button okBtn=(Button)dialogView.findViewById(R.id.add_ok_btn);
-                    okBtn.setText(R.string.ok_btn);
-                    okBtn.setOnClickListener(new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View view)
-                        {
-                            mDialog.dismiss();
-                            if(ConfigHelper.ISOFFLINEMODE)
-                            {
-                                Schedule newToAdd=new Schedule();
-                                newToAdd.setContent(mNewMemoText.getText().toString());
-                                newToAdd.setIsDone(false);
-                                newToAdd.setID(java.util.UUID.randomUUID().toString());
-                                ((MainActivity)getActivity()).OnAddedResponse(true, newToAdd);
-                            }
-                            else
-                            {
-                                PostHelper.AddMemo(getActivity(), ConfigHelper.getString(getActivity(), "sid"), mNewMemoText.getText().toString(), "0");
-                            }
-
-                        }
-                    });
-
-                    Button cancelBtn=(Button)dialogView.findViewById(R.id.add_cancel_btn);
-                    cancelBtn.setText(R.string.cancel_btn);
-                    cancelBtn.setOnClickListener(new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View view)
-                        {
-                            if (mDialog != null)
-                            {
-                                mDialog.dismiss();
-                            }
-                        }
-                    });
-
-                    if(!ConfigHelper.getBoolean(ContextUtil.getInstance(),"HandHobbit"))
-                    {
-                        LinearLayout linearLayout=(LinearLayout)dialogView.findViewById(R.id.dialog_btn_layout);
-
-                        RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
-                        layoutParams.setMargins(20,0,0,0);
-                        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                        linearLayout.setLayoutParams(layoutParams);
-                    }
-
-                    AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
-                    mDialog=builder.setView((dialogView)).show();
-
-                    if(ConfigHelper.getBoolean(ContextUtil.getInstance(),"ShowKeyboard"))
-                    {
-                        mNewMemoText.requestFocus();
-                        Timer timer=new Timer();
-                        timer.schedule(new TimerTask()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                InputMethodManager inputMethodManager = (InputMethodManager) mNewMemoText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                                inputMethodManager.showSoftInput(mNewMemoText, 0);
-                            }
-                        },333);
-                    }
+                mActivity.showAddingPane(null);
             }
         });
-        if(!ConfigHelper.getBoolean(ContextUtil.getInstance(),"HandHobbit"))
-        {
-           RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
-            layoutParams.setMargins(16,0,0,16);
+
+        if (!LocalSettingHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            layoutParams.setMargins(16, 0, 0, 16);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            add_fab.setLayoutParams(layoutParams);
+            mAddingFab.setLayoutParams(layoutParams);
         }
 
-        ((OnCreatedTodoViewListener)mActivity).OnCreatedToDo(true);
+        onInit();
+
+        initRV(view);
 
         return view;
     }
 
-    public void SetUpData(ArrayList<Schedule> data)
-    {
-        mMySchedules=data;
-        if(mToDoRecyclerView!=null)
-        {
-            mToDoRecyclerView.setAdapter(new ToDoListAdapter(mMySchedules,mActivity,this));
-            StopRefreshing();
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(ToDoFragment.class.getName(), "onPause");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d(ToDoFragment.class.getName(), "onDetach");
+    }
+
+    public void onInit() {
+        try {
+            Type type = new TypeToken<ArrayList<ToDo>>() {
+            }.getType();
+            ArrayList<ToDo> list = SerializerHelper.deSerializeFromFile(
+                    type, AppExtension.getInstance(), SerializationName.TODOS_FILE_NAME);
+
+            if (list != null) {
+                GlobalListLocator.TodosList = list;
+            }
+            //已经登陆了
+            if (!ConfigHelper.ISOFFLINEMODE) {
+                updateData(GlobalListLocator.TodosList);
+            }
+            //离线模式
+            else {
+                updateData(GlobalListLocator.TodosList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    public void updateNoItemUI() {
+        if((mToDoRecyclerView.getAdapter())!=null){
+            if (((ToDoListAdapter)mToDoRecyclerView.getAdapter()).getData().size() == 0) {
+                mNoItemLayout.setVisibility(View.VISIBLE);
+            } else {
+                mNoItemLayout.setVisibility(View.GONE);
+            }
+        }
+        else{
+            mNoItemLayout.setVisibility(View.GONE);
+        }
+    }
 
-    public void ShowRefreshing()
-    {
-        if(mRefreshLayout!=null)
-        {
+    private void initRV(View view) {
+        mToDoRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_todo_rv);
+        mToDoRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false));
+
+        ToDoListAdapter adapter = new ToDoListAdapter(GlobalListLocator.TodosList, mActivity, this);
+        mToDoRecyclerView.swapAdapter(adapter, true);
+        updateNoItemUI();
+    }
+
+    public void updateData(ArrayList<ToDo> data) {
+        if (mToDoRecyclerView != null) {
+            mToDoRecyclerView.setAdapter(new ToDoListAdapter(data, mActivity, this));
+
+            stopRefreshing();
+            updateNoItemUI();
+        }
+    }
+
+    public void showRefreshing() {
+        if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(true);
         }
     }
 
-    public void StopRefreshing()
-    {
-        if(mRefreshLayout!=null)
-        {
+    public void stopRefreshing() {
+        if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(false);
         }
     }
 
-    public void EnableRefresh()
-    {
-        if(mRefreshLayout!=null)
-        {
+    public void enableRefresh() {
+        if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(true);
         }
     }
 
-    public void DisableRefresh()
-    {
-        if(mRefreshLayout!=null)
-        {
+    public void disableRefresh() {
+        if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(false);
         }
     }
 
-    public void GetAllSchedules()
-    {
-        //ArrayList newlist=new GetScheduleAsyncTask(this).execute().get();
-        //getActivity().OnGotScheduleResponse(newlist);
-        //PostHelper.GetOrderedSchedules(getActivity(), ConfigHelper.getString(getActivity(), "sid"),ConfigHelper.getString(getActivity(),"access_token"));
+    public int getFABRadius() {
+        return mAddingFab.getWidth() / 2;
     }
 
+    public int[] getFABPostion() {
+        int[] position = new int[2];
+        mAddingFab.getLocationOnScreen(position);
+        return position;
+    }
 
-    @Override
-    public void onAttach(Activity activity)
-    {
-        super.onAttach(activity);
-        try
-        {
-            mActivity=activity;
+    public void getAllSchedules() {
+        Logger.d(mActivity);
+        showRefreshing();
+        mActivity.syncCateAndList();
+
+        if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
+            if (GlobalListLocator.StagedList == null) return;
+            mActivity.setIsAddStagedItems(true);
+            for (ToDo todo : GlobalListLocator.StagedList) {
+                CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(),
+                        todo.getContent(), "0", todo.getCate(),
+                        new IRequestCallback() {
+                            @Override
+                            public void onResponse(JSONObject jsonObject) {
+                                if (jsonObject != null) Logger.d(jsonObject);
+                                stopRefreshing();
+                                mActivity.onAddedResponse(jsonObject);
+                            }
+                        });
+            }
+            GlobalListLocator.StagedList.clear();
+            SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializationName.STAGED_FILE_NAME);
         }
-        catch (ClassCastException e)
-        {
+    }
 
+    public ArrayList<ToDo> getData() {
+        if ((mToDoRecyclerView.getAdapter()) != null) {
+            return ((ToDoListAdapter)mToDoRecyclerView.getAdapter()).getData();
+        } else {
+            return null;
         }
     }
 
-    @Override
-    public void onDetach()
-    {
-        super.onDetach();
+    public void updateContent(ToDo toDo) {
+        if ((mToDoRecyclerView.getAdapter()) != null) {
+            ((ToDoListAdapter)mToDoRecyclerView.getAdapter()).updateToDo(toDo);
+        }
     }
 
-    public interface OnCreatedTodoViewListener
-    {
-        void OnCreatedToDo(boolean b);
+    public void addToDo(ToDo todo) {
+        if ((mToDoRecyclerView.getAdapter()) != null) {
+            ((ToDoListAdapter)mToDoRecyclerView.getAdapter()).addToDo(todo);
+        }
     }
-
 }

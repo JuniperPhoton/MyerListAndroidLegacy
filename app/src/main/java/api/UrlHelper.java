@@ -1,8 +1,5 @@
 package api;
 
-/**
- * Created by dengw on 3/6/2016.
- */
 public class UrlHelper {
     public final static String domain = "juniperphoton.net";
     public static String UserCheckExist = "http://" + domain + "/schedule/User/CheckUserExist/v1?";

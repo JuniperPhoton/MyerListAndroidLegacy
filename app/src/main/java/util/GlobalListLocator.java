@@ -10,6 +10,7 @@ import com.juniperphoton.myerlistandroid.R;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import common.AppExtension;
 import model.ToDo;
 import model.ToDoCategory;
 

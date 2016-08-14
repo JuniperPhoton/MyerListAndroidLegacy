@@ -8,6 +8,8 @@ import com.juniperphoton.jputils.LocalSettingHelper;
 
 import java.util.Locale;
 
+import common.AppExtension;
+
 public class ConfigHelper {
     public static boolean ISOFFLINEMODE = true;
     public static boolean ISLOADLISTONCE = false;

@@ -4,6 +4,7 @@ import com.juniperphoton.jputils.NetworkSecurityHelper;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.SyncHttpClient;
 import com.orhanobut.logger.Logger;
 
 import org.json.JSONObject;
@@ -102,13 +103,13 @@ public class CloudServices {
         });
     }
 
-    public static void getLatestSchedules(final String sid, final String access_token, final IRequestCallback callback) {
+    public static void getLatestSchedules(final String sid, final String access_token, boolean isSync, final IRequestCallback callback) {
         RequestParams params = new RequestParams();
         params.put("sid", sid);
 
         Logger.d("getLatestSchedules");
-
-        mClient.post(UrlHelper.ScheduleGetUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
+        AsyncHttpClient client = isSync ? new SyncHttpClient() : mClient;
+        client.post(UrlHelper.ScheduleGetUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
                 callback.onResponse(null);
@@ -121,13 +122,14 @@ public class CloudServices {
         });
     }
 
-    public static void getListOrder(String sid, String access_token, final IRequestCallback callback) {
+    public static void getListOrder(String sid, String access_token,boolean isSync, final IRequestCallback callback) {
         RequestParams params = new RequestParams();
         params.put("sid", sid);
 
         Logger.d("getListOrder");
 
-        mClient.post(UrlHelper.ScheduleGetOrderUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
+        AsyncHttpClient client = isSync ? new SyncHttpClient() : mClient;
+        client.post(UrlHelper.ScheduleGetOrderUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 callback.onResponse(response);
@@ -249,12 +251,13 @@ public class CloudServices {
         });
     }
 
-    public static void getCategories(String sid, String access_token, final IRequestCallback callback) {
+    public static void getCategories(String sid, String access_token,boolean isSync, final IRequestCallback callback) {
         RequestParams params = new RequestParams();
 
         Logger.d("getCategories");
 
-        mClient.get(UrlHelper.UserGetCateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
+        AsyncHttpClient client = isSync ? new SyncHttpClient() : mClient;
+        client.get(UrlHelper.UserGetCateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
                 callback.onResponse(jsonObject);

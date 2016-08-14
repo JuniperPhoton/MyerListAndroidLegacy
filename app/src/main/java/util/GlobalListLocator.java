@@ -1,5 +1,7 @@
 package util;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import common.AppExtension;
 import model.ToDo;
 import model.ToDoCategory;
+import widget.WidgetProvider;
 
 public class GlobalListLocator {
     public static ArrayList<ToDo> TodosList;
@@ -21,6 +24,17 @@ public class GlobalListLocator {
     public static ArrayList<ToDoCategory> CategoryList;
 
     public static boolean onUpdateCateList;
+
+    /**
+     * 更新小部件
+     */
+    public static void updateWidget() {
+        int widgetIDs[] = AppWidgetManager.getInstance(AppExtension.getInstance())
+                .getAppWidgetIds(new ComponentName(AppExtension.getInstance(), WidgetProvider.class));
+        for (int id : widgetIDs) {
+            AppWidgetManager.getInstance(AppExtension.getInstance()).notifyAppWidgetViewDataChanged(id, R.id.widget_list_lv);
+        }
+    }
 
     /**
      * 更新待办事项
@@ -40,8 +54,6 @@ public class GlobalListLocator {
 
     /**
      * 删除待办事项
-     *
-     * @param toDo 待办事项
      */
     public static void deleteToDo(String id) {
         int index = getToDoById(id);
@@ -66,13 +78,14 @@ public class GlobalListLocator {
      * 序列化数据到文件保存
      */
     public static void saveData() {
+        //updateWidget();
         SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
         SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializationName.CATES_FILE_NAME);
         SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializationName.STAGED_FILE_NAME);
         SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.DeletedList, SerializationName.DELETED_FILE_NAME);
     }
 
-    public static void clearData(){
+    public static void clearData() {
         AppExtension.getInstance().deleteFile(SerializationName.TODOS_FILE_NAME);
         AppExtension.getInstance().deleteFile(SerializationName.CATES_FILE_NAME);
         AppExtension.getInstance().deleteFile(SerializationName.STAGED_FILE_NAME);
@@ -119,7 +132,7 @@ public class GlobalListLocator {
      * @param id ID
      * @return 类别
      */
-    public static ToDoCategory GetCategoryByCateID(int id) {
+    public static ToDoCategory getCategoryByCateID(int id) {
         if (CategoryList == null) {
             return null;
         }

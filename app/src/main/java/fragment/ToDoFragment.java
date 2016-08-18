@@ -103,6 +103,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
                 getAllSchedules();
             }
         });
+        mRefreshLayout.setEnabled(false);
 
         //设置 FAB
         mAddingFab = (FloatingActionButton) view.findViewById(R.id.fragment_todo_add_fab);
@@ -211,28 +212,39 @@ public class ToDoFragment extends Fragment implements IRefresh {
                 if (mCurrentMovingView == null) {
                     mCurrentMovingView = view;
                 }
-
+                disableRefresh();
                 mCurrentMovingView.scrollTo(-(int) dx, 0);
 
+                Log.d(TAG, "IS REFRESING ENABLE:" + mRefreshLayout.isEnabled());
+
                 if (mCurrentMovingView.getScrollX() < -150 && !mTurnGreen) {
-                    playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.greenImageView), true);
+                    mTurnGreen = true;
+                    mTurnRed = false;
+                    playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.greenImageView));
                 } else if (mCurrentMovingView.getScrollX() > 150 && !mTurnRed) {
-                    playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.redImageView), false);
+                    mTurnRed = true;
+                    mTurnGreen = false;
+                    playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.redImageView));
                 }
             }
 
             @Override
             public void onMoveCompleted(View view, int position) {
 
+                enableRefresh();
                 ToDo toDoItem = getData().get(position);
 
                 if (mTurnGreen) {
-                    playFadebackAnimation((ImageView) mCurrentMovingView.findViewById(R.id.greenImageView), true);
+                    mTurnGreen = false;
+                    playFadebackAnimation((ImageView) mCurrentMovingView.findViewById(R.id.greenImageView));
                 } else if (mTurnRed) {
-                    playFadebackAnimation((ImageView) mCurrentMovingView.findViewById(R.id.redImageView), false);
+                    mTurnRed = false;
+                    playFadebackAnimation((ImageView) mCurrentMovingView.findViewById(R.id.redImageView));
                 }
 
                 playGoBackAnimation(mCurrentMovingView, mCurrentMovingView.getScrollX());
+
+                Log.d(TAG, "IS REFRESING ENABLE:" + mRefreshLayout.isEnabled());
 
                 //Finish
                 if (mCurrentMovingView.getScrollX() < -150) {
@@ -277,15 +289,15 @@ public class ToDoFragment extends Fragment implements IRefresh {
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
                 if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10) {
-                    enableRefresh();
+
                 }
             }
         });
         valueAnimator.start();
     }
 
-    private void playColorChangeAnimation(final ImageView v, boolean isGreen) {
-        v.setAlpha(1f);
+    private void playColorChangeAnimation(final ImageView imageView) {
+        imageView.setAlpha(1f);
         AnimationSet animationSet = new AnimationSet(false);
 
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.1f, 1.0f);
@@ -293,7 +305,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                v.setVisibility(View.VISIBLE);
+                imageView.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -307,31 +319,25 @@ public class ToDoFragment extends Fragment implements IRefresh {
             }
         });
         animationSet.addAnimation(alphaAnimation);
-        v.startAnimation(animationSet);
-
-        if (isGreen)
-            mTurnGreen = true;
-        else
-            mTurnRed = true;
+        imageView.startAnimation(animationSet);
     }
 
-    private void playFadebackAnimation(final ImageView v, final boolean isGreen) {
+    private void playFadebackAnimation(final ImageView imageView) {
         AnimationSet animationSet = new AnimationSet(false);
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
         alphaAnimation.setDuration(700);
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                v.setVisibility(View.VISIBLE);
+                imageView.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                v.setVisibility(View.INVISIBLE);
-                if (isGreen)
-                    mTurnGreen = false;
-                else
-                    mTurnRed = false;
+                imageView.setVisibility(View.INVISIBLE);
+                mTurnGreen = false;
+                mTurnRed = false;
+                enableRefresh();
             }
 
             @Override
@@ -340,7 +346,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
             }
         });
         animationSet.addAnimation(alphaAnimation);
-        v.startAnimation(animationSet);
+        imageView.startAnimation(animationSet);
     }
 
     public void updateData(ArrayList<ToDo> data) {

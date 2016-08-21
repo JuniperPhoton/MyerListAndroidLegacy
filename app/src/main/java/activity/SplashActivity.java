@@ -8,7 +8,7 @@ import android.os.Handler;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.myerlistandroid.R;
 
-import util.ConfigHelper;
+import util.AppConfig;
 
 /**
  * Created by dengw on 2016-07-01.
@@ -24,11 +24,11 @@ public class SplashActivity extends Activity {
                 String access_token = LocalSettingHelper.getString(SplashActivity.this, "access_token");
                 boolean offline = LocalSettingHelper.getBoolean(SplashActivity.this, "offline_mode");
 
-                ConfigHelper.ISOFFLINEMODE = offline;
+                AppConfig.ISOFFLINEMODE = offline;
 
                 //还没有登录/进入离线模式，回到 StartActivity
                 if (!offline && access_token == null) {
-                    ConfigHelper.ISOFFLINEMODE = false;
+                    AppConfig.ISOFFLINEMODE = false;
                     Intent intent = new Intent(SplashActivity.this, StartActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                             Intent.FLAG_ACTIVITY_CLEAR_TASK |

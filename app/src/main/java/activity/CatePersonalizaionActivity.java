@@ -35,7 +35,7 @@ import model.ColorWrapper;
 import model.ToDoCategory;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.AppUtil;
-import util.ConfigHelper;
+import util.AppConfig;
 import util.GlobalListLocator;
 
 /**
@@ -198,14 +198,14 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
             jsonArray.add(jsonObject);
         }
         String arrayString = MODIFIED_CATE_JSON_STRING_FORE + jsonArray.toString() + "}";
-        if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(this)) {
+        if (!AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(this)) {
             GlobalListLocator.makeAndUpdateCategoryList((ArrayList<ToDoCategory>) mAdapter.getNormalData());
             GlobalListLocator.onUpdateCateList = true;
 
             ProgressDialog dialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
             dialog.setMessage(getResources().getString(R.string.loading_hint));
             dialog.show();
-            CloudServices.updateCategories(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), arrayString, new IRequestCallback() {
+            CloudServices.updateCategories(AppConfig.getSid(), AppConfig.getAccessToken(), arrayString, new IRequestCallback() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
                     if (jsonObject != null) {

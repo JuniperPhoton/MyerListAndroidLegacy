@@ -2,7 +2,7 @@ package common;
 
 import android.app.Application;
 
-import util.ConfigHelper;
+import util.AppConfig;
 import util.GlobalListLocator;
 
 public class AppExtension extends Application implements Thread.UncaughtExceptionHandler  {
@@ -20,7 +20,7 @@ public class AppExtension extends Application implements Thread.UncaughtExceptio
         super.onCreate();
         instance = this;
 
-        ConfigHelper.configAppSetting();
+        AppConfig.configAppSetting();
         GlobalListLocator.restoreData();
     }
 

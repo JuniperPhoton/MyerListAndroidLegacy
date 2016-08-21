@@ -1,215 +1,143 @@
 package listener;
 
-import android.animation.ValueAnimator;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
-
-import com.juniperphoton.myerlistandroid.R;
+import android.view.ViewConfiguration;
 
 /**
  * Created by chao on 8/9/2016.
  */
 public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
 
-    private View childView;
-    private RecyclerView touchView;
-    public ToDoItemTouchListener() {
+    private static String TAG = ToDoItemTouchListener.class.getName();
 
+    private int mLastDownX, mLastDownY;
+
+    private int touchSlop;
+    private OnItemClickListener mListener;
+
+    private boolean isSingleTapUp = false;
+
+    private boolean isLongPressUp = false;
+
+    private boolean isMove = false;
+    private boolean moveCompleted = false;
+    private long mDownTime;
+
+    public interface OnItemClickListener {
+        void onPointerDown(View view, int position);
+
+        void onPointerUp(View view, int position);
+
+        void onItemClick(View view, int position);
+
+        void onItemLongClick(View view, int position);
+
+        void onMovingItem(View view, int position, float dx, float dy);
+
+        void onMoveCompleted(View view, int position);
+    }
+
+    public ToDoItemTouchListener(Context context, OnItemClickListener listener) {
+        touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        mListener = listener;
     }
 
     @Override
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-        childView = rv.findChildViewUnder(e.getX(), e.getY());
-        touchView = rv;
-        return true;
-    }
-
-    private boolean mTurnGreen = false;
-    private boolean mTurnRed = false;
-    private boolean mIsSwiping = false;
-    private int startingX;
-
-    @Override
-    public void onTouchEvent(RecyclerView rv, MotionEvent event) {
-        //String id = (String) view.getTag();
-        //findDataById(id);
-
-        int scrollingX;
-
-        switch (event.getAction()) {
+        int x = (int) e.getX();
+        int y = (int) e.getY();
+        View childView = rv.findChildViewUnder(e.getX(), e.getY());
+        switch (e.getAction()) {
+            /**
+             *  如果是ACTION_DOWN事件，那么记录当前按下的位置，
+             *  记录当前的系统时间。
+             */
             case MotionEvent.ACTION_DOWN:
-
-                startingX = (int) event.getRawX();
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-                mIsSwiping = true;
-
-                scrollingX = childView.getScrollX();
-                int dx = (int) event.getRawX() - startingX;
-
-
-                childView.scrollBy(-dx, 0);
-
-//                if (scrollingX < -20) {
-//                    if (mIRefreshCallback != null) {
-//                        mIRefreshCallback.disableRefresh();
-//                    }
-//                }
-
-                startingX = (int) event.getRawX();
-
-                if (scrollingX < -150 && !mTurnGreen) {
-                    playColorChangeAnimation((ImageView) childView.findViewById(R.id.greenImageView), true);
-                } else if (scrollingX > 150 && !mTurnRed) {
-                    playColorChangeAnimation((ImageView) childView.findViewById(R.id.redImageView), false);
+                mLastDownX = x;
+                mLastDownY = y;
+                mDownTime = System.currentTimeMillis();
+                isMove = false;
+                if (mListener != null) {
+                    mListener.onPointerDown(childView, rv.getChildLayoutPosition(childView));
                 }
-
                 break;
-            case MotionEvent.ACTION_UP:
-
-                //onMoveComplete(childView, childView.getScrollX());
-
+            /**
+             *  如果是ACTION_MOVE事件，此时根据TouchSlop判断用户在按下的时候是否滑动了，
+             *  如果滑动了，那么接下来将不处理点击事件
+             */
+            case MotionEvent.ACTION_MOVE:
+                if (Math.abs(x - mLastDownX) > touchSlop || Math.abs(y - mLastDownY) > touchSlop) {
+                    isMove = true;
+                    Log.d(TAG, "IS MOVING:" + String.valueOf(isMove));
+                }
                 break;
-
+            /**
+             *  如果是ACTION_UP事件，那么根据isMove标志位来判断是否需要处理点击事件；
+             *  根据系统时间的差值来判断是哪种事件，如果按下事件超过1ms，则认为是长按事件，
+             *  否则是单击事件。
+             */
             case MotionEvent.ACTION_CANCEL:
-
-                //onMoveComplete(childView, childView.getScrollX());
-
+            case MotionEvent.ACTION_UP:
+                if (mListener != null) {
+                    mListener.onPointerUp(childView, rv.getChildLayoutPosition(childView));
+                }
+                Log.d(TAG, "ACTION_UP onInterceptTouchEvent");
+                Log.d(TAG, "IS MOVING:" + String.valueOf(isMove));
+                if (isMove) {
+                    moveCompleted = true;
+                    break;
+                }
+                if (System.currentTimeMillis() - mDownTime > 1000) {
+                    isLongPressUp = true;
+                } else {
+                    isSingleTapUp = true;
+                }
                 break;
         }
-
-    }
-
-    private void onMoveComplete(View v, float scrollLeft) {
-//        if (mCurrentToDo == null)
-//            return;
-//
-//        //Finish
-//        if (scrollLeft < -150) {
-//
-//            ImageView lineview = (ImageView) v.findViewById(R.id.lineView);
-//            if (mCurrentToDo.getIsDone()) {
-//                lineview.setVisibility(View.GONE);
-//                mCurrentToDo.setIsDone(false);
-//            } else {
-//                lineview.setVisibility(View.VISIBLE);
-//                mCurrentToDo.setIsDone(true);
-//            }
-//
-//            if (!ConfigHelper.ISOFFLINEMODE) {
-//                CloudServices.setDone(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
-//                        LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"), mCurrentToDo.getID(),
-//                        mCurrentToDo.getIsDone() ? "1" : "0",
-//                        new IRequestCallback() {
-//                            @Override
-//                            public void onResponse(JSONObject jsonObject) {
-//                                //mCurrentActivity.onSetDone(jsonObject);
-//                            }
-//                        });
-//            }
-//        }
-//        //Delete
-//        else if (scrollLeft > 150) {
-//            deleteToDo(mCurrentToDo.getID());
-//        }
-//
-//        if (mTurnGreen) {
-//            playFadebackAnimation((ImageView) v.findViewById(R.id.greenImageView), true);
-//        } else if (mTurnRed) {
-//            playFadebackAnimation((ImageView) v.findViewById(R.id.redImageView), false);
-//        }
-//
-//        playGoBackAnimation(v, scrollLeft);
-//        SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializationName.TODOS_FILE_NAME);
-    }
-
-    private void playGoBackAnimation(final View v, final float left) {
-        ValueAnimator valueAnimator = ValueAnimator.ofInt((int) left, 0);
-        valueAnimator.setDuration(700);
-        valueAnimator.setInterpolator(new DecelerateInterpolator());
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
-                if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10) {
-//                    if (mIRefreshCallback != null) {
-//                        mIRefreshCallback.enableRefresh();
-//                    }
-                    mIsSwiping = false;
+        if (isSingleTapUp) {
+            //根据触摸坐标来获取childView
+            isSingleTapUp = false;
+            if (childView != null) {
+                //回调mListener#onItemClick方法
+                mListener.onItemClick(childView, rv.getChildLayoutPosition(childView));
+                return true;
+            }
+            return false;
+        }
+        if (isLongPressUp) {
+            isLongPressUp = false;
+            if (childView != null) {
+                mListener.onItemLongClick(childView, rv.getChildLayoutPosition(childView));
+                return true;
+            }
+            return false;
+        }
+        if (isMove) {
+            if (!moveCompleted) {
+                if (childView != null) {
+                    mListener.onMovingItem(childView, rv.getChildLayoutPosition(childView), x - mLastDownX, y - mLastDownY);
+                }
+            } else {
+                isMove = false;
+                moveCompleted = false;
+                Log.d(TAG, "isMove,and completed");
+                if (childView != null) {
+                    mListener.onMoveCompleted(childView, rv.getChildLayoutPosition(childView));
                 }
             }
-        });
-        valueAnimator.start();
+        }
+        return false;
     }
 
-    private void playColorChangeAnimation(final ImageView v, boolean isGreen) {
-        v.setAlpha(1f);
-        AnimationSet animationSet = new AnimationSet(false);
-
-        AlphaAnimation alphaAnimation = new AlphaAnimation(0.1f, 1.0f);
-        alphaAnimation.setDuration(700);
-        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                v.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        animationSet.addAnimation(alphaAnimation);
-        v.startAnimation(animationSet);
-
-        if (isGreen)
-            mTurnGreen = true;
-        else
-            mTurnRed = true;
-    }
-
-    private void playFadebackAnimation(final ImageView v, final boolean isGreen) {
-        AnimationSet animationSet = new AnimationSet(false);
-        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
-        alphaAnimation.setDuration(700);
-        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                v.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                v.setVisibility(View.INVISIBLE);
-                if (isGreen)
-                    mTurnGreen = false;
-                else
-                    mTurnRed = false;
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        animationSet.addAnimation(alphaAnimation);
-        v.startAnimation(animationSet);
+    @Override
+    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
     }
 
     @Override
     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
     }
 }

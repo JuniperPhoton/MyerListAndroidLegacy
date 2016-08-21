@@ -47,7 +47,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import util.AppUtil;
-import util.ConfigHelper;
+import util.AppConfig;
 import common.AppExtension;
 import model.ToDo;
 import util.GlobalListLocator;
@@ -100,11 +100,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         String access_token = LocalSettingHelper.getString(MainActivity.this, "access_token");
         boolean offline = LocalSettingHelper.getBoolean(MainActivity.this, "offline_mode");
 
-        ConfigHelper.ISOFFLINEMODE = offline;
+        AppConfig.ISOFFLINEMODE = offline;
 
         //还没有登录/进入离线模式，回到 StartActivity
         if (!offline && access_token == null) {
-            ConfigHelper.ISOFFLINEMODE = false;
+            AppConfig.ISOFFLINEMODE = false;
             Intent intent = new Intent(MainActivity.this, StartActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                     Intent.FLAG_ACTIVITY_CLEAR_TASK |
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             initToDoFragment(savedInstanceState, true);
             GlobalListLocator.updateWidget();
         } else {
-            ConfigHelper.ISOFFLINEMODE = true;
+            AppConfig.ISOFFLINEMODE = true;
             mNavigationDrawerFragment.setupOfflineMode();
             initToDoFragment(savedInstanceState, false);
         }
@@ -281,11 +281,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             ToastService.sendShortToast(getResources().getString(R.string.NoNetworkHint));
         }
         //暂存区有待办事项的，同步到云端
-        if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
+        if (!AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
             if (GlobalListLocator.StagedList == null) return;
             misStagedItemsNotEmpty = true;
             for (ToDo todo : GlobalListLocator.StagedList) {
-                CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(),
+                CloudServices.addToDo(AppConfig.getSid(), AppConfig.getAccessToken(),
                         todo.getContent(), "0", todo.getCate(),
                         new IRequestCallback() {
                             @Override
@@ -518,7 +518,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     //在同步完类类别后调用
     public void syncList() {
         updateRatioButtons();
-        CloudServices.getLatestSchedules(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), false, new IRequestCallback() {
+        CloudServices.getLatestSchedules(AppConfig.getSid(), AppConfig.getAccessToken(), false, new IRequestCallback() {
             @Override
             public void onResponse(JSONObject jsonObject) {
                 if (jsonObject != null) Logger.json(jsonObject.toString());
@@ -551,26 +551,22 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         mToDoAboutToAdded = tempToDo;
 
-        //离线模式
-        if (ConfigHelper.ISOFFLINEMODE) {
+        if (mAboutToModify) {
+            mToDoFragment.updateContent(tempToDo);
+        } else {
             addNewToDoToList(tempToDo);
         }
         //非离线模式，发送请求
-        else {
-            if (mAboutToModify) {
-                mToDoFragment.updateContent(tempToDo);
-            } else {
-                addNewToDoToList(tempToDo);
-                CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), mEditedText.getText().toString(),
-                        "0", mCateIDAboutToAdd,
-                        new IRequestCallback() {
-                            @Override
-                            public void onResponse(JSONObject jsonObject) {
-                                if (jsonObject != null) Logger.d(jsonObject);
-                                onAddedResponse(jsonObject);
-                            }
-                        });
-            }
+        if (AppConfig.canSync()) {
+            CloudServices.addToDo(AppConfig.getSid(), AppConfig.getAccessToken(), mEditedText.getText().toString(),
+                    "0", mCateIDAboutToAdd,
+                    new IRequestCallback() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            if (jsonObject != null) Logger.d(jsonObject);
+                            onAddedResponse(jsonObject);
+                        }
+                    });
         }
         dismissDialog();
     }

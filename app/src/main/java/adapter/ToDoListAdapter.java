@@ -1,18 +1,9 @@
 package adapter;
 
-import android.animation.ValueAnimator;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,7 +24,7 @@ import api.CloudServices;
 import fragment.ToDoFragment;
 import interfaces.IRequestCallback;
 import model.ToDoCategory;
-import util.ConfigHelper;
+import util.AppConfig;
 import common.AppExtension;
 import model.ToDo;
 import util.GlobalListLocator;
@@ -117,7 +108,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
         GlobalListLocator.DeletedList.add(0, todoToDelete);
         GlobalListLocator.saveData();
 
-        if (!ConfigHelper.ISOFFLINEMODE) {
+        if (!AppConfig.canSync()) {
             CloudServices.setDelete(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
                     LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
                     todoToDelete.getID(),
@@ -175,10 +166,10 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
         }
         Logger.d(sb.toString());
 
-        if (!ConfigHelper.ISOFFLINEMODE) {
+        if (!AppConfig.ISOFFLINEMODE) {
             CloudServices.updateContent(
-                    ConfigHelper.getSid(),
-                    ConfigHelper.getAccessToken(),
+                    AppConfig.getSid(),
+                    AppConfig.getAccessToken(),
                     toDo.getID(),
                     toDo.getContent(),
                     toDo.getCate(),

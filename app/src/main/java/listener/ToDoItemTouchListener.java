@@ -1,21 +1,11 @@
 package listener;
 
-import android.animation.ValueAnimator;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.nfc.Tag;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
-
-import com.juniperphoton.myerlistandroid.R;
 
 /**
  * Created by chao on 8/9/2016.
@@ -38,6 +28,10 @@ public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
     private long mDownTime;
 
     public interface OnItemClickListener {
+        void onPointerDown(View view, int position);
+
+        void onPointerUp(View view, int position);
+
         void onItemClick(View view, int position);
 
         void onItemLongClick(View view, int position);
@@ -56,6 +50,7 @@ public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
         int x = (int) e.getX();
         int y = (int) e.getY();
+        View childView = rv.findChildViewUnder(e.getX(), e.getY());
         switch (e.getAction()) {
             /**
              *  如果是ACTION_DOWN事件，那么记录当前按下的位置，
@@ -66,6 +61,9 @@ public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
                 mLastDownY = y;
                 mDownTime = System.currentTimeMillis();
                 isMove = false;
+                if (mListener != null) {
+                    mListener.onPointerDown(childView, rv.getChildLayoutPosition(childView));
+                }
                 break;
             /**
              *  如果是ACTION_MOVE事件，此时根据TouchSlop判断用户在按下的时候是否滑动了，
@@ -82,7 +80,11 @@ public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
              *  根据系统时间的差值来判断是哪种事件，如果按下事件超过1ms，则认为是长按事件，
              *  否则是单击事件。
              */
+            case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
+                if (mListener != null) {
+                    mListener.onPointerUp(childView, rv.getChildLayoutPosition(childView));
+                }
                 Log.d(TAG, "ACTION_UP onInterceptTouchEvent");
                 Log.d(TAG, "IS MOVING:" + String.valueOf(isMove));
                 if (isMove) {
@@ -96,9 +98,6 @@ public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
                 }
                 break;
         }
-
-        View childView = rv.findChildViewUnder(e.getX(), e.getY());
-
         if (isSingleTapUp) {
             //根据触摸坐标来获取childView
             isSingleTapUp = false;
@@ -123,8 +122,8 @@ public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
                     mListener.onMovingItem(childView, rv.getChildLayoutPosition(childView), x - mLastDownX, y - mLastDownY);
                 }
             } else {
-                isMove=false;
-                moveCompleted=false;
+                isMove = false;
+                moveCompleted = false;
                 Log.d(TAG, "isMove,and completed");
                 if (childView != null) {
                     mListener.onMoveCompleted(childView, rv.getChildLayoutPosition(childView));

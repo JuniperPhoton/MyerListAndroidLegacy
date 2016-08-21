@@ -1,7 +1,5 @@
 package widget;
 
-import android.app.LauncherActivity;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,14 +16,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import activity.MainActivity;
 import api.CloudServices;
 import exception.APIException;
 import interfaces.IRequestCallback;
 import model.ToDo;
-import util.ConfigHelper;
+import util.AppConfig;
 import util.GlobalListLocator;
 
 /**
@@ -47,7 +43,7 @@ public class WidgetListFactory implements RemoteViewsService.RemoteViewsFactory 
     private void getToDos() {
         mData = new ArrayList<>();
 
-        CloudServices.getLatestSchedules(ConfigHelper.getSid(), ConfigHelper.getAccessToken(), true, new IRequestCallback() {
+        CloudServices.getLatestSchedules(AppConfig.getSid(), AppConfig.getAccessToken(), true, new IRequestCallback() {
             @Override
             public void onResponse(JSONObject jsonObject) {
                 if (jsonObject != null) Logger.json(jsonObject.toString());

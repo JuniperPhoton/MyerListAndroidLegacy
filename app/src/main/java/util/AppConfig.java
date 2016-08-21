@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import common.AppExtension;
 
-public class ConfigHelper {
+public class AppConfig {
     public static boolean ISOFFLINEMODE = true;
     public static boolean ISLOADLISTONCE = false;
 
@@ -20,6 +20,10 @@ public class ConfigHelper {
 
     public static String getAccessToken() {
         return LocalSettingHelper.getString(AppExtension.getInstance(), "access_token");
+    }
+
+    public static boolean canSync(){
+        return !AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance());
     }
 
     public static void configAppSetting() {

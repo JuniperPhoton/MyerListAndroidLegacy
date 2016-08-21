@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -38,7 +37,7 @@ import interfaces.IRefresh;
 import interfaces.IRequestCallback;
 import listener.ToDoItemTouchListener;
 import util.AppUtil;
-import util.ConfigHelper;
+import util.AppConfig;
 import common.AppExtension;
 import adapter.ToDoListAdapter;
 import util.GlobalListLocator;
@@ -96,27 +95,19 @@ public class ToDoFragment extends Fragment implements IRefresh {
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (ConfigHelper.ISOFFLINEMODE) {
+                if (AppConfig.ISOFFLINEMODE) {
                     stopRefreshing();
                     return;
                 }
                 getAllSchedules();
             }
         });
-        mRefreshLayout.setEnabled(false);
 
         //设置 FAB
         mAddingFab = (FloatingActionButton) view.findViewById(R.id.fragment_todo_add_fab);
         mAddingFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                StringBuffer sb = new StringBuffer();
-                for (ToDo todo : ((ToDoListAdapter) mToDoRecyclerView.getAdapter()).getData()) {
-                    sb.append(todo.getContent()).append(",");
-                }
-                Logger.d(sb.toString());
-
                 mActivity.showAddingPane(null);
             }
         });
@@ -159,7 +150,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
                 GlobalListLocator.TodosList = list;
             }
             //已经登陆了
-            if (!ConfigHelper.ISOFFLINEMODE) {
+            if (!AppConfig.ISOFFLINEMODE) {
                 updateData(GlobalListLocator.TodosList);
             }
             //离线模式
@@ -203,6 +194,16 @@ public class ToDoFragment extends Fragment implements IRefresh {
             }
 
             @Override
+            public void onPointerDown(View view, int position) {
+
+            }
+
+            @Override
+            public void onPointerUp(View view, int position) {
+                enableRefresh();
+            }
+
+            @Override
             public void onItemLongClick(View view, int position) {
 
             }
@@ -218,13 +219,22 @@ public class ToDoFragment extends Fragment implements IRefresh {
                 Log.d(TAG, "IS REFRESING ENABLE:" + mRefreshLayout.isEnabled());
 
                 if (mCurrentMovingView.getScrollX() < -150 && !mTurnGreen) {
-                    mTurnGreen = true;
-                    mTurnRed = false;
-                    playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.greenImageView));
+                    if (!mTurnGreen) {
+                        mTurnGreen = true;
+                        playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.greenImageView), true);
+                    }
+                    if (mTurnRed) {
+                        mTurnRed = false;
+                        playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.redImageView), false);
+                    }
+
                 } else if (mCurrentMovingView.getScrollX() > 150 && !mTurnRed) {
                     mTurnRed = true;
-                    mTurnGreen = false;
-                    playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.redImageView));
+                    playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.redImageView), true);
+                    if (mTurnGreen) {
+                        mTurnGreen = false;
+                        playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.greenImageView), false);
+                    }
                 }
             }
 
@@ -236,10 +246,10 @@ public class ToDoFragment extends Fragment implements IRefresh {
 
                 if (mTurnGreen) {
                     mTurnGreen = false;
-                    playFadebackAnimation((ImageView) mCurrentMovingView.findViewById(R.id.greenImageView));
+                    playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.greenImageView), false);
                 } else if (mTurnRed) {
                     mTurnRed = false;
-                    playFadebackAnimation((ImageView) mCurrentMovingView.findViewById(R.id.redImageView));
+                    playColorChangeAnimation((ImageView) mCurrentMovingView.findViewById(R.id.redImageView), false);
                 }
 
                 playGoBackAnimation(mCurrentMovingView, mCurrentMovingView.getScrollX());
@@ -258,16 +268,11 @@ public class ToDoFragment extends Fragment implements IRefresh {
                         toDoItem.setIsDone(true);
                     }
 
-                    if (!ConfigHelper.ISOFFLINEMODE) {
+                    if (AppConfig.canSync()) {
                         CloudServices.setDone(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
                                 LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"), toDoItem.getID(),
                                 toDoItem.getIsDone() ? "1" : "0",
-                                new IRequestCallback() {
-                                    @Override
-                                    public void onResponse(JSONObject jsonObject) {
-                                        //mActivity.onSetDone(jsonObject);
-                                    }
-                                });
+                                null);
                     }
                 }
                 //Delete
@@ -288,56 +293,32 @@ public class ToDoFragment extends Fragment implements IRefresh {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 v.scrollTo((int) valueAnimator.getAnimatedValue(), 0);
-                if (Math.abs((int) valueAnimator.getAnimatedValue()) < 10) {
-
-                }
             }
         });
         valueAnimator.start();
     }
 
-    private void playColorChangeAnimation(final ImageView imageView) {
+    private void playColorChangeAnimation(final ImageView imageView, final boolean show) {
         imageView.setAlpha(1f);
         AnimationSet animationSet = new AnimationSet(false);
-
-        AlphaAnimation alphaAnimation = new AlphaAnimation(0.1f, 1.0f);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(show ? 0.1f : 1f, show ? 1f : 0.1f);
         alphaAnimation.setDuration(700);
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                imageView.setVisibility(View.VISIBLE);
+                if (show) {
+                    imageView.setVisibility(View.VISIBLE);
+                } else {
+                    imageView.setVisibility(View.INVISIBLE);
+                    mTurnGreen = false;
+                    mTurnRed = false;
+                    enableRefresh();
+                }
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
 
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        animationSet.addAnimation(alphaAnimation);
-        imageView.startAnimation(animationSet);
-    }
-
-    private void playFadebackAnimation(final ImageView imageView) {
-        AnimationSet animationSet = new AnimationSet(false);
-        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
-        alphaAnimation.setDuration(700);
-        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                imageView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                imageView.setVisibility(View.INVISIBLE);
-                mTurnGreen = false;
-                mTurnRed = false;
-                enableRefresh();
             }
 
             @Override
@@ -397,11 +378,11 @@ public class ToDoFragment extends Fragment implements IRefresh {
         showRefreshing();
         mActivity.syncCateAndList();
 
-        if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
+        if (!AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
             if (GlobalListLocator.StagedList == null) return;
             mActivity.setIsAddStagedItems(true);
             for (ToDo todo : GlobalListLocator.StagedList) {
-                CloudServices.addToDo(ConfigHelper.getSid(), ConfigHelper.getAccessToken(),
+                CloudServices.addToDo(AppConfig.getSid(), AppConfig.getAccessToken(),
                         todo.getContent(), "0", todo.getCate(),
                         new IRequestCallback() {
                             @Override

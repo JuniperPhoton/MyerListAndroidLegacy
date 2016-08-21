@@ -18,8 +18,7 @@ import activity.MainActivity;
 import api.CloudServices;
 import fragment.DeletedItemFragment;
 import interfaces.IRequestCallback;
-import util.AppUtil;
-import util.ConfigHelper;
+import util.AppConfig;
 import common.AppExtension;
 import model.ToDo;
 import util.GlobalListLocator;
@@ -49,7 +48,6 @@ public class DeletedListAdapter extends BaseItemDraggableAdapter<ToDo> {
 
     @Override
     protected void convert(BaseViewHolder baseViewHolder, final ToDo toDo) {
-        if (toDo == null) return;
 
         DeleteItemViewHolder holder = (DeleteItemViewHolder) baseViewHolder;
         final int position = holder.getAdapterPosition();
@@ -72,21 +70,22 @@ public class DeletedListAdapter extends BaseItemDraggableAdapter<ToDo> {
         holder.mReDoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                GlobalListLocator.TodosList.add(toDo);
+
                 //非离线模式下，同步
-                if (!ConfigHelper.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
-                    CloudServices.addToDo(ConfigHelper.getSid(),
-                            ConfigHelper.getAccessToken(),
+                if (AppConfig.canSync()) {
+                    CloudServices.addToDo(AppConfig.getSid(),
+                            AppConfig.getAccessToken(),
                             mData.get(position).getContent(),
-                            "0",
-                            0,
+                            toDo.getIsDone() ? "1" : "0",
+                            toDo.getCate(),
                             new IRequestCallback() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {
                                     ((MainActivity) mCurrentActivity).onReCreatedToDo(jsonObject);
                                 }
                             });
-                } else {
-                    GlobalListLocator.TodosList.add(GlobalListLocator.TodosList.size(), mData.get(position));
                 }
 
                 mData.remove(toDo);

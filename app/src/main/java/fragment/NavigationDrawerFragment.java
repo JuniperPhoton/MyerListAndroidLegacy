@@ -45,7 +45,7 @@ import java.util.ArrayList;
 
 import model.ToDoCategory;
 import common.AppExtension;
-import util.ConfigHelper;
+import util.AppConfig;
 import util.GlobalListLocator;
 
 import util.SerializationName;
@@ -283,7 +283,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     }
 
     public void syncCatesOrDefault() {
-        if (!ConfigHelper.ISOFFLINEMODE) {
+        if (!AppConfig.ISOFFLINEMODE) {
             CloudServices.getCategories(LocalSettingHelper.getString(getActivity(), "sid"),
                     LocalSettingHelper.getString(getActivity(), "access_token"), false, new IRequestCallback() {
                         @Override

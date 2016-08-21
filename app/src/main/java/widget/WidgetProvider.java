@@ -3,38 +3,14 @@ package widget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.widget.RemoteViews;
-import android.widget.SimpleAdapter;
 
-import com.juniperphoton.jputils.LocalSettingHelper;
-import com.juniperphoton.jputils.SerializerHelper;
 import com.juniperphoton.myerlistandroid.R;
-import com.orhanobut.logger.Logger;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import activity.MainActivity;
-import api.CloudServices;
-import common.AppExtension;
-import exception.APIException;
-import interfaces.IRequestCallback;
-import model.ToDo;
-import util.ConfigHelper;
-import util.GlobalListLocator;
-import util.SerializationName;
-import util.ToastService;
 
 public class WidgetProvider extends AppWidgetProvider {
 

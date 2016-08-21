@@ -31,12 +31,16 @@ public class CloudServices {
         mClient.post(UrlHelper.UserCheckExist, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
         });
     }
@@ -50,12 +54,16 @@ public class CloudServices {
         mClient.post(UrlHelper.UserGetSalt, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
         });
     }
@@ -72,12 +80,16 @@ public class CloudServices {
         mClient.post(UrlHelper.UserRegisterUri, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
-                callback.onResponse(object);
+                if (callback != null) {
+                    callback.onResponse(object);
+                }
             }
         });
     }
@@ -93,12 +105,16 @@ public class CloudServices {
         mClient.post(UrlHelper.UserLoginUri, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
-                callback.onResponse(object);
+                if (callback != null) {
+                    callback.onResponse(object);
+                }
             }
         });
     }
@@ -112,17 +128,21 @@ public class CloudServices {
         client.post(UrlHelper.ScheduleGetUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
         });
     }
 
-    public static void getListOrder(String sid, String access_token,boolean isSync, final IRequestCallback callback) {
+    public static void getListOrder(String sid, String access_token, boolean isSync, final IRequestCallback callback) {
         RequestParams params = new RequestParams();
         params.put("sid", sid);
 
@@ -132,12 +152,16 @@ public class CloudServices {
         client.post(UrlHelper.ScheduleGetOrderUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int code, Header[] headers, Throwable throwable, JSONObject object) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
         });
     }
@@ -159,12 +183,16 @@ public class CloudServices {
         mClient.post(UrlHelper.ScheduleAddUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
         });
 
@@ -180,12 +208,16 @@ public class CloudServices {
         mClient.post(UrlHelper.ScheduleSetOrderUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
         });
     }
@@ -200,12 +232,16 @@ public class CloudServices {
         mClient.post(UrlHelper.ScheduleFinishUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
 
         });
@@ -220,12 +256,16 @@ public class CloudServices {
         mClient.post(UrlHelper.ScheduleDeleteUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
         });
     }
@@ -241,17 +281,21 @@ public class CloudServices {
         mClient.post(UrlHelper.ScheduleUpdateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
         });
     }
 
-    public static void getCategories(String sid, String access_token,boolean isSync, final IRequestCallback callback) {
+    public static void getCategories(String sid, String access_token, boolean isSync, final IRequestCallback callback) {
         RequestParams params = new RequestParams();
 
         Logger.d("getCategories");
@@ -260,12 +304,16 @@ public class CloudServices {
         client.get(UrlHelper.UserGetCateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
-                callback.onResponse(jsonObject);
+                if (callback != null) {
+                    callback.onResponse(jsonObject);
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
         });
     }
@@ -279,12 +327,16 @@ public class CloudServices {
         mClient.post(UrlHelper.UserUpdateCateUri + "sid=" + sid + "&access_token=" + access_token, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.onResponse(response);
+                if (callback != null) {
+                    callback.onResponse(response);
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                callback.onResponse(null);
+                if (callback != null) {
+                    callback.onResponse(null);
+                }
             }
         });
     }

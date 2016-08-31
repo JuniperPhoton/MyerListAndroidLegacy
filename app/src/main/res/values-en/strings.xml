@@ -55,7 +55,6 @@
     <string name="login_success">Login successfully</string>
     <string name="rebootHint">Roboot app to make it work</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="version_value">3.0.0</string>
     <string name="now_to_login">Now to login</string>
     <string name="user_dont_exist">User do not exist</string>
     <string name="fail_to_login">Fail to login :-(</string>

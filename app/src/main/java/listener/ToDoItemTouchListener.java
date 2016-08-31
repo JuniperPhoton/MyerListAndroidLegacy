@@ -26,6 +26,7 @@ public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
     private boolean isMove = false;
     private boolean moveCompleted = false;
     private long mDownTime;
+    private View mChildView;
 
     public interface OnItemClickListener {
         void onPointerDown(View view, int position);
@@ -50,7 +51,12 @@ public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
         int x = (int) e.getX();
         int y = (int) e.getY();
-        View childView = rv.findChildViewUnder(e.getX(), e.getY());
+        if (mChildView == null) {
+            mChildView = rv.findChildViewUnder(e.getX(), e.getY());
+        }
+
+        Log.d(TAG, "CURRENT ACTION:" + String.valueOf(MotionEvent.actionToString(e.getAction())));
+
         switch (e.getAction()) {
             /**
              *  如果是ACTION_DOWN事件，那么记录当前按下的位置，
@@ -62,7 +68,7 @@ public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
                 mDownTime = System.currentTimeMillis();
                 isMove = false;
                 if (mListener != null) {
-                    mListener.onPointerDown(childView, rv.getChildLayoutPosition(childView));
+                    mListener.onPointerDown(mChildView, rv.getChildLayoutPosition(mChildView));
                 }
                 break;
             /**
@@ -83,50 +89,56 @@ public class ToDoItemTouchListener implements RecyclerView.OnItemTouchListener {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 if (mListener != null) {
-                    mListener.onPointerUp(childView, rv.getChildLayoutPosition(childView));
+                    mListener.onPointerUp(mChildView, rv.getChildLayoutPosition(mChildView));
                 }
-                Log.d(TAG, "ACTION_UP onInterceptTouchEvent");
-                Log.d(TAG, "IS MOVING:" + String.valueOf(isMove));
+                //Log.d(TAG, "ACTION_UP onInterceptTouchEvent");
+                //Log.d(TAG, "IS MOVING:" + String.valueOf(isMove));
                 if (isMove) {
                     moveCompleted = true;
                     break;
                 }
-                if (System.currentTimeMillis() - mDownTime > 1000) {
-                    isLongPressUp = true;
-                } else {
-                    isSingleTapUp = true;
+                if (e.getAction() == MotionEvent.ACTION_UP) {
+                    if (System.currentTimeMillis() - mDownTime > 1000) {
+                        isLongPressUp = true;
+                    } else {
+                        isSingleTapUp = true;
+                    }
+                    break;
                 }
-                break;
+
         }
         if (isSingleTapUp) {
             //根据触摸坐标来获取childView
             isSingleTapUp = false;
-            if (childView != null) {
+            if (mChildView != null) {
                 //回调mListener#onItemClick方法
-                mListener.onItemClick(childView, rv.getChildLayoutPosition(childView));
+                mListener.onItemClick(mChildView, rv.getChildLayoutPosition(mChildView));
+                mChildView = null;
                 return true;
             }
             return false;
         }
         if (isLongPressUp) {
             isLongPressUp = false;
-            if (childView != null) {
-                mListener.onItemLongClick(childView, rv.getChildLayoutPosition(childView));
+            if (mChildView != null) {
+                mListener.onItemLongClick(mChildView, rv.getChildLayoutPosition(mChildView));
+                mChildView = null;
                 return true;
             }
             return false;
         }
         if (isMove) {
             if (!moveCompleted) {
-                if (childView != null) {
-                    mListener.onMovingItem(childView, rv.getChildLayoutPosition(childView), x - mLastDownX, y - mLastDownY);
+                if (mChildView != null) {
+                    mListener.onMovingItem(mChildView, rv.getChildLayoutPosition(mChildView), x - mLastDownX, y - mLastDownY);
                 }
             } else {
                 isMove = false;
                 moveCompleted = false;
-                Log.d(TAG, "isMove,and completed");
-                if (childView != null) {
-                    mListener.onMoveCompleted(childView, rv.getChildLayoutPosition(childView));
+                //Log.d(TAG, "isMove,and completed");
+                if (mChildView != null) {
+                    mListener.onMoveCompleted(mChildView, rv.getChildLayoutPosition(mChildView));
+                    mChildView = null;
                 }
             }
         }

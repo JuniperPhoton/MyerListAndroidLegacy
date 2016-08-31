@@ -2,12 +2,12 @@ package activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -251,8 +251,21 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private void updateAddingPaneColorByCateId(int cateID) {
         if (mAddingPaneLayout == null) return;
         ToDoCategory category = GlobalListLocator.getCategoryByCateID(cateID);
-        if (category.getID() != -2) {
-            mAddingPaneLayout.setBackgroundColor(category.getColor());
+        if (category != null) {
+            if (category.getID() != -2) {
+                ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(),
+                        ((ColorDrawable)mAddingPaneLayout.getBackground()).getColor(), category.getColor());
+                colorAnimation.setDuration(250); // milliseconds
+                colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animator) {
+                        mAddingPaneLayout.setBackgroundColor((int) animator.getAnimatedValue());
+                    }
+
+                });
+                colorAnimation.start();
+            }
         }
     }
 
@@ -629,16 +642,15 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             boolean isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
-                SnackbarUtil.ShortSnackbar(findViewById(android.R.id.content), getResources().getString(R.string.Synced), Color.WHITE,
-                        mNavigationDrawerFragment.getRootBackgroundColor()).show();
+                SnackbarUtil.shortSnackbar(findViewById(android.R.id.content), getResources().getString(R.string.Synced),
+                        ContextCompat.getColor(this, R.color.MyerListBlue),
+                        ContextCompat.getColor(this, R.color.SnackBackColor)).show();
 
                 String orderStr = response.getJSONArray(("OrderList")).getJSONObject(0).getString("list_order");
                 ArrayList<ToDo> listInOrder = ToDo.setOrderByString(originalList, orderStr);
                 GlobalListLocator.TodosList = listInOrder;
                 mToDoFragment.updateData(listInOrder);
 
-                SnackbarUtil.ShortSnackbar(findViewById(android.R.id.content), getResources().getString(R.string.Synced), Color.WHITE,
-                        mNavigationDrawerFragment.getRootBackgroundColor()).show();
                 //ToastService.sendShortToast(getResources().getString(R.string.Synced));
 
                 SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);

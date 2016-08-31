@@ -108,7 +108,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
         GlobalListLocator.DeletedList.add(0, todoToDelete);
         GlobalListLocator.saveData();
 
-        if (!AppConfig.canSync()) {
+        if (AppConfig.canSync()) {
             CloudServices.setDelete(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
                     LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
                     todoToDelete.getID(),

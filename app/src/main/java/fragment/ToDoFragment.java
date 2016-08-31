@@ -43,6 +43,7 @@ import adapter.ToDoListAdapter;
 import util.GlobalListLocator;
 import model.ToDo;
 import util.SerializationName;
+import util.SnackbarUtil;
 import view.CircleView;
 
 public class ToDoFragment extends Fragment implements IRefresh {
@@ -361,6 +362,10 @@ public class ToDoFragment extends Fragment implements IRefresh {
         if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(false);
         }
+    }
+
+    public void scrollFABY(boolean up) {
+        mAddingFab.scrollBy(0, up ? -100 : 100);
     }
 
     public int getFABRadius() {

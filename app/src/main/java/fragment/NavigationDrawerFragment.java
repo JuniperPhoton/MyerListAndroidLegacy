@@ -80,6 +80,7 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
     private TextView mUndoneTextView;
 
     private ArrayList<ToDoCategory> mCatesList;
+    private int mRootColor;
 
     @Override
     public void onAttach(Context activity) {
@@ -278,8 +279,13 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     public void updateRootBackgroundColor(int color) {
         if (mRootLayout != null) {
-            mRootLayout.setBackgroundColor(color);
+            mRootColor = color;
+            mRootLayout.setBackgroundColor(mRootColor);
         }
+    }
+
+    public int getRootBackgroundColor() {
+        return mRootColor;
     }
 
     public void syncCatesOrDefault() {

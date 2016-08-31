@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.juniperphoton.myerlistandroid.R;
 
+import activity.MainActivity;
 import common.AppExtension;
 
 public class ToastService {

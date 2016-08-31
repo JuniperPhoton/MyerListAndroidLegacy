@@ -4,7 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -53,6 +56,7 @@ import model.ToDo;
 import util.GlobalListLocator;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.SerializationName;
+import util.SnackbarUtil;
 import util.ToastService;
 import view.CircleRadioButton;
 
@@ -625,12 +629,17 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             boolean isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
+                SnackbarUtil.ShortSnackbar(findViewById(android.R.id.content), getResources().getString(R.string.Synced), Color.WHITE,
+                        mNavigationDrawerFragment.getRootBackgroundColor()).show();
+
                 String orderStr = response.getJSONArray(("OrderList")).getJSONObject(0).getString("list_order");
                 ArrayList<ToDo> listInOrder = ToDo.setOrderByString(originalList, orderStr);
                 GlobalListLocator.TodosList = listInOrder;
                 mToDoFragment.updateData(listInOrder);
 
-                ToastService.sendShortToast(getResources().getString(R.string.Synced));
+                SnackbarUtil.ShortSnackbar(findViewById(android.R.id.content), getResources().getString(R.string.Synced), Color.WHITE,
+                        mNavigationDrawerFragment.getRootBackgroundColor()).show();
+                //ToastService.sendShortToast(getResources().getString(R.string.Synced));
 
                 SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
 

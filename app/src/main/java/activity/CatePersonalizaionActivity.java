@@ -153,11 +153,13 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
         return list;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.activity_cate_per_acceptView)
     void OnClickAccept() {
         saveData();
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.activity_cate_per_cancelView)
     void OnClickCancel() {
         AlertDialog.Builder builder = new AlertDialog.Builder(CatePersonalizaionActivity.this);

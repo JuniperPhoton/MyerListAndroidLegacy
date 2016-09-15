@@ -18,15 +18,20 @@ import com.umeng.analytics.MobclickAgent;
 
 import java.util.Locale;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import common.App;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.GlobalListLocator;
 
 public class SettingActivity extends AppCompatActivity {
-    private com.rey.material.widget.Switch mAddToBottomSwitch;
-    private TextView mLangText;
-    private TextView mLogoutBtn;
-    private ImageView mMaskView;
+
+    @Bind(R.id.activity_setting_addToEnd_s)
+    com.rey.material.widget.Switch mAddToBottomSwitch;
+
+    @Bind(R.id.activity_setting_language_tv)
+    TextView mLangText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,98 +40,10 @@ public class SettingActivity extends AppCompatActivity {
         StatusBarCompat.setUpActivity(this);
 
         setContentView(R.layout.activity_setting);
-
-        //找到开关控件
-        mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.activity_setting_addToEnd_s);
-
-        mLangText = (TextView) findViewById(R.id.activity_setting_language_tv);
+        ButterKnife.bind(this);
 
         Boolean addToBottom = LocalSettingHelper.getBoolean(App.getInstance(), "AddToBottom");
         mAddToBottomSwitch.setChecked(addToBottom);
-
-        //找到语言
-        final String langStr = LocalSettingHelper.getString(App.getInstance(), "Language");
-        if (langStr != null) {
-            if (langStr.equals("Chinese")) {
-                mLangText.setText(getString(R.string.chinese));
-            } else {
-                mLangText.setText(getString(R.string.english));
-            }
-        } else {
-            Resources resources = getResources();
-            Configuration config = resources.getConfiguration();
-            if (config.locale == Locale.CHINESE) {
-                mLangText.setText(getString(R.string.chinese));
-            } else {
-                mLangText.setText(getString(R.string.english));
-            }
-        }
-
-        mLangText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                builder.setTitle(getString(R.string.change_lang));
-                builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)},
-                        langStr.equals("Chinese") ? 1 : 0,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                if (i == 1) {
-                                    Resources resources = getResources();
-                                    Configuration config = resources.getConfiguration();
-                                    DisplayMetrics dm = resources.getDisplayMetrics();
-                                    config.locale = Locale.CHINESE;
-                                    resources.updateConfiguration(config, dm);
-                                    LocalSettingHelper.putString(App.getInstance(), "Language", "Chinese");
-                                } else {
-                                    Resources resources = getResources();
-                                    Configuration config = resources.getConfiguration();
-                                    DisplayMetrics dm = resources.getDisplayMetrics();
-                                    config.locale = Locale.ENGLISH;
-                                    resources.updateConfiguration(config, dm);
-                                    LocalSettingHelper.putString(App.getInstance(), "Language", "English");
-                                }
-                                Intent intent = new Intent(SettingActivity.this, MainActivity.class);
-                                intent.putExtra("LOGIN_STATE", "AboutToLogin");
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            }
-                        });
-
-                builder.create().show();
-            }
-        });
-
-        mLogoutBtn = (TextView) findViewById(R.id.activity_setting_logout_tv);
-        mLogoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                builder.setTitle(R.string.logout_title);
-                builder.setMessage(R.string.logout_content);
-                builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        LocalSettingHelper.putBoolean(getApplicationContext(), "offline_mode", false);
-                        LocalSettingHelper.deleteKey(getApplicationContext(), "email");
-                        LocalSettingHelper.deleteKey(getApplicationContext(), "salt");
-                        LocalSettingHelper.deleteKey(getApplicationContext(), "access_token");
-                        Intent intent = new Intent(getApplicationContext(), StartActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        GlobalListLocator.clearData();
-                        startActivity(intent);
-                    }
-                });
-                builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-                builder.create().show();
-            }
-        });
 
         mAddToBottomSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
             @Override
@@ -150,4 +67,85 @@ public class SettingActivity extends AppCompatActivity {
         MobclickAgent.onPause(this);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.activity_setting_language_tv)
+    void onClickSetLanguage() {
+        final String langStr = LocalSettingHelper.getString(App.getInstance(), "Language","");
+        if (langStr != null) {
+            if (langStr.equals("Chinese")) {
+                mLangText.setText(getString(R.string.chinese));
+            } else {
+                mLangText.setText(getString(R.string.english));
+            }
+        } else {
+            Resources resources = getResources();
+            Configuration config = resources.getConfiguration();
+            if (config.locale == Locale.CHINESE) {
+                mLangText.setText(getString(R.string.chinese));
+            } else {
+                mLangText.setText(getString(R.string.english));
+            }
+        }
+
+        int choice = langStr.equals("Chinese") ? 1 : 0;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+        builder.setTitle(getString(R.string.change_lang));
+        builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)},
+                choice,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (i == 1) {
+                            Resources resources = getResources();
+                            Configuration config = resources.getConfiguration();
+                            DisplayMetrics dm = resources.getDisplayMetrics();
+                            config.locale = Locale.CHINESE;
+                            resources.updateConfiguration(config, dm);
+                            LocalSettingHelper.putString(App.getInstance(), "Language", "Chinese");
+                        } else {
+                            Resources resources = getResources();
+                            Configuration config = resources.getConfiguration();
+                            DisplayMetrics dm = resources.getDisplayMetrics();
+                            config.locale = Locale.ENGLISH;
+                            resources.updateConfiguration(config, dm);
+                            LocalSettingHelper.putString(App.getInstance(), "Language", "English");
+                        }
+                        Intent intent = new Intent(SettingActivity.this, MainActivity.class);
+                        intent.putExtra("LOGIN_STATE", "AboutToLogin");
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                });
+
+        builder.create().show();
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.activity_setting_logout_tv)
+    void onClickLogout() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+        builder.setTitle(R.string.logout_title);
+        builder.setMessage(R.string.logout_content);
+        builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                LocalSettingHelper.putBoolean(getApplicationContext(), "offline_mode", false);
+                LocalSettingHelper.deleteKey(getApplicationContext(), "email");
+                LocalSettingHelper.deleteKey(getApplicationContext(), "salt");
+                LocalSettingHelper.deleteKey(getApplicationContext(), "access_token");
+                Intent intent = new Intent(getApplicationContext(), StartActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                GlobalListLocator.clearData();
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.create().show();
+    }
 }

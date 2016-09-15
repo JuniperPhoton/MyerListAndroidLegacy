@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +22,7 @@ import android.view.ViewAnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -59,7 +61,6 @@ import model.ToDo;
 import util.GlobalListLocator;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.SerializationName;
-import util.SnackbarUtil;
 import util.ToastService;
 import view.CircleRadioButton;
 
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     /**
      * Init views
      */
+    @SuppressWarnings("UnusedDeclaration")
     private void initViews(Bundle savedInstanceState) {
         mToolbar.setTitle(R.string.cate_default);
         mToolbar.setTitleTextColor(Color.BLACK);
@@ -380,8 +382,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     private void updateToolBarAndDrawerColor(ToDoCategory category) {
         if (category.getID() == 0) {
-
-            //mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.MyerListBlue));
             mToolbar.setTitle(getResources().getString(R.string.cate_default));
 
             mToDoFragment.setFABColor(ContextCompat.getColor(this, R.color.MyerListBlue));
@@ -389,12 +389,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
         } else if (category.getID() == -1) {
             switchToDeleteFragment();
-            //mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.DeletedColor));
+
             mToDoFragment.setFABColor(ContextCompat.getColor(this, R.color.DeletedColor));
             mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.DeletedColor));
             mToolbar.setTitle(getResources().getString(R.string.deleteditems));
         } else {
-            //mToolbar.setTitleTextColor(category.getColor());
             mNavigationDrawerFragment.updateRootBackgroundColor(category.getColor());
             mToDoFragment.setFABColor(category.getColor());
             mToolbar.setTitle(category.getName());
@@ -662,16 +661,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             boolean isSuccess = response.getBoolean("isSuccessed");
             if (isSuccess) {
-                SnackbarUtil.shortSnackbar(findViewById(android.R.id.content), getResources().getString(R.string.Synced),
-                        ContextCompat.getColor(this, R.color.MyerListBlue),
-                        ContextCompat.getColor(this, R.color.SnackBackColor)).show();
-
                 String orderStr = response.getJSONArray(("OrderList")).getJSONObject(0).getString("list_order");
                 ArrayList<ToDo> listInOrder = ToDo.setOrderByString(originalList, orderStr);
                 GlobalListLocator.TodosList = listInOrder;
                 mToDoFragment.updateData(listInOrder);
 
-                //ToastService.sendShortToast(getResources().getString(R.string.Synced));
+                ToastService.sendShortToast(getResources().getString(R.string.Synced));
 
                 SerializerHelper.serializeToFile(App.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
 

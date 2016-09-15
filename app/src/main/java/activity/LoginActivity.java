@@ -115,8 +115,9 @@ public class LoginActivity extends AppCompatActivity {
         MobclickAgent.onPause(this);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.activity_login_login_btn)
-    public void login_Click(View view){
+    public void login_Click(View view) {
         if (!isDataValid()) {
             return;
         }
@@ -294,7 +295,7 @@ public class LoginActivity extends AppCompatActivity {
                             "password",
                             psToPost);
 
-                    CloudServices.login(LocalSettingHelper.getString(this, "email"),
+                    CloudServices.login(LocalSettingHelper.getString(this, "email", null),
                             psToPost,
                             new IRequestCallback() {
                                 @Override

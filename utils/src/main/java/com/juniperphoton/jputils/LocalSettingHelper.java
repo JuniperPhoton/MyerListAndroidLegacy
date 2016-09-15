@@ -25,6 +25,11 @@ public class LocalSettingHelper {
         return sharedPreferences.contains(key);
     }
 
+    public static String getString(Context context, String key, String defValue) {
+        SharedPreferences sharedPreferences = getSharedPreference(context);
+        return sharedPreferences.getString(key, defValue);
+    }
+
     public static String getString(Context context, String key) {
         SharedPreferences sharedPreferences = getSharedPreference(context);
         return sharedPreferences.getString(key, null);

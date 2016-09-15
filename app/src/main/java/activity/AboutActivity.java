@@ -40,6 +40,7 @@ public class AboutActivity extends AppCompatActivity {
         MobclickAgent.onPause(this);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.activity_about_email)
     public void emailClick(View view) {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -47,9 +48,10 @@ public class AboutActivity extends AppCompatActivity {
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"dengweichao@hotmail.com"}); // recipients
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerList Android feedback");
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
-        startActivity(Intent.createChooser(emailIntent, "Choose app to send an email"));
+        startActivity(emailIntent);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.activity_about_download)
     public void downloadClick(View view) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.microsoft.com/store/apps/9nblggh11k1m"));

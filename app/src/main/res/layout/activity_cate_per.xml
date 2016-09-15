@@ -50,25 +50,18 @@
         android:background="@android:color/transparent"
         android:elevation="4dp">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/activity_cate_per_cancelView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="?android:attr/selectableItemBackground"
-            card_view:fab_size="mini"
-            fab:fab_colorNormal="@color/cancelColor"
-            fab:fab_colorPressed="@color/cancelColorPressed"
-            fab:fab_icon="@drawable/cancel" />
+            android:src="@drawable/cancel" />
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/activity_cate_per_acceptView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            fab:fab_colorNormal="@color/pink"
-            fab:fab_colorPressed="@color/pink_pressed"
-            fab:fab_icon="@drawable/ic_check_white_48dp" />
+            android:src="@drawable/ic_check_white_48dp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

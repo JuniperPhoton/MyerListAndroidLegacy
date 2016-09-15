@@ -118,6 +118,6 @@
     <string name="a_cate_per_discard_content">Confirm to exit the page without saving.</string>
     <string name="english">English</string>
     <string name="pick_a_color_title">Pick a color</string>
-    <string name="version_value">3.0.1</string>
+    <string name="version_value">3.1.0</string>
 
 </resources>

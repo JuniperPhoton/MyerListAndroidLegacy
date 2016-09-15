@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/fragment_todo_root_ll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,20 +19,17 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <com.getbase.floatingactionbutton.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fragment_todo_add_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16sp"
-        android:layout_marginRight="16sp"
-        android:background="?android:attr/selectableItemBackground"
+        android:layout_margin="16dp"
+        app:backgroundTint="@color/myPrimaryColor"
         android:clickable="true"
-        fab:fab_colorNormal="@color/pink"
-        fab:fab_colorPressed="@color/pink_pressed"
-        fab:fab_icon="@drawable/add" />
+        android:src="@drawable/add" />
 
     <LinearLayout
         android:id="@+id/fragment_todo_no_item_ll"

@@ -79,16 +79,6 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
             holder.mLineView.setVisibility(View.GONE);
         }
 
-//        holder.mRelativeLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                int[] location = new int[2];
-//                holder.mCateCircle.getLocationOnScreen(location);
-//                mActivity.setupAddingPaneForModifyAndShow(toDoItem,
-//                        new int[]{location[0] + holder.mCateCircle.getWidth() / 2, location[1] + holder.mCateCircle.getHeight() / 2});
-//            }
-//        });
-
         holder.mRelativeLayout.setTag(currentToDoItem.getID());
     }
 

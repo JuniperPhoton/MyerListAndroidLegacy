@@ -2,7 +2,9 @@ package view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.renderscript.Matrix3f;
 import android.util.AttributeSet;
 
 public class CircleView extends ColorView {

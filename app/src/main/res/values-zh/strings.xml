@@ -118,6 +118,6 @@
     <string name="english">English</string>
     <string name="pick_a_color_title">选一个颜色</string>
     <string name="tb_munion_tip_download_prefix">正在下载:</string>
-    <string name="version_value">3.0.1</string>
+    <string name="version_value">3.1.0</string>
 
 </resources>

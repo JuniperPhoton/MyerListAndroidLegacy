@@ -67,30 +67,32 @@ public class SettingActivity extends AppCompatActivity {
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                 builder.setTitle(getString(R.string.change_lang));
-                builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)}, langStr.equals("Chinese") ? 1 : 0, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (i == 1) {
-                            Resources resources = getResources();
-                            Configuration config = resources.getConfiguration();
-                            DisplayMetrics dm = resources.getDisplayMetrics();
-                            config.locale = Locale.CHINESE;
-                            resources.updateConfiguration(config, dm);
-                            LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
-                        } else {
-                            Resources resources = getResources();
-                            Configuration config = resources.getConfiguration();
-                            DisplayMetrics dm = resources.getDisplayMetrics();
-                            config.locale = Locale.ENGLISH;
-                            resources.updateConfiguration(config, dm);
-                            LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "English");
-                        }
-                        Intent intent = new Intent(SettingActivity.this, MainActivity.class);
-                        intent.putExtra("LOGIN_STATE", "AboutToLogin");
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                });
+                builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)},
+                        langStr.equals("Chinese") ? 1 : 0,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (i == 1) {
+                                    Resources resources = getResources();
+                                    Configuration config = resources.getConfiguration();
+                                    DisplayMetrics dm = resources.getDisplayMetrics();
+                                    config.locale = Locale.CHINESE;
+                                    resources.updateConfiguration(config, dm);
+                                    LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
+                                } else {
+                                    Resources resources = getResources();
+                                    Configuration config = resources.getConfiguration();
+                                    DisplayMetrics dm = resources.getDisplayMetrics();
+                                    config.locale = Locale.ENGLISH;
+                                    resources.updateConfiguration(config, dm);
+                                    LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "English");
+                                }
+                                Intent intent = new Intent(SettingActivity.this, MainActivity.class);
+                                intent.putExtra("LOGIN_STATE", "AboutToLogin");
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+                        });
 
                 builder.create().show();
             }

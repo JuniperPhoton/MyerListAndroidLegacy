@@ -16,23 +16,23 @@
         android:src="@drawable/black_mask" />
 
     <!--<ImageView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:scaleType="matrix"-->
-        <!--android:src="@drawable/login_background" />-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:scaleType="matrix"-->
+    <!--android:src="@drawable/login_background" />-->
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/activity_login_cv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="20sp"
         android:layout_marginRight="20sp"
         card_view:cardCornerRadius="2dp"
         card_view:cardElevation="6dp">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -119,8 +119,8 @@
                     android:layout_marginTop="5sp"
                     android:background="@drawable/shape_edit_text"
                     android:hint="@string/passwordHint"
-                    android:padding="10sp"
                     android:inputType="textPassword"
+                    android:padding="10sp"
                     android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textColorHint="@color/TextHintColor"
@@ -135,22 +135,21 @@
                     android:layout_marginTop="5dp"
                     android:background="@drawable/shape_edit_text"
                     android:hint="@string/repasswordHint"
-                    android:padding="10sp"
                     android:inputType="textPassword"
+                    android:padding="10sp"
                     android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textColorHint="@color/TextHintColor"
                     android:textSize="12sp" />
 
-                <android.support.v7.widget.CardView
-                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/activity_login_login_btn_cv"
                     android:layout_width="match_parent"
                     android:layout_height="40sp"
+                    android:layout_marginBottom="20sp"
                     android:layout_marginLeft="20sp"
                     android:layout_marginRight="20sp"
                     android:layout_marginTop="5sp"
-                    android:layout_marginBottom="20sp"
                     card_view:cardBackgroundColor="@color/MyerListBlueLight"
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="3dp">
@@ -166,14 +165,15 @@
                         android:textColor="#ffffff" />
 
                 </android.support.v7.widget.CardView>
+
                 <TextView
                     android:id="@+id/activity_login_forget_tv"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="20sp"
-                    android:layout_marginBottom="10sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/LoginActivity_Forget_PWD"/>
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="10sp"
+                    android:layout_marginLeft="20sp"
+                    android:text="@string/LoginActivity_Forget_PWD" />
             </LinearLayout>
 
         </LinearLayout>

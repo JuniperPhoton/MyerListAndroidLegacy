@@ -56,7 +56,7 @@
     <string name="add_success">New memo added ;-)</string>
     <string name="login_success">登录成功</string>
     <string name="rebootHint">重启应用以生效</string>
-    <string name="version_value">3.0.1</string>
+    <string name="version_value">3.1.0</string>
     <string name="hello_blank_fragment">现在登录</string>
     <string name="now_to_login">现在登录</string>
     <string name="user_dont_exist">用户不存在</string>

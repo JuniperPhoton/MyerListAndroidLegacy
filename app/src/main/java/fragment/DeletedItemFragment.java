@@ -3,6 +3,7 @@ package fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,7 +25,7 @@ import util.GlobalListLocator;
 public class DeletedItemFragment extends Fragment {
 
     private ArrayList<ToDo> mDeletedToDos;
-    private com.getbase.floatingactionbutton.FloatingActionButton mFab;
+    private FloatingActionButton mFab;
     private MainActivity mActivity;
     private LinearLayout mNoItemHintLayout;
 
@@ -58,7 +59,7 @@ public class DeletedItemFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        mFab = (com.getbase.floatingactionbutton.FloatingActionButton) view.findViewById(R.id.fragment_delete_delete_all_fab);
+        mFab = (FloatingActionButton) view.findViewById(R.id.fragment_delete_delete_all_fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

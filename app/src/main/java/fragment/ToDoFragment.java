@@ -3,6 +3,7 @@ package fragment;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,8 +19,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
@@ -43,7 +42,6 @@ import adapter.ToDoListAdapter;
 import util.GlobalListLocator;
 import model.ToDo;
 import util.SerializationName;
-import util.SnackbarUtil;
 import view.CircleView;
 
 public class ToDoFragment extends Fragment implements IRefresh {

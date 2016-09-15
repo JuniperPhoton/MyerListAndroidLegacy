@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,9 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.juniperphoton.jputils.ColorUtil;
@@ -38,9 +37,6 @@ import util.AppUtil;
 import util.AppConfig;
 import util.GlobalListLocator;
 
-/**
- * Created by JuniperPhoton on 2016-07-17.
- */
 public class CatePersonalizaionActivity extends AppCompatActivity implements IPickColorCallback, IPickedColor {
 
     private static final String MODIFIED_CATE_JSON_STRING_FORE = "{ \"modified\":true, \"cates\":";

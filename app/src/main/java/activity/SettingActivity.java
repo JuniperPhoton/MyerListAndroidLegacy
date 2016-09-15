@@ -61,7 +61,6 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     @Override
-
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
@@ -70,7 +69,7 @@ public class SettingActivity extends AppCompatActivity {
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.activity_setting_language_tv)
     void onClickSetLanguage() {
-        final String langStr = LocalSettingHelper.getString(App.getInstance(), "Language","");
+        final String langStr = LocalSettingHelper.getString(App.getInstance(), "Language", "");
         if (langStr != null) {
             if (langStr.equals("Chinese")) {
                 mLangText.setText(getString(R.string.chinese));

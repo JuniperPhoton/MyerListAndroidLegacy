@@ -76,6 +76,7 @@ public class StartActivity extends AppCompatActivity {
         fadeAnimator.start();
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.activity_start_login_btn)
     public void toLoginClick(View v) {
         Intent intent = new Intent(this, LoginActivity.class);
@@ -83,6 +84,7 @@ public class StartActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.activity_start_register_btn)
     public void toRegisterClick(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
@@ -90,6 +92,7 @@ public class StartActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.activity_start_offline_btn)
     public void toMainClick(View view) {
         Intent intent = new Intent(this, MainActivity.class);

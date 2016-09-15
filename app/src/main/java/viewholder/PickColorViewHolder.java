@@ -9,9 +9,6 @@ import com.juniperphoton.myerlistandroid.R;
 import view.CircleView;
 import view.RectangleView;
 
-/**
- * Created by JuniperPhoton on 2016-07-31.
- */
 public class PickColorViewHolder extends BaseViewHolder {
 
     private CircleView mRectangleView;

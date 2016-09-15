@@ -86,7 +86,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
         if (mSelectedPosition == position && mINavigationDrawerCallback != null) {
             mSelectedCardView = drawerViewHolder.cardView;
-            mSelectedCardView.setCardBackgroundColor(ContextCompat.getColor(App.getInstance(),R.color.DrawerSelectedBackground));
+            mSelectedCardView.setCardBackgroundColor(ContextCompat.getColor(App.getInstance(), R.color.DrawerSelectedBackground));
         }
     }
 

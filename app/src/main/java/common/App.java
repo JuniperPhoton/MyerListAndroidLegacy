@@ -5,7 +5,7 @@ import android.app.Application;
 import util.AppConfig;
 import util.GlobalListLocator;
 
-public class App extends Application implements Thread.UncaughtExceptionHandler  {
+public class App extends Application implements Thread.UncaughtExceptionHandler {
     private static App instance;
 
     public static App getInstance() {

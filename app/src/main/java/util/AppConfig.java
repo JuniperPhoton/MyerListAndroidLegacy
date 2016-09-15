@@ -22,7 +22,7 @@ public class AppConfig {
         return LocalSettingHelper.getString(App.getInstance(), "access_token");
     }
 
-    public static boolean canSync(){
+    public static boolean canSync() {
         return !AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(App.getInstance());
     }
 

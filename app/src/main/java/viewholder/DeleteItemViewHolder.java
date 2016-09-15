@@ -8,9 +8,6 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.juniperphoton.myerlistandroid.R;
 
-/**
- * Created by JuniperPhoton on 2016-07-25.
- */
 public class DeleteItemViewHolder extends BaseViewHolder {
     public TextView mTextView;
     public ImageView mReDoView;

@@ -32,7 +32,7 @@ import util.SerializationName;
 import view.CircleView;
 
 
-public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
+public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> {
     private static String TAG = ToDoListAdapter.class.getName();
 
     private MainActivity mActivity;

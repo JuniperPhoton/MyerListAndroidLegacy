@@ -7,15 +7,15 @@ public class APIException extends Exception {
 
     private String error;
 
-    public APIException(String string){
-        this.error=string;
+    public APIException(String string) {
+        this.error = string;
     }
 
-    public APIException(){
+    public APIException() {
 
     }
 
-    public String getError(){
+    public String getError() {
         return error;
     }
 }

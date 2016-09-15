@@ -5,9 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
-/**
- * Created by JuniperPhoton on 2016-07-31.
- */
 public class RectangleView extends ColorView {
 
     public RectangleView(Context context, AttributeSet attrs) {
@@ -21,6 +18,6 @@ public class RectangleView extends ColorView {
         Paint paint = new Paint();
         paint.setColor(getColor());
 
-        canvas.drawRect(0,0,getWidth(),getWidth(),paint);
+        canvas.drawRect(0, 0, getWidth(), getWidth(), paint);
     }
 }

@@ -6,11 +6,11 @@ package model;
 public class ColorWrapper {
     private int mColor;
 
-    public ColorWrapper(int color){
-        mColor=color;
+    public ColorWrapper(int color) {
+        mColor = color;
     }
 
-    public int getColor(){
+    public int getColor() {
         return mColor;
     }
 }

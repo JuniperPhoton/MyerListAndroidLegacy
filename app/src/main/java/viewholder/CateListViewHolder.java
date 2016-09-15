@@ -13,9 +13,6 @@ import com.juniperphoton.myerlistandroid.R;
 
 import view.CircleView;
 
-/**
- * Created by JuniperPhoton on 2016-07-25.
- */
 public class CateListViewHolder extends BaseViewHolder {
 
     private final int IS_NORMAL = 0;

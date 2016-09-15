@@ -5,9 +5,6 @@ import android.text.TextWatcher;
 
 import model.ToDoCategory;
 
-/**
- * Created by chao on 8/7/2016.
- */
 public class CateTextWatcher implements TextWatcher {
 
     private ToDoCategory mToDocategory;

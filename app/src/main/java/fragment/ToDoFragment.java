@@ -2,6 +2,10 @@ package fragment;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -19,6 +23,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
 import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
@@ -374,6 +379,10 @@ public class ToDoFragment extends Fragment implements IRefresh {
         int[] position = new int[2];
         mAddingFab.getLocationOnScreen(position);
         return position;
+    }
+
+    public void setFABColor(int color) {
+        mAddingFab.setBackgroundTintList(ColorStateList.valueOf(color));
     }
 
     public void getAllSchedules() {

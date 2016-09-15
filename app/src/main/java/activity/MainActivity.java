@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (category != null) {
             if (category.getID() != -2) {
                 ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(),
-                        ((ColorDrawable)mAddingPaneLayout.getBackground()).getColor(), category.getColor());
+                        ((ColorDrawable) mAddingPaneLayout.getBackground()).getColor(), category.getColor());
                 colorAnimation.setDuration(250); // milliseconds
                 colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
@@ -364,19 +364,23 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     private void updateToolBarAndDrawerColor(ToDoCategory category) {
         if (category.getID() == 0) {
-            mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
+
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.MyerListBlue));
             mToolbar.setTitle(getResources().getString(R.string.cate_default));
 
+            mToDoFragment.setFABColor(ContextCompat.getColor(this, R.color.MyerListBlue));
             mAddingPaneLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
             mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
         } else if (category.getID() == -1) {
             switchToDeleteFragment();
-            mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.DeletedColor));
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.DeletedColor));
+            mToDoFragment.setFABColor(ContextCompat.getColor(this, R.color.DeletedColor));
             mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.DeletedColor));
             mToolbar.setTitle(getResources().getString(R.string.deleteditems));
         } else {
-            mToolbar.setBackgroundColor(category.getColor());
+            mToolbar.setTitleTextColor(category.getColor());
             mNavigationDrawerFragment.updateRootBackgroundColor(category.getColor());
+            mToDoFragment.setFABColor(category.getColor());
             mToolbar.setTitle(category.getName());
         }
     }

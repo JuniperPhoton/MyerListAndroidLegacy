@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="24sp"
         android:layout_alignParentTop="true"
-        android:alpha="0.1"
+        android:alpha="0.3"
         android:elevation="@dimen/statusbar_elevation"
         android:scaleType="fitXY"
         android:src="@drawable/black_mask" />

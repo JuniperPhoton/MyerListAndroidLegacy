@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/MyerListBlue"
+    android:background="@color/MyerListGray"
     android:minHeight="@dimen/abc_action_bar_default_height_material"
     android:paddingTop="22sp"
     android:elevation="3dp"

@@ -12,11 +12,15 @@ import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 
 public class StartActivity extends AppCompatActivity {
-    private LinearLayout mRootLinearLayout;
+    @Bind(R.id.activity_start_root_ll)
+    LinearLayout mRootLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +29,8 @@ public class StartActivity extends AppCompatActivity {
         StatusBarCompat.setUpActivity(this);
 
         setContentView(R.layout.activity_start);
+        ButterKnife.bind(this);
 
-        mRootLinearLayout = (LinearLayout) findViewById(R.id.activity_start_root_ll);
         mRootLinearLayout.setAlpha(0f);
     }
 
@@ -46,44 +50,47 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void startNavigatedToAnim() {
-        ValueAnimator valueAnimator1 = new ValueAnimator();
-        valueAnimator1.setDuration(500);
-        valueAnimator1.setIntValues(100, 0);
-        valueAnimator1.setStartDelay(600);
-        valueAnimator1.setInterpolator(new DecelerateInterpolator(1.5f));
-        valueAnimator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        ValueAnimator offsetAnimator = new ValueAnimator();
+        offsetAnimator.setDuration(500);
+        offsetAnimator.setIntValues(100, 0);
+        offsetAnimator.setStartDelay(600);
+        offsetAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
+        offsetAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 mRootLinearLayout.scrollTo(0, (int) valueAnimator.getAnimatedValue());
             }
         });
 
-        ValueAnimator valueAnimator2 = new ValueAnimator();
-        valueAnimator2.setDuration(500);
-        valueAnimator2.setFloatValues(0f, 1f);
-        valueAnimator2.setStartDelay(600);
-        valueAnimator2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        ValueAnimator fadeAnimator = new ValueAnimator();
+        fadeAnimator.setDuration(500);
+        fadeAnimator.setFloatValues(0f, 1f);
+        fadeAnimator.setStartDelay(600);
+        fadeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 mRootLinearLayout.setAlpha((float) valueAnimator.getAnimatedValue());
             }
         });
-        valueAnimator1.start();
-        valueAnimator2.start();
+        offsetAnimator.start();
+        fadeAnimator.start();
     }
 
+    @OnClick(R.id.activity_start_login_btn)
     public void toLoginClick(View v) {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.putExtra("LOGIN_STATE", "ToLogin");
         startActivity(intent);
     }
 
+    @OnClick(R.id.activity_start_register_btn)
     public void toRegisterClick(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.putExtra("LOGIN_STATE", "ToRegister");
         startActivity(intent);
     }
 
+    @OnClick(R.id.activity_start_offline_btn)
     public void toMainClick(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("LOGIN_STATE", "OfflineMode");

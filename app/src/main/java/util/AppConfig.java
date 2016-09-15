@@ -8,45 +8,45 @@ import com.juniperphoton.jputils.LocalSettingHelper;
 
 import java.util.Locale;
 
-import common.AppExtension;
+import common.App;
 
 public class AppConfig {
     public static boolean ISOFFLINEMODE = true;
     public static boolean ISLOADLISTONCE = false;
 
     public static String getSid() {
-        return LocalSettingHelper.getString(AppExtension.getInstance(), "sid");
+        return LocalSettingHelper.getString(App.getInstance(), "sid");
     }
 
     public static String getAccessToken() {
-        return LocalSettingHelper.getString(AppExtension.getInstance(), "access_token");
+        return LocalSettingHelper.getString(App.getInstance(), "access_token");
     }
 
     public static boolean canSync(){
-        return !AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance());
+        return !AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(App.getInstance());
     }
 
     public static void configAppSetting() {
-        if (!LocalSettingHelper.checkKey(AppExtension.getInstance(), "ShowKeyboard")) {
-            LocalSettingHelper.putBoolean(AppExtension.getInstance(), "ShowKeyboard", true);
+        if (!LocalSettingHelper.checkKey(App.getInstance(), "ShowKeyboard")) {
+            LocalSettingHelper.putBoolean(App.getInstance(), "ShowKeyboard", true);
         }
-        if (!LocalSettingHelper.checkKey(AppExtension.getInstance(), "AddToBottom")) {
-            LocalSettingHelper.putBoolean(AppExtension.getInstance(), "AddToBottom", true);
+        if (!LocalSettingHelper.checkKey(App.getInstance(), "AddToBottom")) {
+            LocalSettingHelper.putBoolean(App.getInstance(), "AddToBottom", true);
         }
-        if (!LocalSettingHelper.checkKey(AppExtension.getInstance(), "HandHobbit")) {
-            LocalSettingHelper.putBoolean(AppExtension.getInstance(), "HandHobbit", true);
+        if (!LocalSettingHelper.checkKey(App.getInstance(), "HandHobbit")) {
+            LocalSettingHelper.putBoolean(App.getInstance(), "HandHobbit", true);
         }
 
-        Resources resources = AppExtension.getInstance().getResources();
+        Resources resources = App.getInstance().getResources();
         Configuration config = resources.getConfiguration();
         DisplayMetrics dm = resources.getDisplayMetrics();
 
-        if (!LocalSettingHelper.checkKey(AppExtension.getInstance(), "Language")) {
+        if (!LocalSettingHelper.checkKey(App.getInstance(), "Language")) {
             if (config.locale == Locale.SIMPLIFIED_CHINESE) {
-                LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
-            } else LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "English");
+                LocalSettingHelper.putString(App.getInstance(), "Language", "Chinese");
+            } else LocalSettingHelper.putString(App.getInstance(), "Language", "English");
         } else {
-            if (LocalSettingHelper.getString(AppExtension.getInstance(), "Language").equals("Chinese")) {
+            if (LocalSettingHelper.getString(App.getInstance(), "Language").equals("Chinese")) {
                 config.locale = Locale.SIMPLIFIED_CHINESE;
                 resources.updateConfiguration(config, dm);
             } else {

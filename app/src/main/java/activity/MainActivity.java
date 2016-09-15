@@ -6,6 +6,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,6 +32,8 @@ import com.juniperphoton.myerlistandroid.R;
 import com.orhanobut.logger.Logger;
 
 import api.CloudServices;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import exception.APIException;
 import fragment.ToDoFragment;
 import interfaces.INavigationDrawerCallback;
@@ -51,7 +54,7 @@ import java.util.TimerTask;
 
 import util.AppUtil;
 import util.AppConfig;
-import common.AppExtension;
+import common.App;
 import model.ToDo;
 import util.GlobalListLocator;
 import moe.feng.material.statusbar.StatusBarCompat;
@@ -62,21 +65,31 @@ import view.CircleRadioButton;
 
 public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback, IDrawerStatusChanged {
 
-    private static String TAG = MainActivity.class.getName();
+    private static final String TAG = MainActivity.class.getName();
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private ToDoFragment mToDoFragment;
     private DeletedItemFragment mDeletedItemFragment;
-    private Toolbar mToolbar;
-
     private boolean isAddingPaneShown = false;
-    private EditText mEditedText;
 
-    private RelativeLayout mAddingPaneLayout;
-    private TextView mAddingCateHintTextView;
-    private TextView mAddingTitleTextView;
+    @Bind(R.id.activity_main_tb)
+    Toolbar mToolbar;
 
-    private RadioGroup mAddingCateRadioGroup;
+    @Bind(R.id.fragment_adding_pane_add_et)
+    EditText mEditedText;
+
+    @Bind(R.id.activity_main_adding_pane)
+    RelativeLayout mAddingPaneLayout;
+
+    @Bind(R.id.fragment_adding_pane_cate_tv)
+    TextView mAddingCateHintTextView;
+
+    @Bind(R.id.fragment_adding_pane_title_tv)
+    TextView mAddingTitleTextView;
+
+    @Bind(R.id.fragment_adding_pane_radio)
+    RadioGroup mAddingCateRadioGroup;
+
     private int mCheckedPosition;
 
     private int mCurrentDisplayedCateID = 0;
@@ -98,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         StatusBarCompat.setUpActivity(this);
 
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         initViews(savedInstanceState);
 
@@ -147,13 +161,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
      * Init views
      */
     private void initViews(Bundle savedInstanceState) {
-        mToolbar = (Toolbar) findViewById(R.id.activity_main_tb);
         mToolbar.setTitle(R.string.cate_default);
+        mToolbar.setTitleTextColor(Color.BLACK);
         setSupportActionBar(mToolbar);
 
         initGestureDetector();
 
-        mAddingCateRadioGroup = (RadioGroup) findViewById(R.id.fragment_adding_pane_radio);
         mAddingCateRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
@@ -165,9 +178,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
 
-        mAddingTitleTextView = (TextView) findViewById(R.id.fragment_adding_pane_title_tv);
-        mAddingCateHintTextView = (TextView) findViewById(R.id.fragment_adding_pane_cate_tv);
-        mAddingPaneLayout = (RelativeLayout) findViewById(R.id.activity_main_adding_pane);
         mAddingPaneLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -177,22 +187,25 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         if (GlobalListLocator.CategoryList != null) updateRatioButtons();
 
-        mEditedText = (EditText) findViewById(R.id.fragment_adding_pane_add_et);
         Button okBtn = (Button) findViewById(R.id.fragment_adding_pane_pane_ok_btn);
         Button cancelBtn = (Button) findViewById(R.id.fragment_adding_pane_cancel_btn);
 
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                okClick(v);
-            }
-        });
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelClick(v);
-            }
-        });
+        if (okBtn != null) {
+            okBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    okClick(v);
+                }
+            });
+        }
+        if (cancelBtn != null) {
+            cancelBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cancelClick(v);
+                }
+            });
+        }
 
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.activity_main_fragment_drawer);
@@ -298,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             ToastService.sendShortToast(getResources().getString(R.string.NoNetworkHint));
         }
         //暂存区有待办事项的，同步到云端
-        if (!AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
+        if (!AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(App.getInstance())) {
             if (GlobalListLocator.StagedList == null) return;
             misStagedItemsNotEmpty = true;
             for (ToDo todo : GlobalListLocator.StagedList) {
@@ -314,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
             GlobalListLocator.StagedList.clear();
             misStagedItemsNotEmpty = false;
-            SerializerHelper.serializeToFile(AppExtension.getInstance(),
+            SerializerHelper.serializeToFile(App.getInstance(),
                     GlobalListLocator.StagedList,
                     SerializationName.STAGED_FILE_NAME);
         }
@@ -328,6 +341,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             circleRadioButton.setCircleColor(category.getColor());
             circleRadioButton.setLeft(5);
             mAddingCateRadioGroup.addView(circleRadioButton);
+        }
+        if (mAddingCateRadioGroup.getChildCount() <= 0) {
+            return;
         }
         mAddingCateRadioGroup.check(mAddingCateRadioGroup.getChildAt(0).getId());
         mCheckedPosition = 0;
@@ -365,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private void updateToolBarAndDrawerColor(ToDoCategory category) {
         if (category.getID() == 0) {
 
-            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.MyerListBlue));
+            //mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.MyerListBlue));
             mToolbar.setTitle(getResources().getString(R.string.cate_default));
 
             mToDoFragment.setFABColor(ContextCompat.getColor(this, R.color.MyerListBlue));
@@ -373,12 +389,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.MyerListBlue));
         } else if (category.getID() == -1) {
             switchToDeleteFragment();
-            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.DeletedColor));
+            //mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.DeletedColor));
             mToDoFragment.setFABColor(ContextCompat.getColor(this, R.color.DeletedColor));
             mNavigationDrawerFragment.updateRootBackgroundColor(ContextCompat.getColor(this, R.color.DeletedColor));
             mToolbar.setTitle(getResources().getString(R.string.deleteditems));
         } else {
-            mToolbar.setTitleTextColor(category.getColor());
+            //mToolbar.setTitleTextColor(category.getColor());
             mNavigationDrawerFragment.updateRootBackgroundColor(category.getColor());
             mToDoFragment.setFABColor(category.getColor());
             mToolbar.setTitle(category.getName());
@@ -657,7 +673,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
                 //ToastService.sendShortToast(getResources().getString(R.string.Synced));
 
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
+                SerializerHelper.serializeToFile(App.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
 
                 updateListByCategory();
             }

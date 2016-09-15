@@ -8,8 +8,9 @@
     <ImageView
         android:id="@+id/activity_main_mask"
         android:layout_width="match_parent"
-        android:layout_height="24sp"
+        android:layout_height="24dp"
         android:layout_alignParentTop="true"
+        android:contentDescription="@string/image_const"
         android:alpha="0.3"
         android:elevation="@dimen/statusbar_elevation"
         android:scaleType="fitXY"
@@ -21,34 +22,27 @@
         android:layout_height="match_parent"
         android:layout_gravity="start">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/MyerListGray"
-            android:orientation="vertical">
-
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:background="@color/MyerListGray">
 
                 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:id="@+id/activity_main_fl"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@+id/activity_main_tb"
-                    android:layout_marginTop="0sp"
+                    android:layout_marginTop="0dp"
                     android:background="?android:attr/selectableItemBackground" />
 
                 <include
                     android:id="@+id/activity_main_tb"
-                    layout="@layout/toolbar_default"
+                    layout="@layout/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="0sp" />
+                    android:layout_marginTop="0dp" />
 
             </RelativeLayout>
-
-        </LinearLayout>
 
         <fragment
             android:id="@+id/activity_main_fragment_drawer"
@@ -61,7 +55,7 @@
 
     <include
         android:id="@+id/activity_main_adding_pane"
-        layout="@layout/fragment_adding_pane"
+        layout="@layout/content_adding_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>

@@ -19,7 +19,7 @@ import api.CloudServices;
 import fragment.DeletedItemFragment;
 import interfaces.IRequestCallback;
 import util.AppConfig;
-import common.AppExtension;
+import common.App;
 import model.ToDo;
 import util.GlobalListLocator;
 import util.SerializationName;
@@ -64,7 +64,7 @@ public class DeletedListAdapter extends BaseItemDraggableAdapter<ToDo> {
                     mDeletedItemFragment.showNoItemHint();
                 }
 
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializationName.DELETED_FILE_NAME);
+                SerializerHelper.serializeToFile(App.getInstance(), mData, SerializationName.DELETED_FILE_NAME);
             }
         });
         holder.mReDoView.setOnClickListener(new View.OnClickListener() {
@@ -95,8 +95,8 @@ public class DeletedListAdapter extends BaseItemDraggableAdapter<ToDo> {
                     mDeletedItemFragment.showNoItemHint();
                 }
 
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializationName.DELETED_FILE_NAME);
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
+                SerializerHelper.serializeToFile(App.getInstance(), mData, SerializationName.DELETED_FILE_NAME);
+                SerializerHelper.serializeToFile(App.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
             }
         });
     }
@@ -107,7 +107,7 @@ public class DeletedListAdapter extends BaseItemDraggableAdapter<ToDo> {
             notifyItemRangeRemoved(0, mData.size());
             mData.clear();
             mDeletedItemFragment.showNoItemHint();
-            SerializerHelper.serializeToFile(AppExtension.getInstance(), mData, SerializationName.DELETED_FILE_NAME);
+            SerializerHelper.serializeToFile(App.getInstance(), mData, SerializationName.DELETED_FILE_NAME);
         } catch (Exception e) {
             e.printStackTrace();
         }

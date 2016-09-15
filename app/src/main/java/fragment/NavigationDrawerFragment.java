@@ -44,7 +44,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import model.ToDoCategory;
-import common.AppExtension;
+import common.App;
 import util.AppConfig;
 import util.GlobalListLocator;
 
@@ -150,14 +150,14 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
         mSettingsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AppExtension.getInstance(), SettingActivity.class);
+                Intent intent = new Intent(App.getInstance(), SettingActivity.class);
                 startActivity(intent);
             }
         });
         mAboutLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AppExtension.getInstance(), AboutActivity.class);
+                Intent intent = new Intent(App.getInstance(), AboutActivity.class);
                 startActivity(intent);
             }
         });
@@ -179,18 +179,14 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
 
     private ArrayList<ToDoCategory> getDefaultCateList() {
         ArrayList<ToDoCategory> items = new ArrayList<>();
-//        items.add(new ToDoCategory(getResources().getString(R.string.cate_default), 0,
-//                ContextCompat.getColor(AppExtension.getInstance(), R.color.MyerListBlue)));
         items.add(new ToDoCategory(getResources().getString(R.string.cate_work), 1,
-                ContextCompat.getColor(AppExtension.getInstance(), R.color.WorkColor)));
+                ContextCompat.getColor(App.getInstance(), R.color.WorkColor)));
         items.add(new ToDoCategory(getResources().getString(R.string.cate_life), 2,
-                ContextCompat.getColor(AppExtension.getInstance(), R.color.LifeColor)));
+                ContextCompat.getColor(App.getInstance(), R.color.LifeColor)));
         items.add(new ToDoCategory(getResources().getString(R.string.cate_family), 3,
-                ContextCompat.getColor(AppExtension.getInstance(), R.color.FamilyColor)));
+                ContextCompat.getColor(App.getInstance(), R.color.FamilyColor)));
         items.add(new ToDoCategory(getResources().getString(R.string.cate_enter), 4,
-                ContextCompat.getColor(AppExtension.getInstance(), R.color.EnterColor)));
-//        items.add(new ToDoCategory(getResources().getString(R.string.deleteditems), 5,
-//                ContextCompat.getColor(AppExtension.getInstance(), R.color.DeletedColor)));
+                ContextCompat.getColor(App.getInstance(), R.color.EnterColor)));
         return items;
     }
 
@@ -295,19 +291,17 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                         @Override
                         public void onResponse(JSONObject jsonObject) {
                             if (jsonObject != null) Logger.json(jsonObject.toString());
-                            onGotNewestCates(jsonObject);
+                            onGotNewestCategories(jsonObject);
                         }
                     });
         }
     }
 
-    private void onGotNewestCates(JSONObject response) {
+    private void onGotNewestCategories(JSONObject response) {
         try {
-            ArrayList<ToDoCategory> categoryList;
+            ArrayList<ToDoCategory> categoryList = new ArrayList<>();
 
-            if (response == null) {
-                categoryList = getDefaultCateList();
-            } else {
+            if (response != null) {
                 boolean isOK = response.getBoolean("isSuccessed");
                 if (!isOK) {
                     throw new APIException();
@@ -337,6 +331,12 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                 }
             }
 
+            if (categoryList.size() == 0) {
+                categoryList = getDefaultCateList();
+            }
+
+            SerializerHelper.serializeToFile(App.getInstance(), categoryList, SerializationName.CATES_FILE_NAME);
+
             categoryList.add(0,
                     new ToDoCategory(getResources().getString(R.string.cate_default), 0, ContextCompat.getColor(getActivity(), R.color.MyerListBlue)));
             categoryList.add(categoryList.size(),
@@ -345,8 +345,6 @@ public class NavigationDrawerFragment extends Fragment implements INavigationDra
                     new ToDoCategory(getResources().getString(R.string.cate_per), -2, Color.WHITE));
 
             GlobalListLocator.CategoryList = categoryList;
-
-            SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializationName.CATES_FILE_NAME);
 
             setAdapter(categoryList);
 

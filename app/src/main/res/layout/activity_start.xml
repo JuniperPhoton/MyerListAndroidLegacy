@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="24sp"
         android:layout_alignParentTop="true"
-        android:alpha="0.15"
+        android:contentDescription="@string/image_const"
+        android:alpha="0.3"
         android:elevation="@dimen/statusbar_elevation"
         android:scaleType="fitXY"
         android:src="@drawable/black_mask" />
@@ -19,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0.2"
+        android:contentDescription="@string/image_const"
         android:src="@drawable/backgrd" />
 
     <LinearLayout
@@ -33,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="160sp"
             android:layout_gravity="center_horizontal"
-            android:contentDescription="logo"
+            android:contentDescription="@string/image_const"
             android:src="@drawable/icon" />
 
         <LinearLayout

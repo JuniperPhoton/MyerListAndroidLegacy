@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -27,6 +28,9 @@ import java.util.ArrayList;
 import adapter.PickColorAdapter;
 import adapter.CateListAdapter;
 import api.CloudServices;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import interfaces.IPickColorCallback;
 import interfaces.IPickedColor;
 import interfaces.IRequestCallback;
@@ -41,9 +45,15 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
 
     private static final String MODIFIED_CATE_JSON_STRING_FORE = "{ \"modified\":true, \"cates\":";
 
-    private RecyclerView mCateRecyclerView;
-    private RecyclerView mColorRecyclerView;
-    private RelativeLayout mColorRootLayout = null;
+    @Bind(R.id.activity_cate_per_rv)
+    RecyclerView mCateRecyclerView;
+
+    @Bind(R.id.dialog_cate_per_color_rv)
+    RecyclerView mColorRecyclerView;
+
+    @Bind(R.id.dialog_cate_per_color_root_rl)
+    RelativeLayout mColorRootLayout;
+
     private CateListAdapter mAdapter;
     private ItemTouchHelper mItemTouchHelper;
     private ItemDragAndSwipeCallback mItemDragAndSwipeCallback;
@@ -61,11 +71,11 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
         super.onCreate(savedInstanceState);
         StatusBarCompat.setUpActivity(this);
         setContentView(R.layout.activity_cate_per);
+        ButterKnife.bind(this);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         setupCateViews();
-        setupFAB();
     }
 
     @Override
@@ -74,7 +84,6 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
     }
 
     private void setupCateViews() {
-        mCateRecyclerView = (RecyclerView) findViewById(R.id.activity_cate_per_rv);
         mCateRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
 
         mAdapter = new CateListAdapter(GlobalListLocator.makeCategoryListForPersonalizaion(), this);
@@ -90,8 +99,6 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
 
     private void setupColorViews(View view) {
         if (mColorRootLayout == null) {
-            mColorRootLayout = (RelativeLayout) view.findViewById(R.id.dialog_cate_per_color_root_rl);
-            mColorRecyclerView = (RecyclerView) view.findViewById(R.id.dialog_cate_per_color_rv);
             mColorRecyclerView.setLayoutManager(new GridLayoutManager(this, 7));
 
             mColors = generateColors();
@@ -146,38 +153,31 @@ public class CatePersonalizaionActivity extends AppCompatActivity implements IPi
         return list;
     }
 
-    private void setupFAB() {
-        FloatingActionButton cancelFAB = (FloatingActionButton) findViewById(R.id.activity_cate_per_cancelView);
-        FloatingActionButton acceptFAB = (FloatingActionButton) findViewById(R.id.activity_cate_per_acceptView);
-        cancelFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CatePersonalizaionActivity.this);
-                builder.setTitle(getString(R.string.logout_title));
-                builder.setMessage(getString(R.string.a_cate_per_discard_content));
-                builder.setPositiveButton(getString(R.string.ok_btn), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
-                    }
-                });
-                builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-                builder.create().show();
-            }
-        });
-
-        acceptFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveData();
-            }
-        });
+    @OnClick(R.id.activity_cate_per_acceptView)
+    void OnClickAccept() {
+        saveData();
     }
+
+    @OnClick(R.id.activity_cate_per_cancelView)
+    void OnClickCancel() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CatePersonalizaionActivity.this);
+        builder.setTitle(getString(R.string.logout_title));
+        builder.setMessage(getString(R.string.a_cate_per_discard_content));
+        builder.setPositiveButton(getString(R.string.ok_btn), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+            }
+        });
+        builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
 
     public RecyclerView.Adapter getAdatper() {
         return mAdapter;

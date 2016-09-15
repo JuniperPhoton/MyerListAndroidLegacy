@@ -19,11 +19,12 @@ import com.umeng.analytics.MobclickAgent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.NoSuchAlgorithmException;
-
 import api.CloudServices;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import exception.APIException;
-import common.AppExtension;
+import common.App;
 import interfaces.IRequestCallback;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
@@ -32,15 +33,24 @@ import util.ToastService;
 public class LoginActivity extends AppCompatActivity {
     private final boolean DEBUG_ENABLE = true;
 
-    private EditText mEmailBox;
-    private EditText mPasswordBox;
-    private EditText mConfirmPsBox;
-    private TextView mTitleView;
+    @Bind(R.id.activity_login_email_tv)
+    EditText mEmailBox;
+
+    @Bind(R.id.activity_login_ps_et)
+    EditText mPasswordBox;
+
+    @Bind(R.id.activity_login_rps_et)
+    EditText mConfirmPsBox;
+
+    @Bind(R.id.activity_login_loginTitle_tv)
+    TextView mTitleView;
+
     private ProgressDialog mprogressDialog;
-    private TextView mForgetPwdTextView;
+
+    @Bind(R.id.activity_login_forget_tv)
+    TextView mForgetPwdTextView;
 
     private boolean isToRegister = true;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,18 +58,13 @@ public class LoginActivity extends AppCompatActivity {
         StatusBarCompat.setUpActivity(this);
 
         setContentView(R.layout.activity_login);
-
-        mEmailBox = (EditText) findViewById(R.id.activity_login_email_tv);
-        mPasswordBox = (EditText) findViewById(R.id.activity_login_ps_et);
+        ButterKnife.bind(this);
 
         if (DEBUG_ENABLE) {
             mEmailBox.setText("dengweichao@hotmail.com");
             mPasswordBox.setText("windfantasy");
         }
 
-        mConfirmPsBox = (EditText) findViewById(R.id.activity_login_rps_et);
-        mTitleView = (TextView) findViewById(R.id.activity_login_loginTitle_tv);
-        mForgetPwdTextView = (TextView) findViewById(R.id.activity_login_forget_tv);
         mForgetPwdTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,16 +92,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-        String state = intent.getStringExtra("LOGIN_STATE");
+        mprogressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+
+        String state = getIntent().getStringExtra("LOGIN_STATE");
         if (state.equals("ToLogin")) {
             mTitleView.setText(getResources().getString(R.string.loginBtn));
             mConfirmPsBox.setVisibility(View.GONE);
             isToRegister = false;
         } else
             mTitleView.setText(getResources().getString(R.string.registerBtn));
-
-        mprogressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
     }
 
     @Override
@@ -106,13 +110,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
     }
 
-    public void login_Click(View view) throws NoSuchAlgorithmException {
+    @OnClick(R.id.activity_login_login_btn)
+    public void login_Click(View view){
         if (!isDataValid()) {
             return;
         }
@@ -243,10 +247,10 @@ public class LoginActivity extends AppCompatActivity {
                 if (userObj != null) {
                     String sid = userObj.getString("sid");
                     String access_token = userObj.getString("access_token");
-                    LocalSettingHelper.putString(AppExtension.getInstance(), "email", mEmailBox.getText().toString());
-                    LocalSettingHelper.putString(AppExtension.getInstance(), "sid", sid);
-                    LocalSettingHelper.putString(AppExtension.getInstance(), "access_token", access_token);
-                    LocalSettingHelper.deleteKey(AppExtension.getInstance(), "password");
+                    LocalSettingHelper.putString(App.getInstance(), "email", mEmailBox.getText().toString());
+                    LocalSettingHelper.putString(App.getInstance(), "sid", sid);
+                    LocalSettingHelper.putString(App.getInstance(), "access_token", access_token);
+                    LocalSettingHelper.deleteKey(App.getInstance(), "password");
 
                     ToastService.sendShortToast(getResources().getString(R.string.login_success));
 
@@ -283,10 +287,10 @@ public class LoginActivity extends AppCompatActivity {
                     String psAfterMD5 = NetworkSecurityHelper.get32MD5Str(mPasswordBox.getText().toString());
                     String psToPost = NetworkSecurityHelper.get32MD5Str(psAfterMD5 + salt);
 
-                    LocalSettingHelper.putString(AppExtension.getInstance(),
+                    LocalSettingHelper.putString(App.getInstance(),
                             "email",
                             mEmailBox.getText().toString());
-                    LocalSettingHelper.putString(AppExtension.getInstance(),
+                    LocalSettingHelper.putString(App.getInstance(),
                             "password",
                             psToPost);
 

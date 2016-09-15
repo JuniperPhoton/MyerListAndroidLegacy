@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/fragment_todo_root_ll"
     android:layout_width="match_parent"
@@ -56,7 +55,7 @@
             android:gravity="center_horizontal"
             android:text="@string/no_todo_content_hint"
             android:textColor="@android:color/black"
-            android:textSize="30dp" />
+            android:textSize="30sp" />
     </LinearLayout>
 </RelativeLayout>
 

@@ -1,18 +1,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fragment_drawer_root_ll"
-    android:layout_width="300sp"
+    android:layout_width="300dp"
     android:layout_height="match_parent"
     android:background="@color/MyerListBlue">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="250sp">
+        android:layout_height="250dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20sp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -42,14 +42,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="10sp"
+            android:layout_marginBottom="10dp"
 
             android:orientation="vertical">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:orientation="horizontal">
 
                 <TextView
@@ -68,7 +67,7 @@
                 android:id="@+id/fragment_drawer_login_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5sp"
+                android:layout_marginTop="5dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/now_to_login"
@@ -80,8 +79,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="70sp"
-        android:layout_marginTop="260sp"
+        android:layout_marginBottom="70dp"
+        android:layout_marginTop="260dp"
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
@@ -94,14 +93,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50sp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="@android:color/transparent"
         android:orientation="horizontal">
 
         <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:layout_width="150sp"
+            android:layout_width="150dp"
             android:layout_height="match_parent"
             android:layout_gravity="fill"
             android:layout_weight="1"
@@ -112,7 +111,7 @@
 
             <RelativeLayout
                 android:id="@+id/fragment_drawer_settings_ll"
-                android:layout_width="150sp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true">
@@ -125,15 +124,15 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:layout_width="25sp"
-                        android:layout_height="25sp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:src="@drawable/settings" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="5sp"
+                        android:layout_marginStart="5dp"
                         android:text="@string/settings"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
@@ -143,7 +142,7 @@
 
         <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:layout_width="150sp"
+            android:layout_width="150dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_gravity="fill"
@@ -153,7 +152,7 @@
             card_view:cardElevation="0dp">
 
             <RelativeLayout
-                android:layout_width="150sp"
+                android:layout_width="150dp"
                 android:id="@+id/fragment_drawer_about_ll"
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackground"
@@ -166,8 +165,8 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:layout_width="25sp"
-                        android:layout_height="25sp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/like" />
 
@@ -175,7 +174,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="5sp"
+                        android:layout_marginStart="5dp"
                         android:text="@string/about"
                         android:textColor="@android:color/white" />
                 </LinearLayout>

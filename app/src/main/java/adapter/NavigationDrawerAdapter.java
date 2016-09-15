@@ -16,7 +16,7 @@ import java.util.List;
 
 import interfaces.INavigationDrawerCallback;
 import model.ToDoCategory;
-import common.AppExtension;
+import common.App;
 import view.CircleView;
 
 
@@ -86,7 +86,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
         if (mSelectedPosition == position && mINavigationDrawerCallback != null) {
             mSelectedCardView = drawerViewHolder.cardView;
-            mSelectedCardView.setCardBackgroundColor(ContextCompat.getColor(AppExtension.getInstance(),R.color.DrawerSelectedBackground));
+            mSelectedCardView.setCardBackgroundColor(ContextCompat.getColor(App.getInstance(),R.color.DrawerSelectedBackground));
         }
     }
 

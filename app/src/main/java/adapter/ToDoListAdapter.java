@@ -25,7 +25,7 @@ import fragment.ToDoFragment;
 import interfaces.IRequestCallback;
 import model.ToDoCategory;
 import util.AppConfig;
-import common.AppExtension;
+import common.App;
 import model.ToDo;
 import util.GlobalListLocator;
 import util.SerializationName;
@@ -99,8 +99,8 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
         GlobalListLocator.saveData();
 
         if (AppConfig.canSync()) {
-            CloudServices.setDelete(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
-                    LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
+            CloudServices.setDelete(LocalSettingHelper.getString(App.getInstance(), "sid"),
+                    LocalSettingHelper.getString(App.getInstance(), "access_token"),
                     todoToDelete.getID(),
                     new IRequestCallback() {
                         @Override
@@ -114,7 +114,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
     public void addToDo(ToDo todoToAdd) {
         if (todoToAdd == null) return;
 
-        if (LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
+        if (LocalSettingHelper.getBoolean(App.getInstance(), "AddToBottom")) {
             notifyItemInserted(mData.size() - 1);
             GlobalListLocator.TodosList.add(todoToAdd);
         } else {

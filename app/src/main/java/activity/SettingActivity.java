@@ -18,7 +18,7 @@ import com.umeng.analytics.MobclickAgent;
 
 import java.util.Locale;
 
-import common.AppExtension;
+import common.App;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.GlobalListLocator;
 
@@ -41,11 +41,11 @@ public class SettingActivity extends AppCompatActivity {
 
         mLangText = (TextView) findViewById(R.id.activity_setting_language_tv);
 
-        Boolean addToBottom = LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom");
+        Boolean addToBottom = LocalSettingHelper.getBoolean(App.getInstance(), "AddToBottom");
         mAddToBottomSwitch.setChecked(addToBottom);
 
         //找到语言
-        final String langStr = LocalSettingHelper.getString(AppExtension.getInstance(), "Language");
+        final String langStr = LocalSettingHelper.getString(App.getInstance(), "Language");
         if (langStr != null) {
             if (langStr.equals("Chinese")) {
                 mLangText.setText(getString(R.string.chinese));
@@ -78,14 +78,14 @@ public class SettingActivity extends AppCompatActivity {
                                     DisplayMetrics dm = resources.getDisplayMetrics();
                                     config.locale = Locale.CHINESE;
                                     resources.updateConfiguration(config, dm);
-                                    LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
+                                    LocalSettingHelper.putString(App.getInstance(), "Language", "Chinese");
                                 } else {
                                     Resources resources = getResources();
                                     Configuration config = resources.getConfiguration();
                                     DisplayMetrics dm = resources.getDisplayMetrics();
                                     config.locale = Locale.ENGLISH;
                                     resources.updateConfiguration(config, dm);
-                                    LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "English");
+                                    LocalSettingHelper.putString(App.getInstance(), "Language", "English");
                                 }
                                 Intent intent = new Intent(SettingActivity.this, MainActivity.class);
                                 intent.putExtra("LOGIN_STATE", "AboutToLogin");
@@ -131,7 +131,7 @@ public class SettingActivity extends AppCompatActivity {
         mAddToBottomSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
-                LocalSettingHelper.putBoolean(AppExtension.getInstance(), "AddToBottom", b);
+                LocalSettingHelper.putBoolean(App.getInstance(), "AddToBottom", b);
             }
 
         });

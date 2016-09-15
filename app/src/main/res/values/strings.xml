@@ -1,4 +1,5 @@
 <resources>
+    <string name="image_const">Desc</string>
     <string name="app_name">MyerList</string>
     <string name="myer">Myer</string>
     <string name="list">List</string>

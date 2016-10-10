@@ -18,15 +18,20 @@ import com.umeng.analytics.MobclickAgent;
 
 import java.util.Locale;
 
-import common.AppExtension;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import common.App;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.GlobalListLocator;
 
 public class SettingActivity extends AppCompatActivity {
-    private com.rey.material.widget.Switch mAddToBottomSwitch;
-    private TextView mLangText;
-    private TextView mLogoutBtn;
-    private ImageView mMaskView;
+
+    @Bind(R.id.activity_setting_addToEnd_s)
+    com.rey.material.widget.Switch mAddToBottomSwitch;
+
+    @Bind(R.id.activity_setting_language_tv)
+    TextView mLangText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,17 +40,36 @@ public class SettingActivity extends AppCompatActivity {
         StatusBarCompat.setUpActivity(this);
 
         setContentView(R.layout.activity_setting);
+        ButterKnife.bind(this);
 
-        //找到开关控件
-        mAddToBottomSwitch = (com.rey.material.widget.Switch) findViewById(R.id.activity_setting_addToEnd_s);
-
-        mLangText = (TextView) findViewById(R.id.activity_setting_language_tv);
-
-        Boolean addToBottom = LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom");
+        Boolean addToBottom = LocalSettingHelper.getBoolean(App.getInstance(), "AddToBottom");
         mAddToBottomSwitch.setChecked(addToBottom);
 
-        //找到语言
-        final String langStr = LocalSettingHelper.getString(AppExtension.getInstance(), "Language");
+        mAddToBottomSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
+                LocalSettingHelper.putBoolean(App.getInstance(), "AddToBottom", b);
+            }
+
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.activity_setting_language_tv)
+    void onClickSetLanguage() {
+        final String langStr = LocalSettingHelper.getString(App.getInstance(), "Language", "");
         if (langStr != null) {
             if (langStr.equals("Chinese")) {
                 mLangText.setText(getString(R.string.chinese));
@@ -62,12 +86,13 @@ public class SettingActivity extends AppCompatActivity {
             }
         }
 
-        mLangText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                builder.setTitle(getString(R.string.change_lang));
-                builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)}, langStr.equals("Chinese") ? 1 : 0, new DialogInterface.OnClickListener() {
+        int choice = langStr.equals("Chinese") ? 1 : 0;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+        builder.setTitle(getString(R.string.change_lang));
+        builder.setSingleChoiceItems(new String[]{"English", getString(R.string.chinese)},
+                choice,
+                new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (i == 1) {
@@ -76,14 +101,14 @@ public class SettingActivity extends AppCompatActivity {
                             DisplayMetrics dm = resources.getDisplayMetrics();
                             config.locale = Locale.CHINESE;
                             resources.updateConfiguration(config, dm);
-                            LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "Chinese");
+                            LocalSettingHelper.putString(App.getInstance(), "Language", "Chinese");
                         } else {
                             Resources resources = getResources();
                             Configuration config = resources.getConfiguration();
                             DisplayMetrics dm = resources.getDisplayMetrics();
                             config.locale = Locale.ENGLISH;
                             resources.updateConfiguration(config, dm);
-                            LocalSettingHelper.putString(AppExtension.getInstance(), "Language", "English");
+                            LocalSettingHelper.putString(App.getInstance(), "Language", "English");
                         }
                         Intent intent = new Intent(SettingActivity.this, MainActivity.class);
                         intent.putExtra("LOGIN_STATE", "AboutToLogin");
@@ -92,60 +117,34 @@ public class SettingActivity extends AppCompatActivity {
                     }
                 });
 
-                builder.create().show();
-            }
-        });
+        builder.create().show();
+    }
 
-        mLogoutBtn = (TextView) findViewById(R.id.activity_setting_logout_tv);
-        mLogoutBtn.setOnClickListener(new View.OnClickListener() {
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.activity_setting_logout_tv)
+    void onClickLogout() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+        builder.setTitle(R.string.logout_title);
+        builder.setMessage(R.string.logout_content);
+        builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                builder.setTitle(R.string.logout_title);
-                builder.setMessage(R.string.logout_content);
-                builder.setPositiveButton(getResources().getString(R.string.ok_btn), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        LocalSettingHelper.putBoolean(getApplicationContext(), "offline_mode", false);
-                        LocalSettingHelper.deleteKey(getApplicationContext(), "email");
-                        LocalSettingHelper.deleteKey(getApplicationContext(), "salt");
-                        LocalSettingHelper.deleteKey(getApplicationContext(), "access_token");
-                        Intent intent = new Intent(getApplicationContext(), StartActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        GlobalListLocator.clearData();
-                        startActivity(intent);
-                    }
-                });
-                builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-                builder.create().show();
+            public void onClick(DialogInterface dialogInterface, int i) {
+                LocalSettingHelper.putBoolean(getApplicationContext(), "offline_mode", false);
+                LocalSettingHelper.deleteKey(getApplicationContext(), "email");
+                LocalSettingHelper.deleteKey(getApplicationContext(), "salt");
+                LocalSettingHelper.deleteKey(getApplicationContext(), "access_token");
+                Intent intent = new Intent(getApplicationContext(), StartActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                GlobalListLocator.clearData();
+                startActivity(intent);
             }
         });
-
-        mAddToBottomSwitch.setOnCheckedChangeListener(new com.rey.material.widget.Switch.OnCheckedChangeListener() {
+        builder.setNegativeButton(getResources().getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
             @Override
-            public void onCheckedChanged(com.rey.material.widget.Switch aSwitch, boolean b) {
-                LocalSettingHelper.putBoolean(AppExtension.getInstance(), "AddToBottom", b);
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
             }
-
         });
+        builder.create().show();
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    @Override
-
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
-    }
-
 }

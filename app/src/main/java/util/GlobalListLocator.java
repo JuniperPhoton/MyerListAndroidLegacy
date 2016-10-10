@@ -12,7 +12,7 @@ import com.juniperphoton.myerlistandroid.R;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import common.AppExtension;
+import common.App;
 import model.ToDo;
 import model.ToDoCategory;
 import widget.WidgetProvider;
@@ -21,7 +21,7 @@ public class GlobalListLocator {
     public static ArrayList<ToDo> TodosList;
     public static ArrayList<ToDo> DeletedList;
     public static ArrayList<ToDo> StagedList;
-    public static ArrayList<ToDoCategory> CategoryList;
+    public static ArrayList<ToDoCategory> CategoryList = new ArrayList<>();
 
     public static boolean onUpdateCateList;
 
@@ -29,11 +29,17 @@ public class GlobalListLocator {
      * 更新小部件
      */
     public static void updateWidget() {
-        int widgetIDs[] = AppWidgetManager.getInstance(AppExtension.getInstance())
-                .getAppWidgetIds(new ComponentName(AppExtension.getInstance(), WidgetProvider.class));
+        int widgetIDs[] = AppWidgetManager.getInstance(App.getInstance())
+                .getAppWidgetIds(new ComponentName(App.getInstance(), WidgetProvider.class));
         for (int id : widgetIDs) {
-            AppWidgetManager.getInstance(AppExtension.getInstance()).notifyAppWidgetViewDataChanged(id, R.id.widget_list_lv);
+            AppWidgetManager.getInstance(App.getInstance()).notifyAppWidgetViewDataChanged(id, R.id.widget_list_lv);
         }
+    }
+
+    public static boolean gotCategoryList() {
+        if (CategoryList == null) return false;
+        else if (CategoryList.size() <= 3) return false;
+        return true;
     }
 
     /**
@@ -79,17 +85,17 @@ public class GlobalListLocator {
      */
     public static void saveData() {
         //updateWidget();
-        SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
-        SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.CategoryList, SerializationName.CATES_FILE_NAME);
-        SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializationName.STAGED_FILE_NAME);
-        SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.DeletedList, SerializationName.DELETED_FILE_NAME);
+        SerializerHelper.serializeToFile(App.getInstance(), GlobalListLocator.TodosList, SerializationName.TODOS_FILE_NAME);
+        SerializerHelper.serializeToFile(App.getInstance(), GlobalListLocator.CategoryList, SerializationName.CATES_FILE_NAME);
+        SerializerHelper.serializeToFile(App.getInstance(), GlobalListLocator.StagedList, SerializationName.STAGED_FILE_NAME);
+        SerializerHelper.serializeToFile(App.getInstance(), GlobalListLocator.DeletedList, SerializationName.DELETED_FILE_NAME);
     }
 
     public static void clearData() {
-        AppExtension.getInstance().deleteFile(SerializationName.TODOS_FILE_NAME);
-        AppExtension.getInstance().deleteFile(SerializationName.CATES_FILE_NAME);
-        AppExtension.getInstance().deleteFile(SerializationName.STAGED_FILE_NAME);
-        AppExtension.getInstance().deleteFile(SerializationName.DELETED_FILE_NAME);
+        App.getInstance().deleteFile(SerializationName.TODOS_FILE_NAME);
+        App.getInstance().deleteFile(SerializationName.CATES_FILE_NAME);
+        App.getInstance().deleteFile(SerializationName.STAGED_FILE_NAME);
+        App.getInstance().deleteFile(SerializationName.DELETED_FILE_NAME);
     }
 
     /**
@@ -99,13 +105,13 @@ public class GlobalListLocator {
      */
     public static void makeAndUpdateCategoryList(ArrayList<ToDoCategory> categoryList) {
         categoryList.add(0,
-                new ToDoCategory(AppExtension.getInstance().getString(R.string.cate_default), 0,
-                        ContextCompat.getColor(AppExtension.getInstance(), R.color.MyerListBlue)));
+                new ToDoCategory(App.getInstance().getString(R.string.cate_default), 0,
+                        ContextCompat.getColor(App.getInstance(), R.color.MyerListBlue)));
         categoryList.add(categoryList.size(),
-                new ToDoCategory(AppExtension.getInstance().getString(R.string.cate_deleted), -1,
-                        ContextCompat.getColor(AppExtension.getInstance(), R.color.DeletedColor)));
+                new ToDoCategory(App.getInstance().getString(R.string.cate_deleted), -1,
+                        ContextCompat.getColor(App.getInstance(), R.color.DeletedColor)));
         categoryList.add(categoryList.size(),
-                new ToDoCategory(AppExtension.getInstance().getString(R.string.cate_per), -2,
+                new ToDoCategory(App.getInstance().getString(R.string.cate_per), -2,
                         Color.WHITE));
         CategoryList = categoryList;
     }
@@ -133,8 +139,9 @@ public class GlobalListLocator {
      * @return 类别
      */
     public static ToDoCategory getCategoryByCateID(int id) {
-        if (CategoryList == null) {
-            return null;
+        if (CategoryList == null || CategoryList.size() <= 3) {
+            return new ToDoCategory(App.getInstance().getResources().getString(R.string.cate_default), 0,
+                    ContextCompat.getColor(App.getInstance(), R.color.MyerListBlue));
         }
         ToDoCategory foundCate = null;
         for (ToDoCategory cate : CategoryList) {
@@ -161,14 +168,14 @@ public class GlobalListLocator {
 
         ArrayList<ToDo> deletedContent = SerializerHelper.deSerializeFromFile(
                 type,
-                AppExtension.getInstance(),
+                App.getInstance(),
                 SerializationName.DELETED_FILE_NAME);
         if (deletedContent != null) {
             DeletedList = deletedContent;
         }
         ArrayList<ToDo> stagedContent = SerializerHelper.deSerializeFromFile(
                 type,
-                AppExtension.getInstance(),
+                App.getInstance(),
                 SerializationName.STAGED_FILE_NAME);
         if (stagedContent != null) {
             StagedList = stagedContent;
@@ -179,7 +186,7 @@ public class GlobalListLocator {
 
         ArrayList<ToDoCategory> categories = SerializerHelper.deSerializeFromFile(
                 type2,
-                AppExtension.getInstance(),
+                App.getInstance(),
                 SerializationName.CATES_FILE_NAME);
         if (categories != null) {
             CategoryList = categories;

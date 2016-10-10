@@ -11,11 +11,11 @@
         android:id="@+id/toast_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8sp"
-        android:layout_marginLeft="8sp"
-        android:layout_marginRight="8sp"
-        android:layout_marginTop="8sp"
-        android:text="This is a toast"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/english"
         android:textColor="@android:color/white"
         android:textSize="15sp"/>
 </LinearLayout>

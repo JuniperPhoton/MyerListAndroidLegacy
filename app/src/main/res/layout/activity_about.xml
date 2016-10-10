@@ -1,18 +1,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     tools:context="activity.AboutActivity">
 
     <ImageView
+        android:contentDescription="@string/image_const"
         android:id="@+id/activity_about_mask"
         android:layout_width="match_parent"
-        android:layout_height="24sp"
+        android:layout_height="24dp"
         android:layout_alignParentTop="true"
-        android:alpha="0.15"
+        android:alpha="0.3"
         android:elevation="@dimen/statusbar_elevation"
         android:scaleType="fitXY"
         android:src="@drawable/black_mask" />
@@ -24,11 +25,13 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="170sp"
-            android:layout_height="140sp"
+            android:layout_width="170dp"
+            android:contentDescription="@string/image_const"
+            android:layout_height="140dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50sp"
-            android:src="@drawable/icon_about"/>
+            android:layout_marginTop="50dp"
+            android:src="@drawable/icon_about" />
+
         <LinearLayout
             android:id="@+id/activity_start_title_tv"
             android:layout_width="match_parent"
@@ -43,8 +46,7 @@
                 android:gravity="center"
                 android:text="@string/myer"
                 android:textColor="@color/MyerListBlue"
-                android:textSize="40sp"
-                />
+                android:textSize="40sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -54,172 +56,181 @@
                 android:text="@string/list"
                 android:textColor="@color/MyerListBlue"
                 android:textSize="40sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="for Android"
             android:alpha="0.3"
+            android:text="for Android"
             android:textColor="@android:color/black"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textStyle="normal" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="20sp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
             android:orientation="vertical">
-                <LinearLayout
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/version"
+                    android:textColor="@color/MyerListBlueLight"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:layout_marginTop="0dp"
+                    android:fontFamily="@string/FontLight"
+                    android:text="@string/version_value"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+            </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="@string/version"
-                        android:textColor="@color/MyerListBlueLight"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="0sp"
-                        android:fontFamily="@string/FontLight"
-                        android:layout_gravity="center_horizontal"
-                        android:text="@string/version_value"
-                        android:textColor="@android:color/black"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10sp"
                     android:layout_gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:text="@string/credit"
+                    android:textColor="@color/MyerListBlueLight"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:text="@string/credit"
-                        android:textColor="@color/MyerListBlueLight"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@string/FontLight"
-                        android:gravity="center_horizontal"
-                        android:layout_marginTop="0sp"
-                        android:text="JuniperPhoton"
-                        android:textColor="@android:color/black"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10sp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:text="@string/about_feedback"
-                        android:textColor="@color/MyerListBlueLight"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                    <android.support.v7.widget.CardView
-                        android:layout_width="wrap_content"
-                        android:elevation="0sp"
-                        card_view:cardBackgroundColor="@android:color/transparent"
-                        card_view:cardCornerRadius="0dp"
-                        card_view:cardElevation="0dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_height="wrap_content">
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:onClick="emailClick"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:layout_height="match_parent">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:padding="10sp"
-                                android:fontFamily="@string/FontLight"
-                                android:layout_gravity="center_horizontal"
-                                android:autoLink="web"
-                                android:textColorLink="@android:color/black"
-                                android:text="@string/about_feedback__content"
-                                android:textColor="@android:color/black"
-                                android:textSize="15sp" />
-
-                        </RelativeLayout>
-                    </android.support.v7.widget.CardView>
-
-                </LinearLayout>
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10sp"
-                    android:layout_marginRight="10sp"
-                    android:layout_marginTop="0sp"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:layout_marginTop="0dp"
+                    android:fontFamily="@string/FontLight"
+                    android:gravity="center_horizontal"
+                    android:text="JuniperPhoton"
+                    android:textColor="@android:color/black"
+                    android:textSize="15sp" />
+            </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="@string/about_myerlist"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/MyerListBlueLight"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <android.support.v7.widget.CardView
-                        android:layout_width="wrap_content"
-                        android:elevation="0sp"
-                        card_view:cardBackgroundColor="@android:color/transparent"
-                        card_view:cardCornerRadius="0dp"
-                        card_view:cardElevation="0dp"
-                        android:layout_gravity="center_horizontal"
-                        android:onClick="downloadClick"
-                        android:layout_height="wrap_content">
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:layout_height="match_parent">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:padding="10sp"
-                                android:fontFamily="@string/FontLight"
-                                android:layout_gravity="center_horizontal"
-                                android:autoLink="web"
-                                android:textColorLink="@android:color/black"
-                                android:text="@string/about_download_btn"
-                                android:textColor="@android:color/black"
-                                android:textSize="15sp" />
-
-                        </RelativeLayout>
-                    </android.support.v7.widget.CardView>
-
-                </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10sp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/about_feedback"
+                    android:textColor="@color/MyerListBlueLight"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="0dp"
+                    card_view:cardBackgroundColor="@android:color/transparent"
+                    card_view:cardCornerRadius="0dp"
+                    card_view:cardElevation="0dp">
+
+                    <RelativeLayout
+                        android:id="@+id/activity_about_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:attr/selectableItemBackground">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:autoLink="web"
+                            android:fontFamily="@string/FontLight"
+                            android:padding="10dp"
+                            android:text="@string/about_feedback__content"
+                            android:textColor="@android:color/black"
+                            android:textColorLink="@android:color/black"
+                            android:textSize="15sp" />
+
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="0dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:text="@string/about_myerlist"
+                    android:textColor="@color/MyerListBlueLight"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="0dp"
+                    card_view:cardBackgroundColor="@android:color/transparent"
+                    card_view:cardCornerRadius="0dp"
+                    card_view:cardElevation="0dp">
+
+                    <RelativeLayout
+                        android:id="@+id/activity_about_download"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:attr/selectableItemBackground">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:autoLink="web"
+                            android:fontFamily="@string/FontLight"
+                            android:padding="10dp"
+                            android:text="@string/about_download_btn"
+                            android:textColor="@android:color/black"
+                            android:textColorLink="@android:color/black"
+                            android:textSize="15sp" />
+
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:background="@android:color/transparent"
                 android:gravity="top"
                 android:orientation="horizontal">

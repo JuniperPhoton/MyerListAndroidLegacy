@@ -5,10 +5,10 @@ import android.app.Application;
 import util.AppConfig;
 import util.GlobalListLocator;
 
-public class AppExtension extends Application implements Thread.UncaughtExceptionHandler  {
-    private static AppExtension instance;
+public class App extends Application implements Thread.UncaughtExceptionHandler {
+    private static App instance;
 
-    public static AppExtension getInstance() {
+    public static App getInstance() {
         return instance;
     }
 

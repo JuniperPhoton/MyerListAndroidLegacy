@@ -11,6 +11,9 @@ import android.view.WindowManager;
 import com.juniperphoton.myerlistandroid.R;
 import com.umeng.analytics.MobclickAgent;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 
@@ -22,6 +25,7 @@ public class AboutActivity extends AppCompatActivity {
         StatusBarCompat.setUpActivity(this);
 
         setContentView(R.layout.activity_about);
+        ButterKnife.bind(this);
     }
 
     @Override
@@ -31,24 +35,26 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     @Override
-
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.activity_about_email)
     public void emailClick(View view) {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("message/rfc822");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"dengweichao@hotmail.com"}); // recipients
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerList Android feedback");
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
-        startActivity(Intent.createChooser(emailIntent, "Choose app to send an email"));
+        startActivity(emailIntent);
     }
 
-    public void downloadClick(View view){
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.activity_about_download)
+    public void downloadClick(View view) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.microsoft.com/store/apps/9nblggh11k1m"));
         startActivity(browserIntent);
     }
-
 }

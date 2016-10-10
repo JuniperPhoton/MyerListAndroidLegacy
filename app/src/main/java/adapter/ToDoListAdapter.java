@@ -25,14 +25,14 @@ import fragment.ToDoFragment;
 import interfaces.IRequestCallback;
 import model.ToDoCategory;
 import util.AppConfig;
-import common.AppExtension;
+import common.App;
 import model.ToDo;
 import util.GlobalListLocator;
 import util.SerializationName;
 import view.CircleView;
 
 
-public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
+public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo> {
     private static String TAG = ToDoListAdapter.class.getName();
 
     private MainActivity mActivity;
@@ -79,16 +79,6 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
             holder.mLineView.setVisibility(View.GONE);
         }
 
-//        holder.mRelativeLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                int[] location = new int[2];
-//                holder.mCateCircle.getLocationOnScreen(location);
-//                mActivity.setupAddingPaneForModifyAndShow(toDoItem,
-//                        new int[]{location[0] + holder.mCateCircle.getWidth() / 2, location[1] + holder.mCateCircle.getHeight() / 2});
-//            }
-//        });
-
         holder.mRelativeLayout.setTag(currentToDoItem.getID());
     }
 
@@ -108,9 +98,9 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
         GlobalListLocator.DeletedList.add(0, todoToDelete);
         GlobalListLocator.saveData();
 
-        if (!AppConfig.canSync()) {
-            CloudServices.setDelete(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
-                    LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"),
+        if (AppConfig.canSync()) {
+            CloudServices.setDelete(LocalSettingHelper.getString(App.getInstance(), "sid"),
+                    LocalSettingHelper.getString(App.getInstance(), "access_token"),
                     todoToDelete.getID(),
                     new IRequestCallback() {
                         @Override
@@ -124,7 +114,7 @@ public class ToDoListAdapter extends BaseItemDraggableAdapter<ToDo>{
     public void addToDo(ToDo todoToAdd) {
         if (todoToAdd == null) return;
 
-        if (LocalSettingHelper.getBoolean(AppExtension.getInstance(), "AddToBottom")) {
+        if (LocalSettingHelper.getBoolean(App.getInstance(), "AddToBottom")) {
             notifyItemInserted(mData.size() - 1);
             GlobalListLocator.TodosList.add(todoToAdd);
         } else {

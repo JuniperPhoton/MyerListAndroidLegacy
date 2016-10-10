@@ -14,7 +14,7 @@ import java.util.List;
 
 import interfaces.IPickColorCallback;
 import model.ToDoCategory;
-import common.AppExtension;
+import common.App;
 import viewholder.CateListViewHolder;
 import viewholder.CateTextWatcher;
 
@@ -101,9 +101,9 @@ public class CateListAdapter extends BaseItemDraggableAdapter<ToDoCategory> {
     }
 
     private void addNewCate() {
-        ToDoCategory newCategory = new ToDoCategory(AppExtension.getInstance().getResources().getString(R.string.new_cate_name),
+        ToDoCategory newCategory = new ToDoCategory(App.getInstance().getResources().getString(R.string.new_cate_name),
                 getNewId(),
-                ContextCompat.getColor(AppExtension.getInstance(), R.color.MyerListBlue));
+                ContextCompat.getColor(App.getInstance(), R.color.MyerListBlue));
         mData.add(newCategory);
         notifyItemInserted(mData.size());
     }

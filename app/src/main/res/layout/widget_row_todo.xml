@@ -5,9 +5,9 @@
 
     <RelativeLayout
         android:id="@+id/widget_cate_rl"
-        android:layout_width="5sp"
-        android:layout_height="20sp"
-        android:layout_margin="10sp"
+        android:layout_width="5dp"
+        android:layout_height="20dp"
+        android:layout_margin="10dp"
         android:background="@color/MyerListBlueLight"
         />
     <TextView
@@ -15,18 +15,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="20sp"
+        android:layout_marginLeft="20dp"
         android:singleLine="true"
         android:textColor="@android:color/black" />
 
     <ImageView
         android:id="@+id/widget_todo_lineview"
         android:layout_width="match_parent"
-        android:layout_height="12sp"
+        android:layout_height="12dp"
         android:layout_centerInParent="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:scaleType="fitXY"
         android:src="@drawable/line" />
 </RelativeLayout>

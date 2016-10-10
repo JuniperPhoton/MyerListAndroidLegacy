@@ -16,10 +16,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        final int count = appWidgetIds.length;
-
-        for (int i = 0; i < count; i++) {
-            int widgetId = appWidgetIds[i];
+        for (int widgetId : appWidgetIds) {
 
             Intent intent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
@@ -28,7 +25,7 @@ public class WidgetProvider extends AppWidgetProvider {
             remoteViews.setOnClickPendingIntent(R.id.widget_ll, pendingIntent);
 
             Intent svcIntent = new Intent(context, WidgetService.class);
-            svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
+            svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
             svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
 
             remoteViews.setRemoteAdapter(R.id.widget_list_lv, svcIntent);

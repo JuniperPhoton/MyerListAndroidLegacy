@@ -20,8 +20,8 @@
             android:id="@+id/todo_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="-100sp"
-            android:layout_marginRight="-100sp"
+            android:layout_marginLeft="-100dp"
+            android:layout_marginRight="-100dp"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="false">
 
@@ -29,8 +29,8 @@
                 android:id="@+id/greenImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="100sp"
-                android:layout_marginRight="100sp"
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="100dp"
                 android:alpha="1"
                 android:scaleType="fitXY"
                 android:src="@drawable/green"
@@ -40,8 +40,8 @@
                 android:id="@+id/redImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="100sp"
-                android:layout_marginRight="100sp"
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="100dp"
                 android:alpha="1"
                 android:scaleType="fitXY"
                 android:src="@drawable/red"
@@ -49,21 +49,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50sp"
-                android:layout_marginLeft="100sp"
-                android:layout_marginRight="100sp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="100dp"
                 android:orientation="horizontal">
 
                 <RelativeLayout
                     android:id="@+id/cateCircleLayout"
-                    android:layout_width="40sp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5sp"
+                    android:layout_marginLeft="5dp"
                     >
                     <view.CircleView
                         android:id="@+id/cateCircle"
-                        android:layout_width="20sp"
-                        android:layout_height="20sp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_centerInParent="true" />
                 </RelativeLayout>
 
@@ -71,8 +71,8 @@
                     android:id="@+id/todoBlock"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5sp"
-                    android:layout_marginRight="50sp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="50dp"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
                     android:hint="Enjoy your good day!"
@@ -81,10 +81,10 @@
 
                 <ImageView
                     android:id="@+id/hamView"
-                    android:layout_width="30sp"
-                    android:layout_height="30sp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="-40sp"
+                    android:layout_marginLeft="-40dp"
                     android:visibility="gone"
                     android:src="@drawable/ham" />
             </LinearLayout>
@@ -92,10 +92,10 @@
             <ImageView
                 android:id="@+id/lineView"
                 android:layout_width="match_parent"
-                android:layout_height="10sp"
+                android:layout_height="10dp"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="145sp"
-                android:layout_marginRight="120sp"
+                android:layout_marginLeft="145dp"
+                android:layout_marginRight="120dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/line" />
         </RelativeLayout>

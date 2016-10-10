@@ -14,9 +14,6 @@ import interfaces.IPickedColor;
 import model.ColorWrapper;
 import viewholder.PickColorViewHolder;
 
-/**
- * Created by JuniperPhoton on 2016-07-31.
- */
 public class PickColorAdapter extends BaseQuickAdapter<ColorWrapper> {
 
     private IPickedColor mCallback;

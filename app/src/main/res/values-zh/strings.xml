@@ -56,7 +56,6 @@
     <string name="add_success">添加成功</string>
     <string name="login_success">登录成功</string>
     <string name="rebootHint">重启应用以生效</string>
-    <string name="version_value">3.0.0</string>
     <string name="hello_blank_fragment">现在登录</string>
     <string name="now_to_login">现在登录</string>
     <string name="user_dont_exist">用户不存在</string>
@@ -119,5 +118,6 @@
     <string name="english">English</string>
     <string name="pick_a_color_title">选一个颜色</string>
     <string name="tb_munion_tip_download_prefix">正在下载:</string>
+    <string name="version_value">3.1.0</string>
 
 </resources>

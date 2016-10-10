@@ -2,7 +2,9 @@ package fragment;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.jputils.LocalSettingHelper;
 import com.juniperphoton.jputils.SerializerHelper;
@@ -38,7 +39,7 @@ import interfaces.IRequestCallback;
 import listener.ToDoItemTouchListener;
 import util.AppUtil;
 import util.AppConfig;
-import common.AppExtension;
+import common.App;
 import adapter.ToDoListAdapter;
 import util.GlobalListLocator;
 import model.ToDo;
@@ -112,7 +113,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
             }
         });
 
-        if (!LocalSettingHelper.getBoolean(AppExtension.getInstance(), "HandHobbit")) {
+        if (!LocalSettingHelper.getBoolean(App.getInstance(), "HandHobbit")) {
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             layoutParams.setMargins(16, 0, 0, 16);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -144,7 +145,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
             Type type = new TypeToken<ArrayList<ToDo>>() {
             }.getType();
             ArrayList<ToDo> list = SerializerHelper.deSerializeFromFile(
-                    type, AppExtension.getInstance(), SerializationName.TODOS_FILE_NAME);
+                    type, App.getInstance(), SerializationName.TODOS_FILE_NAME);
 
             if (list != null) {
                 GlobalListLocator.TodosList = list;
@@ -269,8 +270,8 @@ public class ToDoFragment extends Fragment implements IRefresh {
                     }
 
                     if (AppConfig.canSync()) {
-                        CloudServices.setDone(LocalSettingHelper.getString(AppExtension.getInstance(), "sid"),
-                                LocalSettingHelper.getString(AppExtension.getInstance(), "access_token"), toDoItem.getID(),
+                        CloudServices.setDone(LocalSettingHelper.getString(App.getInstance(), "sid"),
+                                LocalSettingHelper.getString(App.getInstance(), "access_token"), toDoItem.getID(),
                                 toDoItem.getIsDone() ? "1" : "0",
                                 null);
                     }
@@ -280,7 +281,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
                     getAdatper().deleteToDo(toDoItem.getID());
                 }
                 mCurrentMovingView = null;
-                SerializerHelper.serializeToFile(AppExtension.getInstance(), getData(), SerializationName.TODOS_FILE_NAME);
+                SerializerHelper.serializeToFile(App.getInstance(), getData(), SerializationName.TODOS_FILE_NAME);
             }
         }));
     }
@@ -363,6 +364,10 @@ public class ToDoFragment extends Fragment implements IRefresh {
         }
     }
 
+    public void scrollFABY(boolean up) {
+        mAddingFab.scrollBy(0, up ? -100 : 100);
+    }
+
     public int getFABRadius() {
         return mAddingFab.getWidth() / 2;
     }
@@ -373,12 +378,16 @@ public class ToDoFragment extends Fragment implements IRefresh {
         return position;
     }
 
+    public void setFABColor(int color) {
+        mAddingFab.setBackgroundTintList(ColorStateList.valueOf(color));
+    }
+
     public void getAllSchedules() {
         Logger.d(mActivity);
         showRefreshing();
         mActivity.syncCateAndList();
 
-        if (!AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(AppExtension.getInstance())) {
+        if (!AppConfig.ISOFFLINEMODE && AppUtil.isNetworkAvailable(App.getInstance())) {
             if (GlobalListLocator.StagedList == null) return;
             mActivity.setIsAddStagedItems(true);
             for (ToDo todo : GlobalListLocator.StagedList) {
@@ -394,7 +403,7 @@ public class ToDoFragment extends Fragment implements IRefresh {
                         });
             }
             GlobalListLocator.StagedList.clear();
-            SerializerHelper.serializeToFile(AppExtension.getInstance(), GlobalListLocator.StagedList, SerializationName.STAGED_FILE_NAME);
+            SerializerHelper.serializeToFile(App.getInstance(), GlobalListLocator.StagedList, SerializationName.STAGED_FILE_NAME);
         }
     }
 

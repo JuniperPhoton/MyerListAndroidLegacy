@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/cate_per_title_backgrd"
@@ -10,9 +9,10 @@
     <ImageView
         android:id="@+id/activity_setting_mask_iv"
         android:layout_width="match_parent"
-        android:layout_height="24sp"
+        android:layout_height="24dp"
         android:layout_alignParentTop="true"
-        android:alpha="0.15"
+        android:alpha="0.3"
+        android:contentDescription="@string/image_const"
         android:elevation="@dimen/statusbar_elevation"
         android:scaleType="fitXY"
         android:src="@drawable/black_mask" />
@@ -25,15 +25,15 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="130sp"
+            android:layout_height="130dp"
             android:background="@color/cate_per_title_backgrd">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="10sp"
-                android:layout_marginLeft="20sp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="20dp"
                 android:text="@string/cate_per_title"
                 android:textColor="@android:color/black"
                 android:textSize="20sp" />
@@ -44,36 +44,29 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="90sp"
+        android:layout_marginTop="90dp"
         android:background="@android:color/transparent"
         android:elevation="4dp">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/activity_cate_per_cancelView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="?android:attr/selectableItemBackground"
-            card_view:fab_size="mini"
-            fab:fab_colorNormal="@color/cancelColor"
-            fab:fab_colorPressed="@color/cancelColorPressed"
-            fab:fab_icon="@drawable/cancel" />
+            android:src="@drawable/cancel" />
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/activity_cate_per_acceptView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            fab:fab_colorNormal="@color/pink"
-            fab:fab_colorPressed="@color/pink_pressed"
-            fab:fab_icon="@drawable/ic_check_white_48dp" />
+            android:src="@drawable/ic_check_white_48dp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/activity_cate_per_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="130sp"></android.support.v7.widget.RecyclerView>
+        android:layout_marginTop="130dp"/>
 </RelativeLayout>

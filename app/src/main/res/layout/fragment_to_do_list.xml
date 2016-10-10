@@ -1,13 +1,11 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/fragment_todo_root_ll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_todo_refresh_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,88 +14,30 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/fragment_todo_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <com.getbase.floatingactionbutton.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fragment_todo_add_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16sp"
-        android:layout_marginRight="16sp"
-        android:background="?android:attr/selectableItemBackground"
+        android:layout_margin="16dp"
+        app:backgroundTint="@color/myPrimaryColor"
         android:clickable="true"
-        fab:fab_colorNormal="@color/pink"
-        fab:fab_colorPressed="@color/pink_pressed"
-        fab:fab_icon="@drawable/add" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:src="@drawable/add" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="getRawX" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="getRawY" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="getLeft" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/getrawx_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/getrawy_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/getleft_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-    </LinearLayout>
     <LinearLayout
         android:id="@+id/fragment_todo_no_item_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:gravity="center_horizontal"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
@@ -115,6 +55,7 @@
             android:gravity="center_horizontal"
             android:text="@string/no_todo_content_hint"
             android:textColor="@android:color/black"
-            android:textSize="30dp" />
+            android:textSize="30sp" />
     </LinearLayout>
 </RelativeLayout>
+

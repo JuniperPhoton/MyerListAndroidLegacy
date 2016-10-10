@@ -13,9 +13,6 @@ import android.widget.RadioButton;
 import com.juniperphoton.jputils.ColorUtil;
 import com.juniperphoton.myerlistandroid.R;
 
-/**
- * Created by dengw on 2016-06-29.
- */
 public class CircleRadioButton extends RadioButton {
     private int mCircleColor;
 

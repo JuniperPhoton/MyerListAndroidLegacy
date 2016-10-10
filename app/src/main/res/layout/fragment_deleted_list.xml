@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,20 +13,17 @@
         android:clickable="true"
         android:scrollbars="vertical" />
 
-    <com.getbase.floatingactionbutton.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fragment_delete_delete_all_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:background="?android:attr/selectableItemBackground"
+        android:layout_marginEnd="16dp"
         android:clickable="true"
-        fab:fab_colorNormal="@color/pink"
-        fab:fab_colorPressed="@color/pink_pressed"
-        fab:fab_icon="@drawable/delete_white" />
+        android:src="@drawable/delete_white" />
 
     <LinearLayout
         android:id="@+id/fragment_delete_noitem_ll"
@@ -50,6 +46,6 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/no_deleted_content_hint"
-            android:textSize="20dp" />
+            android:textSize="20sp" />
     </LinearLayout>
 </RelativeLayout>

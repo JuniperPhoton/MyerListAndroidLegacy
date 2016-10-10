@@ -11,7 +11,6 @@
     <string name="emailHint">EMAIL</string>
     <string name="passwordHint">PASSWORD</string>
     <string name="repasswordHint">CONFIRM YOUR PASSWORD</string>
-
     <string name="title_activity_login">login</string>
     <string name="FontLight">sans-serif-light</string>
     <string name="title_activity_start">StartActivity</string>
@@ -65,7 +64,7 @@
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="version_value">1.1</string>
+    <string name="version_value">3.0.1</string>
     <string name="now_to_login">Now to login</string>
     <string name="user_dont_exist">User do not exist</string>
     <string name="fail_to_login">Fail to login :-(</string>

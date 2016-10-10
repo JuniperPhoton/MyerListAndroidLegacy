@@ -11,6 +11,7 @@
     <color name="DrawerSelectedBackground">#78000000</color>
     <color name="myWindowBackground">#FFF</color>
     <color name="myTextPrimaryColor">#212121</color>
+    <color name="SnackBackColor">#222222</color>
     <color name="myNavigationColor">#000</color>
     <color name="WorkColor">#FF436998</color>
     <color name="LifeColor">#FFFFB542</color>

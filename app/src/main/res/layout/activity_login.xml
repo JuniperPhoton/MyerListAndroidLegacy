@@ -8,31 +8,26 @@
     <ImageView
         android:id="@+id/activity_login_mask"
         android:layout_width="match_parent"
-        android:layout_height="24sp"
+        android:layout_height="24dp"
         android:layout_alignParentTop="true"
-        android:alpha="0.15"
+        android:alpha="0.3"
         android:elevation="@dimen/statusbar_elevation"
         android:scaleType="fitXY"
+        android:contentDescription="@string/image_const"
         android:src="@drawable/black_mask" />
 
-    <!--<ImageView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:scaleType="matrix"-->
-        <!--android:src="@drawable/login_background" />-->
-
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/activity_login_cv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         card_view:cardCornerRadius="2dp"
         card_view:cardElevation="6dp">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,31 +38,30 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="100sp"
+                android:layout_height="100dp"
                 android:layout_weight="1">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scaleType="fitXY"
+                    android:contentDescription="@string/image_const"
                     android:src="@drawable/login_top_rect" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="5sp"
+                    android:layout_marginBottom="5dp"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/activity_login_loginTitle_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_gravity="left"
-                        android:layout_marginLeft="20sp"
-                        android:layout_marginStart="20sp"
-                        android:gravity="left"
+                        android:layout_gravity="start"
+                        android:layout_marginStart="20dp"
+                        android:gravity="start"
                         android:text="@string/loginBtn"
                         android:textColor="@android:color/black"
                         android:textSize="30sp" />
@@ -75,13 +69,12 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:layout_marginLeft="20sp"
-                        android:layout_marginStart="20sp"
-                        android:layout_marginTop="5sp"
+                        android:layout_gravity="start"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="5dp"
                         android:alpha="0.5"
                         android:fontFamily="@string/FontLight"
-                        android:gravity="left"
+                        android:gravity="start"
                         android:text="@string/loginHint"
                         android:textColor="@android:color/black"
                         android:textSize="15sp" />
@@ -99,13 +92,14 @@
                     android:id="@+id/activity_login_email_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10sp"
-                    android:layout_marginRight="20sp"
-                    android:layout_marginTop="5sp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/shape_edit_text"
                     android:hint="@string/emailHint"
-                    android:padding="10sp"
+                    android:padding="10dp"
                     android:singleLine="true"
+                    android:inputType="textEmailAddress"
                     android:textColor="@android:color/black"
                     android:textColorHint="@color/TextHintColor"
                     android:textSize="12sp" />
@@ -114,13 +108,13 @@
                     android:id="@+id/activity_login_ps_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10sp"
-                    android:layout_marginRight="20sp"
-                    android:layout_marginTop="5sp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/shape_edit_text"
                     android:hint="@string/passwordHint"
-                    android:padding="10sp"
                     android:inputType="textPassword"
+                    android:padding="10dp"
                     android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textColorHint="@color/TextHintColor"
@@ -130,27 +124,26 @@
                     android:id="@+id/activity_login_rps_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10sp"
-                    android:layout_marginRight="20sp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="20dp"
                     android:layout_marginTop="5dp"
                     android:background="@drawable/shape_edit_text"
                     android:hint="@string/repasswordHint"
-                    android:padding="10sp"
                     android:inputType="textPassword"
+                    android:padding="10dp"
                     android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textColorHint="@color/TextHintColor"
                     android:textSize="12sp" />
 
-                <android.support.v7.widget.CardView
-                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/activity_login_login_btn_cv"
                     android:layout_width="match_parent"
-                    android:layout_height="40sp"
-                    android:layout_marginLeft="20sp"
-                    android:layout_marginRight="20sp"
-                    android:layout_marginTop="5sp"
-                    android:layout_marginBottom="20sp"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="5dp"
                     card_view:cardBackgroundColor="@color/MyerListBlueLight"
                     card_view:cardCornerRadius="2dp"
                     card_view:cardElevation="3dp">
@@ -161,19 +154,19 @@
                         android:layout_height="wrap_content"
                         android:background="?android:selectableItemBackground"
                         android:clickable="true"
-                        android:onClick="login_Click"
                         android:text="@string/loginBtn"
                         android:textColor="#ffffff" />
 
                 </android.support.v7.widget.CardView>
+
                 <TextView
                     android:id="@+id/activity_login_forget_tv"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="20sp"
-                    android:layout_marginBottom="10sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/LoginActivity_Forget_PWD"/>
+                    android:layout_gravity="start"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/LoginActivity_Forget_PWD" />
             </LinearLayout>
 
         </LinearLayout>

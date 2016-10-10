@@ -19,28 +19,38 @@ import com.umeng.analytics.MobclickAgent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.NoSuchAlgorithmException;
-
 import api.CloudServices;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import exception.APIException;
-import common.AppExtension;
+import common.App;
 import interfaces.IRequestCallback;
 import moe.feng.material.statusbar.StatusBarCompat;
 import util.ToastService;
 
 
 public class LoginActivity extends AppCompatActivity {
-    private final boolean DEBUG_ENABLE = false;
+    private final boolean DEBUG_ENABLE = true;
 
-    private EditText mEmailBox;
-    private EditText mPasswordBox;
-    private EditText mConfirmPsBox;
-    private TextView mTitleView;
+    @Bind(R.id.activity_login_email_tv)
+    EditText mEmailBox;
+
+    @Bind(R.id.activity_login_ps_et)
+    EditText mPasswordBox;
+
+    @Bind(R.id.activity_login_rps_et)
+    EditText mConfirmPsBox;
+
+    @Bind(R.id.activity_login_loginTitle_tv)
+    TextView mTitleView;
+
     private ProgressDialog mprogressDialog;
-    private TextView mForgetPwdTextView;
+
+    @Bind(R.id.activity_login_forget_tv)
+    TextView mForgetPwdTextView;
 
     private boolean isToRegister = true;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,22 +58,17 @@ public class LoginActivity extends AppCompatActivity {
         StatusBarCompat.setUpActivity(this);
 
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
 
-        mEmailBox = (EditText) findViewById(R.id.activity_login_email_tv);
-        mPasswordBox = (EditText) findViewById(R.id.activity_login_ps_et);
-
-        if(DEBUG_ENABLE){
+        if (DEBUG_ENABLE) {
             mEmailBox.setText("dengweichao@hotmail.com");
             mPasswordBox.setText("windfantasy");
         }
 
-        mConfirmPsBox = (EditText) findViewById(R.id.activity_login_rps_et);
-        mTitleView = (TextView) findViewById(R.id.activity_login_loginTitle_tv);
-        mForgetPwdTextView=(TextView)findViewById(R.id.activity_login_forget_tv);
         mForgetPwdTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                 builder.setTitle(getResources().getString(R.string.forget_pwd_title));
                 builder.setMessage(getResources().getString(R.string.forget_pwd_content));
                 builder.setPositiveButton(getResources().getString(R.string.forget_pwd_send_email), new DialogInterface.OnClickListener() {
@@ -87,17 +92,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-        String state = intent.getStringExtra("LOGIN_STATE");
+        mprogressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+
+        String state = getIntent().getStringExtra("LOGIN_STATE");
         if (state.equals("ToLogin")) {
             mTitleView.setText(getResources().getString(R.string.loginBtn));
             mConfirmPsBox.setVisibility(View.GONE);
             isToRegister = false;
-        }
-        else
+        } else
             mTitleView.setText(getResources().getString(R.string.registerBtn));
-
-        mprogressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
     }
 
     @Override
@@ -107,13 +110,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
     }
 
-    public void login_Click(View view) throws NoSuchAlgorithmException {
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.activity_login_login_btn)
+    public void login_Click(View view) {
         if (!isDataValid()) {
             return;
         }
@@ -129,8 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                     onCheckEmailResponse(response);
                 }
             });
-        }
-        else {
+        } else {
             mprogressDialog.setMessage(getResources().getString(R.string.loading_hint));
             mprogressDialog.show();
             CloudServices.register(mEmailBox.getText().toString(),
@@ -184,20 +187,16 @@ public class LoginActivity extends AppCompatActivity {
                                     onGotSaltResponse(jsonObject);
                                 }
                             });
-                }
-                else {
+                } else {
                     ToastService.sendShortToast(getResources().getString(R.string.hint_email_not_exist));
                 }
-            }
-            else {
+            } else {
                 ToastService.sendShortToast(getResources().getString(R.string.hint_email_not_exist));
             }
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
             mprogressDialog.dismiss();
-        }
-        catch (APIException e) {
+        } catch (APIException e) {
             ToastService.sendShortToast(getResources().getString(R.string.hint_request_fail));
             mprogressDialog.dismiss();
         }
@@ -225,16 +224,12 @@ public class LoginActivity extends AppCompatActivity {
                                     onLoginResponse(jsonObject);
                                 }
                             });
-                }
-                else throw new IllegalArgumentException();
-            }
-            else throw new IllegalArgumentException();
-        }
-        catch (APIException e) {
+                } else throw new IllegalArgumentException();
+            } else throw new IllegalArgumentException();
+        } catch (APIException e) {
             ToastService.sendShortToast(getResources().getString(R.string.hint_request_fail));
             mprogressDialog.dismiss();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ToastService.sendShortToast(getResources().getString(R.string.hint_login_fail));
             mprogressDialog.dismiss();
@@ -253,10 +248,10 @@ public class LoginActivity extends AppCompatActivity {
                 if (userObj != null) {
                     String sid = userObj.getString("sid");
                     String access_token = userObj.getString("access_token");
-                    LocalSettingHelper.putString(AppExtension.getInstance(), "email", mEmailBox.getText().toString());
-                    LocalSettingHelper.putString(AppExtension.getInstance(), "sid", sid);
-                    LocalSettingHelper.putString(AppExtension.getInstance(), "access_token", access_token);
-                    LocalSettingHelper.deleteKey(AppExtension.getInstance(), "password");
+                    LocalSettingHelper.putString(App.getInstance(), "email", mEmailBox.getText().toString());
+                    LocalSettingHelper.putString(App.getInstance(), "sid", sid);
+                    LocalSettingHelper.putString(App.getInstance(), "access_token", access_token);
+                    LocalSettingHelper.deleteKey(App.getInstance(), "password");
 
                     ToastService.sendShortToast(getResources().getString(R.string.login_success));
 
@@ -264,21 +259,16 @@ public class LoginActivity extends AppCompatActivity {
                     intent.putExtra("LOGIN_STATE", "Logined");
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                }
-                else throw new IllegalArgumentException();
-            }
-            else {
+                } else throw new IllegalArgumentException();
+            } else {
                 ToastService.sendShortToast(getResources().getString(R.string.hint_wrong_psd));
             }
-        }
-        catch (APIException e) {
+        } catch (APIException e) {
             ToastService.sendShortToast(getResources().getString(R.string.hint_request_fail));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ToastService.sendShortToast(getResources().getString(R.string.hint_login_fail));
-        }
-        finally {
+        } finally {
             mprogressDialog.dismiss();
         }
     }
@@ -298,14 +288,14 @@ public class LoginActivity extends AppCompatActivity {
                     String psAfterMD5 = NetworkSecurityHelper.get32MD5Str(mPasswordBox.getText().toString());
                     String psToPost = NetworkSecurityHelper.get32MD5Str(psAfterMD5 + salt);
 
-                    LocalSettingHelper.putString(AppExtension.getInstance(),
+                    LocalSettingHelper.putString(App.getInstance(),
                             "email",
                             mEmailBox.getText().toString());
-                    LocalSettingHelper.putString(AppExtension.getInstance(),
+                    LocalSettingHelper.putString(App.getInstance(),
                             "password",
                             psToPost);
 
-                    CloudServices.login(LocalSettingHelper.getString(this, "email"),
+                    CloudServices.login(LocalSettingHelper.getString(this, "email", null),
                             psToPost,
                             new IRequestCallback() {
                                 @Override
@@ -314,22 +304,18 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
                 }
-            }
-            else {
-                double code=response.getDouble("error_code");
-                if(code==203){
+            } else {
+                double code = response.getDouble("error_code");
+                if (code == 203) {
                     ToastService.sendShortToast(getResources().getString(R.string.hint_email_exist));
                 }
             }
-        }
-        catch (APIException e) {
+        } catch (APIException e) {
             ToastService.sendShortToast(getResources().getString(R.string.hint_request_fail));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ToastService.sendShortToast(getResources().getString(R.string.hint_register_fail));
-        }
-        finally {
+        } finally {
             mprogressDialog.dismiss();
         }
     }
